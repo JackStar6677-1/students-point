@@ -15,7 +15,7 @@ from .views import (
 )
 
 urlpatterns = [
-    path("foros/", ForoListView.as_view(), name="foro-list"),
+    path("forum/foros/", ForoListView.as_view(), name="foro-list"),
     path("forum/posts/", PostListCreateView.as_view(), name="post-list"),
     path("forum/posts/<int:pk>/comentarios", CommentCreateView.as_view(), name="post-comments"),
     path("forum/posts/<int:pk>/votar", PostVoteView.as_view(), name="post-vote"),

@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "studentspoint.apps.wellbeing",
     "marketplace",
     "campus_map",
+    "infrastructure_monitoring",
 ]
 
 MIDDLEWARE = [

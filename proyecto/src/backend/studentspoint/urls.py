@@ -65,6 +65,7 @@ urlpatterns = [
     path('api/', include('studentspoint.apps.portfolio.urls')),
     path('api/marketplace/', include('marketplace.urls')),
     path('api/campus/', include('campus_map.urls')),
+    path('api/infrastructure/', include('infrastructure_monitoring.urls')),
     path('api/auth/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='docs'),

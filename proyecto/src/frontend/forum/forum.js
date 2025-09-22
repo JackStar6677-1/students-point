@@ -96,17 +96,17 @@ class ForumManager {
             if (response.ok) {
                 const contentType = response.headers.get('content-type');
                 if (contentType && contentType.includes('application/json')) {
-                    this.forums = await response.json();
+                    const data = await response.json();
+                    this.forums = Array.isArray(data) ? data : data.results || [];
                 } else {
                     // Si no es JSON, usar datos de ejemplo
                     this.forums = this.getSampleForums();
                 }
-                this.populateForumSelects();
             } else {
                 // Si falla la API, usar datos de ejemplo
                 this.forums = this.getSampleForums();
-                this.populateForumSelects();
             }
+            this.populateForumSelects();
         } catch (error) {
             console.error('Error loading forums:', error);
             // En caso de error, usar datos de ejemplo
@@ -136,17 +136,17 @@ class ForumManager {
             if (response.ok) {
                 const contentType = response.headers.get('content-type');
                 if (contentType && contentType.includes('application/json')) {
-                    this.posts = await response.json();
+                    const data = await response.json();
+                    this.posts = Array.isArray(data) ? data : data.results || [];
                 } else {
                     // Si no es JSON, usar datos de ejemplo
                     this.posts = this.getSamplePosts();
                 }
-                this.renderPosts();
             } else {
                 // Si falla la API, usar datos de ejemplo
                 this.posts = this.getSamplePosts();
-                this.renderPosts();
             }
+            this.renderPosts();
         } catch (error) {
             console.error('Error loading posts:', error);
             // En caso de error, usar datos de ejemplo

@@ -337,6 +337,11 @@
     function displayPosts(postsToShow) {
       const container = document.getElementById('postsContainer');
       
+      // Asegurar que postsToShow sea un array
+      if (!Array.isArray(postsToShow)) {
+        postsToShow = [];
+      }
+      
       if (postsToShow.length === 0) {
         container.innerHTML = `
           <div class="text-center py-4">

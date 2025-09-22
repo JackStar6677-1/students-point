@@ -146,3 +146,24 @@ def liveness_check(request):
     Endpoint de liveness check para Kubernetes
     """
     return JsonResponse({'status': 'alive'}, status=200)
+
+
+def api_info(request):
+    """
+    Endpoint público con información de la API
+    """
+    return JsonResponse({
+        'name': 'StudentsPoint API',
+        'version': '1.0.0',
+        'description': 'API para la plataforma StudentsPoint - PWA estudiantil',
+        'endpoints': {
+            'auth': '/api/auth/',
+            'forum': '/api/forum/',
+            'marketplace': '/api/marketplace/',
+            'campus': '/api/campus/',
+            'infrastructure': '/api/infrastructure/',
+            'health': '/health/',
+            'docs': '/api/docs/'
+        },
+        'status': 'active'
+    }, status=200)

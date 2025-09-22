@@ -295,13 +295,13 @@
         
         const response = await fetch('/api/marketplace/products/', { headers });
         if (response.ok) {
-          products = await response.json();
-          displayProducts(products);
+          const data = await response.json();
+          products = Array.isArray(data) ? data : data.results || [];
         } else {
           // Si no hay API, usar datos de ejemplo
           products = getSampleProducts();
-          displayProducts(products);
         }
+        displayProducts(products);
       } catch (error) {
         console.error('Error:', error);
         // Usar datos de ejemplo si hay error de conexión
