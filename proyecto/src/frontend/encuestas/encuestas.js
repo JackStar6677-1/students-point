@@ -111,7 +111,7 @@ class EncuestasManager {
             const token = localStorage.getItem('access_token');
             const params = new URLSearchParams(this.filtros);
             
-            const response = await fetch(`/api/polls/encuestas/?${params}`, {
+            const response = await fetch(`/api/polls/?${params}`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             
@@ -132,7 +132,7 @@ class EncuestasManager {
     async loadRespuestas(encuestaId) {
         try {
             const token = localStorage.getItem('access_token');
-            const response = await fetch(`/api/polls/encuestas/${encuestaId}/respuestas/`, {
+            const response = await fetch(`/api/polls/${encuestaId}/respuestas/`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             
@@ -395,7 +395,7 @@ class EncuestasManager {
             }
             
             const token = localStorage.getItem('access_token');
-            const response = await fetch(`/api/polls/encuestas/${this.encuestaActual.id}/responder/`, {
+            const response = await fetch(`/api/polls/${this.encuestaActual.id}/votar/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

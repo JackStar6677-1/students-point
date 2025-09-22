@@ -209,16 +209,16 @@
     // Cargar sedes desde la API
     async function loadSedes() {
       try {
-        const response = await fetch('/api/campuses/sedes/');
+        const response = await fetch('/api/campus/campuses/');
         if (response.ok) {
           sedes = await response.json();
           populateSedeSelect();
         } else {
           // Datos de ejemplo si la API no está disponible
           sedes = [
-            { id: 1, nombre: 'Sede San Carlos de Apoquindo', slug: 'san-carlos' },
-            { id: 2, nombre: 'Sede Maipú', slug: 'maipu' },
-            { id: 3, nombre: 'Sede San Joaquín', slug: 'san-joaquin' }
+            { id: 1, name: 'Sede San Carlos de Apoquindo', slug: 'san-carlos' },
+            { id: 2, name: 'Sede Maipú', slug: 'maipu' },
+            { id: 3, name: 'Sede San Joaquín', slug: 'san-joaquin' }
           ];
           populateSedeSelect();
         }
@@ -227,9 +227,9 @@
         showError('Error cargando sedes. Usando datos de ejemplo.');
         // Datos de ejemplo
         sedes = [
-          { id: 1, nombre: 'Sede San Carlos de Apoquindo', slug: 'san-carlos' },
-          { id: 2, nombre: 'Sede Maipú', slug: 'maipu' },
-          { id: 3, nombre: 'Sede San Joaquín', slug: 'san-joaquin' }
+          { id: 1, name: 'Sede San Carlos de Apoquindo', slug: 'san-carlos' },
+          { id: 2, name: 'Sede Maipú', slug: 'maipu' },
+          { id: 3, name: 'Sede San Joaquín', slug: 'san-joaquin' }
         ];
         populateSedeSelect();
       }
@@ -242,7 +242,7 @@
       sedes.forEach(sede => {
         const option = document.createElement('option');
         option.value = sede.id;
-        option.textContent = sede.nombre;
+        option.textContent = sede.name;
         select.appendChild(option);
       });
       
@@ -257,7 +257,7 @@
       if (!sedeId) return;
 
       try {
-        const response = await fetch(`/api/campuses/recorridos/?sede=${sedeId}`);
+        const response = await fetch(`/api/campus/tours/?campus=${sedeId}`);
         if (response.ok) {
           recorridos = await response.json();
         } else {
@@ -265,35 +265,41 @@
           recorridos = [
             {
               id: 1,
-              titulo: 'Recorrido Principal',
-              sede: sedes.find(s => s.id == sedeId)?.nombre || 'Sede',
-              pasos: [
+              title: 'Recorrido Principal',
+              campus: sedes.find(s => s.id == sedeId)?.name || 'Sede',
+              steps: [
                 {
                   id: 1,
-                  orden: 1,
-                  titulo: 'Entrada Principal',
-                  descripcion: 'Bienvenido a la sede. Aquí encontrarás información general y recepción.',
-                  imagen_url: '/images/logos-iconos/Logo_StudentsPoint.svg.png',
-                  lat: -33.4172,
-                  lng: -70.6067
+                  order: 1,
+                  title: 'Entrada Principal',
+                  description: 'Bienvenido a la sede. Aquí encontrarás información general y recepción.',
+                  image: '/static/images/placeholder-campus.jpg',
+                  location: {
+                    latitude: -33.4172,
+                    longitude: -70.6067
+                  }
                 },
                 {
                   id: 2,
-                  orden: 2,
-                  titulo: 'Biblioteca',
-                  descripcion: 'Espacio de estudio y consulta con amplia colección de libros y recursos digitales.',
-                  imagen_url: '/images/logos-iconos/Logo_StudentsPoint.svg.png',
-                  lat: -33.4175,
-                  lng: -70.6070
+                  order: 2,
+                  title: 'Biblioteca',
+                  description: 'Espacio de estudio y consulta con amplia colección de libros y recursos digitales.',
+                  image: '/static/images/placeholder-campus.jpg',
+                  location: {
+                    latitude: -33.4175,
+                    longitude: -70.6070
+                  }
                 },
                 {
                   id: 3,
-                  orden: 3,
-                  titulo: 'Laboratorios',
-                  descripcion: 'Laboratorios equipados con tecnología de punta para prácticas y proyectos.',
-                  imagen_url: '/images/logos-iconos/Logo_StudentsPoint.svg.png',
-                  lat: -33.4178,
-                  lng: -70.6073
+                  order: 3,
+                  title: 'Laboratorios',
+                  description: 'Laboratorios equipados con tecnología de punta para prácticas y proyectos.',
+                  image: '/static/images/placeholder-campus.jpg',
+                  location: {
+                    latitude: -33.4178,
+                    longitude: -70.6073
+                  }
                 }
               ]
             }
@@ -319,9 +325,9 @@
         card.innerHTML = `
           <div class="card h-100">
             <div class="card-body">
-              <h5 class="card-title">${recorrido.titulo}</h5>
-              <p class="card-text text-muted">${recorrido.sede}</p>
-              <p class="card-text">${recorrido.pasos ? recorridos.pasos.length : 0} pasos</p>
+              <h5 class="card-title">${recorrido.title}</h5>
+              <p class="card-text text-muted">${recorrido.campus}</p>
+              <p class="card-text">${recorrido.steps ? recorrido.steps.length : 0} pasos</p>
             </div>
             <div class="card-footer">
               <button class="btn btn-primary w-100" onclick="startSlideshow(${recorrido.id})">
@@ -341,7 +347,7 @@
       currentRecorrido = recorridos.find(r => r.id === recorridoId);
       if (!currentRecorrido) return;
 
-      pasos = currentRecorrido.pasos || [];
+      pasos = currentRecorrido.steps || [];
       currentSlide = 0;
 
       document.getElementById('recorridos-container').style.display = 'none';
@@ -352,8 +358,8 @@
     }
 
     function updateSlideInfo() {
-      document.getElementById('recorrido-titulo').textContent = currentRecorrido.titulo;
-      document.getElementById('recorrido-sede').textContent = currentRecorrido.sede;
+      document.getElementById('recorrido-titulo').textContent = currentRecorrido.title;
+      document.getElementById('recorrido-sede').textContent = currentRecorrido.campus;
       document.getElementById('slide-counter').textContent = `${currentSlide + 1} / ${pasos.length}`;
       
       const progress = ((currentSlide + 1) / pasos.length) * 100;
@@ -373,13 +379,13 @@
           <div class="row h-100">
             <div class="col-md-6 d-flex align-items-center">
               <div class="slide-text p-4">
-                <h3 class="slide-title">${paso.titulo}</h3>
-                <p class="slide-description">${paso.descripcion}</p>
-                ${paso.lat && paso.lng ? `
+                <h3 class="slide-title">${paso.title}</h3>
+                <p class="slide-description">${paso.description}</p>
+                ${paso.location && paso.location.latitude && paso.location.longitude ? `
                   <div class="slide-location mt-3">
                     <small class="text-muted">
                       <i class="fas fa-map-marker-alt"></i> 
-                      Coordenadas: ${paso.lat.toFixed(4)}, ${paso.lng.toFixed(4)}
+                      Coordenadas: ${paso.location.latitude.toFixed(4)}, ${paso.location.longitude.toFixed(4)}
                     </small>
                   </div>
                 ` : ''}
@@ -387,7 +393,7 @@
             </div>
             <div class="col-md-6 d-flex align-items-center">
               <div class="slide-image">
-                <img src="${paso.imagen_url}" alt="${paso.titulo}" class="img-fluid rounded">
+                <img src="${paso.image || '/static/images/placeholder-campus.jpg'}" alt="${paso.title}" class="img-fluid rounded">
               </div>
             </div>
           </div>

@@ -25,6 +25,7 @@ INSTALLED_APPS = [
     "drf_spectacular",
     "corsheaders",
     "rest_framework_simplejwt",
+    "django_filters",
 
     # Local apps (ajusta nombres si cambiaste rutas)
     "studentspoint.apps.accounts",
@@ -39,6 +40,8 @@ INSTALLED_APPS = [
     "studentspoint.apps.reports",
     "studentspoint.apps.schedules",
     "studentspoint.apps.wellbeing",
+    "marketplace",
+    "campus_map",
 ]
 
 MIDDLEWARE = [

@@ -287,8 +287,13 @@
     // Cargar productos desde la API
     async function loadProducts() {
       try {
-        // Intentar cargar desde la API real primero
-        const response = await fetch('/api/market/products/');
+        const token = localStorage.getItem('access_token');
+        const headers = {};
+        if (token) {
+          headers['Authorization'] = `Bearer ${token}`;
+        }
+        
+        const response = await fetch('/api/marketplace/products/', { headers });
         if (response.ok) {
           products = await response.json();
           displayProducts(products);
@@ -375,29 +380,29 @@
           <div class="card-body">
             <div class="row">
               <div class="col-md-2">
-                <img src="${product.imagen || '/static/images/no-image.png'}" 
+                <img src="${product.primary_image || '/static/images/no-image.png'}" 
                      class="img-fluid rounded" 
-                     alt="${product.nombre}"
+                     alt="${product.title}"
                      style="max-height: 80px; object-fit: cover;">
               </div>
               <div class="col-md-6">
-                <h5 class="card-title">${product.nombre}</h5>
-                <p class="card-text text-muted">${product.descripcion.substring(0, 100)}...</p>
+                <h5 class="card-title">${product.title}</h5>
+                <p class="card-text text-muted">${product.description ? product.description.substring(0, 100) + '...' : 'Sin descripción'}</p>
                 <div class="d-flex gap-3">
-                  <span class="badge bg-primary">${product.categoria}</span>
+                  <span class="badge bg-primary">${product.category ? product.category.name : 'Sin categoría'}</span>
                   <small class="text-muted">
-                    <i class="fas fa-user"></i> ${product.vendedor}
+                    <i class="fas fa-user"></i> ${product.seller || 'Usuario'}
                   </small>
                   <small class="text-muted">
-                    <i class="fas fa-clock"></i> ${new Date(product.fecha_creacion).toLocaleDateString()}
+                    <i class="fas fa-clock"></i> ${new Date(product.created_at).toLocaleDateString()}
                   </small>
                 </div>
               </div>
               <div class="col-md-4 text-end">
                 <div class="d-flex flex-column gap-2">
-                  <h4 class="text-success mb-0">$${product.precio.toLocaleString()}</h4>
+                  <h4 class="text-success mb-0">$${parseFloat(product.price).toLocaleString()}</h4>
                   <span class="badge bg-success">
-                    <i class="fas fa-eye"></i> ${product.vistas || 0}
+                    <i class="fas fa-eye"></i> ${product.views || 0}
                   </span>
                   <button class="btn btn-primary btn-sm" onclick="event.stopPropagation(); contactSeller(${product.id})">
                     <i class="fas fa-envelope"></i> Contactar
@@ -435,7 +440,9 @@
       // Filtrar productos
       let filteredProducts = products;
       if (category !== 'all') {
-        filteredProducts = products.filter(product => product.categoria === category);
+        filteredProducts = products.filter(product => 
+          product.category && product.category.name.toLowerCase() === category.toLowerCase()
+        );
       }
       
       displayProducts(filteredProducts);
@@ -455,8 +462,8 @@
       }
       
       const filteredProducts = products.filter(product => 
-        product.nombre.toLowerCase().includes(searchTerm) ||
-        product.descripcion.toLowerCase().includes(searchTerm)
+        product.title.toLowerCase().includes(searchTerm) ||
+        (product.description && product.description.toLowerCase().includes(searchTerm))
       );
       
       displayProducts(filteredProducts);
@@ -584,32 +591,32 @@
           <div class="modal-dialog modal-lg">
             <div class="modal-content">
               <div class="modal-header">
-                <h5 class="modal-title">${product.nombre}</h5>
+                <h5 class="modal-title">${product.title}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
               </div>
               <div class="modal-body">
                 <div class="row">
                   <div class="col-md-4">
-                    <img src="${product.imagen}" alt="${product.nombre}" class="img-fluid rounded">
+                    <img src="${product.primary_image || '/static/images/no-image.png'}" alt="${product.title}" class="img-fluid rounded">
                   </div>
                   <div class="col-md-8">
                     <div class="product-meta mb-3">
-                      <span class="badge bg-primary">${product.categoria}</span>
+                      <span class="badge bg-primary">${product.category ? product.category.name : 'Sin categoría'}</span>
                       <small class="text-muted ms-2">
-                        <i class="fas fa-user"></i> ${product.vendedor} • 
-                        <i class="fas fa-clock"></i> ${new Date(product.fecha_creacion).toLocaleDateString()}
+                        <i class="fas fa-user"></i> ${product.seller || 'Usuario'} • 
+                        <i class="fas fa-clock"></i> ${new Date(product.created_at).toLocaleDateString()}
                       </small>
                     </div>
                     <div class="product-description">
                       <h6>Descripción:</h6>
-                      <p>${product.descripcion}</p>
+                      <p>${product.description || 'Sin descripción'}</p>
                     </div>
                     <div class="product-price">
-                      <h4 class="text-success">$${product.precio.toLocaleString()}</h4>
+                      <h4 class="text-success">$${parseFloat(product.price).toLocaleString()}</h4>
                     </div>
                     <div class="product-stats mt-3">
                       <span class="badge bg-secondary me-2">
-                        <i class="fas fa-eye"></i> ${product.vistas} vistas
+                        <i class="fas fa-eye"></i> ${product.views || 0} vistas
                       </span>
                     </div>
                   </div>
