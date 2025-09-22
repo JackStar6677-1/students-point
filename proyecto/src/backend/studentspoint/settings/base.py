@@ -162,7 +162,7 @@ CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", "redis://redis:6379/0")
 CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND", CELERY_BROKER_URL)
 
 # ---- OAuth de Google ----
-GOOGLE_CLIENT_ID = "307562557576-0fd8ta7i09i1e6it5hstla13jsomeq2s.apps.googleusercontent.com"
-GOOGLE_CLIENT_SECRET = "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"
+GOOGLE_CLIENT_ID = os.getenv("GOOGLE_OAUTH_CLIENT_ID", "")
+GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_OAUTH_CLIENT_SECRET", "")
 GOOGLE_REDIRECT_URI = os.getenv("GOOGLE_REDIRECT_URI", "http://localhost:8000/api/auth/google/callback/web/")
 FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:8000")

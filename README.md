@@ -216,11 +216,13 @@ docker run -p 8000:8000 --env-file .env studentspoint
    http://localhost:8000/api/auth/google/callback/web/
    http://127.0.0.1:8000/api/auth/google/callback/web/
    https://tu-dominio.com/api/auth/google/callback/web/
+   https://studentspoint.app/api/auth/google/callback/web/
    ```
 6. **Agregar variables al .env**:
    ```env
    GOOGLE_OAUTH_CLIENT_ID=tu_client_id
    GOOGLE_OAUTH_CLIENT_SECRET=tu_client_secret
+   GOOGLE_REDIRECT_URI=http://localhost:8000/api/auth/google/callback/web/
    ```
 
 #### Notificaciones Push (Opcional)
@@ -298,6 +300,7 @@ CORS_ALLOWED_ORIGINS=https://tu-dominio.com,https://www.tu-dominio.com
 # Google OAuth
 GOOGLE_OAUTH_CLIENT_ID=tu_client_id
 GOOGLE_OAUTH_CLIENT_SECRET=tu_client_secret
+GOOGLE_REDIRECT_URI=http://localhost:8000/api/auth/google/callback/web/
 
 # Email (opcional)
 EMAIL_HOST=smtp.gmail.com
