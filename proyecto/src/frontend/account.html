@@ -115,11 +115,96 @@
   <script src="/static/js/main.js"></script>
 
   <script>
+    // Verificar autenticación
+    async function checkAuth() {
+      try {
+        const token = localStorage.getItem('access_token');
+        if (!token) {
+          window.location.href = '/login.html';
+          return false;
+        }
+        
+        const response = await fetch('/api/auth/me/', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (response.ok) {
+          const user = await response.json();
+          updateUIForLoggedInUser(user);
+          return true;
+        } else {
+          localStorage.removeItem('access_token');
+          localStorage.removeItem('refresh_token');
+          window.location.href = '/login.html';
+          return false;
+        }
+      } catch (error) {
+        console.error('Error verificando autenticación:', error);
+        window.location.href = '/login.html';
+        return false;
+      }
+    }
+
+    // Actualizar UI para usuario autenticado
+    function updateUIForLoggedInUser(user) {
+      const authButtons = document.querySelector('.auth-buttons');
+      if (authButtons) {
+        authButtons.innerHTML = `
+          <div class="dropdown">
+            <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+              <i class="fas fa-user"></i> ${user.name || user.email}
+            </button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="/account.html">
+                <i class="fas fa-user"></i> Mi Perfil
+              </a></li>
+              <li><a class="dropdown-item" href="/portfolio/">
+                <i class="fas fa-briefcase"></i> Portafolio
+              </a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="#" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+              </a></li>
+            </ul>
+          </div>
+        `;
+      }
+    }
+
+    // Función de logout
+    window.logout = async function() {
+      if (confirm('¿Estás seguro de que quieres cerrar sesión?')) {
+        try {
+          const token = localStorage.getItem('access_token');
+          if (token) {
+            await fetch('/api/auth/logout/', {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+              }
+            });
+          }
+        } catch (error) {
+          console.error('Error en logout:', error);
+        } finally {
+          localStorage.removeItem('access_token');
+          localStorage.removeItem('refresh_token');
+          window.location.href = '/';
+        }
+      }
+    };
+
     if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
       document.querySelector('.dev-tools').style.display = 'flex';
     }
 
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', async function() {
+      await checkAuth();
+      
       setTimeout(() => {
         if (window.playSound) {
           window.playSound('pageLoad');

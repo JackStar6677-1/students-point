@@ -20,7 +20,7 @@ function configurarEventos() {
 // Cargar cursos
 async function cargarCursos() {
     try {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('access_token');
         if (!token) {
             mostrarError('Debes iniciar sesión para ver los cursos');
             return;
@@ -186,7 +186,7 @@ function mostrarNuevoCurso() {
 // Enviar nuevo curso
 async function enviarCurso() {
     try {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('access_token');
         if (!token) {
             mostrarError('Debes iniciar sesión para publicar cursos');
             return;
@@ -236,7 +236,7 @@ async function enviarCurso() {
 // Ver curso completo
 async function verCurso(id) {
     try {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('access_token');
         const response = await fetch(`/api/otec/cursos/${id}`, {
             headers: {
                 'Authorization': `Bearer ${token}`,

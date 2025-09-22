@@ -18,7 +18,7 @@ function configurarEventos() {
 // Cargar contenido de bienestar
 async function cargarContenidoBienestar() {
     try {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('access_token');
         if (!token) {
             mostrarError('Debes iniciar sesión para acceder al contenido de bienestar');
             return;
@@ -103,7 +103,7 @@ function mostrarContenido() {
 // Ver contenido completo
 async function verContenido(id) {
     try {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('access_token');
         const response = await fetch(`/api/bienestar/bienestar/${id}`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
