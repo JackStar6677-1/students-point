@@ -18,21 +18,39 @@ Una **Aplicación Web Progresiva (PWA)** integral diseñada para la comunidad es
 ### Aplicaciones Integradas
 
 #### Herramientas Académicas
-- **Foros**: Sistema de discusión con moderación automática
-- **Horarios**: Gestión de horarios con importación PDF
-- **Encuestas**: Sistema de votación y encuestas interactivas
+- **Foros**: Sistema de discusión con CRUD completo (crear, responder, editar, eliminar posts)
+- **Encuestas y Votaciones**: Sistema para que estudiantes expresen opiniones y profesores recopilen feedback
 - **Profesores**: Directorio completo de la facultad
+- **Cursos**: Gestión de materias y horarios con notificaciones
 
 #### Desarrollo Profesional
-- **Portafolio**: Gestión de perfil con generación PDF profesional
-- **Cursos OTEC**: Plataforma de intercambio de cursos
-- **Marketplace**: Integración con Facebook Marketplace y MercadoLibre
+- **Portafolio Automático**: Generación automática de portafolios estudiantiles para evaluación
+- **Sistema de Compra/Venta**: Plataforma segura para publicar y comprar productos entre estudiantes
+- **Mapa Interactivo**: Navegación del campus con PWA para ubicaciones y servicios
 
 #### Servicios Estudiantiles
 - **Bienestar**: Recursos de salud y bienestar estudiantil
-- **Reportes**: Sistema de reportes de infraestructura
-- **Notificaciones**: Push notifications en tiempo real
-- **Recorridos Virtuales**: Tours interactivos por diapositivas
+- **Notificaciones Push**: Alertas de clases y actividades importantes
+- **Recorridos Virtuales**: Tours interactivos por diapositivas del campus
+- **Monitoreo de Infraestructura**: Reportes de funcionamiento del campus para administradores
+
+### Estado de Implementación
+
+#### Funcionalidades Completadas
+- **Autenticación**: Login con Google OAuth y registro con validación
+- **Foros**: Sistema básico de discusión
+- **Encuestas**: Sistema de votación básico
+- **Recorridos Virtuales**: Tours por diapositivas
+- **Bienestar**: Interfaz de servicios estudiantiles
+- **Profesores**: Directorio de facultad
+- **Cursos**: Gestión básica de materias
+
+#### Funcionalidades en Desarrollo
+- **Mapa Interactivo**: Navegación del campus (PWA)
+- **Sistema de Compra/Venta**: Plataforma de productos entre estudiantes
+- **Portafolio Automático**: Generación automática de portafolios
+- **Notificaciones Push**: Sistema completo de alertas
+- **Monitoreo de Infraestructura**: Reportes para administradores
 
 ### Características Técnicas
 - **PWA Completa**: Funcionalidad offline y experiencia nativa
