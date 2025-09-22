@@ -38,19 +38,23 @@ Una **Aplicación Web Progresiva (PWA)** integral diseñada para la comunidad es
 
 #### Funcionalidades Completadas
 - **Autenticación**: Login con Google OAuth y registro con validación
-- **Foros**: Sistema básico de discusión
-- **Encuestas**: Sistema de votación básico
-- **Recorridos Virtuales**: Tours por diapositivas
+- **Foros**: Sistema completo de discusión con CRUD, moderación y votación
+- **Encuestas**: Sistema de votación con dashboard y resultados en tiempo real
+- **Recorridos Virtuales**: Tours por diapositivas con navegación interactiva
 - **Bienestar**: Interfaz de servicios estudiantiles
 - **Profesores**: Directorio de facultad
-- **Cursos**: Gestión básica de materias
-
-#### Funcionalidades en Desarrollo
-- **Mapa Interactivo**: Navegación del campus (PWA)
+- **Cursos**: Gestión de materias y horarios
+- **Mapa Interactivo**: Navegación del campus con PWA
 - **Sistema de Compra/Venta**: Plataforma de productos entre estudiantes
 - **Portafolio Automático**: Generación automática de portafolios
-- **Notificaciones Push**: Sistema completo de alertas
+- **Notificaciones Push**: Sistema completo de alertas con templates
 - **Monitoreo de Infraestructura**: Reportes para administradores
+
+#### Correcciones Recientes
+- **Frontend**: Corregidos errores de JavaScript y manejo de arrays
+- **API**: Mejorado manejo de errores y endpoints
+- **PWA**: Corregidas imágenes faltantes y configuración
+- **Autenticación**: Mejorado manejo de tokens y sesiones
 
 ### Características Técnicas
 - **PWA Completa**: Funcionalidad offline y experiencia nativa
@@ -134,6 +138,9 @@ python manage.py collectstatic --noinput
 
 # Crear superusuario
 python manage.py createsuperuser
+
+# Crear datos de ejemplo (opcional)
+python create_sample_data.py
 ```
 
 #### 5. Iniciar Servidor de Desarrollo
@@ -283,6 +290,9 @@ students-point/
 │   │   │   │   │   ├── otec/         # Cursos
 │   │   │   │   │   ├── wellbeing/    # Bienestar
 │   │   │   │   │   └── campuses/     # Sedes
+│   │   │   ├── marketplace/          # Sistema de compra/venta
+│   │   │   ├── campus_map/           # Mapa interactivo
+│   │   │   └── infrastructure_monitoring/ # Monitoreo de infraestructura
 │   │   │   │   ├── settings/  # Configuraciones
 │   │   │   │   └── urls.py    # URLs principales
 │   │   │   ├── staticfiles/   # Archivos estáticos
@@ -393,17 +403,18 @@ server {
 - `POST /api/auth/google/callback/web/` - Callback OAuth
 
 #### Aplicaciones
-- `GET /api/forum/` - Lista de foros
+- `GET /api/forum/foros/` - Lista de foros
 - `POST /api/forum/posts/` - Crear post
-- `GET /api/market/` - Productos del marketplace
+- `GET /api/marketplace/products/` - Productos del marketplace
 - `GET /api/portfolio/` - Portafolios
 - `POST /api/portfolio/generate_pdf/` - Generar PDF
 - `GET /api/polls/` - Encuestas disponibles
 - `POST /api/polls/{id}/vote/` - Votar en encuesta
 - `GET /api/schedules/` - Horarios
 - `GET /api/notifications/` - Notificaciones
-- `GET /api/campuses/sedes/` - Sedes disponibles
-- `GET /api/campuses/recorridos/` - Recorridos virtuales
+- `GET /api/campus/campuses/` - Sedes disponibles
+- `GET /api/campus/tours/` - Recorridos virtuales
+- `GET /api/infrastructure/` - Monitoreo de infraestructura
 
 ### Documentación Interactiva
 - **Swagger UI**: http://tu-dominio.com/api/docs/
