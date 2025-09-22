@@ -11,7 +11,7 @@ class VirtualNavigation {
                 id: 1,
                 title: "Entrada Principal",
                 description: "Bienvenido al campus StudentsPoint Maipú. Aquí comienza tu recorrido virtual por nuestras instalaciones.",
-                image: "/imagenes/streetviewSalas/entrada.jpg",
+                image: "/static/images/placeholder-campus.jpg",
                 detailTitle: "Entrada Principal",
                 detailDescription: "La entrada principal del campus StudentsPoint Maipú es el punto de acceso principal para estudiantes, profesores y visitantes.",
                 features: [
@@ -28,7 +28,7 @@ class VirtualNavigation {
                 id: 2,
                 title: "Biblioteca",
                 description: "Centro de recursos académicos con amplia colección de libros, computadores y espacios de estudio.",
-                image: "/imagenes/streetviewSalas/biblioteca.jpg",
+                image: "/static/images/placeholder-campus.jpg",
                 detailTitle: "Biblioteca Central",
                 detailDescription: "La biblioteca del campus cuenta con una amplia colección de recursos académicos y espacios de estudio.",
                 features: [
@@ -45,7 +45,7 @@ class VirtualNavigation {
                 id: 3,
                 title: "Laboratorio de Computación",
                 description: "Laboratorios equipados con tecnología de última generación para el aprendizaje práctico.",
-                image: "/imagenes/streetviewSalas/laboratorio.jpg",
+                image: "/static/images/placeholder-campus.jpg",
                 detailTitle: "Laboratorios de Computación",
                 detailDescription: "Nuestros laboratorios están equipados con computadores de última generación y software especializado.",
                 features: [
@@ -62,7 +62,7 @@ class VirtualNavigation {
                 id: 4,
                 title: "Aula Magna",
                 description: "Espacio principal para eventos, conferencias y presentaciones importantes del campus.",
-                image: "/imagenes/streetviewSalas/aula_magna.jpg",
+                image: "/static/images/placeholder-campus.jpg",
                 detailTitle: "Aula Magna",
                 detailDescription: "El Aula Magna es nuestro espacio principal para eventos académicos y conferencias.",
                 features: [
@@ -79,7 +79,7 @@ class VirtualNavigation {
                 id: 5,
                 title: "Cafetería",
                 description: "Espacio de encuentro estudiantil con variedad de alimentos y bebidas a precios accesibles.",
-                image: "/imagenes/streetviewSalas/cafeteria.jpg",
+                image: "/static/images/placeholder-campus.jpg",
                 detailTitle: "Cafetería Estudiantil",
                 detailDescription: "La cafetería es el corazón social del campus, donde los estudiantes se reúnen para comer y socializar.",
                 features: [
@@ -96,7 +96,7 @@ class VirtualNavigation {
                 id: 6,
                 title: "Laboratorio de Ciencias",
                 description: "Laboratorios especializados para prácticas de ciencias básicas y experimentos.",
-                image: "/imagenes/streetviewSalas/lab_ciencias.jpg",
+                image: "/static/images/placeholder-campus.jpg",
                 detailTitle: "Laboratorios de Ciencias",
                 detailDescription: "Laboratorios especializados para las carreras que requieren prácticas de ciencias básicas.",
                 features: [
@@ -113,7 +113,7 @@ class VirtualNavigation {
                 id: 7,
                 title: "Área de Estudio",
                 description: "Espacios tranquilos y cómodos para el estudio individual y grupal de los estudiantes.",
-                image: "/imagenes/streetviewSalas/estudio.jpg",
+                image: "/static/images/placeholder-campus.jpg",
                 detailTitle: "Áreas de Estudio",
                 detailDescription: "Espacios diseñados específicamente para el estudio, con mobiliario cómodo y ambiente tranquilo.",
                 features: [
@@ -130,7 +130,7 @@ class VirtualNavigation {
                 id: 8,
                 title: "Patio Central",
                 description: "Espacio al aire libre para el descanso, actividades recreativas y eventos al aire libre.",
-                image: "/imagenes/streetviewSalas/patio.jpg",
+                image: "/static/images/placeholder-campus.jpg",
                 detailTitle: "Patio Central",
                 detailDescription: "El patio central es un espacio al aire libre que sirve como punto de encuentro para estudiantes.",
                 features: [

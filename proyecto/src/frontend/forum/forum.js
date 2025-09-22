@@ -92,7 +92,7 @@ class ForumManager {
 
     async loadForums() {
         try {
-            const response = await fetch('/api/foros/');
+            const response = await fetch('/api/forum/');
             if (response.ok) {
                 const contentType = response.headers.get('content-type');
                 if (contentType && contentType.includes('application/json')) {
@@ -616,7 +616,8 @@ function submitModeration() {
 }
 
 function logout() {
-    localStorage.removeItem('token');
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
     window.location.href = '../index.html';
 }
 

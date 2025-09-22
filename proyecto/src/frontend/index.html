@@ -743,23 +743,107 @@ body {
   <script src="/static/js/pwa.js"></script>
   <script src="/static/pwa-config.js"></script>
   <script src="/static/js/main.js"></script>
-
+  
+  <!-- Script de manejo de errores y navegación -->
   <script>
-    // Función de navegación
-    function navigateTo(url) {
-      if (window.playSound) {
-        window.playSound('navigate');
+    // Manejo global de errores
+    window.addEventListener('error', function(e) {
+      console.error('Error global:', e.error);
+    });
+
+    // Manejo de errores de fetch
+    window.addEventListener('unhandledrejection', function(e) {
+      console.error('Error de promesa:', e.reason);
+    });
+
+    // Verificar si el usuario está autenticado
+    async function checkAuth() {
+      try {
+        const token = localStorage.getItem('access_token');
+        if (!token) return false;
+        
+        const response = await fetch('/api/auth/me/', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (response.ok) {
+          const user = await response.json();
+          updateUIForLoggedInUser(user);
+          return true;
+        } else {
+          localStorage.removeItem('access_token');
+          localStorage.removeItem('refresh_token');
+          return false;
+        }
+      } catch (error) {
+        console.error('Error verificando autenticación:', error);
+        return false;
       }
-      window.location.href = url;
     }
 
-    // Mostrar herramientas de desarrollo solo en modo debug
-    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-      document.querySelector('.dev-tools').style.display = 'flex';
+    // Actualizar UI para usuario autenticado
+    function updateUIForLoggedInUser(user) {
+      const authButtons = document.querySelector('.auth-buttons');
+      if (authButtons) {
+        authButtons.innerHTML = `
+          <div class="dropdown">
+            <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+              <i class="fas fa-user"></i> ${user.name || user.email}
+            </button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="/account.html">
+                <i class="fas fa-user"></i> Mi Perfil
+              </a></li>
+              <li><a class="dropdown-item" href="/portfolio/">
+                <i class="fas fa-briefcase"></i> Portafolio
+              </a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="#" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+              </a></li>
+            </ul>
+          </div>
+        `;
+      }
     }
 
-    // Efectos de sonido en las tarjetas
-    document.addEventListener('DOMContentLoaded', function() {
+    // Función de logout mejorada
+    window.logout = async function() {
+      if (confirm('¿Estás seguro de que quieres cerrar sesión?')) {
+        try {
+          const token = localStorage.getItem('access_token');
+          if (token) {
+            await fetch('/api/auth/logout/', {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+              }
+            });
+          }
+        } catch (error) {
+          console.error('Error en logout:', error);
+        } finally {
+          localStorage.removeItem('access_token');
+          localStorage.removeItem('refresh_token');
+          window.location.href = '/';
+        }
+      }
+    };
+
+    // Inicializar cuando se carga la página
+    document.addEventListener('DOMContentLoaded', async function() {
+      await checkAuth();
+      
+      // Mostrar herramientas de desarrollo solo en modo debug
+      if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        document.querySelector('.dev-tools').style.display = 'flex';
+      }
+
+      // Efectos de sonido en las tarjetas
       const serviceCards = document.querySelectorAll('.service-card');
       serviceCards.forEach((card, index) => {
         card.addEventListener('mouseenter', () => {
@@ -791,17 +875,16 @@ body {
         });
       });
     });
+  </script>
 
-    // Función de logout
-    window.logout = function() {
-      if (confirm('¿Estás seguro de que quieres cerrar sesión?')) {
-        if (window.playSound) {
-          window.playSound('logout');
-        }
-        // Aquí iría la lógica de logout
-        window.location.href = '/login.html';
+  <script>
+    // Función de navegación
+    function navigateTo(url) {
+      if (window.playSound) {
+        window.playSound('navigate');
       }
-    };
+      window.location.href = url;
+    }
   </script>
 </body>
 </html>

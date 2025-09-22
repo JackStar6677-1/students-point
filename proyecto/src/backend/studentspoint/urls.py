@@ -73,6 +73,8 @@ urlpatterns = [
     re_path(r'^favicon\.ico$', serve, {'document_root': Path(settings.STATIC_ROOT), 'path': 'images/icons/icon-192x192.png'}),
     # Servir imágenes desde staticfiles
     re_path(r'^images/(?P<path>.*)$', serve, {'document_root': Path(settings.STATIC_ROOT) / "images"}),
+    # Servir imágenes desde la carpeta imagenes (legacy)
+    re_path(r'^imagenes/(?P<path>.*)$', serve, {'document_root': Path(settings.BASE_DIR).parent.parent / "imagenes"}),
     re_path(r'^(?P<path>.*)$', spa_serve),
 ]
 
