@@ -64,7 +64,7 @@ EXPOSE 8000
 
 # Variables de entorno
 ENV PYTHONPATH=/app
-ENV DJANGO_SETTINGS_MODULE=duocpoint.settings.production
+ENV DJANGO_SETTINGS_MODULE=studentspoint.settings.production
 
 # Comando por defecto para producción
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "3", "--timeout", "120", "duocpoint.wsgi:application"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "3", "--timeout", "120", "studentspoint.wsgi:application"]

@@ -43,7 +43,7 @@ if not errorlevel 1 (
         echo [INFO] 2. Descarga el instalador oficial
         echo [INFO] 3. Ejecuta el instalador con las siguientes opciones:
         echo [INFO]    - Puerto: 5432 (por defecto)
-        echo [INFO]    - Contraseña: recuérdala para configurar DuocPoint
+        echo [INFO]    - Contraseña: recuérdala para configurar StudentsPoint
         echo [INFO]    - Locale: Spanish, Chile
         echo.
         echo [INFO] Presiona Enter cuando hayas completado la instalación...
@@ -65,25 +65,25 @@ echo [INFO] PostgreSQL instalado correctamente
 psql --version
 
 echo.
-echo [INFO] Configurando base de datos para DuocPoint...
+echo [INFO] Configurando base de datos para StudentsPoint...
 echo [INFO] Ingresa la contraseña del usuario postgres:
 echo [INFO] (Esta será la contraseña que configuraste durante la instalación)
 
 REM Crear base de datos
-echo [INFO] Creando base de datos 'duocpoint_prod'...
-psql -U postgres -c "CREATE DATABASE duocpoint_prod;" 2>nul
+echo [INFO] Creando base de datos 'studentspoint_prod'...
+psql -U postgres -c "CREATE DATABASE studentspoint_prod;" 2>nul
 if errorlevel 1 (
     echo [WARNING] No se pudo crear la base de datos automáticamente
     echo [INFO] Por favor crea la base de datos manualmente:
     echo [INFO] 1. Abre pgAdmin o psql
-    echo [INFO] 2. Ejecuta: CREATE DATABASE duocpoint_prod;
+    echo [INFO] 2. Ejecuta: CREATE DATABASE studentspoint_prod;
 ) else (
-    echo [INFO] Base de datos 'duocpoint_prod' creada exitosamente
+    echo [INFO] Base de datos 'studentspoint_prod' creada exitosamente
 )
 
 echo.
 echo [INFO] Verificando conexión a la base de datos...
-psql -U postgres -d duocpoint_prod -c "SELECT version();" >nul 2>&1
+psql -U postgres -d studentspoint_prod -c "SELECT version();" >nul 2>&1
 if errorlevel 1 (
     echo [WARNING] No se pudo conectar a la base de datos
     echo [INFO] Verifica la configuración de PostgreSQL
@@ -101,7 +101,7 @@ echo    2. Configura las variables de base de datos en .env
 echo    3. Ejecuta iniciar_produccion.bat
 echo.
 echo 🔧 CONFIGURACIÓN RECOMENDADA:
-echo    - DB_NAME=duocpoint_prod
+echo    - DB_NAME=studentspoint_prod
 echo    - DB_USER=postgres
 echo    - DB_PASSWORD=[tu_contraseña]
 echo    - DB_HOST=localhost
@@ -109,7 +109,7 @@ echo    - DB_PORT=5432
 echo.
 echo 📚 DOCUMENTACIÓN:
 echo    - PostgreSQL: https://www.postgresql.org/docs/
-echo    - DuocPoint: README.md
+echo    - StudentsPoint: README.md
 echo ============================================================
 
 pause

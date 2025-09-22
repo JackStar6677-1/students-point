@@ -32,7 +32,7 @@ class PushTests(TestCase):
             p256dh="k",
             auth="a",
         )
-        with patch("duocpoint.apps.notifications.tasks.webpush", side_effect=WebPushException("bad")):
+        with patch("studentspoint.apps.notifications.tasks.webpush", side_effect=WebPushException("bad")):
             send_class_push(self.user.id, None, None, None, test_only=True)
         sub.refresh_from_db()
         self.assertFalse(sub.activo)
@@ -44,6 +44,6 @@ class PushTests(TestCase):
             p256dh="k",
             auth="a",
         )
-        with patch("duocpoint.apps.notifications.tasks.webpush") as mock_webpush:
+        with patch("studentspoint.apps.notifications.tasks.webpush") as mock_webpush:
             send_class_push(self.user.id, None, None, None, test_only=True)
             self.assertTrue(mock_webpush.called)

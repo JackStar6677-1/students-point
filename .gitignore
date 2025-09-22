@@ -255,3 +255,4 @@ jspm_packages/
 proyecto/src/backend/db.sqlite3
 proyecto/src/backend/staticfiles/admin/
 proyecto/src/backend/staticfiles/rest_framework/
+

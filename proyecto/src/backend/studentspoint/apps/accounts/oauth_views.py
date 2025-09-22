@@ -245,3 +245,4 @@ def disconnect_google(request):
         return Response({
             'error': 'Error desconectando cuenta de Google'
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+

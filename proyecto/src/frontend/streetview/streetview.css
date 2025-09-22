@@ -471,3 +471,165 @@
     outline: 2px solid var(--students-cyan);
     outline-offset: 2px;
 }
+
+/* Estilos para Slideshow */
+.slideshow-wrapper {
+    height: 70vh;
+    background: linear-gradient(135deg, var(--main-purple), var(--students-blue));
+    position: relative;
+    overflow: hidden;
+}
+
+.slide-container {
+    height: 100%;
+    position: relative;
+}
+
+.slide-content {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    color: white;
+}
+
+.slide-text {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.slide-title {
+    color: var(--gold);
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.slide-description {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    opacity: 0.9;
+}
+
+.slide-image img {
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease;
+}
+
+.slide-image img:hover {
+    transform: scale(1.05);
+}
+
+.slide-location {
+    background: rgba(13, 202, 240, 0.2);
+    border: 1px solid rgba(13, 202, 240, 0.3);
+    border-radius: 10px;
+    padding: 0.75rem;
+}
+
+.recorrido-header {
+    background: linear-gradient(135deg, var(--main-purple), var(--students-blue));
+    border-bottom: 2px solid var(--gold);
+}
+
+.slide-controls {
+    background: linear-gradient(135deg, var(--main-purple), var(--students-blue));
+    border-top: 2px solid var(--gold);
+}
+
+.slide-progress .progress {
+    height: 10px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+}
+
+.slide-progress .progress-bar {
+    background: linear-gradient(90deg, var(--gold), var(--students-cyan));
+    border-radius: 5px;
+    transition: width 0.3s ease;
+}
+
+/* Animaciones para slideshow */
+.slide-content {
+    animation: slideInFromRight 0.5s ease-out;
+}
+
+@keyframes slideInFromRight {
+    from {
+        opacity: 0;
+        transform: translateX(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInFromLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.slide-content.prev {
+    animation: slideInFromLeft 0.5s ease-out;
+}
+
+.slide-content.next {
+    animation: slideInFromRight 0.5s ease-out;
+}
+
+/* Responsive para slideshow */
+@media (max-width: 768px) {
+    .slideshow-wrapper {
+        height: 60vh;
+    }
+    
+    .slide-title {
+        font-size: 1.8rem;
+    }
+    
+    .slide-description {
+        font-size: 1rem;
+    }
+    
+    .slide-text {
+        padding: 1.5rem !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .slideshow-wrapper {
+        height: 50vh;
+    }
+    
+    .slide-title {
+        font-size: 1.5rem;
+    }
+    
+    .slide-description {
+        font-size: 0.9rem;
+    }
+    
+    .slide-text {
+        padding: 1rem !important;
+    }
+    
+    .recorrido-header h4 {
+        font-size: 1.2rem;
+    }
+    
+    .slide-controls .btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
+}

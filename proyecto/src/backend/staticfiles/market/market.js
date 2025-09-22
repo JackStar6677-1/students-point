@@ -1,5 +1,5 @@
 /**
- * Sistema de Market DuocPoint
+ * Sistema de Market StudentsPoint
  * Interfaz completa para compra/venta segura
  */
 

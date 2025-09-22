@@ -115,8 +115,8 @@ USE_TZ = True
 STATIC_URL = os.getenv('STATIC_URL', '/static/')
 STATIC_ROOT = os.getenv('STATIC_ROOT', BASE_DIR / 'staticfiles')
 
-# Configurar archivos estáticos del frontend
-STATICFILES_DIRS = [BASE_DIR.parent / "frontend/static"]
+# Configurar archivos estáticos del frontend (solo en desarrollo)
+# STATICFILES_DIRS = [BASE_DIR.parent / "frontend/static"]
 
 MEDIA_URL = os.getenv('MEDIA_URL', '/media/')
 MEDIA_ROOT = os.getenv('MEDIA_ROOT', BASE_DIR / 'media')
@@ -148,11 +148,8 @@ SIMPLE_JWT = {
     'ROTATE_REFRESH_TOKENS': True,
 }
 
-# CORS settings
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:8000",
-    "http://127.0.0.1:8000",
-]
+# CORS settings - Configurar para tu dominio de producción
+CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:8000,http://127.0.0.1:8000').split(',')
 
 CORS_ALLOW_CREDENTIALS = True
 

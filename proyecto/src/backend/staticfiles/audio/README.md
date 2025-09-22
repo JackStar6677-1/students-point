@@ -1,6 +1,6 @@
-# Audio - DuocPoint
+# Audio - StudentsPoint
 
-Esta carpeta contiene los archivos de audio para la aplicación DuocPoint.
+Esta carpeta contiene los archivos de audio para la aplicación StudentsPoint.
 
 ## Archivos de Audio
 

@@ -283,7 +283,7 @@ def obtener_metadatos_opengraph(url):
     """Obtiene metadatos OpenGraph de una URL."""
     try:
         response = requests.get(url, timeout=10, headers={
-            'User-Agent': 'Mozilla/5.0 (compatible; DuocPoint/1.0)'
+            'User-Agent': 'Mozilla/5.0 (compatible; StudentsPoint/1.0)'
         })
         response.raise_for_status()
         

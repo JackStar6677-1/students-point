@@ -1,4 +1,4 @@
-"""Modelos de encuestas mejorados para DuocPoint.
+"""Modelos de encuestas mejorados para StudentsPoint.
 
 Sistema completo de encuestas que permite:
 - Encuestas independientes (no solo vinculadas a posts)

@@ -276,3 +276,4 @@ def generate_portfolio_pdf(portfolio_data, output_path=None):
     """
     generator = PortfolioPDFGenerator()
     return generator.generate_portfolio_pdf(portfolio_data, output_path)
+

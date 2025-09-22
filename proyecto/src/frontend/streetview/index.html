@@ -71,16 +71,85 @@
   </nav>
 
   <main class="main-content" style="position: relative; z-index: 2;">
-    <div class="container mt-3">
+    <!-- Selector de Sede -->
+    <div class="container mt-3" id="sede-selector">
       <div class="row">
         <div class="col-12">
           <div class="text-center py-5">
             <i class="fas fa-map fa-3x gradient-text mb-3"></i>
-            <h2>Recorridos Virtuales 360°</h2>
+            <h2>Recorridos Virtuales</h2>
             <p class="text-muted">Explora las sedes de StudentsPoint con recorridos interactivos</p>
-            <button class="btn btn-primary btn-lg" onclick="startTour()">
-              <i class="fas fa-play"></i> Iniciar Recorrido
-            </button>
+            <div class="row justify-content-center">
+              <div class="col-md-6">
+                <select class="form-select form-select-lg mb-3" id="sede-select">
+                  <option value="">Selecciona una sede...</option>
+                </select>
+                <button class="btn btn-primary btn-lg" onclick="loadRecorridos()" id="load-btn" disabled>
+                  <i class="fas fa-play"></i> Cargar Recorridos
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recorridos Disponibles -->
+    <div class="container mt-3" id="recorridos-container" style="display: none;">
+      <div class="row">
+        <div class="col-12">
+          <h3 class="text-center mb-4">Recorridos Disponibles</h3>
+          <div class="row" id="recorridos-list">
+            <!-- Los recorridos se cargarán aquí dinámicamente -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Visor de Diapositivas -->
+    <div class="container-fluid" id="slideshow-container" style="display: none;">
+      <div class="row">
+        <div class="col-12">
+          <!-- Navegación del recorrido -->
+          <div class="recorrido-header bg-dark text-white p-3">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <h4 id="recorrido-titulo">Título del Recorrido</h4>
+                <small id="recorrido-sede">Sede</small>
+              </div>
+              <div>
+                <button class="btn btn-outline-light btn-sm me-2" onclick="exitSlideshow()">
+                  <i class="fas fa-times"></i> Salir
+                </button>
+                <span id="slide-counter">1 / 5</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Contenedor de diapositivas -->
+          <div class="slideshow-wrapper">
+            <div class="slide-container" id="slide-container">
+              <!-- Las diapositivas se cargarán aquí -->
+            </div>
+          </div>
+
+          <!-- Controles de navegación -->
+          <div class="slide-controls bg-dark text-white p-3">
+            <div class="d-flex justify-content-between align-items-center">
+              <button class="btn btn-outline-light" onclick="previousSlide()" id="prev-btn" disabled>
+                <i class="fas fa-chevron-left"></i> Anterior
+              </button>
+              
+              <div class="slide-progress">
+                <div class="progress" style="width: 200px;">
+                  <div class="progress-bar" id="progress-bar" style="width: 0%"></div>
+                </div>
+              </div>
+              
+              <button class="btn btn-outline-light" onclick="nextSlide()" id="next-btn">
+                Siguiente <i class="fas fa-chevron-right"></i>
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -115,6 +184,13 @@
   <script src="/static/js/main.js"></script>
 
   <script>
+    // Variables globales
+    let sedes = [];
+    let recorridos = [];
+    let pasos = [];
+    let currentSlide = 0;
+    let currentRecorrido = null;
+
     if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
       document.querySelector('.dev-tools').style.display = 'flex';
     }
@@ -125,13 +201,222 @@
           window.playSound('pageLoad');
         }
       }, 500);
+      
+      // Cargar sedes al iniciar
+      loadSedes();
     });
 
-    function startTour() {
-      if (window.playSound) {
-        window.playSound('click');
+    // Cargar sedes desde la API
+    async function loadSedes() {
+      try {
+        const response = await fetch('/api/campuses/sedes/');
+        if (response.ok) {
+          sedes = await response.json();
+          populateSedeSelect();
+        } else {
+          // Datos de ejemplo si la API no está disponible
+          sedes = [
+            { id: 1, nombre: 'Sede San Carlos de Apoquindo', slug: 'san-carlos' },
+            { id: 2, nombre: 'Sede Maipú', slug: 'maipu' },
+            { id: 3, nombre: 'Sede San Joaquín', slug: 'san-joaquin' }
+          ];
+          populateSedeSelect();
+        }
+      } catch (error) {
+        console.error('Error cargando sedes:', error);
+        showError('Error cargando sedes. Usando datos de ejemplo.');
+        // Datos de ejemplo
+        sedes = [
+          { id: 1, nombre: 'Sede San Carlos de Apoquindo', slug: 'san-carlos' },
+          { id: 2, nombre: 'Sede Maipú', slug: 'maipu' },
+          { id: 3, nombre: 'Sede San Joaquín', slug: 'san-joaquin' }
+        ];
+        populateSedeSelect();
       }
-      showSuccess('Función de recorridos virtuales en desarrollo');
+    }
+
+    function populateSedeSelect() {
+      const select = document.getElementById('sede-select');
+      select.innerHTML = '<option value="">Selecciona una sede...</option>';
+      
+      sedes.forEach(sede => {
+        const option = document.createElement('option');
+        option.value = sede.id;
+        option.textContent = sede.nombre;
+        select.appendChild(option);
+      });
+      
+      select.addEventListener('change', function() {
+        document.getElementById('load-btn').disabled = !this.value;
+      });
+    }
+
+    // Cargar recorridos de una sede
+    async function loadRecorridos() {
+      const sedeId = document.getElementById('sede-select').value;
+      if (!sedeId) return;
+
+      try {
+        const response = await fetch(`/api/campuses/recorridos/?sede=${sedeId}`);
+        if (response.ok) {
+          recorridos = await response.json();
+        } else {
+          // Datos de ejemplo
+          recorridos = [
+            {
+              id: 1,
+              titulo: 'Recorrido Principal',
+              sede: sedes.find(s => s.id == sedeId)?.nombre || 'Sede',
+              pasos: [
+                {
+                  id: 1,
+                  orden: 1,
+                  titulo: 'Entrada Principal',
+                  descripcion: 'Bienvenido a la sede. Aquí encontrarás información general y recepción.',
+                  imagen_url: '/images/logos-iconos/Logo_StudentsPoint.svg.png',
+                  lat: -33.4172,
+                  lng: -70.6067
+                },
+                {
+                  id: 2,
+                  orden: 2,
+                  titulo: 'Biblioteca',
+                  descripcion: 'Espacio de estudio y consulta con amplia colección de libros y recursos digitales.',
+                  imagen_url: '/images/logos-iconos/Logo_StudentsPoint.svg.png',
+                  lat: -33.4175,
+                  lng: -70.6070
+                },
+                {
+                  id: 3,
+                  orden: 3,
+                  titulo: 'Laboratorios',
+                  descripcion: 'Laboratorios equipados con tecnología de punta para prácticas y proyectos.',
+                  imagen_url: '/images/logos-iconos/Logo_StudentsPoint.svg.png',
+                  lat: -33.4178,
+                  lng: -70.6073
+                }
+              ]
+            }
+          ];
+        }
+        
+        showRecorridos();
+      } catch (error) {
+        console.error('Error cargando recorridos:', error);
+        showError('Error cargando recorridos');
+      }
+    }
+
+    function showRecorridos() {
+      const container = document.getElementById('recorridos-container');
+      const list = document.getElementById('recorridos-list');
+      
+      list.innerHTML = '';
+      
+      recorridos.forEach(recorrido => {
+        const card = document.createElement('div');
+        card.className = 'col-md-6 col-lg-4 mb-4';
+        card.innerHTML = `
+          <div class="card h-100">
+            <div class="card-body">
+              <h5 class="card-title">${recorrido.titulo}</h5>
+              <p class="card-text text-muted">${recorrido.sede}</p>
+              <p class="card-text">${recorrido.pasos ? recorridos.pasos.length : 0} pasos</p>
+            </div>
+            <div class="card-footer">
+              <button class="btn btn-primary w-100" onclick="startSlideshow(${recorrido.id})">
+                <i class="fas fa-play"></i> Iniciar Recorrido
+              </button>
+            </div>
+          </div>
+        `;
+        list.appendChild(card);
+      });
+      
+      document.getElementById('sede-selector').style.display = 'none';
+      container.style.display = 'block';
+    }
+
+    function startSlideshow(recorridoId) {
+      currentRecorrido = recorridos.find(r => r.id === recorridoId);
+      if (!currentRecorrido) return;
+
+      pasos = currentRecorrido.pasos || [];
+      currentSlide = 0;
+
+      document.getElementById('recorridos-container').style.display = 'none';
+      document.getElementById('slideshow-container').style.display = 'block';
+      
+      updateSlideInfo();
+      renderSlide();
+    }
+
+    function updateSlideInfo() {
+      document.getElementById('recorrido-titulo').textContent = currentRecorrido.titulo;
+      document.getElementById('recorrido-sede').textContent = currentRecorrido.sede;
+      document.getElementById('slide-counter').textContent = `${currentSlide + 1} / ${pasos.length}`;
+      
+      const progress = ((currentSlide + 1) / pasos.length) * 100;
+      document.getElementById('progress-bar').style.width = `${progress}%`;
+      
+      // Actualizar botones
+      document.getElementById('prev-btn').disabled = currentSlide === 0;
+      document.getElementById('next-btn').disabled = currentSlide === pasos.length - 1;
+    }
+
+    function renderSlide() {
+      const container = document.getElementById('slide-container');
+      const paso = pasos[currentSlide];
+      
+      container.innerHTML = `
+        <div class="slide-content">
+          <div class="row h-100">
+            <div class="col-md-6 d-flex align-items-center">
+              <div class="slide-text p-4">
+                <h3 class="slide-title">${paso.titulo}</h3>
+                <p class="slide-description">${paso.descripcion}</p>
+                ${paso.lat && paso.lng ? `
+                  <div class="slide-location mt-3">
+                    <small class="text-muted">
+                      <i class="fas fa-map-marker-alt"></i> 
+                      Coordenadas: ${paso.lat.toFixed(4)}, ${paso.lng.toFixed(4)}
+                    </small>
+                  </div>
+                ` : ''}
+              </div>
+            </div>
+            <div class="col-md-6 d-flex align-items-center">
+              <div class="slide-image">
+                <img src="${paso.imagen_url}" alt="${paso.titulo}" class="img-fluid rounded">
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function nextSlide() {
+      if (currentSlide < pasos.length - 1) {
+        currentSlide++;
+        updateSlideInfo();
+        renderSlide();
+        if (window.playSound) window.playSound('click');
+      }
+    }
+
+    function previousSlide() {
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlideInfo();
+        renderSlide();
+        if (window.playSound) window.playSound('click');
+      }
+    }
+
+    function exitSlideshow() {
+      document.getElementById('slideshow-container').style.display = 'none';
+      document.getElementById('recorridos-container').style.display = 'block';
+      if (window.playSound) window.playSound('click');
     }
 
     function showSuccess(message) {
@@ -146,6 +431,35 @@
         }
       }, 3000);
     }
+
+    function showError(message) {
+      const alertDiv = document.createElement('div');
+      alertDiv.className = 'alert alert-danger alert-dismissible fade show';
+      alertDiv.innerHTML = `${message}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>`;
+      const container = document.querySelector('.container');
+      container.insertBefore(alertDiv, container.firstChild);
+      setTimeout(() => {
+        if (alertDiv.parentNode) {
+          alertDiv.remove();
+        }
+      }, 5000);
+    }
+
+    // Navegación con teclado
+    document.addEventListener('keydown', function(e) {
+      if (document.getElementById('slideshow-container').style.display !== 'none') {
+        if (e.key === 'ArrowRight' || e.key === ' ') {
+          e.preventDefault();
+          nextSlide();
+        } else if (e.key === 'ArrowLeft') {
+          e.preventDefault();
+          previousSlide();
+        } else if (e.key === 'Escape') {
+          e.preventDefault();
+          exitSlideshow();
+        }
+      }
+    });
   </script>
 </body>
 </html>

@@ -71,8 +71,8 @@ urlpatterns = [
     re_path(r'^sw\.js$', serve, {'document_root': Path(settings.STATIC_ROOT), 'path': 'sw.js'}),
     # Servir favicon específicamente
     re_path(r'^favicon\.ico$', serve, {'document_root': Path(settings.STATIC_ROOT), 'path': 'images/icons/icon-192x192.png'}),
-    # Servir imágenes antes del catch-all
-    re_path(r'^imagenes/(?P<path>.*)$', serve, {'document_root': Path(settings.BASE_DIR).parent.parent / "imagenes"}),
+    # Servir imágenes desde staticfiles
+    re_path(r'^images/(?P<path>.*)$', serve, {'document_root': Path(settings.STATIC_ROOT) / "images"}),
     re_path(r'^(?P<path>.*)$', spa_serve),
 ]
 
@@ -80,5 +80,5 @@ urlpatterns = [
 if settings.DEBUG:
     from django.conf.urls.static import static
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-    # Servir imágenes desde la carpeta imagenes
-    urlpatterns += static('/imagenes/', document_root=Path(settings.BASE_DIR).parent.parent / "imagenes")
+    # Servir imágenes desde staticfiles
+    urlpatterns += static('/images/', document_root=Path(settings.STATIC_ROOT) / "images")

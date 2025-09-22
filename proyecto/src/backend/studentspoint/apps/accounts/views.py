@@ -12,6 +12,11 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from drf_spectacular.utils import extend_schema
 from .models import User
+from .serializers import (
+    UserDetailSerializer, LoginSerializer, RegisterSerializer, 
+    TokenPairSerializer, UserUpdateSerializer, EmailCheckSerializer,
+    StatusResponseSerializer
+)
 from studentspoint.apps.campuses.models import Sede
 
 User = get_user_model()
@@ -19,86 +24,71 @@ User = get_user_model()
 
 @extend_schema(
     summary="Obtener información del usuario actual",
-    responses={200: {"description": "Información del usuario"}}
+    responses={200: UserDetailSerializer}
 )
 @csrf_exempt
 @api_view(['GET'])
 @permission_classes([permissions.IsAuthenticated])
 def me(request):
     """Obtiene información del usuario actual."""
-    user = request.user
-    
-    return Response({
-        'id': user.id,
-        'email': user.email,
-        'name': user.name,
-        'campus': user.campus.nombre if user.campus else None,
-        'career': user.career,
-        'role': user.role,
-        'es_duoc': user.es_duoc,
-        'es_gmail': user.es_gmail,
-        'es_estudiante_gmail': user.es_estudiante_gmail,
-        'telefono': user.telefono,
-        'linkedin_url': user.linkedin_url,
-        'github_url': user.github_url,
-        'date_joined': user.date_joined
-    })
+    serializer = UserDetailSerializer(request.user)
+    return Response(serializer.data)
 
 
 @extend_schema(
     summary="Actualizar perfil del usuario",
-    responses={200: {"description": "Perfil actualizado exitosamente"}}
+    request=UserUpdateSerializer,
+    responses={200: UserDetailSerializer}
 )
 @api_view(['PATCH'])
 @permission_classes([permissions.IsAuthenticated])
 def update_profile(request):
     """Actualiza el perfil del usuario."""
-    user = request.user
-    
-    # Campos permitidos para actualizar
-    allowed_fields = ['name', 'career', 'telefono', 'linkedin_url', 'github_url']
-    
-    for field in allowed_fields:
-        if field in request.data:
-            setattr(user, field, request.data[field])
-    
-    try:
+    serializer = UserUpdateSerializer(data=request.data)
+    if serializer.is_valid():
+        user = request.user
+        for field, value in serializer.validated_data.items():
+            setattr(user, field, value)
         user.save()
-        return Response({'message': 'Perfil actualizado exitosamente'})
-    except Exception as e:
-        return Response(
-            {'error': f'Error actualizando perfil: {str(e)}'}, 
-            status=status.HTTP_400_BAD_REQUEST
-        )
+        
+        response_serializer = UserDetailSerializer(user)
+        return Response(response_serializer.data)
+    
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @extend_schema(
     summary="Verificar si un email está permitido",
-    responses={200: {"description": "Estado del email"}}
+    request=EmailCheckSerializer,
+    responses={200: StatusResponseSerializer}
 )
 @api_view(['POST'])
 @permission_classes([permissions.AllowAny])
 def check_email(request):
     """Verifica si un email está permitido en el sistema."""
-    email = request.data.get('email', '').lower()
+    serializer = EmailCheckSerializer(data=request.data)
+    if not serializer.is_valid():
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    email = serializer.validated_data['email'].lower()
     
     if email.endswith('@duocuc.cl'):
         return Response({
-            'allowed': True,
-            'type': 'duoc',
-            'message': 'Email institucional válido'
+            'status': 'success',
+            'message': 'Email institucional válido',
+            'type': 'duoc'
         })
     elif email.endswith('@gmail.com'):
         return Response({
-            'allowed': True,
-            'type': 'gmail',
-            'message': 'Email Gmail válido para estudiantes'
+            'status': 'success',
+            'message': 'Email Gmail válido para estudiantes',
+            'type': 'gmail'
         })
     else:
         return Response({
-            'allowed': False,
-            'type': 'not_allowed',
-            'message': 'Solo se permiten correos @duocuc.cl o @gmail.com'
+            'status': 'error',
+            'message': 'Solo se permiten correos @duocuc.cl o @gmail.com',
+            'type': 'not_allowed'
         })
 
 

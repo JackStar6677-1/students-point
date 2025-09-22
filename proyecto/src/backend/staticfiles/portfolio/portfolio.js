@@ -1,5 +1,5 @@
 /**
- * Portfolio Manager - DuocPoint
+ * Portfolio Manager - StudentsPoint
  * Sistema completo de portafolio con generación de PDF
  */
 

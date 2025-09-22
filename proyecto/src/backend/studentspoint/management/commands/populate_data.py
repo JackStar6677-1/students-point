@@ -54,7 +54,7 @@ class Command(BaseCommand):
         admin_user, created = User.objects.get_or_create(
             email='admin@duocuc.cl',
             defaults={
-                'name': 'Administrador DuocPoint',
+                'name': 'Administrador StudentsPoint',
                 'role': 'admin_global',
                 'is_staff': True,
                 'is_superuser': True,
@@ -70,7 +70,7 @@ class Command(BaseCommand):
         moderator_user, created = User.objects.get_or_create(
             email='moderador@duocuc.cl',
             defaults={
-                'name': 'Moderador DuocPoint',
+                'name': 'Moderador StudentsPoint',
                 'role': 'moderator',
                 'campus_id': 1,
                 'career': 'Administración'

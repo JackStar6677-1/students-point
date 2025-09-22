@@ -23,8 +23,8 @@ class PushSubSerializer(serializers.ModelSerializer):
         return sub
 
 
-class SimpleStatusSerializer(serializers.Serializer):
-    """Serializer for simple status responses."""
+class NotificationStatusSerializer(serializers.Serializer):
+    """Serializer for notification status responses."""
 
     status = serializers.CharField()
 

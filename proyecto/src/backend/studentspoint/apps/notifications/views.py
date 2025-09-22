@@ -8,7 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view, permission_classes
 
 from .models import PushSub, Notificacion
-from .serializers import PushSubSerializer, SimpleStatusSerializer, NotificacionSerializer
+from .serializers import PushSubSerializer, NotificationStatusSerializer, NotificacionSerializer
 from .tasks import send_class_push
 
 
@@ -25,9 +25,9 @@ class PushSubscribeView(generics.CreateAPIView):
 class PushTestView(generics.GenericAPIView):
     """Send a dummy notification to check the service worker."""
 
-    serializer_class = SimpleStatusSerializer
+    serializer_class = NotificationStatusSerializer
 
-    @extend_schema(responses=SimpleStatusSerializer)
+    @extend_schema(responses=NotificationStatusSerializer)
     def post(self, request, *args, **kwargs):
         send_class_push.delay(request.user.id, None, None, None, test_only=True)
         return Response({"status": "sent"})

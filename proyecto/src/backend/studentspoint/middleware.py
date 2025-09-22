@@ -18,3 +18,17 @@ class DisableCSRFMiddleware(MiddlewareMixin):
             # También deshabilitar para el middleware de CSRF
             request.csrf_processing_done = True
         return None
+
+
+class CustomCorsMiddleware(MiddlewareMixin):
+    """
+    Middleware personalizado para CORS
+    """
+    
+    def process_response(self, request, response):
+        # Agregar headers CORS personalizados
+        response['Access-Control-Allow-Origin'] = '*'
+        response['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS'
+        response['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-CSRFToken'
+        response['Access-Control-Allow-Credentials'] = 'true'
+        return response

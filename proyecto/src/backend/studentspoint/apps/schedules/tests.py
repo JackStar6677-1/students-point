@@ -16,7 +16,7 @@ class ScheduleImportTests(TestCase):
         self.client = APIClient()
         self.client.force_authenticate(self.user)
 
-    @patch("duocpoint.apps.schedules.views.parse_schedule_pdf.delay")
+    @patch("studentspoint.apps.schedules.views.parse_schedule_pdf.delay")
     def test_upload_import_creates_record(self, mock_delay):
         file = SimpleUploadedFile("horario.pdf", b"dummy", content_type="application/pdf")
         resp = self.client.post("/api/horarios/import/pdf", {"file": file})
@@ -38,8 +38,8 @@ class ScheduleImportTests(TestCase):
             def extract_text(self_inner):
                 return sample_text
 
-        with patch("duocpoint.apps.schedules.tasks.PdfReader") as mock_reader, \
-            patch("duocpoint.apps.schedules.tasks.schedule_class_alerts.delay"):
+        with patch("studentspoint.apps.schedules.tasks.PdfReader") as mock_reader, \
+            patch("studentspoint.apps.schedules.tasks.schedule_class_alerts.delay"):
             mock_reader.return_value.pages = [DummyPage()]
             parse_schedule_pdf(str(imp.id))
 
@@ -49,7 +49,7 @@ class ScheduleImportTests(TestCase):
         imp.refresh_from_db()
         self.assertIn("duración inferida", imp.parse_log)
 
-    @patch("duocpoint.apps.notifications.tasks.send_class_push.apply_async")
+    @patch("studentspoint.apps.notifications.tasks.send_class_push.apply_async")
     def test_schedule_class_alerts(self, mock_apply):
         horario = Horario.objects.create(
             usuario=self.user,

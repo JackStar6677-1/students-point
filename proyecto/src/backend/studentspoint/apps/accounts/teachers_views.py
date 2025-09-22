@@ -123,3 +123,4 @@ class TeacherDetailView(generics.RetrieveAPIView):
             specialties.append(teacher.career)
         
         return specialties
+
