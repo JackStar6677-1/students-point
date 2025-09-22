@@ -14,8 +14,8 @@ import requests
 User = get_user_model()
 
 # Configuración de OAuth de Google
-GOOGLE_CLIENT_ID = getattr(settings, 'GOOGLE_CLIENT_ID', '')
-GOOGLE_CLIENT_SECRET = getattr(settings, 'GOOGLE_CLIENT_SECRET', '')
+GOOGLE_CLIENT_ID = getattr(settings, 'GOOGLE_CLIENT_ID', '307562557576-0fd8ta7i09i1e6it5hstla13jsomeq2s.apps.googleusercontent.com')
+GOOGLE_CLIENT_SECRET = getattr(settings, 'GOOGLE_CLIENT_SECRET', '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')
 GOOGLE_REDIRECT_URI = getattr(settings, 'GOOGLE_REDIRECT_URI', 'http://localhost:8000/api/auth/google/callback/web/')
 
 # Scopes de Google

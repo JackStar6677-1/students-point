@@ -1,4 +1,4 @@
-# 🎓 StudentsPoint - Plataforma Integral Estudiantil
+# StudentsPoint - Plataforma Integral Estudiantil
 
 [![Django](https://img.shields.io/badge/Django-5.2.6-green.svg)](https://djangoproject.com/)
 [![Python](https://img.shields.io/badge/Python-3.11+-blue.svg)](https://python.org/)
@@ -7,41 +7,41 @@
 
 Una **Aplicación Web Progresiva (PWA)** integral diseñada para la comunidad estudiantil global. StudentsPoint combina múltiples herramientas académicas y de desarrollo profesional en una experiencia unificada y moderna.
 
-## 🌟 Características Principales
+## Características Principales
 
-### 🔐 Sistema de Autenticación Avanzado
+### Sistema de Autenticación Avanzado
 - **Autenticación JWT** con tokens de acceso y renovación
 - **Google OAuth 2.0** para inicio de sesión fluido
 - **Validación de email** flexible (Duoc UC, Gmail, etc.)
 - **Gestión de perfiles** completa con verificación
 
-### 📱 Aplicaciones Integradas
+### Aplicaciones Integradas
 
-#### 🎓 Herramientas Académicas
-- **📚 Foros**: Sistema de discusión con moderación automática
-- **📅 Horarios**: Gestión de horarios con importación PDF
-- **📊 Encuestas**: Sistema de votación y encuestas interactivas
-- **👨‍🏫 Profesores**: Directorio completo de la facultad
+#### Herramientas Académicas
+- **Foros**: Sistema de discusión con moderación automática
+- **Horarios**: Gestión de horarios con importación PDF
+- **Encuestas**: Sistema de votación y encuestas interactivas
+- **Profesores**: Directorio completo de la facultad
 
-#### 💼 Desarrollo Profesional
-- **💼 Portafolio**: Gestión de perfil con generación PDF profesional
-- **🎓 Cursos OTEC**: Plataforma de intercambio de cursos
-- **🛒 Marketplace**: Integración con Facebook Marketplace y MercadoLibre
+#### Desarrollo Profesional
+- **Portafolio**: Gestión de perfil con generación PDF profesional
+- **Cursos OTEC**: Plataforma de intercambio de cursos
+- **Marketplace**: Integración con Facebook Marketplace y MercadoLibre
 
-#### 🏫 Servicios Estudiantiles
-- **❤️ Bienestar**: Recursos de salud y bienestar estudiantil
-- **📋 Reportes**: Sistema de reportes de infraestructura
-- **🔔 Notificaciones**: Push notifications en tiempo real
-- **🗺️ Recorridos Virtuales**: Tours interactivos por diapositivas
+#### Servicios Estudiantiles
+- **Bienestar**: Recursos de salud y bienestar estudiantil
+- **Reportes**: Sistema de reportes de infraestructura
+- **Notificaciones**: Push notifications en tiempo real
+- **Recorridos Virtuales**: Tours interactivos por diapositivas
 
-### ⚡ Características Técnicas
+### Características Técnicas
 - **PWA Completa**: Funcionalidad offline y experiencia nativa
 - **Diseño Responsivo**: Mobile-first con Bootstrap 5
 - **API RESTful**: Documentación completa con Swagger
 - **Notificaciones Push**: Soporte completo para notificaciones web
 - **Generación PDF**: Documentos profesionales con ReportLab
 
-## 🛠️ Stack Tecnológico
+## Stack Tecnológico
 
 ### Backend
 - **Django 5.2.6** - Framework web robusto
@@ -65,9 +65,9 @@ Una **Aplicación Web Progresiva (PWA)** integral diseñada para la comunidad es
 - **Git** - Control de versiones
 - **pytest** - Testing automatizado
 
-## 🚀 Instalación y Configuración
+## Instalación y Configuración
 
-### 📋 Prerrequisitos
+### Prerrequisitos
 
 #### Desarrollo
 - **Python 3.11+**
@@ -81,7 +81,7 @@ Una **Aplicación Web Progresiva (PWA)** integral diseñada para la comunidad es
 - **Nginx** (recomendado)
 - **Certificado SSL** (recomendado)
 
-### 🔧 Instalación Rápida (Desarrollo)
+### Instalación Rápida (Desarrollo)
 
 #### 1. Clonar el Repositorio
 ```bash
@@ -128,7 +128,7 @@ python manage.py runserver
 - **Admin**: http://127.0.0.1:8000/admin/
 - **API Docs**: http://127.0.0.1:8000/api/docs/
 
-### 🏭 Instalación de Producción
+### Instalación de Producción
 
 #### 1. Configurar Variables de Entorno
 ```bash
@@ -204,26 +204,32 @@ docker build -f Dockerfile.prod -t studentspoint .
 docker run -p 8000:8000 --env-file .env studentspoint
 ```
 
-### 🔐 Configuración de APIs Externas
+### Configuración de APIs Externas
 
 #### Google OAuth 2.0
+**YA CONFIGURADO** - Las credenciales están configuradas por defecto
+
+**URIs de redirección autorizadas** (configurar en Google Cloud Console):
+```
+http://localhost:8000/api/auth/google/callback/web/
+http://127.0.0.1:8000/api/auth/google/callback/web/
+https://tu-dominio.com/api/auth/google/callback/web/
+https://studentspoint.app/api/auth/google/callback/web/
+```
+
+**Pasos para configurar en Google Cloud Console:**
 1. **Ir a Google Cloud Console**: https://console.cloud.google.com/
-2. **Crear proyecto** o seleccionar existente
-3. **Habilitar Google+ API**
-4. **Crear credenciales OAuth 2.0**
-5. **Configurar URIs de redirección**:
-   ```
-   http://localhost:8000/api/auth/google/callback/web/
-   http://127.0.0.1:8000/api/auth/google/callback/web/
-   https://tu-dominio.com/api/auth/google/callback/web/
-   https://studentspoint.app/api/auth/google/callback/web/
-   ```
-6. **Agregar variables al .env**:
-   ```env
-   GOOGLE_OAUTH_CLIENT_ID=tu_client_id
-   GOOGLE_OAUTH_CLIENT_SECRET=tu_client_secret
-   GOOGLE_REDIRECT_URI=http://localhost:8000/api/auth/google/callback/web/
-   ```
+2. **Seleccionar proyecto** existente
+3. **Ir a APIs y servicios** → **Credenciales**
+4. **Editar OAuth 2.0 Client ID** existente
+5. **Agregar URIs de redirección** listadas arriba
+6. **Guardar cambios**
+
+**Nota**: Las credenciales están configuradas por defecto. Para usar credenciales diferentes, configurar variables de entorno:
+```env
+GOOGLE_OAUTH_CLIENT_ID=tu_client_id
+GOOGLE_OAUTH_CLIENT_SECRET=tu_client_secret
+```
 
 #### Notificaciones Push (Opcional)
 1. **Generar VAPID keys**:
@@ -237,46 +243,46 @@ docker run -p 8000:8000 --env-file .env studentspoint
    VAPID_CLAIMS={"sub": "mailto:admin@tu-dominio.com"}
    ```
 
-### 📁 Estructura del Proyecto
+### Estructura del Proyecto
 
 ```
 students-point/
-├── 📁 Documentacion/              # Documentación del proyecto
-├── 📁 FASE 1/                    # Evidencias de desarrollo
-├── 📁 proyecto/
-│   ├── 📁 src/
-│   │   ├── 📁 backend/           # Backend Django
-│   │   │   ├── 📁 studentspoint/ # Configuración principal
-│   │   │   │   ├── 📁 apps/      # Aplicaciones Django
-│   │   │   │   │   ├── 📁 accounts/     # Autenticación
-│   │   │   │   │   ├── 📁 forum/        # Foros
-│   │   │   │   │   ├── 📁 market/       # Marketplace
-│   │   │   │   │   ├── 📁 portfolio/    # Portafolio
-│   │   │   │   │   ├── 📁 polls/        # Encuestas
-│   │   │   │   │   ├── 📁 schedules/    # Horarios
-│   │   │   │   │   ├── 📁 notifications/# Notificaciones
-│   │   │   │   │   ├── 📁 reports/      # Reportes
-│   │   │   │   │   ├── 📁 otec/         # Cursos
-│   │   │   │   │   ├── 📁 wellbeing/    # Bienestar
-│   │   │   │   │   └── 📁 campuses/     # Sedes
-│   │   │   │   ├── 📁 settings/  # Configuraciones
-│   │   │   │   └── 📁 urls.py    # URLs principales
-│   │   │   ├── 📁 staticfiles/   # Archivos estáticos
-│   │   │   ├── 📁 media/         # Archivos multimedia
-│   │   │   ├── 📄 manage.py      # Script de gestión
-│   │   │   ├── 📄 requirements.txt # Dependencias
-│   │   │   └── 📄 Dockerfile.prod # Docker para producción
-│   │   └── 📁 frontend/          # Frontend PWA
-│   ├── 📁 imagenes/              # Imágenes y logos
-│   ├── 📄 env.example           # Variables de entorno ejemplo
-│   └── 📄 env.production.example # Variables de producción
-├── 📄 iniciar_desarrollo.bat     # Script de desarrollo
-├── 📄 iniciar_produccion.bat     # Script de producción
-├── 📄 instalar_postgresql.bat    # Script de PostgreSQL
-└── 📄 README.md                  # Este archivo
+├── Documentacion/              # Documentación del proyecto
+├── FASE 1/                    # Evidencias de desarrollo
+├── proyecto/
+│   ├── src/
+│   │   ├── backend/           # Backend Django
+│   │   │   ├── studentspoint/ # Configuración principal
+│   │   │   │   ├── apps/      # Aplicaciones Django
+│   │   │   │   │   ├── accounts/     # Autenticación
+│   │   │   │   │   ├── forum/        # Foros
+│   │   │   │   │   ├── market/       # Marketplace
+│   │   │   │   │   ├── portfolio/    # Portafolio
+│   │   │   │   │   ├── polls/        # Encuestas
+│   │   │   │   │   ├── schedules/    # Horarios
+│   │   │   │   │   ├── notifications/# Notificaciones
+│   │   │   │   │   ├── reports/      # Reportes
+│   │   │   │   │   ├── otec/         # Cursos
+│   │   │   │   │   ├── wellbeing/    # Bienestar
+│   │   │   │   │   └── campuses/     # Sedes
+│   │   │   │   ├── settings/  # Configuraciones
+│   │   │   │   └── urls.py    # URLs principales
+│   │   │   ├── staticfiles/   # Archivos estáticos
+│   │   │   ├── media/         # Archivos multimedia
+│   │   │   ├── manage.py      # Script de gestión
+│   │   │   ├── requirements.txt # Dependencias
+│   │   │   └── Dockerfile.prod # Docker para producción
+│   │   └── frontend/          # Frontend PWA
+│   ├── imagenes/              # Imágenes y logos
+│   ├── env.example           # Variables de entorno ejemplo
+│   └── env.production.example # Variables de producción
+├── iniciar_desarrollo.bat     # Script de desarrollo
+├── iniciar_produccion.bat     # Script de producción
+├── instalar_postgresql.bat    # Script de PostgreSQL
+└── README.md                  # Este archivo
 ```
 
-## 🔧 Configuración Detallada
+## Configuración Detallada
 
 ### Variables de Entorno (.env)
 
@@ -297,7 +303,7 @@ DATABASE_URL=postgresql://usuario:password@localhost:5432/studentspoint_prod
 ALLOWED_HOSTS=tu-dominio.com,www.tu-dominio.com
 CORS_ALLOWED_ORIGINS=https://tu-dominio.com,https://www.tu-dominio.com
 
-# Google OAuth
+# Google OAuth (opcional - ya configurado por defecto)
 GOOGLE_OAUTH_CLIENT_ID=tu_client_id
 GOOGLE_OAUTH_CLIENT_SECRET=tu_client_secret
 GOOGLE_REDIRECT_URI=http://localhost:8000/api/auth/google/callback/web/
@@ -356,7 +362,7 @@ server {
 }
 ```
 
-## 📚 Documentación de API
+## Documentación de API
 
 ### Endpoints Principales
 
@@ -385,7 +391,7 @@ server {
 - **Swagger UI**: http://tu-dominio.com/api/docs/
 - **ReDoc**: http://tu-dominio.com/api/schema/redoc/
 
-## 🧪 Testing
+## Testing
 
 ### Ejecutar Tests
 ```bash
@@ -409,7 +415,7 @@ coverage html
 - **Model Tests**: Validaciones de modelos
 - **View Tests**: Lógica de vistas
 
-## 🚀 Despliegue en Servidor AMP (CubeCoders)
+## Despliegue en Servidor AMP (CubeCoders)
 
 ### 1. Preparar Archivos
 ```bash
@@ -468,7 +474,7 @@ sudo systemctl start studentspoint
 sudo systemctl status studentspoint
 ```
 
-## 🔒 Seguridad
+## Seguridad
 
 ### Configuraciones de Seguridad
 - **HTTPS Obligatorio** en producción
@@ -485,7 +491,7 @@ sudo systemctl status studentspoint
 - Mantener dependencias actualizadas
 - Monitorear logs de acceso
 
-## 📊 Monitoreo y Logs
+## Monitoreo y Logs
 
 ### Logs de Aplicación
 ```bash
@@ -504,7 +510,7 @@ sudo tail -f /var/log/nginx/error.log
 - **Database Performance**: Rendimiento de BD
 - **Memory Usage**: Uso de memoria
 
-## 🤝 Contribución
+## Contribución
 
 ### Cómo Contribuir
 1. **Fork** del repositorio
@@ -520,7 +526,7 @@ sudo tail -f /var/log/nginx/error.log
 - **Tests** para nuevas funcionalidades
 - **Commits** descriptivos
 
-## 📞 Soporte
+## Soporte
 
 ### Obtener Ayuda
 - **Issues**: https://github.com/JackStar6677-1/students-point/issues
@@ -532,11 +538,11 @@ sudo tail -f /var/log/nginx/error.log
 - **Changelog**: [CHANGELOG.md](CHANGELOG.md)
 - **Roadmap**: [ROADMAP.md](ROADMAP.md)
 
-## 📄 Licencia
+## Licencia
 
 Este proyecto está licenciado bajo la **Licencia MIT** - ver el archivo [LICENSE](LICENSE) para detalles.
 
-## 🙏 Agradecimientos
+## Agradecimientos
 
 - **Comunidad Django** por el excelente framework
 - **Bootstrap Team** por los componentes de UI
@@ -546,7 +552,7 @@ Este proyecto está licenciado bajo la **Licencia MIT** - ver el archivo [LICENS
 
 ---
 
-## 🎯 Roadmap
+## Roadmap
 
 ### Próximas Versiones
 - [ ] **v2.0**: App móvil nativa
@@ -563,6 +569,6 @@ Este proyecto está licenciado bajo la **Licencia MIT** - ver el archivo [LICENS
 
 ---
 
-**🎓 StudentsPoint** - *Empoderando estudiantes a través de la tecnología*
+**StudentsPoint** - *Empoderando estudiantes a través de la tecnología*
 
 *Desarrollado con ❤️ por estudiantes de Ingeniería en Informática*
