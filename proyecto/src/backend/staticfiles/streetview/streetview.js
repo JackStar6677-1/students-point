@@ -42,6 +42,36 @@ class TourManager {
                         points: ['Mesas individuales', 'Iluminación adecuada', 'Ambiente climatizado', 'Política de silencio']
                     }
                 ]
+            },
+            'casino': {
+                title: 'Casino',
+                slides: [
+                    {
+                        title: 'Ingreso al recorrido',
+                        description: 'Inicio del recorrido hacia el casino del campus.',
+                        points: ['Sigue la señalética', 'Mantén tu derecha', 'Respeta las zonas de tránsito']
+                    },
+                    {
+                        title: 'Paso 1',
+                        description: 'Primer punto de referencia hacia el casino.',
+                        points: ['Referencia visual 1', 'Dirección recta', 'Zona iluminada']
+                    },
+                    {
+                        title: 'Paso 2',
+                        description: 'Continúa por el pasillo siguiendo la señalética.',
+                        points: ['Referencia visual 2', 'Gira a la derecha al final', 'Mantén el paso peatonal']
+                    },
+                    {
+                        title: 'Paso 3',
+                        description: 'Cruza el hall y continúa hacia el sector de alimentación.',
+                        points: ['Referencia visual 3', 'Cruce seguro', 'Señal de “Alimentación”']
+                    },
+                    {
+                        title: 'Paso 4',
+                        description: 'Último tramo antes de llegar al casino.',
+                        points: ['Referencia visual 4', 'Área de mesas a la vista', 'Entrada próxima']
+                    }
+                ]
             }
         };
         this.init();
@@ -84,13 +114,28 @@ class TourManager {
         const slide = this.currentTour.slides[this.currentSlide];
         const content = document.getElementById('tourContent');
         
+        // Si el tour es "casino", mostrar la imagen real correspondiente
+        const isCasino = (this.currentTour && this.currentTour.title === 'Casino');
+        const casinoImages = [
+            '/imagenes/mapa/casino/img1casino.jpeg',
+            '/imagenes/mapa/casino/img2casino.jpeg',
+            '/imagenes/mapa/casino/img3casino.jpeg',
+            '/imagenes/mapa/casino/img4casino.jpeg',
+            '/imagenes/mapa/casino/img5casino.jpeg',
+        ];
+        const casinoImgSrc = isCasino ? casinoImages[this.currentSlide] : null;
+
         content.innerHTML = `
             <div class="slide-container">
                 <div class="slide-image">
-                    <div class="image-placeholder">
-                        <i class="fas fa-image fa-5x"></i>
-                        <p>Imagen: ${slide.title}</p>
-                    </div>
+                    ${isCasino ? `
+                        <img src="${casinoImgSrc}" alt="${slide.title}" class="img-fluid rounded w-100"/>
+                    ` : `
+                        <div class="image-placeholder">
+                            <i class="fas fa-image fa-5x"></i>
+                            <p>Imagen: ${slide.title}</p>
+                        </div>
+                    `}
                 </div>
                 <div class="slide-content">
                     <h3>${slide.title}</h3>

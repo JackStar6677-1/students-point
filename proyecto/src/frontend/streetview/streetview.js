@@ -77,18 +77,18 @@ class VirtualNavigation {
             },
             {
                 id: 5,
-                title: "Cafetería",
-                description: "Espacio de encuentro estudiantil con variedad de alimentos y bebidas a precios accesibles.",
+                title: "Casino",
+                description: "Espacio de alimentación con variedad de menús y opciones para estudiantes.",
                 image: "/static/images/placeholder-campus.jpg",
-                detailTitle: "Cafetería Estudiantil",
-                detailDescription: "La cafetería es el corazón social del campus, donde los estudiantes se reúnen para comer y socializar.",
+                detailTitle: "Casino Estudiantil",
+                detailDescription: "El casino es el punto de alimentación principal del campus, con opciones para todos.",
                 features: [
                     "Variedad de comidas saludables",
                     "Precios accesibles para estudiantes",
                     "Espacios de descanso y socialización",
                     "WiFi gratuito"
                 ],
-                location: "Edificio Principal - Planta Baja",
+                location: "Edificio Principal - Planta Baja (Casino)",
                 hours: "Lunes a Viernes: 7:30 - 19:00",
                 services: "Alimentación, Descanso, Socialización"
             },

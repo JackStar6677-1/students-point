@@ -46,17 +46,40 @@ class LocationDetailAPIView(generics.RetrieveAPIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
 class VirtualTourListAPIView(generics.ListAPIView):
-    queryset = VirtualTour.objects.filter(is_active=True).select_related('campus', 'created_by')
-    serializer_class = VirtualTourListSerializer
+    queryset = (
+        VirtualTour.objects.filter(is_active=True)
+        .select_related('campus', 'created_by')
+        .prefetch_related('steps', 'steps__location')
+    )
+    serializer_class = VirtualTourSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
     
     def get_queryset(self):
         queryset = super().get_queryset()
         campus_id = self.request.query_params.get('campus')
-        
+
+        # Filtro explícito por query param
         if campus_id:
-            queryset = queryset.filter(campus_id=campus_id)
-        
+            return queryset.filter(campus_id=campus_id)
+
+        # Si no viene filtro y el usuario tiene sede asignada (apps.campuses.Sede),
+        # intentar mapear por slug/nombre al modelo Campus de este módulo
+        user = getattr(self.request, 'user', None)
+        try:
+            if user and user.is_authenticated and getattr(user, 'campus', None):
+                sede = user.campus  # studentspoint.apps.campuses.models.Sede
+                # Intentar por slug primero
+                mapped = queryset.filter(campus__slug=sede.slug)
+                if mapped.exists():
+                    return mapped
+                # Fallback: intentar por nombre (case-insensitive)
+                mapped = queryset.filter(campus__name__iexact=sede.nombre)
+                if mapped.exists():
+                    return mapped
+        except Exception:
+            # No bloquear en caso de error de mapeo; retornar sin filtrar
+            pass
+
         return queryset
 
 class VirtualTourDetailAPIView(generics.RetrieveAPIView):
