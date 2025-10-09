@@ -51,7 +51,7 @@
     <nav class="navbar-premium" id="navbar">
         <div class="navbar-content">
             <div class="navbar-logo">
-                <img src="/images/Logo_StudentsPoint.svg.png" alt="StudentsPoint" height="40">
+                <img src="/static/images/Logo_StudentsPoint.svg.png" alt="StudentsPoint" height="40">
         </div>
             
             <ul class="navbar-menu">
@@ -85,7 +85,7 @@
         <div class="hero-particles" id="particles"></div>
         
         <div class="hero-content animate-fade-in">
-            <img src="/images/Logo_StudentsPoint.svg.png" alt="StudentsPoint" class="hero-logo">
+            <img src="/static/images/Logo_StudentsPoint.svg.png" alt="StudentsPoint" class="hero-logo">
             <h1 class="hero-title">Bienvenido a StudentsPoint</h1>
             <p class="hero-subtitle">
                 La plataforma integral para estudiantes universitarios. Conecta, aprende y crece con tu comunidad académica.
@@ -224,9 +224,21 @@
                 <button class="btn btn-primary btn-lg animate-scale-in delay-200" onclick="window.location.href='/register.html'">
                     <i class="fas fa-user-plus"></i> Registrarse
                 </button>
-                <button class="btn btn-outline btn-lg animate-scale-in delay-300" onclick="window.location.href='/login.html'">
+                <button class="btn btn-outline btn-lg animate-scale-in delay-300 login-button" onclick="window.location.href='/login.html'">
                     <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
                 </button>
+                <div class="user-menu animate-scale-in delay-300" style="display: none;">
+                    <div class="dropdown">
+                        <button class="btn btn-gradient-gold dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user"></i> <span class="user-name"></span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="/account.html"><i class="fas fa-user-circle"></i> Mi Perfil</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item logout-link" href="#"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a></li>
+                        </ul>
+                    </div>
+                </div>
         </div>
       </div>
     </section>
@@ -235,7 +247,7 @@
     <footer class="footer-premium">
         <div class="footer-content">
             <div class="footer-section">
-                <img src="/images/Logo_StudentsPoint.svg.png" alt="StudentsPoint" height="40" style="margin-bottom: 1rem;">
+                <img src="/static/images/Logo_StudentsPoint.svg.png" alt="StudentsPoint" height="40" style="margin-bottom: 1rem;">
                 <p style="color: var(--color-gray-light); max-width: 300px;">
                     Plataforma integral para estudiantes universitarios. Open Source y gratuito.
                 </p>
@@ -282,6 +294,7 @@
   <script src="/static/js/sounds.js"></script>
   <script src="/static/js/pwa.js"></script>
   <script src="/static/pwa-config.js"></script>
+  <script src="/static/js/auth.js"></script>
   
   <script>
         // Verificar autenticación

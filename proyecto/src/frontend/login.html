@@ -61,7 +61,7 @@
     <div class="glass animate-scale-in" style="max-width: 500px; width: 100%; padding: 3rem; border-radius: 1.5rem; position: relative; z-index: 10;">
         <!-- Logo -->
         <div class="text-center mb-4">
-            <img src="/images/Logo_StudentsPoint.svg.png" alt="StudentsPoint" style="height: 80px; margin-bottom: 1.5rem;" class="animate-float">
+            <img src="/static/images/Logo_StudentsPoint.svg.png" alt="StudentsPoint" style="height: 80px; margin-bottom: 1.5rem;" class="animate-float">
             <h2 class="text-gradient-gold">Bienvenido de Vuelta</h2>
             <p style="color: var(--color-gray-light); margin-top: 0.5rem;">
                 Inicia sesión para continuar
@@ -184,9 +184,14 @@
                     // Save tokens
                     localStorage.setItem('access_token', data.access);
                     localStorage.setItem('refresh_token', data.refresh);
+                    localStorage.setItem('user_data', JSON.stringify(data.user));
                     
                     if (remember) {
                         localStorage.setItem('remember_me', 'true');
+                        localStorage.setItem('saved_email', email);
+                    } else {
+                        localStorage.removeItem('remember_me');
+                        localStorage.removeItem('saved_email');
                     }
                     
                     showAlert('¡Inicio de sesión exitoso! Redirigiendo...', 'success');
@@ -268,9 +273,21 @@
             }
         }
         
+        // Cargar credenciales guardadas
+        function loadSavedCredentials() {
+            const rememberMe = localStorage.getItem('remember_me');
+            const savedEmail = localStorage.getItem('saved_email');
+            
+            if (rememberMe === 'true' && savedEmail) {
+                document.getElementById('email').value = savedEmail;
+                document.getElementById('remember').checked = true;
+            }
+        }
+
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
             createParticles();
+            loadSavedCredentials();
             
             // Start background music
             setTimeout(() => {

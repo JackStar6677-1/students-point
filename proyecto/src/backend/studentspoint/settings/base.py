@@ -109,7 +109,11 @@ USE_TZ = True
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 # Configurar archivos estáticos del frontend
-STATICFILES_DIRS = [BASE_DIR.parent / "frontend/static"]
+# Los HTMLs se copian desde la raíz de frontend
+# Los recursos estáticos (CSS, JS, etc.) se copian desde frontend/static
+STATICFILES_DIRS = [
+    BASE_DIR.parent / "frontend",  # HTMLs en la raíz de staticfiles
+]
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"

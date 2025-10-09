@@ -20,5 +20,5 @@ router.register(r'analytics', PortafolioAnalyticsViewSet)
 router.register(r'completo', PortafolioCompletoViewSet)
 
 urlpatterns = [
-    path('', include(router.urls)),
+    path('portfolio/', include(router.urls)),
 ]

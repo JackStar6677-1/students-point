@@ -47,7 +47,7 @@ CORS_ALLOW_HEADERS = [
 
 # Configuración de archivos estáticos para desarrollo
 STATICFILES_DIRS = [
-    BASE_DIR.parent / "frontend/static",
+    BASE_DIR.parent / "frontend",  # Incluir toda la carpeta frontend para HTMLs
 ]
 
 # Configuración para servir archivos estáticos en desarrollo

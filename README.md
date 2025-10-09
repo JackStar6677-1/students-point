@@ -45,6 +45,29 @@ StudentsPoint es una plataforma web progresiva (PWA) de codigo abierto diseñada
 - Notificaciones push
 - Sistema de reportes de infraestructura
 
+## Testing
+
+El proyecto incluye un sistema completo de testing automatizado:
+
+- **Pruebas Unitarias**: APIs, modelos, serializers, vistas
+- **Pruebas de Integracion**: Flujos completos de APIs
+- **Pruebas E2E**: Interfaz de usuario con Selenium
+- **Cobertura**: >80% del codigo
+
+**Ejecutar pruebas:**
+```bash
+# Windows
+ejecutar_tests_dev.bat
+
+# Linux/Mac
+./ejecutar_tests_completo.sh
+
+# Suite completa con reporte
+python test_suite_completo.py --verbose --coverage
+```
+
+Para mas detalles, ver [TESTING.md](TESTING.md)
+
 ## Stack Tecnologico
 
 ### Backend
