@@ -1,11 +1,38 @@
-# 📝 Changelog
+# Changelog
 
 Todos los cambios notables de este proyecto serán documentados en este archivo.
 
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.0.0] - 2024-09-22
+## [2.1.0] - 2025-10-09
+
+### Agregado
+- **Sistema de foros avanzado** personalizado por carrera
+- **Restriccion de publicacion** por carrera validada en backend
+- **Tipos de publicaciones**: comentarios, encuestas, imagenes, otros
+- **Censura automatica** de contenido ofensivo con sistema parcial
+- **Revision manual de imagenes** por administradores
+- **Foros publicos y privados** con control de acceso
+- **Sistema de moderacion** automatica y manual
+- **Gestion de cambio de carrera** con historial completo
+- **Panel de administracion** mejorado con acciones masivas
+- **Modelos nuevos**: OpcionEncuesta, VotoEncuesta, CambioCarrera
+
+### Cambiado
+- **Modelo Foro** actualizado con campos es_privado y descripcion
+- **Modelo Post** con tipos, imagen y sistema de censura
+- **Vistas de foros** con validacion de permisos por carrera
+- **Admin** mejorado con inline para opciones de encuesta
+- **Documentacion** completa y actualizada
+- **README y ROADMAP** actualizados con fechas correctas
+
+### Corregido
+- Referencias antiguas a "DuocPoint" eliminadas
+- Fechas actualizadas a 2025
+- Manifests actualizados con StudentsPoint
+
+## [2.0.0] - 2025-08-15
 
 ### 🎉 Agregado
 - **Migración completa** de Duoc Point a Students Point
@@ -35,47 +62,41 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 - **Configuraciones obsoletas** removidas
 - **Archivos duplicados** consolidados
 
-## [1.5.0] - 2024-09-15
+## [1.5.0] - 2025-08-10
 
-### 🎉 Agregado
-- **Sistema de autenticación JWT** implementado
-- **Integración Google OAuth** configurada
-- **PWA básica** con Service Worker
-- **Sistema de foros** con moderación
-- **Marketplace** con integración externa
-- **Portafolio** con generación PDF
+### Agregado
+- Sistema de autenticación JWT implementado
+- Integración Google OAuth configurada
+- PWA básica con Service Worker
+- Sistema de foros basico
+- Marketplace con integración externa
+- Portafolio con generación PDF
 
-### 🔧 Cambiado
-- **Arquitectura** migrada a Django 5.2
-- **Frontend** actualizado a Bootstrap 5
-- **Base de datos** configurada para SQLite/PostgreSQL
+### Cambiado
+- Arquitectura migrada a Django 5.2
+- Frontend actualizado a Bootstrap 5
+- Base de datos configurada para SQLite/PostgreSQL
 
-## [1.0.0] - 2024-09-01
+## [1.0.0] - 2025-08-01
 
-### 🎉 Agregado
-- **Versión inicial** del proyecto
-- **Estructura básica** de Django
-- **Aplicaciones core** implementadas
-- **Documentación inicial** creada
+### Agregado
+- Version inicial del proyecto
+- Estructura basica de Django
+- Aplicaciones core implementadas
+- Documentacion inicial creada
 
 ---
 
-## 🔮 Próximas Versiones
+## Proximas Versiones
 
-### [2.1.0] - Planeado para Octubre 2024
-- [ ] **App móvil nativa** con React Native
-- [ ] **Notificaciones push** mejoradas
-- [ ] **Integración con calendarios** externos
-- [ ] **Sistema de badges** y gamificación
+### [2.2.0] - Planeado para Noviembre 2025
+- [ ] Performance optimization
+- [ ] Testing coverage mejorado
+- [ ] Panel de moderacion frontend
+- [ ] Notificaciones push mejoradas
 
-### [2.2.0] - Planeado para Noviembre 2024
-- [ ] **IA para recomendaciones** de cursos
-- [ ] **Integración con LMS** populares
-- [ ] **Sistema de plugins** para extensiones
-- [ ] **Analytics avanzado** con métricas
-
-### [3.0.0] - Planeado para Diciembre 2024
-- [ ] **Soporte multi-idioma** completo
-- [ ] **Arquitectura microservicios**
-- [ ] **API GraphQL** adicional
-- [ ] **Dashboard de administración** avanzado
+### [3.0.0] - Planeado para Diciembre 2025
+- [ ] Integracion con calendarios externos
+- [ ] Sistema de badges y gamificacion
+- [ ] WebSockets para chat en tiempo real
+- [ ] App movil nativa (fase inicial)

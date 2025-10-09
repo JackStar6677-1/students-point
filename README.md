@@ -240,9 +240,9 @@ Este proyecto es de codigo abierto, desarrollado como proyecto academico.
 ## Estado del Proyecto
 
 - **Version Actual**: 2.0.0
-- **Fase 1**: Completada (Septiembre 2024)
-- **Fase 2**: En Progreso (Octubre 2024)
-- **Estado**: Produccion Lista
+- **Fecha de Inicio**: Agosto 2025
+- **Fecha Actual**: Octubre 2025
+- **Estado**: En Desarrollo Activo
 
 ## Changelog
 
@@ -255,5 +255,5 @@ Ver [CHANGELOG.md](CHANGELOG.md) para ver el historial de cambios.
 
 ---
 
-**Construyendo el futuro de la educacion digital** - StudentsPoint Team 2024
+**Construyendo el futuro de la educacion digital** - StudentsPoint Team 2025
 
