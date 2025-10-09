@@ -5,382 +5,231 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iniciar Sesión - StudentsPoint</title>
     
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico" />
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
-    <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="/static/images/favicon.svg" />
-    <link rel="icon" type="image/x-icon" href="/static/favicon.ico" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/static/images/icons/icon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="/static/images/icons/icon-16x16.png" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/static/images/icons/icon-192x192.png" />
-    
-    <!-- PWA Manifest -->
-    <link rel="manifest" href="/static/manifest.json">
-    
-    <!-- Meta tags para PWA -->
-    <meta name="theme-color" content="#2563eb">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="StudentsPoint">
-    
-    <style>
-        :root {
-            --primary-color: #2563eb;
-            --primary-dark: #1d4ed8;
-            --secondary-color: #64748b;
-            --accent-color: #0ea5e9;
-            --success-color: #10b981;
-            --warning-color: #f59e0b;
-            --danger-color: #ef4444;
-            --dark-color: #1e293b;
-            --light-color: #f8fafc;
-            --gradient-primary: linear-gradient(135deg, #2563eb 0%, #0ea5e9 100%);
-            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-            min-height: 100vh;
-            color: var(--dark-color);
-        }
-
-        .navbar {
-            background: var(--gradient-primary) !important;
-            box-shadow: var(--shadow-lg);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .navbar-brand {
-            font-weight: 700;
-            font-size: 1.5rem;
-            color: white !important;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .navbar-nav .nav-link {
-            color: rgba(255, 255, 255, 0.9) !important;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            padding: 0.5rem 1rem !important;
-            border-radius: 0.5rem;
-            margin: 0 0.25rem;
-        }
-
-        .navbar-nav .nav-link:hover {
-            color: white !important;
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateY(-1px);
-        }
-
-        .login-container {
-            background: white;
-            border-radius: 1.5rem;
-            box-shadow: var(--shadow-lg);
-            padding: 3rem;
-            margin: 2rem auto;
-            max-width: 500px;
-            border: 1px solid rgba(226, 232, 240, 0.5);
-        }
-
-        .login-title {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--dark-color);
-            margin-bottom: 0.5rem;
-            text-align: center;
-        }
-
-        .login-subtitle {
-            color: var(--secondary-color);
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .form-control {
-            border: 2px solid #e2e8f0;
-            border-radius: 0.75rem;
-            padding: 0.75rem 1rem;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        .form-control:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-        }
-
-        .btn-primary {
-            background: var(--gradient-primary);
-            border: none;
-            padding: 0.75rem 2rem;
-            border-radius: 0.75rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-            width: 100%;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
-        }
-
-        .google-btn {
-            background: white;
-            border: 2px solid #e2e8f0;
-            color: var(--dark-color);
-            padding: 0.75rem 2rem;
-            border-radius: 0.75rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            width: 100%;
-            text-decoration: none;
-        }
-
-        .google-btn:hover {
-            border-color: #4285f4;
-            color: #4285f4;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-        }
-
-        .divider {
-            text-align: center;
-            margin: 1.5rem 0;
-            position: relative;
-            color: var(--secondary-color);
-        }
-
-        .divider::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: #e2e8f0;
-            z-index: 1;
-        }
-
-        .divider span {
-            background: white;
-            padding: 0 1rem;
-            position: relative;
-            z-index: 2;
-        }
-
-        .alert {
-            border-radius: 0.75rem;
-            border: none;
-            padding: 1rem 1.5rem;
-        }
-
-        .alert-danger {
-            background: #fef2f2;
-            color: #dc2626;
-        }
-
-        .alert-success {
-            background: #f0fdf4;
-            color: #16a34a;
-        }
-
-        .form-label {
-            font-weight: 600;
-            color: var(--dark-color);
-            margin-bottom: 0.5rem;
-        }
-
-        .register-link {
-            text-align: center;
-            margin-top: 1.5rem;
-            color: var(--secondary-color);
-        }
-
-        .register-link a {
-            color: var(--primary-color);
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .register-link a:hover {
-            text-decoration: underline;
-        }
-
-        @media (max-width: 768px) {
-            .login-container {
-                margin: 1rem;
-                padding: 2rem;
-            }
-        }
-    </style>
+    <!-- Tema Oscuro Premium -->
+    <link rel="stylesheet" href="/static/css/theme-dark.css">
+    <link rel="stylesheet" href="/static/css/animations.css">
+    <link rel="stylesheet" href="/static/css/components.css">
 </head>
-<body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
-        <div class="container">
-            <a class="navbar-brand" href="/">
-                <i class="fas fa-graduation-cap me-2"></i>
-                StudentsPoint
-            </a>
-            
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/">Inicio</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/register.html">Registrarse</a>
-                    </li>
-                </ul>
-            </div>
+<body style="min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem;">
+    
+    <!-- Background Pattern -->
+    <div class="hero-background bg-pattern"></div>
+    <div class="hero-particles" id="particles"></div>
+    
+    <!-- Login Container -->
+    <div class="glass animate-scale-in" style="max-width: 500px; width: 100%; padding: 3rem; border-radius: 1.5rem; position: relative; z-index: 10;">
+        <!-- Logo -->
+        <div class="text-center mb-4">
+            <img src="/static/images/Logo_StudentsPoint.svg.png" alt="StudentsPoint" style="height: 80px; margin-bottom: 1.5rem;" class="animate-float">
+            <h2 class="text-gradient-gold">Bienvenido de Vuelta</h2>
+            <p style="color: var(--color-gray-light); margin-top: 0.5rem;">
+                Inicia sesión para continuar
+            </p>
         </div>
-    </nav>
-
-    <!-- Main Content -->
-    <div class="container" style="padding-top: 100px;">
-        <div class="row justify-content-center">
-            <div class="col-md-6 col-lg-5">
-                <div class="login-container">
-                    <div class="text-center mb-4">
-                        <div class="mb-3">
-                            <i class="fas fa-graduation-cap" style="font-size: 3rem; color: var(--primary-color);"></i>
-                        </div>
-                        <h1 class="login-title">Bienvenido de vuelta</h1>
-                        <p class="login-subtitle">Inicia sesión en tu cuenta</p>
-                    </div>
-
-                    <!-- Alert Messages -->
-                    <div id="alertContainer"></div>
-
-                    <form id="loginForm">
-                        <div class="mb-3">
-                            <label for="email" class="form-label">
-                                <i class="fas fa-envelope me-2"></i>Correo Electrónico
-                            </label>
-                            <input type="email" class="form-control" id="email" name="email" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="password" class="form-label">
-                                <i class="fas fa-lock me-2"></i>Contraseña
-                            </label>
-                            <input type="password" class="form-control" id="password" name="password" required>
-                        </div>
-
-                        <div class="mb-3 form-check">
-                            <input type="checkbox" class="form-check-input" id="rememberMe">
-                            <label class="form-check-label" for="rememberMe">
-                                Recordarme
-                            </label>
-                        </div>
-
-                        <button type="submit" class="btn btn-primary mb-3">
-                            <i class="fas fa-sign-in-alt me-2"></i>Iniciar Sesión
-                        </button>
-                    </form>
-
-                    <div class="divider">
-                        <span>o continúa con</span>
-                    </div>
-
-                    <a href="/api/auth/google/login/" class="google-btn mb-3">
-                        <i class="fab fa-google"></i>
-                        Google
-                    </a>
-
-                    <div class="register-link">
-                        ¿No tienes cuenta? <a href="/register.html">Regístrate aquí</a>
-                    </div>
+        
+        <!-- Alert Container -->
+        <div id="alertContainer"></div>
+        
+        <!-- Login Form -->
+        <form id="loginForm">
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="fas fa-envelope"></i> Correo Electrónico
+                </label>
+                <input type="email" class="form-input" id="email" placeholder="tu@email.com" required>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="fas fa-lock"></i> Contraseña
+                </label>
+                <div style="position: relative;">
+                    <input type="password" class="form-input" id="password" placeholder="••••••••" required>
+                    <button type="button" class="btn" id="togglePassword" style="position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--color-gray-light); padding: 0;">
+                        <i class="fas fa-eye"></i>
+                    </button>
                 </div>
             </div>
-        </div>
+            
+            <div class="flex-between mb-3">
+                <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                    <input type="checkbox" id="remember" style="width: 18px; height: 18px; cursor: pointer;">
+                    <span style="color: var(--color-gray-light);">Recordarme</span>
+                </label>
+                <a href="#" class="text-gradient-purple" id="forgotPassword">¿Olvidaste tu contraseña?</a>
+            </div>
+            
+            <button type="submit" class="btn btn-primary w-100 btn-lg mb-3" id="loginBtn">
+                <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+            </button>
+            
+            <div class="divider-gradient"></div>
+            
+            <button type="button" class="btn btn-outline w-100 mb-3" id="googleLogin">
+                <i class="fab fa-google"></i> Continuar con Google
+            </button>
+            
+            <p class="text-center" style="color: var(--color-gray-light); margin-top: 2rem;">
+                ¿No tienes cuenta? 
+                <a href="/register.html" class="text-gradient-gold" style="font-weight: 600;">Regístrate aquí</a>
+            </p>
+        </form>
     </div>
 
-    <!-- Bootstrap JS -->
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <!-- PWA Scripts -->
-    <script src="/static/js/pwa.js"></script>
-    <script src="/static/pwa-config.js"></script>
-    
-    <!-- Sounds -->
     <script src="/static/js/sounds.js"></script>
-
+    
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const form = document.getElementById('loginForm');
-            const alertContainer = document.getElementById('alertContainer');
-
-            function showAlert(message, type = 'danger') {
-                alertContainer.innerHTML = `
-                    <div class="alert alert-${type} alert-dismissible fade show" role="alert">
-                        ${message}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                `;
+        // Toggle password visibility
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const passwordInput = document.getElementById('password');
+            const icon = this.querySelector('i');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
             }
-
-            form.addEventListener('submit', async function(e) {
-                e.preventDefault();
+            
+            if (window.playSound) window.playSound('click');
+        });
+        
+        // Show alert
+        function showAlert(message, type = 'error') {
+            const container = document.getElementById('alertContainer');
+            const alertClass = type === 'success' ? 'alert-success' : 'alert-error';
+            container.innerHTML = `
+                <div class="${alertClass} animate-fade-in" style="margin-bottom: 1.5rem;">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+                    ${message}
+                </div>
+            `;
+            
+            setTimeout(() => {
+                container.innerHTML = '';
+            }, 5000);
+        }
+        
+        // Login form submission
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const remember = document.getElementById('remember').checked;
+            const loginBtn = document.getElementById('loginBtn');
+            
+            // Disable button
+            loginBtn.disabled = true;
+            loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Iniciando sesión...';
+            
+            try {
+                const response = await fetch('/api/auth/login/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
                 
-                const email = document.getElementById('email').value;
-                const password = document.getElementById('password').value;
+                const data = await response.json();
                 
-                try {
-                    const response = await fetch('/api/auth/login/', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            email: email,
-                            password: password
-                        })
-                    });
-
-                    if (response.ok) {
-                        const data = await response.json();
-                        
-                        // Guardar tokens
-                        localStorage.setItem('access_token', data.access);
-                        localStorage.setItem('refresh_token', data.refresh);
-                        
-                        showAlert('¡Inicio de sesión exitoso! Redirigiendo...', 'success');
-                        
-                        // Redirigir al inicio
-                        setTimeout(() => {
-                            window.location.href = '/';
-                        }, 1500);
-                    } else {
-                        const errorData = await response.json();
-                        showAlert(errorData.detail || 'Error en el inicio de sesión');
+                if (response.ok) {
+                    // Save tokens
+                    localStorage.setItem('access_token', data.access);
+                    localStorage.setItem('refresh_token', data.refresh);
+                    
+                    if (remember) {
+                        localStorage.setItem('remember_me', 'true');
                     }
-                } catch (error) {
-                    console.error('Error:', error);
-                    showAlert('Error de conexión. Inténtalo de nuevo.');
+                    
+                    showAlert('¡Inicio de sesión exitoso! Redirigiendo...', 'success');
+                    if (window.playSound) window.playSound('success');
+                    
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 1500);
+                } else {
+                    showAlert(data.detail || 'Credenciales incorrectas. Por favor, intenta de nuevo.');
+                    if (window.playSound) window.playSound('error');
+                    loginBtn.disabled = false;
+                    loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Iniciar Sesión';
                 }
-            });
-
-            // Inicializar sonidos
-            if (typeof SoundManager !== 'undefined') {
-                const soundManager = new SoundManager();
-                soundManager.playDelayed('pageLoad', 1000);
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('Error de conexión. Por favor, intenta de nuevo.');
+                if (window.playSound) window.playSound('error');
+                loginBtn.disabled = false;
+                loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Iniciar Sesión';
+            }
+        });
+        
+        // Google Login
+        document.getElementById('googleLogin').addEventListener('click', function() {
+            if (window.playSound) window.playSound('click');
+            window.location.href = '/api/auth/google/login/web/';
+        });
+        
+        // Forgot Password
+        document.getElementById('forgotPassword').addEventListener('click', function(e) {
+            e.preventDefault();
+            if (window.playSound) window.playSound('click');
+            showAlert('Funcionalidad de recuperación de contraseña disponible próximamente.', 'warning');
+        });
+        
+        // Create particles
+        function createParticles() {
+            const container = document.getElementById('particles');
+            const particleCount = 20;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.style.position = 'absolute';
+                particle.style.width = Math.random() * 4 + 2 + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.background = 'rgba(251, 191, 36, 0.3)';
+                particle.style.borderRadius = '50%';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animation = `particleFloat ${Math.random() * 10 + 10}s linear infinite`;
+                particle.style.animationDelay = Math.random() * 5 + 's';
+                container.appendChild(particle);
+            }
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            createParticles();
+            
+            // Start background music
+            setTimeout(() => {
+                if (window.playBackgroundMusic) {
+                    window.playBackgroundMusic();
+                }
+            }, 1000);
+            
+            // Play page load sound
+            if (window.playSound) {
+                window.playSound('pageLoad');
             }
         });
     </script>
