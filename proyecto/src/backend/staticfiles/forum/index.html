@@ -20,12 +20,14 @@
   <div class="particles-bg"></div>
 
   <!-- Header compacto -->
-  <header class="duoc-header text-white">
+  <header class="students-header text-white">
     <div class="container">
       <div class="row align-items-center">
         <div class="col-md-8">
-          <div class="duoc-logo">
-            <img src="/imagenes/logos-iconos/Logo_StudentsPoint.svg.png" alt="DuocUC Logo" class="duoc-logo-img">
+          <div class="students-logo">
+            <div class="logo-placeholder">
+              <i class="fas fa-graduation-cap fa-2x"></i>
+            </div>
             <div>
               <h1>Foros StudentsPoint</h1>
               <p>Comunícate con tu comunidad estudiantil</p>
@@ -47,7 +49,7 @@
   </header>
 
   <!-- Navegación compacta -->
-  <nav class="navbar navbar-expand-lg duoc-nav">
+  <nav class="navbar navbar-expand-lg students-nav">
     <div class="container">
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
@@ -140,28 +142,19 @@
       <!-- Categorías -->
       <div class="row mb-3">
         <div class="col-12">
-          <div class="row g-2 align-items-center">
-            <div class="col-md-4">
-              <label class="form-label mb-0">Foro por carrera/sede</label>
-              <select id="forumFilter" class="form-select"></select>
-            </div>
-            <div class="col-md-3">
-              <label class="form-label mb-0">Orden</label>
-              <select id="sortFilter" class="form-select">
-                <option value="nuevo">Más nuevos</option>
-                <option value="top">Top</option>
-              </select>
-            </div>
-            <div class="col-md-3">
-              <label class="form-label mb-0">Estado</label>
-              <select id="statusFilter" class="form-select">
-                <option value="">Todos</option>
-                <option value="publicado">Publicado</option>
-                <option value="revision">En revisión</option>
-                <option value="oculto">Oculto</option>
-                <option value="rechazado">Rechazado</option>
-              </select>
-            </div>
+          <div class="btn-group" role="group">
+            <button type="button" class="btn btn-outline-primary active" onclick="filterByCategory('all')">
+              Todos
+            </button>
+            <button type="button" class="btn btn-outline-primary" onclick="filterByCategory('general')">
+              General
+            </button>
+            <button type="button" class="btn btn-outline-primary" onclick="filterByCategory('academico')">
+              Académico
+            </button>
+            <button type="button" class="btn btn-outline-primary" onclick="filterByCategory('social')">
+              Social
+            </button>
           </div>
         </div>
       </div>
@@ -184,7 +177,7 @@
   </main>
 
   <!-- Footer compacto -->
-  <footer class="duoc-footer">
+  <footer class="students-footer">
     <div class="container">
       <div class="row align-items-center">
         <div class="col-md-6">
@@ -231,8 +224,13 @@
               <input type="text" class="form-control" id="postTitle" required>
             </div>
             <div class="mb-3">
-              <label for="postForum" class="form-label">Foro (por carrera/sede)</label>
-              <select class="form-control" id="postForum" required></select>
+              <label for="postCategory" class="form-label">Categoría</label>
+              <select class="form-control" id="postCategory" required>
+                <option value="">Selecciona una categoría</option>
+                <option value="general">General</option>
+                <option value="academico">Académico</option>
+                <option value="social">Social</option>
+              </select>
             </div>
             <div class="mb-3">
               <label for="postContent" class="form-label">Contenido</label>
@@ -281,22 +279,68 @@
     // Cargar posts desde la API
     async function loadPosts() {
       try {
-        const response = await fetch('/api/forum/posts/');
+        // Intentar cargar desde la API real primero
+        const response = await fetch('/api/posts/');
         if (response.ok) {
           posts = await response.json();
           displayPosts(posts);
         } else {
-          showError('Error al cargar los posts');
+          // Si no hay API, usar datos de ejemplo
+          posts = getSamplePosts();
+          displayPosts(posts);
         }
       } catch (error) {
         console.error('Error:', error);
-        showError('Error de conexión');
+        // Usar datos de ejemplo si hay error de conexión
+        posts = getSamplePosts();
+        displayPosts(posts);
       }
+    }
+
+    // Datos de ejemplo para desarrollo
+    function getSamplePosts() {
+      return [
+        {
+          id: 1,
+          titulo: "Bienvenidos al nuevo semestre",
+          contenido: "¡Hola a todos! Espero que tengan un excelente inicio de semestre. Si tienen alguna pregunta sobre horarios o materias, no duden en preguntar aquí.",
+          categoria: "general",
+          autor: "Prof. María González",
+          fecha_creacion: new Date().toISOString(),
+          num_comentarios: 5,
+          vistas: 23
+        },
+        {
+          id: 2,
+          titulo: "Dudas sobre cálculo diferencial",
+          contenido: "Hola compañeros, tengo algunas dudas sobre los ejercicios de la semana 3. ¿Alguien podría ayudarme con la derivada implícita?",
+          categoria: "academico",
+          autor: "Estudiante Anónimo",
+          fecha_creacion: new Date(Date.now() - 86400000).toISOString(),
+          num_comentarios: 3,
+          vistas: 15
+        },
+        {
+          id: 3,
+          titulo: "Evento de bienvenida - Viernes",
+          contenido: "Este viernes habrá un evento de bienvenida en el patio central a las 3 PM. Habrá comida, música y actividades. ¡Los esperamos!",
+          categoria: "social",
+          autor: "Centro de Estudiantes",
+          fecha_creacion: new Date(Date.now() - 172800000).toISOString(),
+          num_comentarios: 8,
+          vistas: 45
+        }
+      ];
     }
 
     // Mostrar posts
     function displayPosts(postsToShow) {
       const container = document.getElementById('postsContainer');
+      
+      // Asegurar que postsToShow sea un array
+      if (!Array.isArray(postsToShow)) {
+        postsToShow = [];
+      }
       
       if (postsToShow.length === 0) {
         container.innerHTML = `
@@ -420,7 +464,8 @@
       }
       
       try {
-        const response = await fetch('/api/forum/posts/', {
+        // Intentar enviar a la API real
+        const response = await fetch('/api/posts/', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -446,20 +491,130 @@
           
           showSuccess('Post creado exitosamente');
         } else {
-          showError('Error al crear el post');
+          // Si falla la API, agregar localmente
+          addPostLocally(title, category, content);
         }
       } catch (error) {
         console.error('Error:', error);
-        showError('Error de conexión');
+        // Si hay error de conexión, agregar localmente
+        addPostLocally(title, category, content);
       }
+    }
+
+    // Agregar post localmente (modo demo)
+    function addPostLocally(title, category, content) {
+      const newPost = {
+        id: Date.now(),
+        titulo: title,
+        contenido: content,
+        categoria: category,
+        autor: "Usuario Demo",
+        fecha_creacion: new Date().toISOString(),
+        num_comentarios: 0,
+        vistas: 1
+      };
+      
+      posts.unshift(newPost);
+      displayPosts(posts);
+      
+      const modal = bootstrap.Modal.getInstance(document.getElementById('newPostModal'));
+      modal.hide();
+      
+      document.getElementById('newPostForm').reset();
+      
+      if (window.playSound) {
+        window.playSound('success');
+      }
+      
+      showSuccess('Post creado exitosamente (modo demo)');
     }
 
     // Abrir post
     function openPost(postId) {
-      window.location.href = `/forum/post/${postId}/`;
+      // En modo demo, mostrar el post en un modal
+      const post = posts.find(p => p.id == postId);
+      if (post) {
+        showPostModal(post);
+      } else {
+        // Intentar navegar a la página del post
+        window.location.href = `/forum/post/${postId}/`;
+      }
       
       if (window.playSound) {
         window.playSound('navigate');
+      }
+    }
+
+    // Mostrar post en modal (modo demo)
+    function showPostModal(post) {
+      const modalHtml = `
+        <div class="modal fade" id="postModal" tabindex="-1">
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">${post.titulo}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+              </div>
+              <div class="modal-body">
+                <div class="post-meta mb-3">
+                  <span class="badge bg-primary">${post.categoria}</span>
+                  <small class="text-muted ms-2">
+                    <i class="fas fa-user"></i> ${post.autor} • 
+                    <i class="fas fa-clock"></i> ${new Date(post.fecha_creacion).toLocaleDateString()}
+                  </small>
+                </div>
+                <div class="post-content">
+                  ${post.contenido.replace(/\n/g, '<br>')}
+                </div>
+                <div class="post-stats mt-3">
+                  <span class="badge bg-secondary me-2">
+                    <i class="fas fa-comments"></i> ${post.num_comentarios} comentarios
+                  </span>
+                  <span class="badge bg-success">
+                    <i class="fas fa-eye"></i> ${post.vistas} vistas
+                  </span>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" onclick="likePost(${post.id})">
+                  <i class="fas fa-heart"></i> Me gusta
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      // Remover modal anterior si existe
+      const existingModal = document.getElementById('postModal');
+      if (existingModal) {
+        existingModal.remove();
+      }
+      
+      // Agregar nuevo modal
+      document.body.insertAdjacentHTML('beforeend', modalHtml);
+      
+      // Mostrar modal
+      const modal = new bootstrap.Modal(document.getElementById('postModal'));
+      modal.show();
+      
+      // Limpiar modal cuando se cierre
+      document.getElementById('postModal').addEventListener('hidden.bs.modal', function() {
+        this.remove();
+      });
+    }
+
+    // Función para dar like (modo demo)
+    function likePost(postId) {
+      const post = posts.find(p => p.id == postId);
+      if (post) {
+        post.vistas = (post.vistas || 0) + 1;
+        showSuccess('¡Gracias por tu interacción! (modo demo)');
+        
+        if (window.playSound) {
+          window.playSound('success');
+        }
       }
     }
 

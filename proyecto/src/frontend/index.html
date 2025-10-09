@@ -760,7 +760,11 @@ body {
     async function checkAuth() {
       try {
         const token = localStorage.getItem('access_token');
-        if (!token) return false;
+        if (!token) {
+          // No hay token, redirigir a login
+          window.location.href = '/login.html';
+          return false;
+        }
         
         const response = await fetch('/api/auth/me/', {
           headers: {
@@ -774,8 +778,10 @@ body {
           updateUIForLoggedInUser(user);
           return true;
         } else {
+          // Token invalido, redirigir a login
           localStorage.removeItem('access_token');
           localStorage.removeItem('refresh_token');
+          window.location.href = '/login.html';
           return false;
         }
       } catch (error) {

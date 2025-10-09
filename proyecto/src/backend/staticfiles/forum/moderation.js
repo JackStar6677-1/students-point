@@ -63,7 +63,7 @@ class ModerationManager {
 
     async loadForums() {
         try {
-            const response = await fetch('/api/forum/foros/');
+            const response = await fetch('/api/foros/');
             if (response.ok) {
                 this.forums = await response.json();
                 this.populateForumSelect();
@@ -89,7 +89,7 @@ class ModerationManager {
             if (reportsFilter === 'no-reports') params.append('sin_reportes', 'true');
             if (dateFilter) params.append('fecha', dateFilter);
 
-            const response = await fetch(`/api/forum/posts/?${params}`);
+            const response = await fetch(`/api/posts/?${params}`);
             if (response.ok) {
                 this.posts = await response.json();
                 this.calculateStats();
@@ -249,7 +249,7 @@ class ModerationManager {
             
             if (reason === null) return; // User cancelled
 
-            const response = await fetch(`/api/forum/posts/${postId}/moderar/`, {
+            const response = await fetch(`/api/posts/${postId}/moderar/`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -311,7 +311,7 @@ class ModerationManager {
         this.currentPostId = postId;
         
         try {
-            const response = await fetch(`/api/forum/posts/${postId}/reportes/`);
+            const response = await fetch(`/api/posts/${postId}/reportes/`);
             if (response.ok) {
                 const reports = await response.json();
                 document.getElementById('reportsList').innerHTML = this.renderReports(reports);
@@ -359,7 +359,7 @@ class ModerationManager {
                 return;
             }
 
-            const response = await fetch(`/api/forum/posts/${this.currentPostId}/moderar/`, {
+            const response = await fetch(`/api/posts/${this.currentPostId}/moderar/`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,

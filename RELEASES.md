@@ -262,4 +262,3 @@ Las notas completas de cada version se encuentran en:
 **Equipo StudentsPoint**  
 **Duoc UC - Ingenieria en Informatica**  
 **Proyecto de Capstone 2025**
-

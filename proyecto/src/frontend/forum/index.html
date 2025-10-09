@@ -280,7 +280,7 @@
     async function loadPosts() {
       try {
         // Intentar cargar desde la API real primero
-        const response = await fetch('/api/forum/posts/');
+        const response = await fetch('/api/posts/');
         if (response.ok) {
           posts = await response.json();
           displayPosts(posts);
@@ -465,7 +465,7 @@
       
       try {
         // Intentar enviar a la API real
-        const response = await fetch('/api/forum/posts/', {
+        const response = await fetch('/api/posts/', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
