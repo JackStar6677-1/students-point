@@ -92,18 +92,34 @@ class ForumManager {
 
     async loadForums() {
         try {
-            const response = await fetch('/api/foros/');
+            const token = localStorage.getItem('access_token');
+            if (!token) {
+                console.log('No hay token de autenticación');
+                this.forums = this.getSampleForums();
+                this.populateForumSelects();
+                return;
+            }
+
+            const response = await fetch('/api/forum/foros/', {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            
             if (response.ok) {
                 const contentType = response.headers.get('content-type');
                 if (contentType && contentType.includes('application/json')) {
                     const data = await response.json();
                     this.forums = Array.isArray(data) ? data : data.results || [];
                 } else {
-                    // Si no es JSON, usar datos de ejemplo
+                    // Si no es JSON, probablemente redirigió a login
+                    console.log('Respuesta no es JSON, probablemente no autenticado');
                     this.forums = this.getSampleForums();
                 }
             } else {
                 // Si falla la API, usar datos de ejemplo
+                console.log('Error en API de foros:', response.status);
                 this.forums = this.getSampleForums();
             }
             this.populateForumSelects();
@@ -132,18 +148,27 @@ class ForumManager {
             if (sortFilter) params.append('orden', sortFilter);
             if (statusFilter) params.append('estado', statusFilter);
 
-            const response = await fetch(`/api/posts/?${params}`);
+            const token = localStorage.getItem('access_token');
+            const headers = {};
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
+                headers['Content-Type'] = 'application/json';
+            }
+
+            const response = await fetch(`/api/forum/posts/?${params}`, { headers });
             if (response.ok) {
                 const contentType = response.headers.get('content-type');
                 if (contentType && contentType.includes('application/json')) {
                     const data = await response.json();
                     this.posts = Array.isArray(data) ? data : data.results || [];
                 } else {
-                    // Si no es JSON, usar datos de ejemplo
+                    // Si no es JSON, probablemente redirigió a login
+                    console.log('Respuesta no es JSON, probablemente no autenticado');
                     this.posts = this.getSamplePosts();
                 }
             } else {
                 // Si falla la API, usar datos de ejemplo
+                console.log('Error en API de posts:', response.status);
                 this.posts = this.getSamplePosts();
             }
             this.renderPosts();
@@ -161,16 +186,24 @@ class ForumManager {
         const forumFilter = document.getElementById('forumFilter');
         const postForum = document.getElementById('postForum');
         
-        // Clear existing options
-        forumFilter.innerHTML = '<option value="">Todos los foros</option>';
-        postForum.innerHTML = '<option value="">Selecciona un foro</option>';
-
-        this.forums.forEach(forum => {
-            const option1 = new Option(forum.titulo, forum.id);
-            const option2 = new Option(forum.titulo, forum.id);
-            forumFilter.add(option1);
-            postForum.add(option2);
-        });
+        // Solo proceder si los elementos existen
+        if (forumFilter) {
+            // Clear existing options
+            forumFilter.innerHTML = '<option value="">Todos los foros</option>';
+            this.forums.forEach(forum => {
+                const option = new Option(forum.titulo, forum.id);
+                forumFilter.add(option);
+            });
+        }
+        
+        if (postForum) {
+            // Clear existing options
+            postForum.innerHTML = '<option value="">Selecciona un foro</option>';
+            this.forums.forEach(forum => {
+                const option = new Option(forum.titulo, forum.id);
+                postForum.add(option);
+            });
+        }
     }
 
     renderPosts() {
@@ -278,7 +311,7 @@ class ForumManager {
     async votePost(postId, value) {
         try {
             const token = localStorage.getItem('access_token');
-            const response = await fetch(`/api/posts/${postId}/votar/`, {
+            const response = await fetch(`/api/forum/posts/${postId}/votar/`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -316,7 +349,7 @@ class ForumManager {
         
         if (commentsContainer.style.display === 'none') {
             try {
-                const response = await fetch(`/api/posts/${postId}/comentarios/`);
+                const response = await fetch(`/api/forum/posts/${postId}/comentarios/`);
                 if (response.ok) {
                     const comments = await response.json();
                     commentsContainer.innerHTML = this.renderComments(comments);
@@ -363,7 +396,7 @@ class ForumManager {
                 return;
             }
 
-            const response = await fetch(`/api/posts/${this.currentPostId}/reportar/`, {
+            const response = await fetch(`/api/forum/posts/${this.currentPostId}/reportar/`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -405,7 +438,7 @@ class ForumManager {
                 return;
             }
 
-            const response = await fetch(`/api/posts/${this.currentPostId}/moderar/`, {
+            const response = await fetch(`/api/forum/posts/${this.currentPostId}/moderar/`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -443,7 +476,7 @@ class ForumManager {
                 return;
             }
 
-            const response = await fetch('/api/posts/', {
+            const response = await fetch('/api/forum/posts/', {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,
