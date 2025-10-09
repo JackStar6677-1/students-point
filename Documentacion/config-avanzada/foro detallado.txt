@@ -1,0 +1,47 @@
+### 1. Sistema de Foros
+
+**Sistema de Foros Personalizados por Carrera**
+
+**Objetivo:** Desarrollar un sistema de foros segmentado por carreras dentro de la plataforma **StudentPoint**, donde cada estudiante pueda interactuar en su foro específico, pero también pueda comentar en los foros de otras carreras sin poder postear contenido directamente allí.
+
+### Funcionalidades:
+
+1. **Foros por Carrera:**
+
+   * Cada carrera tiene su propio foro (por ejemplo: “Informática-Point”, “Leyes-Point”).
+   * Los usuarios solo pueden crear publicaciones (posts) en el foro correspondiente a su carrera. Esto es determinado por el campo de “Área de Estudio” en el perfil del usuario.
+   * Los usuarios pueden interactuar con los posts de otras carreras, pero solo como comentaristas, no como creadores de publicaciones.
+
+2. **Tipos de Publicaciones:**
+
+   * **Encuestas:** Los usuarios pueden crear encuestas con opciones definidas para interactuar con la comunidad.
+   * **Comentarios:** Publicaciones comunes para compartir pensamientos, dudas o información.
+   * **Imágenes:** Permite la publicación de imágenes, pero estas deben ser revisadas manualmente por los administradores para asegurar que cumplan con las normas de la comunidad.
+   * **Otros:** Se pueden agregar tipos personalizados según sea necesario (por ejemplo, enlaces, archivos adjuntos).
+
+3. **Filtrado de Contenido:**
+
+   * Todos los comentarios y publicaciones que contengan texto serán revisados automáticamente para detectar palabras o frases inapropiadas (como insultos o lenguaje ofensivo).
+   * **Censura:** El sistema censura parcialmente las palabras ofensivas (ejemplo: "mierda" se convierte en "m#####").
+
+4. **Revisión de Imágenes:**
+
+   * Las imágenes subidas deben ser enviadas a un área de procesamiento especial, accesible solo por usuarios administradores.
+   * Los administradores revisarán manualmente las imágenes para asegurar que no infringen las normas de la comunidad.
+
+5. **Segmentación y Roles de Usuario:**
+
+   * Los usuarios pueden tener distintos roles: administrador, moderador, estudiante de carrera específica.
+   * Los administradores tienen acceso completo al sistema de foros y a la gestión de imágenes.
+   * Los moderadores pueden revisar y moderar los comentarios, pero no tienen acceso al panel de administración.
+
+6. **Foro Público vs Foro Privado:**
+
+   * Los foros podrían dividirse en públicos y privados según las necesidades, permitiendo conversaciones privadas entre grupos de estudiantes de la misma carrera o abiertos a toda la comunidad de la plataforma.
+
+7. **Cambio de Carrera:**
+
+   * Los estudiantes pueden cambiar de carrera (si así lo requieren) pero al hacerlo, perderán los privilegios de publicación en el foro de la carrera anterior y se les asignará automáticamente el foro correspondiente a su nueva carrera.
+
+---
+

@@ -1,8 +1,8 @@
-DESARROLLO DESDE CERO - DUOCPOINT
+DESARROLLO DESDE CERO - StudentPoint
 ==================================
 
 DESARROLLO COMPLETAMENTE DESDE CERO:
-El proyecto DuocPoint fue desarrollado completamente desde cero, sin usar plantillas o frameworks preconstruidos. Todo el código fue escrito específicamente para este proyecto.
+El proyecto StudentPoint fue desarrollado completamente desde cero, sin usar plantillas o frameworks preconstruidos. Todo el código fue escrito específicamente para este proyecto.
 
 FRONTEND DESARROLLADO DESDE CERO:
 - HTML5 semántico y accesible

@@ -1,11 +1,12 @@
 """Vistas para la API del foro."""
 
-from django.db.models import Sum
+from django.db.models import Q, Sum
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.exceptions import PermissionDenied
 from drf_spectacular.utils import extend_schema
 
 from studentspoint.apps.accounts.permissions import IsModerator
@@ -28,6 +29,8 @@ class ForoListView(generics.ListAPIView):
 
     El frontend utilizará este endpoint para mostrar los foros
     pertinentes al usuario según su sede y carrera.
+    
+    Foros privados solo son visibles para estudiantes de la carrera correspondiente.
     """
 
     serializer_class = ForoSerializer
@@ -36,6 +39,23 @@ class ForoListView(generics.ListAPIView):
         # Asegurar foros por defecto si no existen
         self._ensure_default_foros()
         queryset = Foro.objects.all()
+        
+        # Filtrar foros según permisos del usuario
+        if self.request.user.is_authenticated:
+            # Si es admin o moderador, puede ver todos
+            if self.request.user.is_staff or self.request.user.role in ['moderator', 'admin_global']:
+                pass
+            else:
+                # Mostrar foros públicos + foros privados de su carrera
+                queryset = queryset.filter(
+                    Q(es_privado=False) | 
+                    Q(es_privado=True, carrera=self.request.user.career)
+                )
+        else:
+            # Usuarios no autenticados solo ven foros públicos
+            queryset = queryset.filter(es_privado=False)
+        
+        # Filtros adicionales
         sede = self.request.query_params.get("sede")
         carrera = self.request.query_params.get("carrera")
         if sede:
@@ -75,7 +95,12 @@ class ForoListView(generics.ListAPIView):
 
 
 class PostListCreateView(generics.ListCreateAPIView):
-    """Lista posts de un foro y permite crear nuevas publicaciones."""
+    """Lista posts de un foro y permite crear nuevas publicaciones.
+    
+    RESTRICCION IMPORTANTE: Los usuarios solo pueden crear posts en el foro
+    correspondiente a su carrera. Sin embargo, pueden comentar en posts de
+    cualquier foro.
+    """
 
     serializer_class = PostSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
@@ -96,6 +121,19 @@ class PostListCreateView(generics.ListCreateAPIView):
         return queryset
 
     def perform_create(self, serializer):
+        # Obtener el foro donde se va a postear
+        foro = serializer.validated_data.get('foro')
+        
+        # REGLA: Solo se puede postear en el foro de la propia carrera
+        # Excepto si es admin o moderador
+        if not (self.request.user.is_staff or 
+                self.request.user.role in ['moderator', 'admin_global']):
+            if not foro.puede_postear(self.request.user):
+                raise PermissionDenied(
+                    f"Solo puedes crear publicaciones en el foro de tu carrera ({self.request.user.career}). "
+                    f"Este foro es para {foro.carrera}. Puedes comentar en posts de otros foros."
+                )
+        
         post = serializer.save(usuario=self.request.user)
         # Verificar contenido automáticamente
         estado = post.verificar_contenido()

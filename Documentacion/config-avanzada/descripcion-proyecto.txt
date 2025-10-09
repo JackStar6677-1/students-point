@@ -1,42 +1,306 @@
-DUOCPOINT - PLATAFORMA INTEGRAL DUOC UC
-==========================================
+DESCRIPCION DEL PROYECTO STUDENTSPOINT
+========================================
 
-DESCRIPCIÓN GENERAL:
-DuocPoint es una aplicación web progresiva (PWA) desarrollada desde cero para la comunidad estudiantil de Duoc UC. Es una plataforma integral que integra múltiples módulos funcionales para facilitar la vida académica y social de los estudiantes.
+NOMBRE DEL PROYECTO:
+StudentsPoint (anteriormente DuocPoint)
 
-OBJETIVO:
-Crear una plataforma unificada que conecte a la comunidad estudiantil de Duoc UC, proporcionando herramientas para comunicación, comercio, desarrollo profesional, navegación del campus y bienestar estudiantil.
+TIPO DE PROYECTO:
+Aplicación Web Progresiva (PWA) - Plataforma Integral Estudiantil
 
-CONTEXTO ACADÉMICO:
-- Proyecto desarrollado como parte del programa Capstone de Duoc UC
-- Equipo de desarrollo: Estudiantes de diferentes carreras
-- Institución: Duoc UC (Universidad Católica de Chile)
-- Campus principal: Duoc UC Maipú
+CONTEXTO ACADEMICO:
+Proyecto de Capstone para la carrera de Ingenieria en Informatica
+Institucion: Duoc UC
+Periodo: 2025 - Fase 1 Completada, Fase 2 en Progreso
 
-MÓDULOS PRINCIPALES:
-1. Foros de Discusión - Sistema de comunicación por carrera y sede
-2. Mercado Estudiantil - Plataforma de compra/venta de productos
-3. Portafolio Profesional - Gestión de perfil académico y profesional
-4. Navegación Virtual - Recorrido paso a paso por el campus
-5. Bienestar Estudiantil - Rutinas de salud y bienestar
-6. Sistema de Reportes - Gestión de tickets y reportes
-7. Cursos OTEC - Cursos abiertos y capacitaciones
-8. Encuestas - Sistema de votación y encuestas
-9. Horarios - Gestión de horarios académicos
-10. Notificaciones - Sistema de alertas y comunicaciones
+VISION GENERAL:
+StudentsPoint es una plataforma integral diseñada para centralizar y mejorar la experiencia estudiantil mediante 
+herramientas academicas, de desarrollo profesional y de bienestar en una sola aplicacion web progresiva. 
+El proyecto nacio como DuocPoint y evolucionó hacia una plataforma de código abierto con vision global.
 
-CARACTERÍSTICAS TÉCNICAS:
-- Aplicación Web Progresiva (PWA) instalable
-- Funcionamiento offline con cache inteligente
-- Diseño responsive para móviles y desktop
-- Sistema de autenticación JWT
-- API REST completa
-- Notificaciones push
-- Navegación virtual del campus
+
+PROPOSITO Y OBJETIVOS:
+
+1. OBJETIVO PRINCIPAL:
+   Crear una plataforma unificada que integre todas las herramientas y servicios que un estudiante necesita 
+   en su vida académica diaria, eliminando la fragmentación de servicios y mejorando la accesibilidad.
+
+2. OBJETIVOS ESPECIFICOS:
+   - Facilitar la comunicación entre estudiantes mediante foros organizados por sede y carrera
+   - Proporcionar un marketplace seguro para compra-venta entre estudiantes
+   - Ofrecer herramientas de desarrollo profesional con portafolios digitales
+   - Integrar sistemas de navegación del campus con recorridos virtuales
+   - Proveer acceso a servicios de bienestar estudiantil
+   - Centralizar información de horarios y cursos
+   - Implementar sistema de reportes de infraestructura
+   - Ofrecer sistema de encuestas y votaciones
+
+
+CARACTERISTICAS PRINCIPALES:
+
+1. SISTEMA DE AUTENTICACION SEGURO:
+   - Autenticación dual: JWT (JSON Web Tokens) y Google OAuth 2.0
+   - Registro tradicional con validación de correo electrónico
+   - Inicio de sesión con cuenta de Google
+   - Sistema de perfiles personalizables
+   - Gestión de sesiones seguras
+
+2. FOROS DE DISCUSION:
+   - Organización por sede y carrera
+   - Sistema de publicaciones anónimas opcionales
+   - Moderación automática con filtro de palabras prohibidas
+   - Sistema de reportes comunitarios
+   - Votación de posts (upvote/downvote)
+   - Comentarios anidados
+   - Estados de publicación: publicado, en revisión, oculto, rechazado
+
+3. MARKETPLACE ESTUDIANTIL:
+   - Integración con plataformas de comercio externas
+   - Categorización de productos
+   - Sistema de búsqueda avanzada
+   - Enlaces seguros a productos externos
+   - Interfaz de usuario intuitiva
+
+4. PORTAFOLIO PROFESIONAL:
+   - Creación de perfiles profesionales
+   - Gestión de proyectos y logros
+   - Generación automática de CV en PDF
+   - Integración con LinkedIn y GitHub
+   - Visualización de habilidades y competencias
+
+5. NAVEGACION DEL CAMPUS:
+   - Recorridos virtuales 360 grados personalizados
+   - Sistema de navegación por diapositivas
+   - Información detallada de cada ubicación
+   - Imágenes de alta calidad de espacios del campus
+   - Sistema desarrollado completamente desde cero (sin Google Street View)
+
+6. BIENESTAR ESTUDIANTIL:
+   - Rutinas de ejercicios de kinesiología
+   - Sistema de pausas activas
+   - Recursos de salud mental
+   - Tips de bienestar
+   - Herramientas de gestión del estrés
+
+7. SISTEMA DE REPORTES:
+   - Reporte de problemas de infraestructura
+   - Categorización de incidencias
+   - Sistema de seguimiento de tickets
+   - Priorización de reportes
+   - Historial de resolución
+
+8. GESTION DE HORARIOS:
+   - Visualización de horarios de clases
+   - Integración con calendario personal
+   - Alertas de próximas clases
+   - Información de profesores y salas
+
+9. CURSOS OTEC:
+   - Catálogo de cursos abiertos
+   - Sistema de inscripción
+   - Información detallada de programas
+   - Integración con plataformas de aprendizaje
+
+10. SISTEMA DE ENCUESTAS:
+    - Creación de encuestas personalizadas
+    - Sistema de votación en tiempo real
+    - Análisis estadístico de resultados
+    - Múltiples tipos de preguntas
+    - Resultados visualizados en gráficos
+
+11. NOTIFICACIONES PUSH:
+    - Sistema de notificaciones web push
+    - Alertas personalizadas
+    - Configuración de preferencias
+    - Notificaciones en tiempo real
+
+
+ARQUITECTURA TECNICA:
+
+1. ARQUITECTURA GENERAL:
+   - Aplicación Web Progresiva (PWA)
+   - Arquitectura cliente-servidor
+   - API REST para comunicación frontend-backend
+   - Single Page Application (SPA) con navegación dinámica
+   - Service Worker para funcionalidad offline
+
+2. PATRON DE DISEÑO:
+   - MVC (Model-View-Controller) en backend
+   - Arquitectura modular con apps de Django independientes
+   - Separación clara de responsabilidades
+   - API RESTful con serializers
+   - Autenticación basada en tokens JWT
+
+3. BASE DE DATOS:
+   - SQLite para desarrollo local
+   - PostgreSQL para producción
+   - Modelos relacionales normalizados
+   - Migraciones versionadas con Django ORM
+   - Índices optimizados para consultas frecuentes
+
+
+MODELO DE DATOS PRINCIPAL:
+
+1. USUARIOS (AUTH):
+   - Sistema de autenticación personalizado
+   - Perfiles extendidos con información adicional
+   - Integración con Google OAuth
+   - Campos: email, nombre, apellido, carrera, sede, foto de perfil
+
+2. FOROS:
+   - Tabla Foro: sede, carrera, título, slug
+   - Tabla Post: título, cuerpo, usuario, estado, score, timestamps
+   - Tabla Comentario: cuerpo, usuario, post, timestamps
+   - Sistema de moderación integrado
+
+3. MARKETPLACE:
+   - Tabla Producto: nombre, descripción, precio, categoría, enlace externo
+   - Integración con APIs de comercio
+
+4. PORTAFOLIO:
+   - Tabla Proyecto: título, descripción, tecnologías, enlaces
+   - Tabla Habilidad: nombre, nivel, categoría
+   - Sistema de generación de PDF
+
+5. CAMPUS:
+   - Tabla Sede: nombre, dirección, coordenadas
+   - Tabla Recorrido: sede, título, descripción
+   - Tabla RecorridoPaso: recorrido, imagen, descripción, orden
+
+6. REPORTES:
+   - Tabla Reporte: título, descripción, categoría, estado, prioridad
+   - Sistema de seguimiento de tickets
+
+7. ENCUESTAS:
+   - Tabla Poll: título, descripción, fecha inicio, fecha fin
+   - Tabla PollOption: texto, votos
+   - Tabla PollAnalytics: estadísticas agregadas
+
+
+CAPACIDADES OFFLINE:
+
+1. SERVICE WORKER:
+   - Cache de recursos estáticos
+   - Cache de páginas principales
+   - Estrategia de red primero para contenido dinámico
+   - Sincronización en segundo plano
+
+2. FUNCIONALIDAD OFFLINE:
+   - Navegación entre páginas cacheadas
+   - Visualización de contenido previamente cargado
+   - Queue de acciones para sincronizar al reconectar
+   - Indicadores de estado de conexión
+
+
+SEGURIDAD:
+
+1. AUTENTICACION Y AUTORIZACION:
+   - Tokens JWT con expiración
+   - Refresh tokens para renovación segura
+   - OAuth 2.0 con Google
+   - Hashing de contraseñas con algoritmos seguros
+
+2. PROTECCION DE DATOS:
+   - CORS configurado correctamente
+   - Validación de entrada en todos los formularios
+   - Sanitización de contenido generado por usuarios
+   - Protección contra inyección SQL (Django ORM)
+
+3. MODERACION DE CONTENIDO:
+   - Filtro automático de palabras prohibidas
+   - Sistema de reportes comunitarios
+   - Estados de moderación para posts
+   - Panel de administración para moderadores
+
+
+RENDIMIENTO Y OPTIMIZACION:
+
+1. FRONTEND:
+   - Minificación de CSS y JavaScript
+   - Carga diferida de imágenes
+   - Compresión de assets
+   - Cache de navegador optimizado
+
+2. BACKEND:
+   - Paginación de resultados (20 items por página)
+   - Consultas optimizadas con select_related y prefetch_related
+   - Índices de base de datos
+   - Conexiones persistentes a base de datos
+
+3. CACHING:
+   - Redis para cache de sesiones
+   - Cache de consultas frecuentes
+   - Cache de archivos estáticos
+
+
+ESCALABILIDAD:
+
+1. HORIZONTAL:
+   - Arquitectura preparada para múltiples instancias
+   - Uso de Gunicorn con múltiples workers
+   - Posibilidad de balanceo de carga
+
+2. VERTICAL:
+   - PostgreSQL optimizado para alto volumen
+   - Redis para operaciones en memoria
+   - Celery para tareas asíncronas
+
+
+METRICAS DE EXITO:
+
+1. OBJETIVOS TECNICOS:
+   - Tiempo de carga < 2 segundos
+   - Disponibilidad del 99.9%
+   - 0 vulnerabilidades críticas de seguridad
+   - Cobertura de tests > 80%
+
+2. OBJETIVOS DE USUARIO:
+   - Interfaz intuitiva y fácil de usar
+   - Experiencia consistente en desktop y móvil
+   - Funcionalidad completa en modo offline
+   - Tiempos de respuesta rápidos
+
+
+LICENCIA Y OPEN SOURCE:
+
+El proyecto se desarrolla como software de código abierto, permitiendo que otras instituciones 
+educativas puedan implementar y personalizar la plataforma según sus necesidades.
+
+
+VISION FUTURA:
+
+1. EXPANSION GLOBAL (Fase 3-5):
+   - Soporte multi-idioma
+   - Adaptación para múltiples instituciones
+   - Integración con sistemas LMS internacionales
+
+2. INTELIGENCIA ARTIFICIAL (Fase 4):
+   - Recomendaciones personalizadas
+   - Asistente virtual para estudiantes
+   - Detección automática de contenido inapropiado
+
+3. FUNCIONALIDADES AVANZADAS:
+   - Chat en tiempo real
+   - Sistema de videollamadas
+   - Gamificación completa
+   - Aplicación móvil nativa
+
 
 ESTADO ACTUAL:
-- Completamente funcional y probado
-- Todos los módulos implementados
-- PWA optimizada para instalación nativa
-- Documentación completa
-- Listo para uso en desarrollo y producción
+- Fase 1: Completada (Septiembre 2024)
+- Fase 2: En Progreso (Octubre 2024)
+- Version Actual: 2.0.0
+
+
+REPOSITORIO:
+GitHub: https://github.com/JackStar6677-1/students-point
+
+
+EQUIPO DE DESARROLLO:
+- Pablo Avendaño
+- Darosh Luco
+- Isaac Paz
+
+Institucion: Duoc UC
+Carrera: Ingenieria en Informatica
+Asignatura: Proyecto de Capstone (APT122)
+

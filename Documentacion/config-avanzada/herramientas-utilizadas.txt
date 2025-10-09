@@ -1,122 +1,564 @@
-HERRAMIENTAS Y TECNOLOGÍAS UTILIZADAS - DUOCPOINT
-==================================================
+HERRAMIENTAS Y TECNOLOGIAS UTILIZADAS - STUDENTSPOINT
+======================================================
 
-HERRAMIENTAS DE DESARROLLO:
-- Python 3.8+ - Lenguaje principal del backend
-- Django 5.2.6 - Framework web de Python
-- Django REST Framework - Para API REST
-- SQLite - Base de datos para desarrollo
-- PostgreSQL - Base de datos para producción
-- Git - Control de versiones
-- PowerShell - Scripts de automatización
-- Visual Studio Code - Editor de código
+STACK TECNOLOGICO COMPLETO
+--------------------------
 
-HERRAMIENTAS FRONTEND:
-- HTML5 - Estructura semántica
-- CSS3 - Estilos y animaciones
-- JavaScript ES6+ - Funcionalidad interactiva
-- Bootstrap 5 - Framework CSS (solo componentes base)
-- Font Awesome 6 - Iconografía
-- Bootstrap Icons - Iconos adicionales
-- Web Audio API - Sistema de sonidos
-- Service Worker API - PWA
+El proyecto StudentsPoint utiliza un stack tecnológico moderno y robusto, 
+seleccionado específicamente para garantizar escalabilidad, seguridad y 
+rendimiento óptimo.
 
-HERRAMIENTAS DE DISEÑO:
-- CSS Variables - Para tema personalizado
-- CSS Grid y Flexbox - Layout responsive
-- CSS Animations - Efectos visuales
-- Media Queries - Diseño responsive
-- Custom Properties - Variables CSS
 
-HERRAMIENTAS PWA:
-- Manifest.json - Configuración de PWA
-- Service Worker - Cache y funcionamiento offline
-- Cache API - Almacenamiento offline
-- Push API - Notificaciones push
-- Web App Manifest - Instalación nativa
+================================================================================
+BACKEND - FRAMEWORKS Y LIBRERIAS
+================================================================================
 
-HERRAMIENTAS DE AUTENTICACIÓN:
-- JWT (JSON Web Tokens) - Autenticación
-- Django JWT - Implementación en backend
-- Local Storage - Almacenamiento de tokens
-- Refresh Tokens - Renovación automática
+1. FRAMEWORK PRINCIPAL:
+   ---------------------------------------------------------------------
+   Django 5.2.6
+   - Framework web de alto nivel para Python
+   - Arquitectura MTV (Model-Template-View)
+   - ORM robusto para gestión de base de datos
+   - Sistema de autenticación integrado
+   - Panel de administración automático
+   - Sistema de migraciones versionadas
+   - Protección contra vulnerabilidades comunes (CSRF, XSS, SQL Injection)
+   - Documentación extensa y comunidad activa
+   - Razón de elección: Framework maduro, seguro y con todas las herramientas necesarias
 
-HERRAMIENTAS DE COMUNICACIÓN:
-- Fetch API - Comunicación con backend
-- WebSocket (preparado) - Comunicación en tiempo real
-- Push Notifications - Notificaciones push
-- Email (configurado) - Notificaciones por email
+2. API REST:
+   ---------------------------------------------------------------------
+   Django REST Framework 3.15+
+   - Framework para crear APIs RESTful robustas
+   - Serializers para validación y transformación de datos
+   - Sistema de autenticación flexible
+   - Browsable API para desarrollo
+   - Paginación automática
+   - Filtrado y búsqueda integrados
+   - Throttling para control de tasa de peticiones
+   - Razón de elección: Estándar de la industria para APIs Django
 
-HERRAMIENTAS DE DESARROLLO:
-- Django Admin - Panel de administración
-- Django Debug Toolbar - Debugging
-- Django CORS Headers - CORS
-- Django Filter - Filtros de API
-- Django Pagination - Paginación
+3. AUTENTICACION JWT:
+   ---------------------------------------------------------------------
+   djangorestframework-simplejwt 5.3+
+   - Implementación de JSON Web Tokens para Django
+   - Tokens de acceso y refresh
+   - Claims personalizables
+   - Blacklist de tokens
+   - Integración perfecta con DRF
+   - Razón de elección: Autenticación stateless ideal para PWAs
 
-HERRAMIENTAS DE SEGURIDAD:
-- Django Security - Configuración de seguridad
-- CORS - Cross-Origin Resource Sharing
-- CSRF Protection - Protección CSRF
-- Rate Limiting - Limitación de requests
-- Input Validation - Validación de entrada
+4. DOCUMENTACION DE API:
+   ---------------------------------------------------------------------
+   drf-spectacular 0.27+
+   - Generación automática de documentación OpenAPI 3.0
+   - Interfaz Swagger interactiva
+   - Schemas precisos y actualizados automáticamente
+   - Soporte para tipos complejos
+   - Razón de elección: Mejor generador de documentación para DRF
 
-HERRAMIENTAS DE CACHE:
-- Django Cache - Sistema de cache
-- Redis (producción) - Cache en memoria
-- Browser Cache - Cache del navegador
-- Service Worker Cache - Cache PWA
+5. CORS (Cross-Origin Resource Sharing):
+   ---------------------------------------------------------------------
+   django-cors-headers 4.4+
+   - Manejo de peticiones cross-origin
+   - Configuración flexible de orígenes permitidos
+   - Soporte para credenciales
+   - Headers personalizables
+   - Razón de elección: Esencial para separación frontend-backend
 
-HERRAMIENTAS DE TESTING:
-- Django Test Framework - Testing del backend
-- JavaScript Testing - Testing del frontend
-- Manual Testing - Pruebas manuales
-- User Acceptance Testing - Pruebas de usuario
+6. FILTRADO DE API:
+   ---------------------------------------------------------------------
+   django-filter 25.1+
+   - Sistema de filtrado declarativo para APIs
+   - Filtros por múltiples campos
+   - Búsqueda avanzada
+   - Integración con DRF
+   - Razón de elección: Simplifica búsquedas complejas en la API
 
-HERRAMIENTAS DE DEPLOYMENT:
-- Docker (configurado) - Containerización
-- Nginx (configurado) - Servidor web
-- Gunicorn (configurado) - Servidor WSGI
-- Environment Variables - Configuración
+7. VARIABLES DE ENTORNO:
+   ---------------------------------------------------------------------
+   python-dotenv 1.0+
+   - Carga de variables de entorno desde archivo .env
+   - Separación de configuración y código
+   - Gestión segura de credenciales
+   - Razón de elección: Estándar para manejo de configuración
 
-HERRAMIENTAS DE DOCUMENTACIÓN:
-- Markdown - Documentación
-- Django Admin - Documentación automática
-- API Documentation - Documentación de API
-- README.md - Documentación principal
 
-HERRAMIENTAS DE AUTOMATIZACIÓN:
-- PowerShell Scripts - Scripts de inicio
-- Batch Files - Scripts de Windows
-- Django Management Commands - Comandos personalizados
-- Git Hooks - Automatización Git
+================================================================================
+BASE DE DATOS
+================================================================================
 
-HERRAMIENTAS DE MONITOREO:
-- Django Logging - Sistema de logs
-- Browser DevTools - Debugging frontend
-- Network Tab - Monitoreo de requests
-- Console Logging - Logs de JavaScript
+1. DESARROLLO:
+   ---------------------------------------------------------------------
+   SQLite 3
+   - Base de datos embebida
+   - Sin configuración adicional
+   - Ideal para desarrollo local
+   - Incluida con Python
+   - Razón de elección: Simplicidad para desarrollo
 
-HERRAMIENTAS DE OPTIMIZACIÓN:
-- Django Query Optimization - Optimización de queries
-- CSS Optimization - Optimización de estilos
-- JavaScript Minification - Minificación de JS
-- Image Optimization - Optimización de imágenes
+2. PRODUCCION:
+   ---------------------------------------------------------------------
+   PostgreSQL 14+
+   - Sistema de gestión de base de datos relacional avanzado
+   - ACID compliant
+   - Soporte para JSON y tipos avanzados
+   - Excelente rendimiento
+   - Escalabilidad horizontal y vertical
+   - Razón de elección: Robustez y características empresariales
 
-HERRAMIENTAS DE ACCESIBILIDAD:
-- Semantic HTML - HTML semántico
-- ARIA Labels - Etiquetas de accesibilidad
-- Keyboard Navigation - Navegación por teclado
-- Screen Reader Support - Soporte para lectores de pantalla
+3. DRIVER DE POSTGRESQL:
+   ---------------------------------------------------------------------
+   psycopg2-binary 2.9+
+   - Adaptador PostgreSQL para Python
+   - Alto rendimiento
+   - Soporte completo de características PostgreSQL
+   - Razón de elección: Driver estándar recomendado
 
-HERRAMIENTAS DE RESPONSIVE:
-- CSS Media Queries - Diseño responsive
-- Bootstrap Grid - Sistema de grid
-- Flexible Images - Imágenes responsivas
-- Touch-friendly Design - Diseño táctil
 
-HERRAMIENTAS DE PERFORMANCE:
-- Lazy Loading - Carga diferida
-- Code Splitting - División de código
-- Cache Strategies - Estrategias de cache
-- Compression - Compresión de archivos
+================================================================================
+CACHE Y TAREAS ASINCRONAS
+================================================================================
+
+1. CACHE Y BROKER:
+   ---------------------------------------------------------------------
+   Redis 5.0+
+   - Store de estructura de datos en memoria
+   - Cache de alta velocidad
+   - Broker de mensajes para Celery
+   - Persistencia opcional
+   - Razón de elección: Rendimiento excepcional para cache y mensajería
+
+2. CLIENTE REDIS:
+   ---------------------------------------------------------------------
+   redis 5.0+ (Python)
+   - Cliente Python para Redis
+   - Soporte asíncrono
+   - Connection pooling
+   - Razón de elección: Cliente oficial y confiable
+
+3. INTEGRACION DJANGO-REDIS:
+   ---------------------------------------------------------------------
+   django-redis 5.4+
+   - Backend de cache Redis para Django
+   - Gestión de sesiones en Redis
+   - Serialización optimizada
+   - Razón de elección: Integración perfecta con Django
+
+4. TAREAS ASINCRONAS:
+   ---------------------------------------------------------------------
+   Celery 5.4+
+   - Sistema de cola de tareas distribuido
+   - Ejecución asíncrona de tareas
+   - Tareas programadas (cron-like)
+   - Reintentos automáticos
+   - Monitoreo de tareas
+   - Razón de elección: Estándar para tareas asíncronas en Python
+
+5. PROGRAMACION DE TAREAS:
+   ---------------------------------------------------------------------
+   django-celery-beat 2.5+
+   - Programador de tareas periódicas para Celery
+   - Interfaz administrativa
+   - Almacenamiento de horarios en base de datos
+   - Razón de elección: Tareas programadas persistentes
+
+6. ALMACENAMIENTO DE RESULTADOS:
+   ---------------------------------------------------------------------
+   django-celery-results 2.5+
+   - Almacenamiento de resultados de Celery en Django
+   - Consulta de estado de tareas
+   - Persistencia de resultados
+   - Razón de elección: Integración con modelos Django
+
+
+================================================================================
+ALMACENAMIENTO Y PROCESAMIENTO DE ARCHIVOS
+================================================================================
+
+1. ALMACENAMIENTO EN LA NUBE:
+   ---------------------------------------------------------------------
+   django-storages 1.14+
+   - Backends de almacenamiento para múltiples servicios
+   - Soporte para S3, Azure, Google Cloud Storage
+   - Gestión automática de archivos estáticos y media
+   - Razón de elección: Preparado para producción en la nube
+
+2. CLIENTE AWS:
+   ---------------------------------------------------------------------
+   boto3 1.34+
+   - SDK de AWS para Python
+   - Gestión de S3 para archivos
+   - Integración con otros servicios AWS
+   - Razón de elección: Estándar para AWS
+
+3. GENERACION DE PDF:
+   ---------------------------------------------------------------------
+   reportlab 4.0+
+   - Biblioteca de generación de PDF
+   - Control preciso de diseño
+   - Gráficos y tablas
+   - Usado para portafolios profesionales
+   - Razón de elección: Potencia y flexibilidad para PDFs complejos
+
+4. MANIPULACION DE PDF:
+   ---------------------------------------------------------------------
+   PyPDF2 3.0+
+   - Lectura y manipulación de PDFs
+   - Merge y split de documentos
+   - Extracción de información
+   - Razón de elección: Complemento para procesamiento de PDFs
+
+
+================================================================================
+AUTENTICACION EXTERNA
+================================================================================
+
+1. GOOGLE OAUTH:
+   ---------------------------------------------------------------------
+   google-auth 2.40+
+   - Biblioteca de autenticación de Google
+   - OAuth 2.0 flow
+   - Verificación de tokens
+   - Razón de elección: Oficial de Google
+
+2. OAUTH FLOW:
+   ---------------------------------------------------------------------
+   google-auth-oauthlib 1.2+
+   - Helpers para OAuth 2.0 con Google
+   - Flujo de autorización simplificado
+   - Razón de elección: Simplifica integración OAuth
+
+3. CLIENTE HTTP GOOGLE:
+   ---------------------------------------------------------------------
+   google-auth-httplib2 0.2+
+   - Cliente HTTP para APIs de Google
+   - Autenticación automática
+   - Razón de elección: Requerido para APIs de Google
+
+4. CLIENTE API GOOGLE:
+   ---------------------------------------------------------------------
+   google-api-python-client 2.180+
+   - Cliente para todas las APIs de Google
+   - Discovery service
+   - Soporte para múltiples servicios
+   - Razón de elección: Acceso completo a servicios Google
+
+
+================================================================================
+NOTIFICACIONES WEB PUSH
+================================================================================
+
+1. WEB PUSH:
+   ---------------------------------------------------------------------
+   pywebpush 1.14+
+   - Implementación de Web Push Protocol
+   - VAPID key generation
+   - Envío de notificaciones push
+   - Soporte para múltiples navegadores
+   - Razón de elección: Estándar para notificaciones web
+
+
+================================================================================
+WEB SCRAPING Y PETICIONES HTTP
+================================================================================
+
+1. PETICIONES HTTP:
+   ---------------------------------------------------------------------
+   requests 2.31+
+   - Biblioteca HTTP elegante y simple
+   - Sesiones persistentes
+   - SSL/TLS verification
+   - Usado para integraciones externas
+   - Razón de elección: Estándar de facto para HTTP en Python
+
+2. PARSING HTML:
+   ---------------------------------------------------------------------
+   beautifulsoup4 4.12+
+   - Parser de HTML y XML
+   - Navegación y búsqueda en árboles
+   - Extracción de datos
+   - Razón de elección: Simplicidad y potencia para scraping
+
+
+================================================================================
+TESTING
+================================================================================
+
+1. FRAMEWORK DE TESTING:
+   ---------------------------------------------------------------------
+   pytest 8.0+
+   - Framework de testing moderno
+   - Fixtures potentes
+   - Parametrización de tests
+   - Plugins extensibles
+   - Mejor output y reporting
+   - Razón de elección: Más potente y expresivo que unittest
+
+2. INTEGRACION DJANGO-PYTEST:
+   ---------------------------------------------------------------------
+   pytest-django 4.8+
+   - Plugin pytest para Django
+   - Fixtures específicos de Django
+   - Gestión de base de datos de test
+   - Soporte para transacciones
+   - Razón de elección: Testing óptimo para Django
+
+
+================================================================================
+MONITOREO Y SISTEMA
+================================================================================
+
+1. MONITOREO DE SISTEMA:
+   ---------------------------------------------------------------------
+   psutil 5.9+
+   - Información de procesos y sistema
+   - CPU, memoria, disco, red
+   - Monitoreo de recursos
+   - Cross-platform
+   - Razón de elección: Monitoreo del servidor en tiempo real
+
+
+================================================================================
+SERVIDOR DE PRODUCCION
+================================================================================
+
+1. WSGI SERVER:
+   ---------------------------------------------------------------------
+   Gunicorn 21.2+
+   - HTTP server WSGI para Python
+   - Worker processes múltiples
+   - Pre-fork model
+   - Compatible con Django
+   - Bajo uso de recursos
+   - Razón de elección: Servidor estándar para Django en producción
+
+
+================================================================================
+UTILIDADES ADICIONALES
+================================================================================
+
+1. ZONAS HORARIAS:
+   ---------------------------------------------------------------------
+   pytz 2024.1+
+   - Base de datos de zonas horarias
+   - Conversión de timestamps
+   - Manejo correcto de DST
+   - Razón de elección: Estándar para timezones en Python
+
+2. MARKDOWN:
+   ---------------------------------------------------------------------
+   markdown 3.4+
+   - Conversión de Markdown a HTML
+   - Extensiones disponibles
+   - Usado en descripciones y posts
+   - Razón de elección: Formato amigable para usuarios
+
+
+================================================================================
+FRONTEND - TECNOLOGIAS Y FRAMEWORKS
+================================================================================
+
+1. LENGUAJE BASE:
+   ---------------------------------------------------------------------
+   HTML5
+   - Semántica moderna
+   - APIs avanzadas (Storage, Service Worker, Geolocation)
+   - Multimedia nativa
+   - Formularios mejorados
+   - Razón de elección: Estándar web actual
+
+2. ESTILOS:
+   ---------------------------------------------------------------------
+   CSS3
+   - Variables CSS (custom properties)
+   - Flexbox y Grid Layout
+   - Animaciones y transiciones
+   - Media queries para responsive
+   - Razón de elección: Control completo del diseño
+
+3. FRAMEWORK CSS:
+   ---------------------------------------------------------------------
+   Bootstrap 5.3
+   - Framework CSS responsive
+   - Componentes pre-diseñados
+   - Sistema de grid
+   - Utilidades CSS
+   - Razón de elección: Desarrollo rápido y consistente
+
+4. ICONOS:
+   ---------------------------------------------------------------------
+   Font Awesome 6.4
+   - Biblioteca de iconos vectoriales
+   - 10,000+ iconos disponibles
+   - Escalables y personalizables
+   - Razón de elección: Variedad y calidad de iconos
+
+5. JAVASCRIPT:
+   ---------------------------------------------------------------------
+   JavaScript ES6+
+   - Vanilla JavaScript (sin frameworks)
+   - Async/Await para operaciones asíncronas
+   - Fetch API para peticiones HTTP
+   - Módulos ES6
+   - Razón de elección: Control total, sin dependencias pesadas
+
+
+================================================================================
+PWA (PROGRESSIVE WEB APP)
+================================================================================
+
+1. SERVICE WORKER:
+   ---------------------------------------------------------------------
+   - Cache API para almacenamiento offline
+   - Estrategias de cache personalizadas
+   - Background sync
+   - Push notifications
+   - Razón de elección: Funcionalidad offline y app-like
+
+2. WEB APP MANIFEST:
+   ---------------------------------------------------------------------
+   - manifest.json configurado
+   - Iconos múltiples tamaños
+   - Shortcuts a funcionalidades
+   - Instalable en dispositivos
+   - Razón de elección: Experiencia de aplicación nativa
+
+3. APIS WEB MODERNAS:
+   ---------------------------------------------------------------------
+   - Web Storage API (localStorage, sessionStorage)
+   - Fetch API para peticiones
+   - Notification API
+   - Geolocation API (preparado para uso futuro)
+   - Razón de elección: Capacidades avanzadas sin librerías externas
+
+
+================================================================================
+DESARROLLO Y HERRAMIENTAS
+================================================================================
+
+1. CONTROL DE VERSIONES:
+   ---------------------------------------------------------------------
+   Git
+   - Sistema de control de versiones distribuido
+   - Branching y merging
+   - Historial completo
+   - Razón de elección: Estándar de la industria
+
+2. REPOSITORIO:
+   ---------------------------------------------------------------------
+   GitHub
+   - Hosting de repositorio
+   - Colaboración en equipo
+   - Issues y project management
+   - Actions para CI/CD (preparado)
+   - Razón de elección: Plataforma más popular
+
+3. EDITOR/IDE:
+   ---------------------------------------------------------------------
+   Visual Studio Code / PyCharm
+   - Autocompletado inteligente
+   - Debugging integrado
+   - Extensiones para Python y Django
+   - Razón de elección: Herramientas profesionales
+
+4. GESTION DE DEPENDENCIAS:
+   ---------------------------------------------------------------------
+   pip + requirements.txt
+   - Gestor de paquetes Python
+   - Archivo requirements.txt para reproducibilidad
+   - Virtual environments
+   - Razón de elección: Estándar Python
+
+5. AUTOMATIZACION:
+   ---------------------------------------------------------------------
+   Scripts .bat (Windows)
+   - iniciar_desarrollo.bat
+   - iniciar_produccion.bat
+   - instalar_postgresql.bat
+   - Razón de elección: Facilita setup para desarrolladores
+
+
+================================================================================
+INFRAESTRUCTURA Y DESPLIEGUE
+================================================================================
+
+1. SERVIDOR WEB:
+   ---------------------------------------------------------------------
+   Nginx
+   - Proxy inverso
+   - Servidor de archivos estáticos
+   - Load balancing
+   - SSL/TLS termination
+   - Razón de elección: Alto rendimiento y confiabilidad
+
+2. CONTENEDORES (PREPARADO):
+   ---------------------------------------------------------------------
+   Docker
+   - Dockerfile y Dockerfile.prod incluidos
+   - Containerización de aplicación
+   - Portabilidad entre entornos
+   - Razón de elección: Despliegue consistente
+
+3. CERTIFICADOS SSL:
+   ---------------------------------------------------------------------
+   Let's Encrypt (preparado)
+   - Certificados SSL gratuitos
+   - Renovación automática
+   - Razón de elección: Seguridad sin costo
+
+
+================================================================================
+RESUMEN DE DECISIONES TECNOLOGICAS
+================================================================================
+
+FILOSOFIA DE SELECCION:
+1. Prioridad a herramientas maduras y probadas
+2. Preferencia por estándares de la industria
+3. Balance entre potencia y simplicidad
+4. Enfoque en seguridad y rendimiento
+5. Preparado para escalabilidad futura
+
+VENTAJAS DEL STACK ELEGIDO:
+- Comunidad activa y documentación extensa
+- Seguridad robusta out-of-the-box
+- Escalabilidad probada en producción
+- Curva de aprendizaje razonable
+- Costo-efectivo (mayormente open source)
+
+CONSIDERACIONES FUTURAS:
+- Posible migración a microservicios
+- Integración de GraphQL junto a REST
+- Implementación de WebSockets para tiempo real
+- App móvil nativa con React Native o Flutter
+- Integración de IA/ML para recomendaciones
+
+
+================================================================================
+VERSIONES MINIMAS REQUERIDAS
+================================================================================
+
+Backend:
+- Python: 3.11+
+- Django: 5.0+
+- PostgreSQL: 12+ (producción)
+
+Infraestructura:
+- Redis: 5.0+
+- Nginx: 1.18+ (producción)
+
+Navegadores Soportados:
+- Chrome 90+
+- Firefox 88+
+- Safari 14+
+- Edge 90+
+
+Sistema Operativo:
+- Windows 10+
+- Linux (Ubuntu 20.04+, Debian 11+)
+- macOS 11+
+
+
+FIN DEL DOCUMENTO
+=================
+

@@ -2,9 +2,56 @@
 
 from django.contrib import admin
 from django.contrib.auth import get_user_model
+from .models import CambioCarrera
+
+
+class CambioCarreraInline(admin.TabularInline):
+    model = CambioCarrera
+    extra = 0
+    readonly_fields = ('carrera_anterior', 'carrera_nueva', 'razon', 'fecha_cambio')
+    can_delete = False
 
 
 @admin.register(get_user_model())
 class UserAdmin(admin.ModelAdmin):  # pragma: no cover - interfaz de administración
-    list_display = ("email", "name", "role")
-    search_fields = ("email", "name")
+    list_display = ("email", "name", "career", "campus", "role", "is_active", "date_joined")
+    list_filter = ("role", "career", "campus", "is_active", "es_estudiante_gmail")
+    search_fields = ("email", "name", "career")
+    inlines = [CambioCarreraInline]
+    readonly_fields = ("date_joined", "last_login", "google_id", "is_verified")
+    
+    fieldsets = (
+        ('Información Básica', {
+            'fields': ('email', 'name', 'is_active')
+        }),
+        ('Información Académica', {
+            'fields': ('career', 'campus', 'role')
+        }),
+        ('Contacto Adicional', {
+            'fields': ('telefono', 'linkedin_url', 'github_url')
+        }),
+        ('Autenticación Externa', {
+            'fields': ('es_estudiante_gmail', 'google_id', 'picture', 'is_verified'),
+            'classes': ('collapse',)
+        }),
+        ('Permisos y Estado', {
+            'fields': ('is_staff', 'is_superuser', 'groups', 'user_permissions'),
+            'classes': ('collapse',)
+        }),
+        ('Fechas Importantes', {
+            'fields': ('date_joined', 'last_login')
+        }),
+    )
+
+
+@admin.register(CambioCarrera)
+class CambioCarreraAdmin(admin.ModelAdmin):
+    list_display = ('usuario', 'carrera_anterior', 'carrera_nueva', 'fecha_cambio')
+    list_filter = ('carrera_anterior', 'carrera_nueva', 'fecha_cambio')
+    search_fields = ('usuario__email', 'usuario__name', 'carrera_anterior', 'carrera_nueva', 'razon')
+    readonly_fields = ('usuario', 'carrera_anterior', 'carrera_nueva', 'fecha_cambio')
+    date_hierarchy = 'fecha_cambio'
+    
+    def has_add_permission(self, request):
+        # Los cambios de carrera se crean mediante el método del modelo
+        return False

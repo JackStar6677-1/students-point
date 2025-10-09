@@ -2,31 +2,60 @@
 
 from rest_framework import serializers
 
-from .models import Comentario, Foro, Post, PostReporte
+from .models import Comentario, Foro, Post, PostReporte, OpcionEncuesta, VotoEncuesta
 
 
 class ForoSerializer(serializers.ModelSerializer):
     """Representa un foro temático."""
+    
+    puede_postear = serializers.SerializerMethodField()
 
     class Meta:
         model = Foro
-        fields = ["id", "sede", "carrera", "titulo", "slug"]
+        fields = ["id", "sede", "carrera", "titulo", "slug", "es_privado", "descripcion", "created_at", "puede_postear"]
+        read_only_fields = ["created_at"]
+    
+    def get_puede_postear(self, obj):
+        """Indica si el usuario actual puede postear en este foro."""
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+            return obj.puede_postear(request.user)
+        return False
+
+
+class OpcionEncuestaSerializer(serializers.ModelSerializer):
+    """Serializer para opciones de encuesta."""
+    
+    class Meta:
+        model = OpcionEncuesta
+        fields = ["id", "texto", "votos", "orden"]
+        read_only_fields = ["votos"]
 
 
 class PostSerializer(serializers.ModelSerializer):
-    """Serializa posts para listado y creación."""
+    """Serializa posts para listado y creación.
+    
+    Soporta diferentes tipos de publicaciones:
+    - comentario: Post estándar con texto
+    - encuesta: Post con opciones para votar
+    - imagen: Post con imagen adjunta (requiere aprobación)
+    - otro: Otros tipos
+    """
     
     usuario_name = serializers.CharField(source="usuario.name", read_only=True)
     usuario_career = serializers.CharField(source="usuario.career", read_only=True)
     usuario_campus = serializers.CharField(source="usuario.campus.nombre", read_only=True)
     total_comentarios = serializers.SerializerMethodField()
     total_reportes = serializers.IntegerField(read_only=True)
+    opciones_encuesta = OpcionEncuestaSerializer(many=True, read_only=True)
+    foro_info = serializers.SerializerMethodField()
 
     class Meta:
         model = Post
         fields = [
             "id",
             "foro",
+            "foro_info",
             "usuario",
             "usuario_name",
             "usuario_career",
@@ -34,25 +63,37 @@ class PostSerializer(serializers.ModelSerializer):
             "anonimo",
             "titulo",
             "cuerpo",
+            "tipo",
+            "imagen",
+            "imagen_aprobada",
             "score",
             "estado",
             "created_at",
             "updated_at",
             "total_comentarios",
             "total_reportes",
+            "opciones_encuesta",
             "moderado_por",
             "razon_moderacion",
             "moderado_at",
         ]
         read_only_fields = [
             "usuario", "usuario_name", "usuario_career", "usuario_campus",
-            "score", "estado", "created_at", "updated_at",
-            "total_comentarios", "total_reportes", "moderado_por", 
-            "razon_moderacion", "moderado_at"
+            "score", "estado", "created_at", "updated_at", "imagen_aprobada",
+            "total_comentarios", "total_reportes", "opciones_encuesta",
+            "moderado_por", "razon_moderacion", "moderado_at", "foro_info"
         ]
     
     def get_total_comentarios(self, obj):
         return obj.comentarios.count()
+    
+    def get_foro_info(self, obj):
+        """Información básica del foro."""
+        return {
+            "id": obj.foro.id,
+            "carrera": obj.foro.carrera,
+            "titulo": obj.foro.titulo
+        }
 
 
 class ComentarioSerializer(serializers.ModelSerializer):

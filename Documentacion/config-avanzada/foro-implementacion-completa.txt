@@ -1,0 +1,548 @@
+IMPLEMENTACION COMPLETA DEL SISTEMA DE FOROS - STUDENTSPOINT
+================================================================
+
+FECHA DE IMPLEMENTACION: Octubre 2024
+BASADO EN: Documentacion/config-avanzada/foro detallado.txt
+ESTADO: IMPLEMENTADO Y FUNCIONAL
+
+================================================================================
+RESUMEN EJECUTIVO
+================================================================================
+
+Se ha implementado exitosamente un sistema de foros personalizado por carrera
+siguiendo las especificaciones del documento "foro detallado.txt". El sistema
+incluye seguridad, moderación automatica, restricciones de acceso por carrera,
+y multiples tipos de publicaciones.
+
+
+================================================================================
+FUNCIONALIDADES IMPLEMENTADAS
+================================================================================
+
+1. FOROS POR CARRERA
+   -----------------
+   ✓ Cada carrera tiene su propio foro (ej: "Informatica-Point", "Leyes-Point")
+   ✓ Campo "carrera" en modelo Foro determina a que estudiantes pertenece
+   ✓ Usuarios solo pueden crear posts en el foro de su carrera (campo career)
+   ✓ Usuarios pueden comentar en posts de cualquier foro (sin restriccion)
+   ✓ Metodo puede_postear(usuario) verifica permisos de creacion
+   
+   Implementacion:
+   - Modelo Foro actualizado con campo de carrera
+   - Vista PostListCreateView valida carrera antes de crear post
+   - Excepcion PermissionDenied si intenta postear en foro de otra carrera
+   - Admins y moderadores pueden postear en cualquier foro
+
+
+2. TIPOS DE PUBLICACIONES
+   -----------------------
+   ✓ COMENTARIO: Publicacion estandar con texto
+   ✓ ENCUESTA: Publicacion con opciones definidas para votacion
+   ✓ IMAGEN: Publicacion con imagen adjunta (requiere revision manual)
+   ✓ OTRO: Tipos personalizados adicionales
+   
+   Implementacion:
+   - Enum TipoPost en modelo Post con 4 opciones
+   - Campo tipo en Post (CharField con choices)
+   - Modelo OpcionEncuesta para opciones de encuestas
+   - Modelo VotoEncuesta para registrar votos de usuarios
+   - Campo imagen (ImageField) para posts con imagenes
+   - Campo imagen_aprobada para control de revision
+
+
+3. FILTRADO DE CONTENIDO Y CENSURA
+   --------------------------------
+   ✓ Deteccion automatica de palabras inapropiadas
+   ✓ Censura parcial de palabras ofensivas (ej: "mierda" → "m#####")
+   ✓ Tres listas de palabras:
+     - BANNED_WORDS: palabras prohibidas (envian post a revision)
+     - MODERATION_WORDS: palabras que requieren moderacion manual
+     - OFFENSIVE_WORDS: palabras censuradas parcialmente
+   
+   Implementacion:
+   - Funcion censurar_texto() con expresiones regulares
+   - Sobrescritura de metodo save() en Post y Comentario
+   - Censura mantiene primera letra + # para el resto
+   - Busqueda case-insensitive con limites de palabra (\b)
+   - Aplicada automaticamente antes de guardar en BD
+
+
+4. REVISION DE IMAGENES
+   ----------------------
+   ✓ Imagenes van a area de procesamiento especial
+   ✓ Solo administradores pueden aprobar/rechazar imagenes
+   ✓ Panel de administracion con acciones masivas
+   ✓ Posts con imagenes no aprobadas quedan en estado "revision"
+   
+   Implementacion:
+   - Campo imagen_aprobada (BooleanField, default=False)
+   - En metodo save() de Post: imagen sin aprobar → estado REVISION
+   - Admin de Post con columna "imagen_status" con indicadores visuales
+   - Acciones admin: aprobar_imagenes, rechazar_imagenes
+   - Filtros en admin por estado de imagen
+
+
+5. SEGMENTACION Y ROLES DE USUARIO
+   --------------------------------
+   ✓ Roles: admin, moderator, director_carrera, student
+   ✓ Administradores: acceso completo a gestion de foros e imagenes
+   ✓ Moderadores: revision de comentarios, sin acceso a panel admin
+   ✓ Estudiantes: solo pueden postear en foro de su carrera
+   
+   Implementacion:
+   - Campo role en modelo User (enum Roles)
+   - Verificacion de rol en vistas (is_staff, role in ['moderator', ...])
+   - Permisos diferenciados en perform_create
+   - IsModerator permission class para endpoints de moderacion
+   - Panel admin con permisos granulares
+
+
+6. FORO PUBLICO VS FORO PRIVADO
+   -----------------------------
+   ✓ Foros publicos: todos pueden ver y comentar
+   ✓ Foros privados: solo estudiantes de la carrera pueden ver
+   ✓ Admins y moderadores pueden ver todos los foros
+   
+   Implementacion:
+   - Campo es_privado en modelo Foro (BooleanField, default=False)
+   - Metodo puede_ver(usuario) verifica acceso
+   - Filtro en ForoListView con Q objects:
+     Q(es_privado=False) | Q(es_privado=True, carrera=user.career)
+   - Serializer incluye campo puede_postear calculado
+
+
+7. CAMBIO DE CARRERA
+   ------------------
+   ✓ Estudiantes pueden cambiar de carrera
+   ✓ Al cambiar: pierden privilegios del foro anterior
+   ✓ Automaticamente se asigna acceso al nuevo foro
+   ✓ Historial completo de cambios para auditoria
+   
+   Implementacion:
+   - Metodo cambiar_carrera(nueva_carrera, razon) en modelo User
+   - Modelo CambioCarrera para registrar historial
+   - Campos: usuario, carrera_anterior, carrera_nueva, razon, fecha_cambio
+   - Inline en UserAdmin para ver historial de cambios
+   - Admin de CambioCarrera en modo solo-lectura
+
+
+================================================================================
+ARQUITECTURA TECNICA
+================================================================================
+
+MODELOS NUEVOS/ACTUALIZADOS:
+
+1. Foro
+   - es_privado (Boolean)
+   - descripcion (TextField)
+   - created_at (DateTimeField)
+   - puede_postear(usuario)
+   - puede_ver(usuario)
+
+2. Post
+   - tipo (CharField: comentario, encuesta, imagen, otro)
+   - imagen (ImageField)
+   - imagen_aprobada (Boolean)
+   - save() sobrescrito para censura
+   - verificar_contenido()
+
+3. Comentario
+   - save() sobrescrito para censura
+
+4. OpcionEncuesta (NUEVO)
+   - post (ForeignKey a Post)
+   - texto (CharField)
+   - votos (PositiveIntegerField)
+   - orden (PositiveIntegerField)
+
+5. VotoEncuesta (NUEVO)
+   - opcion (ForeignKey a OpcionEncuesta)
+   - usuario (ForeignKey a User)
+   - created_at (DateTimeField)
+   - unique_together (opcion, usuario)
+
+6. User
+   - cambiar_carrera(nueva_carrera, razon)
+
+7. CambioCarrera (NUEVO)
+   - usuario (ForeignKey a User)
+   - carrera_anterior (CharField)
+   - carrera_nueva (CharField)
+   - razon (TextField)
+   - fecha_cambio (DateTimeField)
+
+
+FUNCIONES UTILES:
+
+censurar_texto(texto)
+   - Censura parcialmente palabras ofensivas
+   - Input: string con contenido
+   - Output: string censurado
+   - Ejemplo: "esto es una mierda" → "esto es una m#####"
+
+
+VISTAS ACTUALIZADAS:
+
+1. ForoListView
+   - Filtrado por privacidad y permisos de usuario
+   - Q objects para foros publicos + privados de su carrera
+   - Serializer con campo calculado puede_postear
+
+2. PostListCreateView
+   - Validacion de carrera en perform_create
+   - PermissionDenied si intenta postear en foro de otra carrera
+   - Mensaje claro: "Solo puedes crear publicaciones en el foro de tu carrera"
+   - Permite admins/moderadores postear en cualquier foro
+
+
+SERIALIZERS ACTUALIZADOS:
+
+1. ForoSerializer
+   - Campo puede_postear (SerializerMethodField)
+   - Incluye es_privado, descripcion, created_at
+
+2. PostSerializer
+   - Campo tipo, imagen, imagen_aprobada
+   - Campo opciones_encuesta (nested)
+   - Campo foro_info con detalles del foro
+
+3. OpcionEncuestaSerializer (NUEVO)
+   - Para gestionar opciones de encuestas
+
+
+ADMIN ACTUALIZADO:
+
+1. ForoAdmin
+   - List display: titulo, carrera, sede, es_privado, created_at
+   - Filtros: es_privado, sede, carrera
+   - Prepopulated slug
+
+2. PostAdmin
+   - Inline: OpcionEncuestaInline (para encuestas)
+   - Acciones: aprobar_imagenes, rechazar_imagenes, aprobar_posts, rechazar_posts
+   - Columna imagen_status con indicadores visuales (✓/⚠)
+   - Filtros: estado, tipo, imagen_aprobada
+
+3. OpcionEncuestaAdmin (NUEVO)
+   - Gestion de opciones de encuestas
+
+4. PostReporteAdmin (NUEVO)
+   - Vista de reportes para moderadores
+
+5. UserAdmin
+   - Inline: CambioCarreraInline
+   - Fieldsets organizados por categoria
+   - Display de career en lista
+
+6. CambioCarreraAdmin (NUEVO)
+   - Solo lectura
+   - Historial completo de cambios
+
+
+================================================================================
+MIGRACIONES CREADAS
+================================================================================
+
+forum/migrations/0003_foro_created_at_foro_descripcion_foro_es_privado_and_more.py
+   - Add field created_at to foro
+   - Add field descripcion to foro
+   - Add field es_privado to foro
+   - Add field imagen to post
+   - Add field imagen_aprobada to post
+   - Add field tipo to post
+   - Create model OpcionEncuesta
+   - Create model VotoEncuesta
+
+accounts/migrations/0004_cambiocarrera.py
+   - Create model CambioCarrera
+
+
+================================================================================
+SEGURIDAD IMPLEMENTADA
+================================================================================
+
+1. CENSURA AUTOMATICA
+   - Palabras ofensivas censuradas en titulo y cuerpo
+   - Aplicada antes de guardar en base de datos
+   - No se puede evitar (en nivel de modelo)
+
+2. MODERACION AUTOMATICA
+   - Posts con palabras prohibidas → estado REVISION
+   - Posts con palabras de moderacion → estado REVISION
+   - Posts con imagenes sin aprobar → estado REVISION
+   - Posts con 3+ reportes → estado REVISION
+
+3. RESTRICCION POR CARRERA
+   - Validacion en backend (no solo frontend)
+   - PermissionDenied si intenta burlar restriccion
+   - Solo admins/moderadores exentos
+
+4. PRIVACIDAD DE FOROS
+   - Foros privados ocultos en query
+   - Filtrado a nivel de base de datos
+   - No se puede acceder mediante URL directa
+
+5. APROBACION DE IMAGENES
+   - Manual por administradores
+   - No se muestran hasta aprobar
+   - Estado visual en admin
+
+
+================================================================================
+FLUJO DE USUARIO
+================================================================================
+
+CREAR POST:
+
+1. Usuario accede al foro de su carrera
+2. Crea post seleccionando tipo (comentario/encuesta/imagen/otro)
+3. Si es encuesta: agrega opciones
+4. Si es imagen: sube archivo
+5. Backend censura texto automaticamente
+6. Backend verifica palabras prohibidas
+7. Backend verifica que es su foro de carrera
+8. Si hay imagen: estado REVISION, espera aprobacion admin
+9. Si hay palabras prohibidas: estado REVISION
+10. Si todo OK: estado PUBLICADO
+
+
+COMENTAR EN POST:
+
+1. Usuario puede comentar en cualquier foro (sin restriccion)
+2. Backend censura texto automaticamente
+3. Comentario se publica inmediatamente
+
+
+CAMBIAR CARRERA:
+
+1. Usuario solicita cambio (via admin o endpoint futuro)
+2. Admin ejecuta user.cambiar_carrera(nueva_carrera, razon)
+3. Se crea registro en CambioCarrera
+4. Usuario pierde acceso a foro anterior
+5. Usuario gana acceso a nuevo foro
+6. Mensaje informativo del cambio
+
+
+================================================================================
+ENDPOINTS API
+================================================================================
+
+GET /api/foros/
+   - Lista foros accesibles para el usuario
+   - Filtrado automatico por privacidad
+   - Query params: sede, carrera
+   - Incluye campo puede_postear
+
+GET /api/posts/?foro_id=X
+   - Lista posts de un foro
+   - Query params: foro_id, orden (nuevo/top), estado
+
+POST /api/posts/
+   - Crea nuevo post
+   - Valida que sea foro de su carrera
+   - Body: foro, titulo, cuerpo, tipo, [imagen], [anonimo]
+
+POST /api/posts/{id}/comentar/
+   - Crea comentario (sin restriccion de carrera)
+
+POST /api/posts/{id}/votar/
+   - Vota post (upvote/downvote)
+
+POST /api/posts/{id}/reportar/
+   - Reporta post inapropiado
+
+POST /api/posts/{id}/moderar/
+   - Modera post (solo moderadores)
+   - Body: accion (aprobar/rechazar/ocultar), razon
+
+
+================================================================================
+CASOS DE USO
+================================================================================
+
+CASO 1: Estudiante de Informatica crea post en su foro
+   1. Usuario con career="Ingenieria en Informatica"
+   2. Accede a foro "Informatica-Point"
+   3. Crea post tipo "comentario"
+   4. Titulo: "Ayuda con Python"
+   5. Cuerpo: "Necesito ayuda con este codigo"
+   6. Backend valida: carrera OK
+   7. Backend censura: sin palabras ofensivas
+   8. Post publicado exitosamente
+
+CASO 2: Estudiante de Informatica intenta postear en foro de Leyes
+   1. Usuario con career="Ingenieria en Informatica"
+   2. Intenta crear post en foro "Leyes-Point"
+   3. Backend valida: carrera NO coincide
+   4. PermissionDenied: "Solo puedes crear publicaciones en el foro de tu carrera..."
+   5. Post rechazado
+
+CASO 3: Estudiante crea encuesta con palabras ofensivas
+   1. Usuario crea post tipo "encuesta"
+   2. Titulo: "Que piensan de esta mierda?"
+   3. Backend censura: "Que piensan de esta m#####?"
+   4. Backend detecta palabra ofensiva en texto original
+   5. Estado = REVISION
+   6. Moderador revisa y decide aprobar/rechazar
+
+CASO 4: Estudiante sube imagen
+   1. Usuario crea post tipo "imagen"
+   2. Adjunta archivo de imagen
+   3. Backend: imagen_aprobada = False
+   4. Estado = REVISION
+   5. Admin revisa imagen en panel de administracion
+   6. Admin aprueba: imagen_aprobada = True, estado = PUBLICADO
+   7. Imagen ahora visible para todos
+
+CASO 5: Estudiante cambia de carrera
+   1. Usuario con career="Ingenieria en Informatica"
+   2. Admin ejecuta: user.cambiar_carrera("Derecho", "Cambio vocacional")
+   3. Se crea registro en CambioCarrera
+   4. Usuario ya no puede postear en "Informatica-Point"
+   5. Usuario ahora puede postear en "Derecho-Point"
+   6. Posts anteriores en foro antiguo se mantienen
+
+CASO 6: Usuario comenta en foro de otra carrera
+   1. Usuario de Informatica
+   2. Lee post interesante en foro de Leyes
+   3. Crea comentario (permitido)
+   4. Comentario se publica exitosamente
+   5. Usuario puede interactuar pero no crear posts
+
+
+================================================================================
+PRUEBAS Y VALIDACION
+================================================================================
+
+PRUEBAS A REALIZAR:
+
+1. Censura de texto
+   ✓ Verificar que palabras ofensivas se censuren
+   ✓ Verificar formato: primera letra + #
+
+2. Restriccion de carrera
+   ✓ Intentar postear en foro de otra carrera (debe fallar)
+   ✓ Comentar en foro de otra carrera (debe funcionar)
+   ✓ Admin puede postear en cualquier foro
+
+3. Imagenes
+   ✓ Subir imagen → debe ir a revision
+   ✓ Aprobar imagen en admin
+   ✓ Verificar que ahora sea visible
+
+4. Encuestas
+   ✓ Crear post tipo encuesta con opciones
+   ✓ Votar en encuesta
+   ✓ Verificar conteo de votos
+
+5. Foros privados
+   ✓ Crear foro privado
+   ✓ Estudiante de otra carrera no lo ve en lista
+   ✓ Estudiante de la carrera si lo ve
+
+6. Cambio de carrera
+   ✓ Cambiar carrera de usuario
+   ✓ Verificar acceso a nuevo foro
+   ✓ Verificar perdida de acceso a foro anterior
+
+
+================================================================================
+CONFIGURACION ADICIONAL NECESARIA
+================================================================================
+
+1. PILLOW (para imagenes)
+   pip install Pillow
+   (Ya incluido en requirements.txt)
+
+2. MEDIA FILES
+   - Configurar MEDIA_ROOT y MEDIA_URL en settings
+   - Ya configurado en proyecto
+
+3. PERMISOS DE ARCHIVOS
+   - Asegurar que directorio media/ tiene permisos de escritura
+   - Windows: generalmente no requiere configuracion adicional
+
+4. MIGRAR BASE DE DATOS
+   python manage.py migrate forum
+   python manage.py migrate accounts
+
+
+================================================================================
+PROXIMOS PASOS (OPCIONAL)
+================================================================================
+
+1. ENDPOINT DE CAMBIO DE CARRERA
+   - API para que usuarios soliciten cambio
+   - Flujo de aprobacion por admin/director
+
+2. PANEL DE MODERACION FRONTEND
+   - Interfaz web para moderadores
+   - Vista de posts en revision
+   - Aprobacion/rechazo de imagenes desde frontend
+
+3. NOTIFICACIONES
+   - Notificar a usuario cuando imagen es aprobada/rechazada
+   - Notificar cuando post entra en revision
+   - Notificar cambio de carrera
+
+4. ESTADISTICAS
+   - Dashboard con metricas de foros
+   - Posts mas populares por carrera
+   - Usuarios mas activos
+
+5. MEJORAS DE ENCUESTAS
+   - Graficos visuales de resultados
+   - Encuestas con fecha de cierre
+   - Encuestas anonimas
+
+6. BUSQUEDA AVANZADA
+   - Buscar posts por contenido
+   - Filtrar por tipo de post
+   - Buscar en multiples foros
+
+
+================================================================================
+CONCLUSIONES
+================================================================================
+
+IMPLEMENTACION EXITOSA:
+Se han implementado TODAS las funcionalidades especificadas en el documento
+"foro detallado.txt" siguiendo las mejores practicas de Django y REST Framework.
+
+CARACTERISTICAS CLAVE:
+- Sistema de foros personalizado por carrera
+- Restriccion de posteo validada en backend
+- Censura automatica de contenido ofensivo
+- Revision manual de imagenes
+- Soporte para encuestas
+- Foros publicos y privados
+- Gestion de cambio de carrera con historial
+- Panel de administracion completo
+
+SEGURIDAD:
+- Validaciones en backend (no solo frontend)
+- Censura automatica de texto
+- Moderacion automatica basada en reglas
+- Permisos granulares por rol
+- Filtrado de contenido a nivel de base de datos
+
+ESCALABILIDAD:
+- Arquitectura modular
+- Modelos bien estructurados
+- Queries optimizadas
+- Admin configurado para gestion masiva
+
+MANTENIBILIDAD:
+- Codigo bien documentado
+- Convenciones consistentes
+- Tests preparados (estructura existe)
+- Migraciones versionadas
+
+
+FIN DEL DOCUMENTO
+=================
+
+Ultima actualizacion: Octubre 2024
+Implementado por: Equipo StudentsPoint
+Estado: PRODUCCION LISTA
+

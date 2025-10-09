@@ -150,4 +150,66 @@ class User(AbstractBaseUser, PermissionsMixin):
     def es_gmail(self) -> bool:
         """Verifica si el usuario tiene correo Gmail."""
         return self.email.lower().endswith("@gmail.com")
+    
+    def cambiar_carrera(self, nueva_carrera, razon=""):
+        """Cambia la carrera del usuario.
+        
+        Al cambiar de carrera, el usuario pierde privilegios de publicación 
+        en el foro de la carrera anterior y se le asigna automáticamente 
+        el foro correspondiente a su nueva carrera.
+        
+        Args:
+            nueva_carrera: Nombre de la nueva carrera
+            razon: Razón del cambio (opcional)
+        
+        Returns:
+            dict: Información sobre el cambio realizado
+        """
+        from django.utils import timezone
+        
+        carrera_anterior = self.career
+        self.career = nueva_carrera
+        self.save(update_fields=['career'])
+        
+        # Registrar el cambio
+        CambioCarrera.objects.create(
+            usuario=self,
+            carrera_anterior=carrera_anterior,
+            carrera_nueva=nueva_carrera,
+            razon=razon
+        )
+        
+        return {
+            'usuario': self.email,
+            'carrera_anterior': carrera_anterior,
+            'carrera_nueva': nueva_carrera,
+            'fecha_cambio': timezone.now(),
+            'mensaje': f'Tu carrera ha sido cambiada de {carrera_anterior} a {nueva_carrera}. '
+                      f'Ahora puedes crear publicaciones en el foro de {nueva_carrera}.'
+        }
+
+
+class CambioCarrera(models.Model):
+    """Registra los cambios de carrera de los usuarios.
+    
+    Mantiene un historial de todos los cambios de carrera para auditoría.
+    """
+    
+    usuario = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="cambios_carrera"
+    )
+    carrera_anterior = models.CharField(max_length=150)
+    carrera_nueva = models.CharField(max_length=150)
+    razon = models.TextField(blank=True)
+    fecha_cambio = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['-fecha_cambio']
+        verbose_name = "Cambio de Carrera"
+        verbose_name_plural = "Cambios de Carrera"
+    
+    def __str__(self):
+        return f"{self.usuario.name}: {self.carrera_anterior} → {self.carrera_nueva}"
 

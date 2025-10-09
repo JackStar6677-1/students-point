@@ -1,95 +1,704 @@
-INSTRUCCIONES PARA IA - DUOCPOINT
-==================================
+INSTRUCCIONES Y CONTEXTO PARA INTELIGENCIA ARTIFICIAL
+=====================================================
 
-CONTEXTO DEL PROYECTO:
-DuocPoint es una aplicación web progresiva (PWA) desarrollada desde cero para la comunidad estudiantil de Duoc UC. Es un proyecto académico del programa Capstone que integra múltiples módulos funcionales.
+PROPOSITO DE ESTE DOCUMENTO
+----------------------------
 
-INFORMACIÓN IMPORTANTE:
-- Proyecto desarrollado completamente desde cero
-- No se usaron plantillas o frameworks preconstruidos
-- Todo el código es original y específico para Duoc UC
-- PWA optimizada para funcionamiento local y producción
-- Documentación académica preservada en carpeta Documentacion/
+Este documento proporciona contexto completo y directrices para que asistentes de IA 
+(como ChatGPT, Claude, Copilot, etc.) puedan entender y trabajar efectivamente con el 
+proyecto StudentsPoint. Incluye información sobre arquitectura, convenciones, patrones 
+de código y mejores prácticas seguidas en el proyecto.
 
-ESTRUCTURA CLAVE:
-- src/backend/ - Backend Django con API REST
-- src/frontend/ - Frontend PWA con archivos estáticos organizados
-- config/ - Configuración del sistema
-- imagenes/ - Imágenes del proyecto (NO TOCAR)
-- Documentacion/ - Documentación académica (NO TOCAR)
-- contexto-ia/ - Contexto para IA (ESTE ARCHIVO)
 
-ARCHIVOS PRINCIPALES:
-- iniciar_desarrollo.bat - Script de desarrollo
-- iniciar_produccion.bat - Script de producción
-- README.md - Documentación principal
+================================================================================
+CONTEXTO GENERAL DEL PROYECTO
+================================================================================
 
-MÓDULOS IMPLEMENTADOS:
-1. Foros de Discusión
-2. Mercado Estudiantil
-3. Portafolio Profesional
-4. Navegación Virtual (por diapositivas)
-5. Bienestar Estudiantil
-6. Sistema de Reportes
-7. Cursos OTEC
-8. Encuestas
-9. Horarios
-10. Notificaciones
+NOMBRE: StudentsPoint
+TIPO: Progressive Web Application (PWA)
+STACK: Django 5.2 (Backend) + Vanilla JavaScript (Frontend)
+PROPOSITO: Plataforma integral para estudiantes universitarios
+DESARROLLO: Proyecto de Capstone - Ingenieria en Informatica
 
-CARACTERÍSTICAS TÉCNICAS:
-- PWA instalable con funcionamiento offline
-- Sistema de autenticación JWT
-- API REST completa
-- Notificaciones push
-- Diseño responsive
-- Sistema de sonidos interactivos
-- Navegación virtual del campus
 
-INSTRUCCIONES ESPECÍFICAS:
-1. NO modificar archivos en carpeta Documentacion/
-2. NO modificar archivos en carpeta imagenes/
-3. Mantener solo 2 archivos .bat (desarrollo y producción)
-4. Preservar estructura de archivos estáticos
-5. Mantener compatibilidad PWA
-6. Conservar funcionalidad de todos los módulos
-7. Mantener diseño responsive
-8. Preservar sistema de sonidos
-9. Conservar navegación virtual por diapositivas
-10. Mantener logo de DuocUC en todas las páginas
+================================================================================
+ARQUITECTURA DEL PROYECTO
+================================================================================
 
-DESARROLLO DESDE CERO:
-- Todo el código fue escrito específicamente para este proyecto
-- No se usaron plantillas HTML preconstruidas
-- No se usaron frameworks CSS como Tailwind
-- No se usaron frameworks JavaScript como React/Vue
-- Diseño visual único para Duoc UC
-- Funcionalidades específicas para la institución
+1. PATRON GENERAL:
+   - Backend: API REST con Django REST Framework
+   - Frontend: SPA (Single Page Application) con JavaScript vanilla
+   - Autenticación: JWT (JSON Web Tokens)
+   - Base de datos: SQLite (dev) / PostgreSQL (prod)
+   - Cache: Redis
+   - Tareas asíncronas: Celery
 
-HERRAMIENTAS UTILIZADAS:
-- Python 3.8+ con Django 5.2.6
-- HTML5, CSS3, JavaScript ES6+
-- Bootstrap 5 (solo componentes base)
-- Font Awesome 6
-- Web Audio API
-- Service Worker API
-- JWT para autenticación
-- SQLite (desarrollo) / PostgreSQL (producción)
+2. COMUNICACION FRONTEND-BACKEND:
+   - Frontend hace peticiones HTTP a /api/*
+   - Backend responde con JSON
+   - Autenticación mediante header: Authorization: Bearer <token>
+   - CORS configurado para desarrollo y producción
 
-ESTADO ACTUAL:
-- Completamente funcional y probado
-- Todos los módulos implementados
-- PWA optimizada
-- Documentación completa
-- Listo para uso en desarrollo y producción
+3. APPS DJANGO (MODULAR):
+   studentspoint/apps/
+   ├── accounts/       # Autenticación y usuarios
+   ├── campuses/       # Campus y recorridos virtuales
+   ├── forum/          # Foros de discusión
+   ├── health/         # Health checks
+   ├── market/         # Marketplace
+   ├── notifications/  # Notificaciones push
+   ├── otec/           # Cursos
+   ├── polls/          # Encuestas
+   ├── portfolio/      # Portafolios profesionales
+   ├── reports/        # Sistema de tickets
+   ├── schedules/      # Horarios
+   └── wellbeing/      # Bienestar estudiantil
 
-INSTRUCCIONES PARA MODIFICACIONES:
-1. Mantener compatibilidad con estructura existente
-2. Preservar funcionalidad PWA
-3. Conservar diseño responsive
-4. Mantener sistema de autenticación
-5. Preservar integración entre módulos
-6. Conservar documentación académica
-7. Mantener contexto para IA actualizado
-8. Preservar scripts de automatización
-9. Conservar configuración de desarrollo/producción
-10. Mantener calidad del código y documentación
+
+================================================================================
+DIRECTRICES DE CODIGO BACKEND (DJANGO)
+================================================================================
+
+1. MODELOS (models.py):
+   
+   CONVENCIONES:
+   - Usar PascalCase para nombres de clases
+   - Incluir __str__ para representación legible
+   - Usar related_name descriptivos en ForeignKey
+   - Incluir help_text en campos cuando sea útil
+   - Ordenar campos: campos básicos → relaciones → metadatos
+   
+   EJEMPLO CORRECTO:
+   ```python
+   class Post(models.Model):
+       titulo = models.CharField(max_length=200)
+       cuerpo = models.TextField()
+       usuario = models.ForeignKey(
+           settings.AUTH_USER_MODEL,
+           on_delete=models.CASCADE,
+           related_name="posts"
+       )
+       created_at = models.DateTimeField(auto_now_add=True)
+       
+       class Meta:
+           ordering = ['-created_at']
+       
+       def __str__(self):
+           return self.titulo
+   ```
+
+2. SERIALIZERS (serializers.py):
+   
+   CONVENCIONES:
+   - Un serializer por modelo principal
+   - Usar serializers anidados para relaciones
+   - Incluir validación personalizada en validate_*
+   - Meta.fields explícito (evitar '__all__' en producción)
+   
+   EJEMPLO CORRECTO:
+   ```python
+   class PostSerializer(serializers.ModelSerializer):
+       usuario = UserSerializer(read_only=True)
+       
+       class Meta:
+           model = Post
+           fields = ['id', 'titulo', 'cuerpo', 'usuario', 'created_at']
+           read_only_fields = ['created_at']
+       
+       def validate_titulo(self, value):
+           if len(value) < 5:
+               raise serializers.ValidationError("Título muy corto")
+           return value
+   ```
+
+3. VISTAS (views.py):
+   
+   CONVENCIONES:
+   - Preferir ViewSets para CRUD completo
+   - Usar APIView para endpoints personalizados
+   - Aplicar permisos apropiados
+   - Manejar errores explícitamente
+   - Incluir docstrings para documentación automática
+   
+   EJEMPLO CORRECTO:
+   ```python
+   class PostViewSet(viewsets.ModelViewSet):
+       """
+       ViewSet para gestión de posts en foros.
+       
+       list: Listar todos los posts
+       create: Crear nuevo post
+       retrieve: Obtener post específico
+       update: Actualizar post
+       destroy: Eliminar post
+       """
+       queryset = Post.objects.select_related('usuario')
+       serializer_class = PostSerializer
+       permission_classes = [IsAuthenticated]
+       filter_backends = [DjangoFilterBackend, SearchFilter]
+       search_fields = ['titulo', 'cuerpo']
+       
+       def perform_create(self, serializer):
+           serializer.save(usuario=self.request.user)
+   ```
+
+4. URLS (urls.py):
+   
+   CONVENCIONES:
+   - Usar routers para ViewSets
+   - Nombres descriptivos para rutas
+   - app_name para namespacing
+   
+   EJEMPLO CORRECTO:
+   ```python
+   from rest_framework.routers import DefaultRouter
+   from .views import PostViewSet
+   
+   app_name = 'forum'
+   
+   router = DefaultRouter()
+   router.register(r'posts', PostViewSet, basename='post')
+   
+   urlpatterns = router.urls
+   ```
+
+5. ADMIN (admin.py):
+   
+   CONVENCIONES:
+   - Registrar todos los modelos
+   - Configurar list_display para vista de lista
+   - Incluir search_fields y list_filter cuando sea útil
+   
+   EJEMPLO CORRECTO:
+   ```python
+   @admin.register(Post)
+   class PostAdmin(admin.ModelAdmin):
+       list_display = ['titulo', 'usuario', 'created_at', 'estado']
+       list_filter = ['estado', 'created_at']
+       search_fields = ['titulo', 'cuerpo']
+       date_hierarchy = 'created_at'
+   ```
+
+
+================================================================================
+DIRECTRICES DE CODIGO FRONTEND (JAVASCRIPT)
+================================================================================
+
+1. ESTRUCTURA DE ARCHIVOS:
+   - Cada módulo tiene: index.html, [modulo].css, [modulo].js
+   - main.js: Funciones compartidas
+   - pwa.js: Lógica PWA
+   - sounds.js: Sistema de sonidos
+
+2. CONVENCIONES JAVASCRIPT:
+   
+   VARIABLES Y FUNCIONES:
+   - camelCase para funciones y variables
+   - PascalCase para constructores/clases
+   - UPPER_SNAKE_CASE para constantes
+   
+   EJEMPLO CORRECTO:
+   ```javascript
+   const API_BASE_URL = '/api';
+   
+   async function fetchPosts() {
+       const token = getAuthToken();
+       const response = await fetch(`${API_BASE_URL}/posts/`, {
+           headers: {
+               'Authorization': `Bearer ${token}`,
+               'Content-Type': 'application/json'
+           }
+       });
+       return await response.json();
+   }
+   ```
+
+3. MANEJO DE AUTENTICACION:
+   
+   PATRON ESTANDAR:
+   ```javascript
+   // Obtener token
+   function getAuthToken() {
+       return localStorage.getItem('access_token');
+   }
+   
+   // Verificar autenticación
+   function checkAuth() {
+       const token = getAuthToken();
+       if (!token) {
+           window.location.href = '/login.html';
+           return false;
+       }
+       return true;
+   }
+   
+   // Headers para peticiones autenticadas
+   function getAuthHeaders() {
+       return {
+           'Authorization': `Bearer ${getAuthToken()}`,
+           'Content-Type': 'application/json'
+       };
+   }
+   ```
+
+4. MANEJO DE ERRORES:
+   
+   PATRON ESTANDAR:
+   ```javascript
+   async function fetchData() {
+       try {
+           const response = await fetch(url, options);
+           
+           if (!response.ok) {
+               if (response.status === 401) {
+                   // Token expirado
+                   localStorage.removeItem('access_token');
+                   window.location.href = '/login.html';
+                   return;
+               }
+               throw new Error(`Error ${response.status}`);
+           }
+           
+           return await response.json();
+       } catch (error) {
+           console.error('Error:', error);
+           showError('Ocurrió un error. Por favor intenta nuevamente.');
+       }
+   }
+   ```
+
+5. DOM MANIPULATION:
+   
+   CONVENCIONES:
+   - Usar querySelector/querySelectorAll
+   - Evitar innerHTML cuando sea posible (usar textContent)
+   - Limpiar event listeners cuando no se necesiten
+   
+   EJEMPLO CORRECTO:
+   ```javascript
+   function renderPosts(posts) {
+       const container = document.getElementById('posts-container');
+       container.innerHTML = ''; // Limpiar contenido previo
+       
+       posts.forEach(post => {
+           const postElement = document.createElement('div');
+           postElement.className = 'post-card';
+           
+           const title = document.createElement('h3');
+           title.textContent = post.titulo;
+           
+           const body = document.createElement('p');
+           body.textContent = post.cuerpo;
+           
+           postElement.appendChild(title);
+           postElement.appendChild(body);
+           container.appendChild(postElement);
+       });
+   }
+   ```
+
+
+================================================================================
+SISTEMA DE AUTENTICACION
+================================================================================
+
+1. FLUJO DE LOGIN:
+   
+   a) Usuario envía credenciales a /api/auth/login/
+   b) Backend valida y retorna access_token y refresh_token
+   c) Frontend guarda tokens en localStorage
+   d) Frontend incluye access_token en todas las peticiones
+   
+   IMPLEMENTACION:
+   ```javascript
+   async function login(email, password) {
+       const response = await fetch('/api/auth/login/', {
+           method: 'POST',
+           headers: { 'Content-Type': 'application/json' },
+           body: JSON.stringify({ email, password })
+       });
+       
+       if (response.ok) {
+           const data = await response.json();
+           localStorage.setItem('access_token', data.access);
+           localStorage.setItem('refresh_token', data.refresh);
+           window.location.href = '/index.html';
+       }
+   }
+   ```
+
+2. FLUJO DE REGISTRO:
+   
+   a) Usuario envía datos a /api/auth/register/
+   b) Backend crea usuario y retorna tokens
+   c) Mismo flujo que login
+   
+3. GOOGLE OAUTH:
+   
+   a) Frontend redirige a /api/auth/google/login/web/
+   b) Google autentica y redirige a callback
+   c) Backend procesa y redirige con tokens
+   d) Frontend captura tokens de URL
+
+4. REFRESH TOKEN:
+   
+   Cuando access_token expira (401):
+   ```javascript
+   async function refreshToken() {
+       const refresh = localStorage.getItem('refresh_token');
+       const response = await fetch('/api/auth/refresh/', {
+           method: 'POST',
+           headers: { 'Content-Type': 'application/json' },
+           body: JSON.stringify({ refresh })
+       });
+       
+       if (response.ok) {
+           const data = await response.json();
+           localStorage.setItem('access_token', data.access);
+           return true;
+       }
+       return false;
+   }
+   ```
+
+
+================================================================================
+SISTEMA DE FOROS
+================================================================================
+
+1. ESTRUCTURA:
+   - Foro: contenedor por sede/carrera
+   - Post: publicación en un foro
+   - Comentario: respuesta a un post
+   - Voto: upvote/downvote en post
+
+2. MODERACION AUTOMATICA:
+   - Lista de palabras prohibidas (BANNED_WORDS)
+   - Lista de palabras que requieren revisión (MODERATION_WORDS)
+   - Estados: publicado, revision, oculto, rechazado
+   - Posts con palabras prohibidas van a revisión automáticamente
+
+3. ANONIMATO:
+   - Campo anonimo en Post
+   - Si es anónimo, no mostrar usuario en frontend
+   - Moderadores pueden ver usuario real
+
+4. API ENDPOINTS:
+   GET    /api/foros/                    # Lista de foros
+   GET    /api/foros/{id}/posts/         # Posts de un foro
+   POST   /api/posts/                    # Crear post
+   GET    /api/posts/{id}/                # Detalle de post
+   POST   /api/posts/{id}/votar/         # Votar post
+   POST   /api/posts/{id}/comentar/      # Comentar post
+
+
+================================================================================
+PWA Y SERVICE WORKER
+================================================================================
+
+1. REGISTRO DE SERVICE WORKER:
+   
+   En main.js o pwa.js:
+   ```javascript
+   if ('serviceWorker' in navigator) {
+       navigator.serviceWorker.register('/sw.js')
+           .then(reg => console.log('SW registered'))
+           .catch(err => console.error('SW error:', err));
+   }
+   ```
+
+2. ESTRATEGIA DE CACHE:
+   
+   En sw.js:
+   - Cache-first para archivos estáticos (CSS, JS, imágenes)
+   - Network-first para API calls
+   - Fallback a cache si network falla
+   
+   EJEMPLO:
+   ```javascript
+   self.addEventListener('fetch', event => {
+       if (event.request.url.includes('/api/')) {
+           // Network-first para API
+           event.respondWith(
+               fetch(event.request)
+                   .catch(() => caches.match(event.request))
+           );
+       } else {
+           // Cache-first para estáticos
+           event.respondWith(
+               caches.match(event.request)
+                   .then(response => response || fetch(event.request))
+           );
+       }
+   });
+   ```
+
+3. MANIFEST.JSON:
+   - Configurado con iconos múltiples tamaños
+   - Shortcuts a funcionalidades principales
+   - theme_color y background_color configurados
+
+
+================================================================================
+TESTING
+================================================================================
+
+1. TESTS BACKEND (pytest):
+   
+   UBICACION: pruebas_unitarias/api/
+   
+   ESTRUCTURA:
+   ```python
+   import pytest
+   from django.urls import reverse
+   
+   @pytest.mark.django_db
+   def test_crear_post(api_client, user):
+       api_client.force_authenticate(user=user)
+       response = api_client.post(reverse('forum:post-list'), {
+           'titulo': 'Test Post',
+           'cuerpo': 'Contenido de prueba'
+       })
+       assert response.status_code == 201
+   ```
+   
+   CONVENCIONES:
+   - Usar fixtures para datos comunes
+   - Marcar con @pytest.mark.django_db si usa BD
+   - Nombrar tests como test_<accion>_<resultado>
+
+2. TESTS FRONTEND (E2E):
+   
+   UBICACION: pruebas_automatizadas/
+   
+   Usar Selenium o Playwright para tests de interfaz
+
+
+================================================================================
+COMANDOS DE GESTION DJANGO
+================================================================================
+
+COMANDOS PERSONALIZADOS:
+- python manage.py ensure_foros: Crear foros iniciales
+- python manage.py populate_data: Poblar datos de prueba
+- python manage.py import_casino_tour: Importar recorrido del casino
+
+COMANDOS ESTANDAR:
+- python manage.py migrate: Aplicar migraciones
+- python manage.py makemigrations: Crear nuevas migraciones
+- python manage.py createsuperuser: Crear admin
+- python manage.py collectstatic: Recopilar estáticos
+- python manage.py runserver: Iniciar servidor desarrollo
+- python manage.py shell: Shell interactiva de Django
+- python manage.py test: Ejecutar tests de Django
+
+
+================================================================================
+CONFIGURACION DE ENTORNOS
+================================================================================
+
+1. DESARROLLO (settings/dev.py):
+   - DEBUG = True
+   - SQLite como base de datos
+   - CORS permite localhost
+   - Sin requerimientos de SSL
+
+2. PRODUCCION (settings/prod.py):
+   - DEBUG = False
+   - PostgreSQL como base de datos
+   - CORS restrictivo
+   - SSL requerido
+   - ALLOWED_HOSTS específico
+
+3. VARIABLES DE ENTORNO (.env):
+   ```
+   DEBUG=1
+   SECRET_KEY=tu-secret-key
+   DATABASE_URL=postgresql://user:pass@localhost:5432/db
+   ALLOWED_HOSTS=localhost,127.0.0.1
+   CORS_ALLOWED_ORIGINS=http://localhost:8000
+   GOOGLE_OAUTH_CLIENT_ID=xxx
+   GOOGLE_OAUTH_CLIENT_SECRET=xxx
+   ```
+
+
+================================================================================
+MEJORES PRACTICAS Y PATRONES
+================================================================================
+
+1. BACKEND:
+   - Validar entrada en serializers
+   - Manejar errores con try/except
+   - Usar select_related/prefetch_related para optimizar queries
+   - Aplicar permisos apropiados a cada endpoint
+   - Incluir paginación en listas largas
+   - Loggear errores importantes
+
+2. FRONTEND:
+   - Validar formularios antes de enviar
+   - Mostrar feedback al usuario (loading, success, error)
+   - Manejar tokens expirados
+   - Implementar debouncing para búsquedas
+   - Usar async/await para código limpio
+   - Evitar operaciones costosas en main thread
+
+3. SEGURIDAD:
+   - NUNCA exponer SECRET_KEY
+   - Sanitizar input de usuarios
+   - Usar HTTPS en producción
+   - Validar tokens en cada petición
+   - Aplicar rate limiting
+   - Mantener dependencias actualizadas
+
+4. RENDIMIENTO:
+   - Cachear queries frecuentes
+   - Optimizar imágenes
+   - Minificar CSS/JS en producción
+   - Usar CDN para assets estáticos
+   - Implementar lazy loading
+
+
+================================================================================
+PATRONES DE CODIGO ESPECIFICOS DEL PROYECTO
+================================================================================
+
+1. CREAR NUEVA APP DJANGO:
+   ```bash
+   cd studentspoint/apps/
+   python ../../manage.py startapp nombre_app
+   ```
+   
+   Estructura esperada:
+   - models.py: Definir modelos
+   - serializers.py: Crear serializers
+   - views.py: Implementar ViewSets/APIViews
+   - urls.py: Definir rutas
+   - admin.py: Registrar en admin
+   - tests.py: Escribir tests
+
+2. CREAR NUEVO MODULO FRONTEND:
+   ```
+   frontend/
+   └── nuevo_modulo/
+       ├── index.html
+       ├── nuevo_modulo.css
+       └── nuevo_modulo.js
+   ```
+   
+   index.html debe:
+   - Incluir CSS de Bootstrap
+   - Incluir CSS del módulo
+   - Incluir main.js
+   - Incluir JS del módulo
+   - Verificar autenticación al cargar
+
+3. AGREGAR ENDPOINT API:
+   
+   En views.py:
+   ```python
+   @action(detail=True, methods=['post'])
+   def accion_personalizada(self, request, pk=None):
+       """Descripción de la acción"""
+       obj = self.get_object()
+       # Lógica aquí
+       return Response({'status': 'success'})
+   ```
+
+4. AGREGAR COMANDO DE GESTION:
+   
+   En management/commands/nombre_comando.py:
+   ```python
+   from django.core.management.base import BaseCommand
+   
+   class Command(BaseCommand):
+       help = 'Descripción del comando'
+       
+       def handle(self, *args, **options):
+           # Lógica aquí
+           self.stdout.write(self.style.SUCCESS('Completado'))
+   ```
+
+
+================================================================================
+SOLUCIONES A PROBLEMAS COMUNES
+================================================================================
+
+1. ERROR: Token inválido o expirado
+   SOLUCION: Implementar refresh token automático o redirigir a login
+
+2. ERROR: CORS blocking requests
+   SOLUCION: Verificar CORS_ALLOWED_ORIGINS en settings
+   
+3. ERROR: 404 en archivos estáticos
+   SOLUCION: Ejecutar collectstatic
+   
+4. ERROR: Migraciones conflictivas
+   SOLUCION: python manage.py migrate --merge
+
+5. ERROR: Service Worker no actualiza
+   SOLUCION: Cambiar versión en sw.js y hacer hard refresh
+
+
+================================================================================
+RECURSOS Y DOCUMENTACION
+================================================================================
+
+DOCUMENTACION DJANGO:
+- https://docs.djangoproject.com/en/5.2/
+
+DOCUMENTACION DRF:
+- https://www.django-rest-framework.org/
+
+DOCUMENTACION PWA:
+- https://web.dev/progressive-web-apps/
+
+DOCUMENTACION JWT:
+- https://django-rest-framework-simplejwt.readthedocs.io/
+
+REPOSITORIO DEL PROYECTO:
+- https://github.com/JackStar6677-1/students-point
+
+
+================================================================================
+NOTAS FINALES PARA IA
+================================================================================
+
+1. CONTEXTO DE TRABAJO:
+   - Este es un proyecto académico (Capstone)
+   - Priorizar código educativo y bien documentado
+   - Seguir estándares de la industria
+   - Código debe ser mantenible y escalable
+
+2. CUANDO SUGERIR CODIGO:
+   - Seguir las convenciones establecidas
+   - Incluir comentarios explicativos
+   - Manejar errores apropiadamente
+   - Considerar seguridad y rendimiento
+   - Proporcionar ejemplos completos y funcionales
+
+3. CUANDO EXPLICAR:
+   - Usar lenguaje claro y profesional
+   - Proporcionar contexto del proyecto
+   - Explicar el "por qué" además del "cómo"
+   - Sugerir mejores prácticas cuando sea relevante
+
+4. LIMITACIONES DEL PROYECTO:
+   - Frontend es vanilla JS (sin React/Vue/Angular)
+   - Backend es monolítico (no microservicios)
+   - Base de datos relacional (no NoSQL)
+   - Estas son decisiones de diseño, no limitaciones técnicas
+
+5. AREAS DE MEJORA FUTURA:
+   - Migración a TypeScript
+   - Implementación de WebSockets
+   - Sistema de cache más robusto
+   - App móvil nativa
+   - Integración de IA
+
+
+FIN DEL DOCUMENTO
+=================
+
+Este documento debe ser actualizado conforme el proyecto evoluciona.
+Última actualización: Octubre 2024
+
