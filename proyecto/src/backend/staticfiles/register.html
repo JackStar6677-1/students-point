@@ -291,12 +291,23 @@
                 const data = await response.json();
                 
                 if (response.ok) {
-                    showAlert('¡Cuenta creada exitosamente! Redirigiendo al login...', 'success');
-                    if (window.playSound) window.playSound('success');
-                    
-                    setTimeout(() => {
-                        window.location.href = '/login.html';
-                    }, 2000);
+                    // Verificar si el email fue verificado
+                    if (data.user && data.user.is_email_verified) {
+                        showAlert('¡Cuenta creada exitosamente! Redirigiendo...', 'success');
+                        if (window.playSound) window.playSound('success');
+                        
+                        setTimeout(() => {
+                            window.location.href = '/index.html';
+                        }, 2000);
+                    } else {
+                        // Mostrar mensaje de verificación
+                        showAlert('¡Cuenta creada! Por favor verifica tu email con el código enviado.', 'info');
+                        if (window.playSound) window.playSound('success');
+                        
+                        setTimeout(() => {
+                            window.location.href = `/verify-email.html?email=${encodeURIComponent(email)}`;
+                        }, 2000);
+                    }
                 } else {
                     showAlert(data.detail || data.error || 'Error al crear la cuenta. Por favor, intenta de nuevo.');
                     if (window.playSound) window.playSound('error');

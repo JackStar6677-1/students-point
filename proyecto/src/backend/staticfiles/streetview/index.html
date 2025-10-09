@@ -38,7 +38,7 @@
             </div>
             <div>
               <h1>Recorridos Virtuales StudentsPoint</h1>
-              <p>Explora las sedes con recorridos 360°</p>
+              <p>Explora las sedes con diapositivas virtuales</p>
             </div>
           </div>
         </div>
@@ -175,7 +175,7 @@
       <div class="row align-items-center">
         <div class="col-md-6">
           <h5 class="gradient-text">Recorridos Virtuales StudentsPoint</h5>
-          <p>Explora las sedes con recorridos 360°.</p>
+          <p>Explora las sedes con diapositivas virtuales.</p>
         </div>
         <div class="col-md-6 text-end">
           <p class="mb-0"><i class="fas fa-map"></i> Explora desde casa</p>
@@ -251,17 +251,25 @@
 
     function populateSedeSelect() {
       const select = document.getElementById('sede-select');
+      if (!select) return;
+      
       select.innerHTML = '<option value="">Selecciona una sede...</option>';
       
-      sedes.forEach(sede => {
-        const option = document.createElement('option');
-        option.value = sede.id;
-        option.textContent = sede.name;
-        select.appendChild(option);
-      });
+      // Asegurar que sedes es un array
+      if (Array.isArray(sedes)) {
+        sedes.forEach(sede => {
+          const option = document.createElement('option');
+          option.value = sede.id;
+          option.textContent = sede.name || sede.nombre;
+          select.appendChild(option);
+        });
+      }
       
       select.addEventListener('change', function() {
-        document.getElementById('load-btn').disabled = !this.value;
+        const loadBtn = document.getElementById('load-btn');
+        if (loadBtn) {
+          loadBtn.disabled = !this.value;
+        }
       });
     }
 
@@ -331,7 +339,14 @@
       const container = document.getElementById('recorridos-container');
       const list = document.getElementById('recorridos-list');
       
+      if (!list) return;
+      
       list.innerHTML = '';
+      
+      // Asegurar que recorridos es un array
+      if (!Array.isArray(recorridos)) {
+        recorridos = [];
+      }
       
       recorridos.forEach(recorrido => {
         const card = document.createElement('div');
