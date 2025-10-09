@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Cuenta - StudentsPoint</title>
+    
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/static/images/favicon.svg" />
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/images/icons/icon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/images/icons/icon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/images/icons/icon-192x192.png" />
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/static/manifest.json">
+    
+    <!-- Meta tags para PWA -->
+    <meta name="theme-color" content="#2563eb">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="StudentsPoint">
+    
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary-color: #64748b;
+            --accent-color: #0ea5e9;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --dark-color: #1e293b;
+            --light-color: #f8fafc;
+            --gradient-primary: linear-gradient(135deg, #2563eb 0%, #0ea5e9 100%);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            min-height: 100vh;
+            color: var(--dark-color);
+        }
+
+        .navbar {
+            background: var(--gradient-primary) !important;
+            box-shadow: var(--shadow-lg);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: white !important;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-nav .nav-link {
+            color: rgba(255, 255, 255, 0.9) !important;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem !important;
+            border-radius: 0.5rem;
+            margin: 0 0.25rem;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: white !important;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .account-container {
+            background: white;
+            border-radius: 1.5rem;
+            box-shadow: var(--shadow-lg);
+            padding: 2rem;
+            margin: 2rem auto;
+            max-width: 800px;
+            border: 1px solid rgba(226, 232, 240, 0.5);
+        }
+
+        .profile-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            color: white;
+            font-size: 3rem;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .profile-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-email {
+            color: var(--secondary-color);
+            margin-bottom: 0;
+        }
+
+        .form-control {
+            border: 2px solid #e2e8f0;
+            border-radius: 0.75rem;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+        }
+
+        .btn-outline-danger {
+            color: var(--danger-color);
+            border: 2px solid var(--danger-color);
+            padding: 0.75rem 2rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-danger:hover {
+            background: var(--danger-color);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--dark-color);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: var(--secondary-color);
+        }
+
+        .info-value {
+            color: var(--dark-color);
+        }
+
+        @media (max-width: 768px) {
+            .account-container {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+  <div class="particles-bg"></div>
+  
+  <header class="students-header text-white">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-md-8">
+          <div class="students-logo">
+            <div class="logo-placeholder">
+              <i class="fas fa-graduation-cap fa-2x"></i>
+            </div>
+            <div>
+              <h1>Mi Cuenta StudentsPoint</h1>
+              <p>Gestiona tu perfil y configuraciones</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 text-end">
+          <div class="auth-buttons">
+            <a href="/" class="btn btn-outline-primary btn-sm">
+              <i class="fas fa-home"></i> Inicio
+            </a>
+            <a href="/login.html" class="btn btn-primary btn-sm">
+              <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <nav class="navbar navbar-expand-lg students-nav">
+    <div class="container">
+      <div class="collapse navbar-collapse">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+              <i class="fas fa-th-large"></i> Aplicaciones
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="/forum/"><i class="fas fa-comments"></i> Foros</a></li>
+              <li><a class="dropdown-item" href="/market/"><i class="fas fa-store"></i> Mercado</a></li>
+              <li><a class="dropdown-item" href="/portfolio/"><i class="fas fa-briefcase"></i> Portafolio</a></li>
+              <li><a class="dropdown-item" href="/bienestar/"><i class="fas fa-heart-pulse"></i> Bienestar</a></li>
+              <li><a class="dropdown-item" href="/cursos/"><i class="fas fa-graduation-cap"></i> Cursos</a></li>
+              <li><a class="dropdown-item" href="/horarios/"><i class="fas fa-calendar"></i> Horarios</a></li>
+              <li><a class="dropdown-item" href="/encuestas/"><i class="fas fa-poll"></i> Encuestas</a></li>
+              <li><a class="dropdown-item" href="/reportes/"><i class="fas fa-chart-bar"></i> Reportes</a></li>
+              <li><a class="dropdown-item" href="/streetview/"><i class="fas fa-map"></i> Recorridos Virtuales</a></li>
+              <li><a class="dropdown-item" href="/campuses.html"><i class="fas fa-building"></i> Sedes</a></li>
+              <li><a class="dropdown-item" href="/teachers.html"><i class="fas fa-chalkboard-teacher"></i> Profesores</a></li>
+              <li><a class="dropdown-item" href="/account.html"><i class="fas fa-user"></i> Mi Cuenta</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <main class="main-content" style="position: relative; z-index: 2;">
+    <div class="container mt-3">
+      <div class="row">
+        <div class="col-12">
+          <div class="text-center py-5">
+            <i class="fas fa-user fa-3x gradient-text mb-3"></i>
+            <h2>Mi Cuenta</h2>
+            <p class="text-muted">Gestiona tu perfil y configuraciones</p>
+            <button class="btn btn-primary btn-lg" onclick="manageAccount()">
+              <i class="fas fa-cog"></i> Gestionar Cuenta
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="students-footer">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-md-6">
+          <h5 class="gradient-text">Mi Cuenta StudentsPoint</h5>
+          <p>Gestiona tu perfil y configuraciones.</p>
+        </div>
+        <div class="col-md-6 text-end">
+          <p class="mb-0"><i class="fas fa-user"></i> Tu espacio personal</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <div class="dev-tools" style="display: none;">
+    <button onclick="window.StudentsPointPWA?.clearCache()" title="Limpiar Cache"><i class="fas fa-sync-alt"></i></button>
+    <button onclick="window.StudentsPointPWA?.getVersion()" title="Versión"><i class="fas fa-info-circle"></i></button>
+    <button onclick="window.open('/admin/', '_blank')" title="Administración"><i class="fas fa-cog"></i></button>
+    <button onclick="window.open('/api/', '_blank')" title="API"><i class="fas fa-code"></i></button>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/static/js/sounds.js"></script>
+  <script src="/static/js/pwa.js"></script>
+  <script src="/static/pwa-config.js"></script>
+  <script src="/static/js/main.js"></script>
+
+  <script>
+    // Verificar autenticación
+    async function checkAuth() {
+      try {
+        const token = localStorage.getItem('access_token');
+        if (!token) {
+          window.location.href = '/login.html';
+          return false;
+        }
+        
+        const response = await fetch('/api/auth/me/', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (response.ok) {
+          const user = await response.json();
+          updateUIForLoggedInUser(user);
+          return true;
+        } else {
+          localStorage.removeItem('access_token');
+          localStorage.removeItem('refresh_token');
+          window.location.href = '/login.html';
+          return false;
+        }
+      } catch (error) {
+        console.error('Error verificando autenticación:', error);
+        window.location.href = '/login.html';
+        return false;
+      }
+    }
+
+    // Actualizar UI para usuario autenticado
+    function updateUIForLoggedInUser(user) {
+      const authButtons = document.querySelector('.auth-buttons');
+      if (authButtons) {
+        authButtons.innerHTML = `
+          <div class="dropdown">
+            <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+              <i class="fas fa-user"></i> ${user.name || user.email}
+            </button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="/account.html">
+                <i class="fas fa-user"></i> Mi Perfil
+              </a></li>
+              <li><a class="dropdown-item" href="/portfolio/">
+                <i class="fas fa-briefcase"></i> Portafolio
+              </a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="#" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+              </a></li>
+            </ul>
+          </div>
+        `;
+      }
+    }
+
+    // Función de logout
+    window.logout = async function() {
+      if (confirm('¿Estás seguro de que quieres cerrar sesión?')) {
+        try {
+          const token = localStorage.getItem('access_token');
+          if (token) {
+            await fetch('/api/auth/logout/', {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+              }
+            });
+          }
+        } catch (error) {
+          console.error('Error en logout:', error);
+        } finally {
+          localStorage.removeItem('access_token');
+          localStorage.removeItem('refresh_token');
+          window.location.href = '/';
+        }
+      }
+    };
+
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+      document.querySelector('.dev-tools').style.display = 'flex';
+    }
+
+    document.addEventListener('DOMContentLoaded', async function() {
+      await checkAuth();
+      
+      setTimeout(() => {
+        if (window.playSound) {
+          window.playSound('pageLoad');
+        }
+      }, 500);
+    });
+
+    function manageAccount() {
+      if (window.playSound) {
+        window.playSound('click');
+      }
+      showSuccess('Función de gestión de cuenta en desarrollo');
+    }
+
+    function showSuccess(message) {
+      const alertDiv = document.createElement('div');
+      alertDiv.className = 'alert alert-success alert-dismissible fade show';
+      alertDiv.innerHTML = `${message}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>`;
+      const container = document.querySelector('.container');
+      container.insertBefore(alertDiv, container.firstChild);
+      setTimeout(() => {
+        if (alertDiv.parentNode) {
+          alertDiv.remove();
+        }
+      }, 3000);
+    }
+  </script>
+</body>
+</html>
