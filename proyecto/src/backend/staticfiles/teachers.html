@@ -3,8 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="manifest" href="/static/manifest.json" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+<link rel="manifest" href="/static/manifest.json" />
+<link rel="icon" type="image/x-icon" href="/static/favicon.ico" />
+<link rel="icon" type="image/png" sizes="32x32" href="/static/images/icons/icon-32x32.png" />
+<link rel="icon" type="image/png" sizes="16x16" href="/static/images/icons/icon-16x16.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="/static/images/icons/icon-192x192.png" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link rel="stylesheet" href="/static/css/students-theme.css" />
   <link rel="stylesheet" href="/static/css/styles.css" />
@@ -19,7 +23,9 @@
       <div class="row align-items-center">
         <div class="col-md-8">
           <div class="students-logo">
-            <img src="/imagenes/logos-iconos/Logo_StudentsPoint.svg.png" alt="StudentsPoint Logo" class="students-logo-img">
+            <div class="logo-placeholder">
+              <i class="fas fa-graduation-cap fa-2x"></i>
+            </div>
             <div>
               <h1>Profesores StudentsPoint</h1>
               <p>Conoce a nuestro equipo docente</p>
@@ -69,73 +75,21 @@
   </nav>
 
   <main class="main-content" style="position: relative; z-index: 2;">
-    <div class="container mt-4">
-      <!-- Header Section -->
-      <div class="row mb-4">
+    <div class="container mt-3">
+      <div class="row">
         <div class="col-12">
-          <div class="text-center">
+          <div class="text-center py-5">
             <i class="fas fa-chalkboard-teacher fa-3x gradient-text mb-3"></i>
             <h2>Nuestro Equipo Docente</h2>
-            <p class="text-muted">Conoce a los profesores y personal académico de StudentsPoint</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Search and Filters -->
-      <div class="row mb-4">
-        <div class="col-md-6">
-          <div class="input-group">
-            <span class="input-group-text"><i class="fas fa-search"></i></span>
-            <input type="text" class="form-control" id="searchInput" placeholder="Buscar profesores...">
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="btn-group w-100" role="group">
-            <button type="button" class="btn btn-outline-primary filter-btn active" id="filterAll">
-              <i class="fas fa-users me-1"></i> Todos
-            </button>
-            <button type="button" class="btn btn-outline-primary filter-btn" id="filterModerators">
-              <i class="fas fa-user-shield me-1"></i> Moderadores
-            </button>
-            <button type="button" class="btn btn-outline-primary filter-btn" id="filterDirectors">
-              <i class="fas fa-user-tie me-1"></i> Directores
-            </button>
-            <button type="button" class="btn btn-outline-primary filter-btn" id="filterAdmins">
-              <i class="fas fa-user-cog me-1"></i> Administradores
+            <p class="text-muted">Conoce a los profesores de StudentsPoint</p>
+            <button class="btn btn-primary btn-lg" onclick="viewTeachers()">
+              <i class="fas fa-users"></i> Ver Profesores
             </button>
           </div>
-        </div>
-      </div>
-
-      <!-- Teachers Grid -->
-      <div class="row" id="teachersContainer">
-        <div class="col-12 text-center py-5">
-          <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Cargando profesores...</span>
-          </div>
-          <p class="mt-3 text-muted">Cargando profesores...</p>
         </div>
       </div>
     </div>
   </main>
-
-  <!-- Teacher Detail Modal -->
-  <div class="modal fade" id="teacherDetailModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Detalle del Profesor</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body" id="teacherDetailBody">
-          <!-- Content will be loaded dynamically -->
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-        </div>
-      </div>
-    </div>
-  </div>
 
   <footer class="students-footer">
     <div class="container">
@@ -165,203 +119,113 @@
   <script src="/static/js/main.js"></script>
 
   <script>
-    class TeachersManager {
-      constructor() {
-        this.teachers = [];
-        this.currentFilter = 'all';
-        this.init();
+    // Verificar autenticación
+    async function checkAuth() {
+      try {
+        const token = localStorage.getItem('access_token');
+        if (!token) {
+          window.location.href = '/login.html';
+          return false;
+        }
+        
+        const response = await fetch('/api/auth/me/', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (response.ok) {
+          const user = await response.json();
+          updateUIForLoggedInUser(user);
+          return true;
+        } else {
+          localStorage.removeItem('access_token');
+          localStorage.removeItem('refresh_token');
+          window.location.href = '/login.html';
+          return false;
+        }
+      } catch (error) {
+        console.error('Error verificando autenticación:', error);
+        window.location.href = '/login.html';
+        return false;
       }
+    }
 
-      async init() {
-        await this.loadTeachers();
-        this.setupEventListeners();
-        this.renderTeachers();
+    // Actualizar UI para usuario autenticado
+    function updateUIForLoggedInUser(user) {
+      const authButtons = document.querySelector('.auth-buttons');
+      if (authButtons) {
+        authButtons.innerHTML = `
+          <div class="dropdown">
+            <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+              <i class="fas fa-user"></i> ${user.name || user.email}
+            </button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="/account.html">
+                <i class="fas fa-user"></i> Mi Perfil
+              </a></li>
+              <li><a class="dropdown-item" href="/portfolio/">
+                <i class="fas fa-briefcase"></i> Portafolio
+              </a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="#" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+              </a></li>
+            </ul>
+          </div>
+        `;
       }
+    }
 
-      async loadTeachers() {
+    // Función de logout
+    window.logout = async function() {
+      if (confirm('¿Estás seguro de que quieres cerrar sesión?')) {
         try {
-          const response = await fetch('/api/teachers/');
-          if (response.ok) {
-            const data = await response.json();
-            this.teachers = data.teachers || [];
-          } else {
-            throw new Error('Error cargando profesores');
+          const token = localStorage.getItem('access_token');
+          if (token) {
+            await fetch('/api/auth/logout/', {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+              }
+            });
           }
         } catch (error) {
-          console.error('Error:', error);
-          this.showError('Error cargando profesores');
+          console.error('Error en logout:', error);
+        } finally {
+          localStorage.removeItem('access_token');
+          localStorage.removeItem('refresh_token');
+          window.location.href = '/';
         }
       }
+    };
 
-      setupEventListeners() {
-        // Filtros
-        document.getElementById('filterAll')?.addEventListener('click', () => this.setFilter('all'));
-        document.getElementById('filterModerators')?.addEventListener('click', () => this.setFilter('moderator'));
-        document.getElementById('filterDirectors')?.addEventListener('click', () => this.setFilter('director_carrera'));
-        document.getElementById('filterAdmins')?.addEventListener('click', () => this.setFilter('admin_global'));
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+      document.querySelector('.dev-tools').style.display = 'flex';
+    }
 
-        // Búsqueda
-        document.getElementById('searchInput')?.addEventListener('input', (e) => this.searchTeachers(e.target.value));
-      }
-
-      setFilter(filter) {
-        this.currentFilter = filter;
-        this.updateFilterButtons();
-        this.renderTeachers();
-      }
-
-      updateFilterButtons() {
-        document.querySelectorAll('.filter-btn').forEach(btn => {
-          btn.classList.remove('active');
-        });
-        document.getElementById(`filter${this.currentFilter.charAt(0).toUpperCase() + this.currentFilter.slice(1)}`)?.classList.add('active');
-      }
-
-      searchTeachers(query) {
-        const filteredTeachers = this.teachers.filter(teacher => 
-          teacher.name.toLowerCase().includes(query.toLowerCase()) ||
-          teacher.career.toLowerCase().includes(query.toLowerCase()) ||
-          teacher.campus_name.toLowerCase().includes(query.toLowerCase())
-        );
-        this.renderTeachers(filteredTeachers);
-      }
-
-      renderTeachers(teachersToRender = null) {
-        const teachers = teachersToRender || this.getFilteredTeachers();
-        const container = document.getElementById('teachersContainer');
-        
-        if (!container) return;
-
-        if (teachers.length === 0) {
-          container.innerHTML = `
-            <div class="col-12 text-center py-5">
-              <i class="fas fa-users fa-3x text-muted mb-3"></i>
-              <h4 class="text-muted">No se encontraron profesores</h4>
-              <p class="text-muted">Intenta con otros filtros o términos de búsqueda</p>
-            </div>
-          `;
-          return;
+    document.addEventListener('DOMContentLoaded', async function() {
+      await checkAuth();
+      
+      setTimeout(() => {
+        if (window.playSound) {
+          window.playSound('pageLoad');
         }
+      }, 500);
+    });
 
-        container.innerHTML = teachers.map(teacher => this.createTeacherCard(teacher)).join('');
+    function viewTeachers() {
+      if (window.playSound) {
+        window.playSound('click');
       }
+      showSuccess('Función de profesores en desarrollo');
+    }
 
-      getFilteredTeachers() {
-        if (this.currentFilter === 'all') {
-          return this.teachers;
-        }
-        return this.teachers.filter(teacher => teacher.role === this.currentFilter);
-      }
-
-      createTeacherCard(teacher) {
-        const roleIcons = {
-          'moderator': 'fas fa-user-shield',
-          'director_carrera': 'fas fa-user-tie',
-          'admin_global': 'fas fa-user-cog'
-        };
-
-        const roleColors = {
-          'moderator': 'primary',
-          'director_carrera': 'success',
-          'admin_global': 'warning'
-        };
-
-        return `
-          <div class="col-md-6 col-lg-4 mb-4">
-            <div class="card teacher-card h-100">
-              <div class="card-body">
-                <div class="d-flex align-items-center mb-3">
-                  <div class="teacher-avatar me-3">
-                    <i class="fas fa-user-circle fa-3x text-${roleColors[teacher.role]}"></i>
-                  </div>
-                  <div>
-                    <h5 class="card-title mb-1">${teacher.name}</h5>
-                    <span class="badge bg-${roleColors[teacher.role]}">
-                      <i class="${roleIcons[teacher.role]} me-1"></i>
-                      ${teacher.role_display}
-                    </span>
-                  </div>
-                </div>
-                
-                <div class="teacher-info mb-3">
-                  <p class="mb-2">
-                    <i class="fas fa-graduation-cap me-2 text-primary"></i>
-                    <strong>Carrera:</strong> ${teacher.career || 'No especificada'}
-                  </p>
-                  <p class="mb-2">
-                    <i class="fas fa-map-marker-alt me-2 text-success"></i>
-                    <strong>Campus:</strong> ${teacher.campus_name}
-                  </p>
-                  <p class="mb-0">
-                    <i class="fas fa-envelope me-2 text-info"></i>
-                    <strong>Email:</strong> ${teacher.email}
-                  </p>
-                </div>
-
-                <div class="teacher-specialties mb-3">
-                  <h6 class="text-muted mb-2">Especialidades:</h6>
-                  <div class="d-flex flex-wrap gap-1">
-                    ${teacher.specialties.map(specialty => 
-                      `<span class="badge bg-light text-dark">${specialty}</span>`
-                    ).join('')}
-                  </div>
-                </div>
-
-                <div class="teacher-actions">
-                  <button class="btn btn-outline-primary btn-sm me-2" onclick="teachersManager.viewTeacherDetail(${teacher.id})">
-                    <i class="fas fa-eye me-1"></i> Ver Perfil
-                  </button>
-                  <a href="mailto:${teacher.email}" class="btn btn-outline-success btn-sm">
-                    <i class="fas fa-envelope me-1"></i> Contactar
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        `;
-      }
-
-      viewTeacherDetail(teacherId) {
-        const teacher = this.teachers.find(t => t.id === teacherId);
-        if (!teacher) return;
-
-        const modal = new bootstrap.Modal(document.getElementById('teacherDetailModal'));
-        const modalBody = document.getElementById('teacherDetailBody');
-        
-        modalBody.innerHTML = `
-          <div class="row">
-            <div class="col-md-4 text-center">
-              <i class="fas fa-user-circle fa-5x text-primary mb-3"></i>
-              <h4>${teacher.name}</h4>
-              <span class="badge bg-primary fs-6">${teacher.role_display}</span>
-            </div>
-            <div class="col-md-8">
-              <h5>Información de Contacto</h5>
-              <ul class="list-unstyled">
-                <li><i class="fas fa-envelope me-2"></i> ${teacher.email}</li>
-                <li><i class="fas fa-graduation-cap me-2"></i> ${teacher.career || 'No especificada'}</li>
-                <li><i class="fas fa-map-marker-alt me-2"></i> ${teacher.campus_name}</li>
-                ${teacher.contact_info.phone ? `<li><i class="fas fa-phone me-2"></i> ${teacher.contact_info.phone}</li>` : ''}
-                ${teacher.contact_info.linkedin ? `<li><i class="fab fa-linkedin me-2"></i> <a href="${teacher.contact_info.linkedin}" target="_blank">LinkedIn</a></li>` : ''}
-                ${teacher.contact_info.github ? `<li><i class="fab fa-github me-2"></i> <a href="${teacher.contact_info.github}" target="_blank">GitHub</a></li>` : ''}
-              </ul>
-              
-              <h5>Especialidades</h5>
-              <div class="d-flex flex-wrap gap-2">
-                ${teacher.specialties.map(specialty => 
-                  `<span class="badge bg-primary">${specialty}</span>`
-                ).join('')}
-              </div>
-            </div>
-          </div>
-        `;
-        
-        modal.show();
-      }
-
-      showError(message) {
+    function showSuccess(message) {
       const alertDiv = document.createElement('div');
-        alertDiv.className = 'alert alert-danger alert-dismissible fade show';
+      alertDiv.className = 'alert alert-success alert-dismissible fade show';
       alertDiv.innerHTML = `${message}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>`;
       const container = document.querySelector('.container');
       container.insertBefore(alertDiv, container.firstChild);
@@ -369,25 +233,8 @@
         if (alertDiv.parentNode) {
           alertDiv.remove();
         }
-        }, 5000);
-      }
+      }, 3000);
     }
-
-    // Inicializar cuando el DOM esté listo
-    document.addEventListener('DOMContentLoaded', function() {
-      if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-        document.querySelector('.dev-tools').style.display = 'flex';
-      }
-
-      setTimeout(() => {
-        if (window.playSound) {
-          window.playSound('pageLoad');
-        }
-      }, 500);
-
-      // Inicializar el gestor de profesores
-      window.teachersManager = new TeachersManager();
-    });
   </script>
 </body>
 </html>

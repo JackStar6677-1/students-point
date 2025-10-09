@@ -3,8 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="manifest" href="/static/manifest.json" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+<link rel="manifest" href="/static/manifest.json" />
+<link rel="icon" type="image/x-icon" href="/static/favicon.ico" />
+<link rel="icon" type="image/png" sizes="32x32" href="/static/images/icons/icon-32x32.png" />
+<link rel="icon" type="image/png" sizes="16x16" href="/static/images/icons/icon-16x16.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="/static/images/icons/icon-192x192.png" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link rel="stylesheet" href="/static/css/students-theme.css" />
   <link rel="stylesheet" href="/static/css/styles.css" />
@@ -19,7 +23,9 @@
       <div class="row align-items-center">
         <div class="col-md-8">
           <div class="students-logo">
-            <img src="/imagenes/logos-iconos/Logo_StudentsPoint.svg.png" alt="StudentsPoint Logo" class="students-logo-img">
+            <div class="logo-placeholder">
+              <i class="fas fa-graduation-cap fa-2x"></i>
+            </div>
             <div>
               <h1>Mi Cuenta StudentsPoint</h1>
               <p>Gestiona tu perfil y configuraciones</p>
@@ -69,138 +75,23 @@
   </nav>
 
   <main class="main-content" style="position: relative; z-index: 2;">
-    <div class="container mt-4">
-      <!-- Verificación de autenticación -->
-      <div id="authCheck" class="text-center py-5">
-        <div class="spinner-border text-primary" role="status">
-          <span class="visually-hidden">Verificando autenticación...</span>
-        </div>
-        <p class="mt-3 text-muted">Verificando autenticación...</p>
-      </div>
-
-      <!-- Contenido principal (se muestra solo si está autenticado) -->
-      <div id="accountContent" style="display: none;">
-        <div class="row">
-          <div class="col-md-4">
-            <div class="card">
-              <div class="card-body text-center">
-                <div class="user-avatar mb-3">
-                  <i class="fas fa-user-circle fa-5x text-primary"></i>
-                </div>
-                <h4 id="userName">Cargando...</h4>
-                <p class="text-muted" id="userEmail">Cargando...</p>
-                <span class="badge bg-primary" id="userRole">Cargando...</span>
-              </div>
-            </div>
+    <div class="container mt-3">
+      <div class="row">
+        <div class="col-12">
+          <div class="text-center py-5">
+            <i class="fas fa-user fa-3x gradient-text mb-3"></i>
+            <h2>Mi Cuenta</h2>
+            <p class="text-muted">Gestiona tu perfil y configuraciones</p>
+            <button class="btn btn-primary btn-lg" onclick="manageAccount()">
+              <i class="fas fa-cog"></i> Gestionar Cuenta
+            </button>
           </div>
-          
-          <div class="col-md-8">
-            <div class="card">
-              <div class="card-header">
-                <h5><i class="fas fa-user-edit me-2"></i>Información Personal</h5>
-              </div>
-              <div class="card-body">
-                <form id="profileForm">
-                  <div class="row">
-                    <div class="col-md-6">
-                      <div class="mb-3">
-                        <label for="name" class="form-label">Nombre Completo</label>
-                        <input type="text" class="form-control" id="name" required>
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                      <div class="mb-3">
-                        <label for="email" class="form-label">Correo Electrónico</label>
-                        <input type="email" class="form-control" id="email" readonly>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div class="row">
-                    <div class="col-md-6">
-                      <div class="mb-3">
-                        <label for="phone" class="form-label">Teléfono</label>
-                        <input type="tel" class="form-control" id="phone">
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                      <div class="mb-3">
-                        <label for="career" class="form-label">Carrera</label>
-                        <input type="text" class="form-control" id="career">
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div class="row">
-                    <div class="col-md-6">
-                      <div class="mb-3">
-                        <label for="linkedin" class="form-label">LinkedIn</label>
-                        <input type="url" class="form-control" id="linkedin" placeholder="https://linkedin.com/in/tu-perfil">
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                      <div class="mb-3">
-                        <label for="github" class="form-label">GitHub</label>
-                        <input type="url" class="form-control" id="github" placeholder="https://github.com/tu-usuario">
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div class="text-end">
-                    <button type="submit" class="btn btn-primary">
-                      <i class="fas fa-save me-1"></i> Guardar Cambios
-                    </button>
-                  </div>
-                </form>
-              </div>
-            </div>
-            
-            <!-- Cambio de contraseña -->
-            <div class="card mt-4">
-              <div class="card-header">
-                <h5><i class="fas fa-lock me-2"></i>Cambiar Contraseña</h5>
-              </div>
-              <div class="card-body">
-                <form id="passwordForm">
-                  <div class="mb-3">
-                    <label for="currentPassword" class="form-label">Contraseña Actual</label>
-                    <input type="password" class="form-control" id="currentPassword" required>
-                  </div>
-                  <div class="mb-3">
-                    <label for="newPassword" class="form-label">Nueva Contraseña</label>
-                    <input type="password" class="form-control" id="newPassword" required>
-                  </div>
-                  <div class="mb-3">
-                    <label for="confirmPassword" class="form-label">Confirmar Nueva Contraseña</label>
-                    <input type="password" class="form-control" id="confirmPassword" required>
-                  </div>
-                  <div class="text-end">
-                    <button type="submit" class="btn btn-warning">
-                      <i class="fas fa-key me-1"></i> Cambiar Contraseña
-                    </button>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Mensaje de no autenticado -->
-      <div id="notAuthenticated" style="display: none;">
-        <div class="text-center py-5">
-          <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
-          <h2>Acceso Requerido</h2>
-          <p class="text-muted">Debes iniciar sesión para acceder a esta página.</p>
-          <a href="/login.html" class="btn btn-primary">
-            <i class="fas fa-sign-in-alt me-1"></i> Iniciar Sesión
-          </a>
         </div>
       </div>
     </div>
   </main>
 
-  <footer class="duoc-footer">
+  <footer class="students-footer">
     <div class="container">
       <div class="row align-items-center">
         <div class="col-md-6">
@@ -228,214 +119,122 @@
   <script src="/static/js/main.js"></script>
 
   <script>
-    class AccountManager {
-      constructor() {
-        this.currentUser = null;
-        this.init();
-      }
-
-      async init() {
-        await this.checkAuthentication();
-        this.setupEventListeners();
-      }
-
-      async checkAuthentication() {
+    // Verificar autenticación
+    async function checkAuth() {
+      try {
         const token = localStorage.getItem('access_token');
-        
         if (!token) {
-          this.showNotAuthenticated();
-          return;
+          window.location.href = '/login.html';
+          return false;
         }
-
-        try {
-          const response = await fetch('/api/auth/me/', {
-            headers: {
-              'Authorization': `Bearer ${token}`
-            }
-          });
-
-          if (response.ok) {
-            this.currentUser = await response.json();
-            this.showAccountContent();
-            this.loadUserData();
-          } else {
-            localStorage.removeItem('access_token');
-            localStorage.removeItem('refresh_token');
-            this.showNotAuthenticated();
+        
+        const response = await fetch('/api/auth/me/', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
           }
-        } catch (error) {
-          console.error('Error verificando autenticación:', error);
-          this.showNotAuthenticated();
-        }
-      }
-
-      showNotAuthenticated() {
-        document.getElementById('authCheck').style.display = 'none';
-        document.getElementById('accountContent').style.display = 'none';
-        document.getElementById('notAuthenticated').style.display = 'block';
-      }
-
-      showAccountContent() {
-        document.getElementById('authCheck').style.display = 'none';
-        document.getElementById('accountContent').style.display = 'block';
-        document.getElementById('notAuthenticated').style.display = 'none';
-      }
-
-      loadUserData() {
-        if (!this.currentUser) return;
-
-        document.getElementById('userName').textContent = this.currentUser.name || 'Usuario';
-        document.getElementById('userEmail').textContent = this.currentUser.email || '';
-        document.getElementById('userRole').textContent = this.getRoleDisplay(this.currentUser.role);
-
-        // Cargar datos en el formulario
-        document.getElementById('name').value = this.currentUser.name || '';
-        document.getElementById('email').value = this.currentUser.email || '';
-        document.getElementById('phone').value = this.currentUser.telefono || '';
-        document.getElementById('career').value = this.currentUser.career || '';
-        document.getElementById('linkedin').value = this.currentUser.linkedin_url || '';
-        document.getElementById('github').value = this.currentUser.github_url || '';
-      }
-
-      getRoleDisplay(role) {
-        const roles = {
-          'student': 'Estudiante',
-          'moderator': 'Moderador',
-          'director_carrera': 'Director de Carrera',
-          'admin_global': 'Administrador'
-        };
-        return roles[role] || 'Usuario';
-      }
-
-      setupEventListeners() {
-        document.getElementById('profileForm')?.addEventListener('submit', (e) => {
-          e.preventDefault();
-          this.updateProfile();
         });
-
-        document.getElementById('passwordForm')?.addEventListener('submit', (e) => {
-          e.preventDefault();
-          this.changePassword();
-        });
-      }
-
-      async updateProfile() {
-        try {
-          const formData = {
-            name: document.getElementById('name').value,
-            telefono: document.getElementById('phone').value,
-            career: document.getElementById('career').value,
-            linkedin_url: document.getElementById('linkedin').value,
-            github_url: document.getElementById('github').value
-          };
-
-          const token = localStorage.getItem('access_token');
-          const response = await fetch('/api/auth/me/update/', {
-            method: 'PUT',
-            headers: {
-              'Authorization': `Bearer ${token}`,
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(formData)
-          });
-
-          if (response.ok) {
-            this.showSuccess('Perfil actualizado exitosamente');
-            await this.checkAuthentication(); // Recargar datos
-          } else {
-            const error = await response.json();
-            throw new Error(error.detail || 'Error al actualizar perfil');
-          }
-        } catch (error) {
-          console.error('Error:', error);
-          this.showError('Error al actualizar perfil');
+        
+        if (response.ok) {
+          const user = await response.json();
+          updateUIForLoggedInUser(user);
+          return true;
+        } else {
+          localStorage.removeItem('access_token');
+          localStorage.removeItem('refresh_token');
+          window.location.href = '/login.html';
+          return false;
         }
-      }
-
-      async changePassword() {
-        const currentPassword = document.getElementById('currentPassword').value;
-        const newPassword = document.getElementById('newPassword').value;
-        const confirmPassword = document.getElementById('confirmPassword').value;
-
-        if (newPassword !== confirmPassword) {
-          this.showError('Las contraseñas no coinciden');
-          return;
-        }
-
-        if (newPassword.length < 8) {
-          this.showError('La nueva contraseña debe tener al menos 8 caracteres');
-          return;
-        }
-
-        try {
-          const token = localStorage.getItem('access_token');
-          const response = await fetch('/api/auth/change-password/', {
-            method: 'POST',
-            headers: {
-              'Authorization': `Bearer ${token}`,
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              current_password: currentPassword,
-              new_password: newPassword
-            })
-          });
-
-          if (response.ok) {
-            this.showSuccess('Contraseña cambiada exitosamente');
-            document.getElementById('passwordForm').reset();
-          } else {
-            const error = await response.json();
-            throw new Error(error.detail || 'Error al cambiar contraseña');
-          }
-        } catch (error) {
-          console.error('Error:', error);
-          this.showError('Error al cambiar contraseña');
-        }
-      }
-
-      showSuccess(message) {
-        const alertDiv = document.createElement('div');
-        alertDiv.className = 'alert alert-success alert-dismissible fade show';
-        alertDiv.innerHTML = `${message}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>`;
-        const container = document.querySelector('.container');
-        container.insertBefore(alertDiv, container.firstChild);
-        setTimeout(() => {
-          if (alertDiv.parentNode) {
-            alertDiv.remove();
-          }
-        }, 3000);
-      }
-
-      showError(message) {
-        const alertDiv = document.createElement('div');
-        alertDiv.className = 'alert alert-danger alert-dismissible fade show';
-        alertDiv.innerHTML = `${message}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>`;
-        const container = document.querySelector('.container');
-        container.insertBefore(alertDiv, container.firstChild);
-        setTimeout(() => {
-          if (alertDiv.parentNode) {
-            alertDiv.remove();
-          }
-        }, 5000);
+      } catch (error) {
+        console.error('Error verificando autenticación:', error);
+        window.location.href = '/login.html';
+        return false;
       }
     }
 
-    // Inicializar cuando el DOM esté listo
-    document.addEventListener('DOMContentLoaded', function() {
-      if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-        document.querySelector('.dev-tools').style.display = 'flex';
+    // Actualizar UI para usuario autenticado
+    function updateUIForLoggedInUser(user) {
+      const authButtons = document.querySelector('.auth-buttons');
+      if (authButtons) {
+        authButtons.innerHTML = `
+          <div class="dropdown">
+            <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+              <i class="fas fa-user"></i> ${user.name || user.email}
+            </button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="/account.html">
+                <i class="fas fa-user"></i> Mi Perfil
+              </a></li>
+              <li><a class="dropdown-item" href="/portfolio/">
+                <i class="fas fa-briefcase"></i> Portafolio
+              </a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="#" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+              </a></li>
+            </ul>
+          </div>
+        `;
       }
+    }
 
+    // Función de logout
+    window.logout = async function() {
+      if (confirm('¿Estás seguro de que quieres cerrar sesión?')) {
+        try {
+          const token = localStorage.getItem('access_token');
+          if (token) {
+            await fetch('/api/auth/logout/', {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+              }
+            });
+          }
+        } catch (error) {
+          console.error('Error en logout:', error);
+        } finally {
+          localStorage.removeItem('access_token');
+          localStorage.removeItem('refresh_token');
+          window.location.href = '/';
+        }
+      }
+    };
+
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+      document.querySelector('.dev-tools').style.display = 'flex';
+    }
+
+    document.addEventListener('DOMContentLoaded', async function() {
+      await checkAuth();
+      
       setTimeout(() => {
         if (window.playSound) {
           window.playSound('pageLoad');
         }
       }, 500);
-
-      // Inicializar el gestor de cuenta
-      window.accountManager = new AccountManager();
     });
+
+    function manageAccount() {
+      if (window.playSound) {
+        window.playSound('click');
+      }
+      showSuccess('Función de gestión de cuenta en desarrollo');
+    }
+
+    function showSuccess(message) {
+      const alertDiv = document.createElement('div');
+      alertDiv.className = 'alert alert-success alert-dismissible fade show';
+      alertDiv.innerHTML = `${message}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>`;
+      const container = document.querySelector('.container');
+      container.insertBefore(alertDiv, container.firstChild);
+      setTimeout(() => {
+        if (alertDiv.parentNode) {
+          alertDiv.remove();
+        }
+      }, 3000);
+    }
   </script>
 </body>
 </html>

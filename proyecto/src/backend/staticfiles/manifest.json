@@ -13,6 +13,12 @@
   "categories": ["education", "productivity", "social"],
   "icons": [
     {
+      "src": "/static/images/studentspoint-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
       "src": "/static/images/icons/icon-72x72.png",
       "sizes": "72x72",
       "type": "image/png",

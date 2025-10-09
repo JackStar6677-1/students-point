@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <!-- Fondo con gradiente -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0066cc;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#004499;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Fondo circular con gradiente -->
+  <circle cx="32" cy="32" r="30" fill="url(#bgGradient)" stroke="#ffffff" stroke-width="2"/>
+  
+  <!-- Letra S estilizada más grande -->
+  <path d="M16 24 Q16 16 24 16 L40 16 Q48 16 48 24 L48 28 Q48 36 40 36 L32 36 Q24 36 24 28" 
+        stroke="white" stroke-width="3" fill="none" stroke-linecap="round"/>
+  
+  <!-- Letra P estilizada más grande -->
+  <path d="M32 16 L32 48 M32 16 L40 16 Q44 16 44 20 Q44 24 40 24 L32 24" 
+        stroke="white" stroke-width="3" fill="none" stroke-linecap="round"/>
+  
+  <!-- Punto decorativo más grande -->
+  <circle cx="44" cy="44" r="3" fill="white"/>
+</svg>

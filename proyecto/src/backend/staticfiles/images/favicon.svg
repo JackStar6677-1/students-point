@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- Fondo circular -->
+  <circle cx="16" cy="16" r="16" fill="#0066cc"/>
+  
+  <!-- Letra S estilizada -->
+  <path d="M8 12 Q8 8 12 8 L20 8 Q24 8 24 12 L24 14 Q24 18 20 18 L16 18 Q12 18 12 14" 
+        stroke="white" stroke-width="2" fill="none" stroke-linecap="round"/>
+  
+  <!-- Letra P estilizada -->
+  <path d="M16 8 L16 20 M16 8 L20 8 Q22 8 22 10 Q22 12 20 12 L16 12" 
+        stroke="white" stroke-width="2" fill="none" stroke-linecap="round"/>
+  
+  <!-- Punto decorativo -->
+  <circle cx="22" cy="22" r="2" fill="white"/>
+</svg>
