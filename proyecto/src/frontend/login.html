@@ -30,6 +30,33 @@
     <div class="hero-background bg-pattern"></div>
     <div class="hero-particles" id="particles"></div>
     
+    <!-- Demo Credentials Window -->
+    <div class="glass animate-slide-in-right" style="position: fixed; bottom: 2rem; right: 2rem; padding: 1.5rem; max-width: 320px; z-index: 1000; border: 1px solid rgba(251, 191, 36, 0.3);">
+        <h6 style="color: var(--color-gold); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+            <i class="fas fa-info-circle"></i> Usuarios Demo
+        </h6>
+        <div style="font-size: 0.875rem; color: var(--color-gray-light); margin-bottom: 1rem;">
+            <p style="margin-bottom: 0.75rem;">
+                <strong style="color: var(--color-white);">Admin:</strong><br>
+                <code style="background: rgba(107, 70, 193, 0.3); padding: 0.25rem 0.5rem; border-radius: 0.25rem; display: block; margin-top: 0.25rem;">admin@studentspoint.app</code>
+                <code style="background: rgba(107, 70, 193, 0.3); padding: 0.25rem 0.5rem; border-radius: 0.25rem; display: block; margin-top: 0.25rem;">admin123</code>
+            </p>
+            <p style="margin-bottom: 0;">
+                <strong style="color: var(--color-white);">Estudiante:</strong><br>
+                <code style="background: rgba(107, 70, 193, 0.3); padding: 0.25rem 0.5rem; border-radius: 0.25rem; display: block; margin-top: 0.25rem;">estudiante@studentspoint.app</code>
+                <code style="background: rgba(107, 70, 193, 0.3); padding: 0.25rem 0.5rem; border-radius: 0.25rem; display: block; margin-top: 0.25rem;">estudiante123</code>
+            </p>
+        </div>
+        <div style="display: flex; gap: 0.5rem;">
+            <button class="btn btn-sm btn-secondary" onclick="fillDemoCredentials('admin')" style="flex: 1; padding: 0.5rem;">
+                <i class="fas fa-user-shield"></i> Admin
+            </button>
+            <button class="btn btn-sm btn-primary" onclick="fillDemoCredentials('student')" style="flex: 1; padding: 0.5rem;">
+                <i class="fas fa-user"></i> Estudiante
+            </button>
+        </div>
+    </div>
+
     <!-- Login Container -->
     <div class="glass animate-scale-in" style="max-width: 500px; width: 100%; padding: 3rem; border-radius: 1.5rem; position: relative; z-index: 10;">
         <!-- Logo -->
@@ -195,6 +222,18 @@
             if (window.playSound) window.playSound('click');
             showAlert('Funcionalidad de recuperación de contraseña disponible próximamente.', 'warning');
         });
+        
+        // Fill demo credentials
+        window.fillDemoCredentials = function(type) {
+            if (type === 'admin') {
+                document.getElementById('email').value = 'admin@studentspoint.app';
+                document.getElementById('password').value = 'admin123';
+            } else if (type === 'student') {
+                document.getElementById('email').value = 'estudiante@studentspoint.app';
+                document.getElementById('password').value = 'estudiante123';
+            }
+            if (window.playSound) window.playSound('click');
+        };
         
         // Create particles
         function createParticles() {
