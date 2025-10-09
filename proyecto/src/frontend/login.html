@@ -211,9 +211,22 @@
         });
         
         // Google Login
-        document.getElementById('googleLogin').addEventListener('click', function() {
+        document.getElementById('googleLogin').addEventListener('click', async function() {
             if (window.playSound) window.playSound('click');
-            window.location.href = '/api/auth/google/login/';
+            
+            try {
+                const response = await fetch('/api/auth/google/login/');
+                const data = await response.json();
+                
+                if (data.auth_url) {
+                    window.location.href = data.auth_url;
+                } else {
+                    showAlert('Error al iniciar sesión con Google', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('Error de conexión con Google', 'error');
+            }
         });
         
         // Forgot Password
