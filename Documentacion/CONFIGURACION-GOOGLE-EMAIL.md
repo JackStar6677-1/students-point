@@ -4,10 +4,13 @@
 
 ### Sistema de Email
 
-**DESARROLLO (Configurado)**
-- Backend: `django.core.mail.backends.console.EmailBackend`
-- Los emails se muestran en la consola del servidor
-- NO se necesita configuracion adicional para desarrollo
+**DESARROLLO (SMTP Real Configurado)**
+- Backend: `django.core.mail.backends.smtp.EmailBackend`
+- Servidor: smtp.gmail.com
+- Email: pablo.elias.miranda.292003@gmail.com
+- App Password: jiyn qwpy soku ghfd
+- **Los emails se envian REALMENTE a los usuarios**
+- NO se necesita configuracion adicional
 - Funciona inmediatamente al ejecutar el servidor
 
 **PRODUCCION (Requiere configuracion)**
@@ -27,52 +30,75 @@
 
 ---
 
-## DESARROLLO (Ya esta configurado)
+## DESARROLLO (Ya esta configurado - Emails Reales)
 
 ### Email en Desarrollo
 
-El sistema de email YA FUNCIONA en desarrollo:
+El sistema de email YA FUNCIONA con SMTP REAL en desarrollo:
 
 ```python
-# settings/base.py (ya configurado)
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# settings/dev.py (ya configurado)
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'pablo.elias.miranda.292003@gmail.com'
+EMAIL_HOST_PASSWORD = 'jiyn qwpy soku ghfd'  # App Password
+DEFAULT_FROM_EMAIL = 'StudentsPoint <pablo.elias.miranda.292003@gmail.com>'
 ```
 
 **Como funciona:**
-1. Usuario se registra
+1. Usuario se registra con SU EMAIL REAL
 2. Sistema genera codigo de 6 digitos
-3. Sistema "envia" email (se muestra en consola del servidor)
-4. Desarrollador ve el codigo en la consola
-5. Usuario ingresa codigo en la app
+3. Sistema ENVIA EMAIL REAL via Gmail SMTP
+4. Usuario RECIBE EMAIL en su bandeja de entrada
+5. Usuario ve el codigo en su email
+6. Usuario ingresa codigo en la app
 
-**Ejemplo de salida en consola:**
+**El email que recibira el usuario:**
 ```
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Verificacion de email - StudentsPoint
-From: noreply@studentspoint.app
-To: estudiante@example.com
+De: StudentsPoint <pablo.elias.miranda.292003@gmail.com>
+Para: usuario@example.com
+Asunto: Verificacion de email - StudentsPoint
 
 Hola Juan Perez,
 
-Tu codigo de verificacion es: 123456
+Tu codigo de verificacion es: 456789
 
 Este codigo expirara en 15 minutos.
+
+Si no solicitaste este codigo, puedes ignorar este email.
+
+Saludos,
+Equipo StudentsPoint
 ```
 
-**NO NECESITAS CONFIGURAR NADA** - Funciona inmediatamente.
+**LOS EMAILS SE ENVIAN REALMENTE** - Los usuarios los reciben en su correo.
 
 ### Google OAuth en Desarrollo
 
 El sistema OAuth YA FUNCIONA en desarrollo:
 
-**Credenciales incluidas:**
+**Credenciales configuradas:**
 - Client ID: 307562557576-0fd8ta7i09i1e6it5hstla13jsomeq2s.apps.googleusercontent.com
 - Client Secret: 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
 - URIs autorizados: localhost:8000, 127.0.0.1:8000
 
-**NO NECESITAS HACER NADA EN GOOGLE** - Ya esta configurado.
+**Estas credenciales pertenecen a:** pablo.elias.miranda.292003@gmail.com
+
+**Como funciona:**
+1. Usuario hace clic en "Login con Google"
+2. Redirige a Google para autenticacion
+3. Usuario selecciona su cuenta de Google
+4. Google redirige de vuelta con token
+5. Sistema crea/busca usuario y genera JWT
+
+**NO NECESITAS CONFIGURAR NADA EN GOOGLE** - Ya esta todo listo.
+
+**IMPORTANTE:** Las credenciales OAuth que tienes YA estan incluidas en el codigo:
+- Ubicacion: `settings/dev.py` lineas 67-70
+- Ya funcionales para localhost
+- NO necesitas hacer nada adicional
 
 ---
 
@@ -210,7 +236,9 @@ cd proyecto\src\backend
 python manage.py runserver
 ```
 
-### Paso 2: Registrar un usuario
+### Paso 2: Registrar un usuario con TU EMAIL REAL
+
+**IMPORTANTE:** Usa tu email REAL para recibir el codigo.
 
 Hacer request a:
 ```
@@ -218,38 +246,42 @@ POST http://127.0.0.1:8000/api/auth/register/
 Content-Type: application/json
 
 {
-  "email": "test@example.com",
+  "email": "TU-EMAIL-REAL@gmail.com",
   "password": "password123",
-  "name": "Test User",
+  "name": "Tu Nombre",
   "career": "Ingenieria en Informatica"
 }
 ```
 
-### Paso 3: Ver el codigo en la consola
+### Paso 3: REVISAR TU BANDEJA DE ENTRADA
 
-En la consola del servidor veras algo como:
+**VE A TU EMAIL** y encontraras:
 
 ```
-Content-Type: text/plain; charset="utf-8"
-Subject: Verificacion de email - StudentsPoint
-From: noreply@studentspoint.app
-To: test@example.com
+De: StudentsPoint <pablo.elias.miranda.292003@gmail.com>
+Para: TU-EMAIL-REAL@gmail.com
+Asunto: Verificacion de email - StudentsPoint
 
-Hola Test User,
+Hola Tu Nombre,
 
 Tu codigo de verificacion es: 456789
 
 Este codigo expirara en 15 minutos.
+
+Si no solicitaste este codigo, puedes ignorar este email.
+
+Saludos,
+Equipo StudentsPoint
 ```
 
-### Paso 4: Verificar el email
+### Paso 4: Verificar el email con el codigo recibido
 
 ```
 POST http://127.0.0.1:8000/api/auth/verificar-email/
 Content-Type: application/json
 
 {
-  "email": "test@example.com",
+  "email": "TU-EMAIL-REAL@gmail.com",
   "codigo": "456789"
 }
 ```
@@ -261,6 +293,8 @@ Content-Type: application/json
   "message": "Email verificado exitosamente"
 }
 ```
+
+**EL SISTEMA ENVIA EMAILS REALES** - No es simulacion.
 
 ---
 
