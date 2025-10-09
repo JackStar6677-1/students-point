@@ -279,7 +279,10 @@ class ModerationManager {
         // Load post details for preview
         const post = this.posts.find(p => p.id === postId);
         if (post) {
-            document.getElementById('postPreview').innerHTML = this.renderPostPreview(post);
+            const postPreview = document.getElementById('postPreview');
+            if (postPreview) {
+                postPreview.innerHTML = this.renderPostPreview(post);
+            }
         }
         
         const modal = new bootstrap.Modal(document.getElementById('moderationModal'));
@@ -314,11 +317,17 @@ class ModerationManager {
             const response = await fetch(`/api/forum/posts/${postId}/reportes/`);
             if (response.ok) {
                 const reports = await response.json();
-                document.getElementById('reportsList').innerHTML = this.renderReports(reports);
+                const reportsList = document.getElementById('reportsList');
+                if (reportsList) {
+                    reportsList.innerHTML = this.renderReports(reports);
+                }
             }
         } catch (error) {
             console.error('Error loading reports:', error);
-            document.getElementById('reportsList').innerHTML = '<p class="text-muted">Error al cargar los reportes</p>';
+            const reportsList = document.getElementById('reportsList');
+            if (reportsList) {
+                reportsList.innerHTML = '<p class="text-muted">Error al cargar los reportes</p>';
+            }
         }
         
         const modal = new bootstrap.Modal(document.getElementById('reportsModal'));

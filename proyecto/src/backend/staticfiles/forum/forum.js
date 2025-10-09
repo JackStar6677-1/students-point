@@ -388,8 +388,10 @@ class ForumManager {
     async submitReport() {
         try {
             const token = localStorage.getItem('access_token');
-            const reportType = document.getElementById('reportType').value;
-            const reportDescription = document.getElementById('reportDescription').value;
+            const reportTypeElement = document.getElementById('reportType');
+            const reportDescriptionElement = document.getElementById('reportDescription');
+            const reportType = reportTypeElement ? reportTypeElement.value : '';
+            const reportDescription = reportDescriptionElement ? reportDescriptionElement.value : '';
 
             if (!reportType) {
                 this.showAlert('Por favor selecciona un tipo de reporte', 'warning');
@@ -430,8 +432,10 @@ class ForumManager {
     async submitModeration() {
         try {
             const token = localStorage.getItem('access_token');
-            const action = document.getElementById('moderationAction').value;
-            const reason = document.getElementById('moderationReason').value;
+            const actionElement = document.getElementById('moderationAction');
+            const reasonElement = document.getElementById('moderationReason');
+            const action = actionElement ? actionElement.value : '';
+            const reason = reasonElement ? reasonElement.value : '';
 
             if (!action) {
                 this.showAlert('Por favor selecciona una acción', 'warning');
@@ -466,10 +470,14 @@ class ForumManager {
     async createPost() {
         try {
             const token = localStorage.getItem('access_token');
-            const forumId = document.getElementById('postForum').value;
-            const title = document.getElementById('postTitle').value;
-            const content = document.getElementById('postContent').value;
-            const anonymous = document.getElementById('postAnonymous').checked;
+            const forumIdElement = document.getElementById('postForum');
+            const titleElement = document.getElementById('postTitle');
+            const contentElement = document.getElementById('postContent');
+            const anonymousElement = document.getElementById('postAnonymous');
+            const forumId = forumIdElement ? forumIdElement.value : '';
+            const title = titleElement ? titleElement.value : '';
+            const content = contentElement ? contentElement.value : '';
+            const anonymous = anonymousElement ? anonymousElement.checked : false;
 
             if (!forumId || !title || !content) {
                 this.showAlert('Por favor completa todos los campos requeridos', 'warning');

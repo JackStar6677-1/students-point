@@ -260,7 +260,7 @@
     // Cargar cursos desde la API
     async function loadCourses() {
       try {
-        const response = await fetch('/api/courses/');
+        const response = await fetch('/api/otec/cursos/');
         if (response.ok) {
           courses = await response.json();
           displayCourses(courses);

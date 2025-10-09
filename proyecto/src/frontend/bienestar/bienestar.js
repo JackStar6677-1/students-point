@@ -119,7 +119,9 @@ async function verContenido(id) {
         
         // Mostrar en modal
         document.getElementById('modalTitulo').textContent = item.titulo;
-        document.getElementById('modalContenido').innerHTML = `
+        const modalContenido = document.getElementById('modalContenido');
+        if (modalContenido) {
+            modalContenido.innerHTML = `
             <div class="mb-3">
                 <span class="bienestar-tipo ${item.tipo}">
                     ${item.tipo === 'kine' ? 'Kinesiología' : 'Psicología'}
@@ -137,6 +139,7 @@ async function verContenido(id) {
                 </div>
             ` : ''}
         `;
+        }
 
         const modal = new bootstrap.Modal(document.getElementById('contenidoModal'));
         modal.show();

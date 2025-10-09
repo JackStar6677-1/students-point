@@ -18,7 +18,7 @@ function configurarEventos() {
 // Cargar contenido de bienestar
 async function cargarContenidoBienestar() {
     try {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('access_token');
         if (!token) {
             mostrarError('Debes iniciar sesión para acceder al contenido de bienestar');
             return;
@@ -103,7 +103,7 @@ function mostrarContenido() {
 // Ver contenido completo
 async function verContenido(id) {
     try {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('access_token');
         const response = await fetch(`/api/bienestar/bienestar/${id}`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -119,7 +119,9 @@ async function verContenido(id) {
         
         // Mostrar en modal
         document.getElementById('modalTitulo').textContent = item.titulo;
-        document.getElementById('modalContenido').innerHTML = `
+        const modalContenido = document.getElementById('modalContenido');
+        if (modalContenido) {
+            modalContenido.innerHTML = `
             <div class="mb-3">
                 <span class="bienestar-tipo ${item.tipo}">
                     ${item.tipo === 'kine' ? 'Kinesiología' : 'Psicología'}
@@ -137,6 +139,7 @@ async function verContenido(id) {
                 </div>
             ` : ''}
         `;
+        }
 
         const modal = new bootstrap.Modal(document.getElementById('contenidoModal'));
         modal.show();

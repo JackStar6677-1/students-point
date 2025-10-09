@@ -254,7 +254,9 @@ async function verCurso(id) {
         
         // Mostrar en modal
         document.getElementById('modalTituloCurso').textContent = curso.titulo;
-        document.getElementById('modalContenidoCurso').innerHTML = `
+        const modalContenido = document.getElementById('modalContenidoCurso');
+        if (modalContenido) {
+            modalContenido.innerHTML = `
             <div class="mb-3">
                 <span class="curso-vigencia ${vigencia.clase}">${vigencia.texto}</span>
             </div>
@@ -285,6 +287,7 @@ async function verCurso(id) {
                 <p class="curso-url">${curso.url}</p>
             </div>
         `;
+        }
 
         // Configurar botón de acceso
         const btnAcceder = document.getElementById('btnAccederCurso');

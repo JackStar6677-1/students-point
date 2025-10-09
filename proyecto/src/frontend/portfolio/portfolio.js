@@ -90,7 +90,7 @@ class PortfolioManager {
     async loadPortfolioData() {
         try {
             const token = localStorage.getItem('access_token');
-            const response = await fetch('/api/portfolio/', {
+            const response = await fetch('/api/portfolio/completo/', {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             
@@ -106,7 +106,7 @@ class PortfolioManager {
     async savePortfolioData() {
         try {
             const token = localStorage.getItem('access_token');
-            const response = await fetch('/api/portfolio/', {
+            const response = await fetch('/api/portfolio/completo/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

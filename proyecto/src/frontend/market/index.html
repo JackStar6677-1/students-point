@@ -508,7 +508,7 @@
           formData.append('imagen', imageFile);
         }
         
-        const response = await fetch('/api/market/products/', {
+        const response = await fetch('/api/marketplace/products/', {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('access_token')}`

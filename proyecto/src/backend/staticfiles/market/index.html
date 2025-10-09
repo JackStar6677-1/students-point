@@ -8,21 +8,29 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link rel="stylesheet" href="/static/css/students-theme.css" />
   <link rel="stylesheet" href="/static/css/styles.css" />
+  <link rel="stylesheet" href="market.css" />
   <meta name="theme-color" content="#1a1a1a">
-  <title>Marketplace - StudentsPoint</title>
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="dark">
+  <title>Mercado - StudentsPoint</title>
 </head>
 <body>
+  <!-- Fondo de partículas -->
   <div class="particles-bg"></div>
-  
+
+  <!-- Header compacto -->
   <header class="students-header text-white">
     <div class="container">
       <div class="row align-items-center">
         <div class="col-md-8">
           <div class="students-logo">
-            <img src="/imagenes/logos-iconos/Logo_StudentsPoint.svg.png" alt="StudentsPoint Logo" class="students-logo-img">
+            <div class="logo-placeholder">
+              <i class="fas fa-graduation-cap fa-2x"></i>
+            </div>
             <div>
-              <h1>Marketplace StudentsPoint</h1>
-              <p>Encuentra productos de estudiantes en Facebook y MercadoLibre</p>
+              <h1>Mercado StudentsPoint</h1>
+              <p>Compra y vende en tu comunidad estudiantil</p>
             </div>
           </div>
         </div>
@@ -40,248 +48,243 @@
     </div>
   </header>
 
+  <!-- Navegación compacta -->
   <nav class="navbar navbar-expand-lg students-nav">
     <div class="container">
-      <div class="collapse navbar-collapse">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav me-auto">
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
               <i class="fas fa-th-large"></i> Aplicaciones
             </a>
             <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="/forum/"><i class="fas fa-comments"></i> Foros</a></li>
-              <li><a class="dropdown-item" href="/market/"><i class="fas fa-store"></i> Marketplace</a></li>
-              <li><a class="dropdown-item" href="/portfolio/"><i class="fas fa-briefcase"></i> Portafolio</a></li>
-              <li><a class="dropdown-item" href="/bienestar/"><i class="fas fa-heart-pulse"></i> Bienestar</a></li>
-              <li><a class="dropdown-item" href="/cursos/"><i class="fas fa-graduation-cap"></i> Cursos</a></li>
-              <li><a class="dropdown-item" href="/horarios/"><i class="fas fa-calendar"></i> Horarios</a></li>
-              <li><a class="dropdown-item" href="/encuestas/"><i class="fas fa-poll"></i> Encuestas</a></li>
-              <li><a class="dropdown-item" href="/reportes/"><i class="fas fa-chart-bar"></i> Reportes</a></li>
-              <li><a class="dropdown-item" href="/streetview/"><i class="fas fa-map"></i> Recorridos Virtuales</a></li>
-              <li><a class="dropdown-item" href="/teachers.html"><i class="fas fa-chalkboard-teacher"></i> Profesores</a></li>
-              <li><a class="dropdown-item" href="/account.html"><i class="fas fa-user"></i> Mi Cuenta</a></li>
+              <li><a class="dropdown-item" href="/forum/">
+                <i class="fas fa-comments"></i> Foros
+              </a></li>
+              <li><a class="dropdown-item" href="/market/">
+                <i class="fas fa-store"></i> Mercado
+              </a></li>
+              <li><a class="dropdown-item" href="/portfolio/">
+                <i class="fas fa-briefcase"></i> Portafolio
+              </a></li>
+              <li><a class="dropdown-item" href="/bienestar/">
+                <i class="fas fa-heart-pulse"></i> Bienestar
+              </a></li>
+              <li><a class="dropdown-item" href="/cursos/">
+                <i class="fas fa-graduation-cap"></i> Cursos
+              </a></li>
+              <li><a class="dropdown-item" href="/horarios/">
+                <i class="fas fa-calendar"></i> Horarios
+              </a></li>
+              <li><a class="dropdown-item" href="/encuestas/">
+                <i class="fas fa-poll"></i> Encuestas
+              </a></li>
+              <li><a class="dropdown-item" href="/reportes/">
+                <i class="fas fa-chart-bar"></i> Reportes
+              </a></li>
+              <li><a class="dropdown-item" href="/streetview/">
+                <i class="fas fa-map"></i> Recorridos Virtuales
+              </a></li>
+              <li><a class="dropdown-item" href="/campuses.html">
+                <i class="fas fa-building"></i> Sedes
+              </a></li>
+              <li><a class="dropdown-item" href="/teachers.html">
+                <i class="fas fa-chalkboard-teacher"></i> Profesores
+              </a></li>
+              <li><a class="dropdown-item" href="/account.html">
+                <i class="fas fa-user"></i> Mi Cuenta
+              </a></li>
             </ul>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/market/?categoria=libros">
+              <i class="fas fa-book"></i> Libros
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/market/?categoria=materiales">
+              <i class="fas fa-tools"></i> Materiales
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/market/?categoria=servicios">
+              <i class="fas fa-handshake"></i> Servicios
+            </a>
           </li>
         </ul>
       </div>
     </div>
   </nav>
 
+  <!-- Contenido principal -->
   <main class="main-content" style="position: relative; z-index: 2;">
     <div class="container mt-3">
-      <!-- Hero Section -->
-      <div class="row mb-4">
-        <div class="col-12">
-          <div class="card bg-gradient-primary text-white">
-            <div class="card-body text-center py-5">
-              <i class="fas fa-store fa-3x mb-3"></i>
-              <h2>Marketplace Estudiantil</h2>
-              <p class="lead">Descubre productos de estudiantes en Facebook Marketplace y MercadoLibre. Comparte tus enlaces favoritos con la comunidad.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
       <!-- Filtros y búsqueda -->
-      <div class="row mb-4">
+      <div class="row mb-3">
         <div class="col-md-6">
           <div class="input-group">
-            <span class="input-group-text"><i class="fas fa-search"></i></span>
             <input type="text" class="form-control" id="searchInput" placeholder="Buscar productos...">
+            <button class="btn btn-primary" type="button" onclick="searchProducts()">
+              <i class="fas fa-search"></i>
+            </button>
           </div>
         </div>
-        <div class="col-md-3">
-          <select class="form-select" id="platformFilter">
-            <option value="">Todas las plataformas</option>
-            <option value="facebook">Facebook Marketplace</option>
-            <option value="mercadolibre">MercadoLibre</option>
-          </select>
-        </div>
-        <div class="col-md-3">
-          <select class="form-select" id="categoryFilter">
-            <option value="">Todas las categorías</option>
-            <option value="libros">Libros</option>
-            <option value="electronica">Electrónica</option>
-            <option value="ropa">Ropa</option>
-            <option value="deportes">Deportes</option>
-            <option value="hogar">Hogar</option>
-            <option value="otro">Otro</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- Botón para compartir producto -->
-      <div class="row mb-4">
-        <div class="col-12 text-end">
-          <button class="btn btn-success" onclick="showShareProductModal()">
-            <i class="fas fa-plus"></i> Compartir Producto
+        <div class="col-md-6 text-end">
+          <button class="btn btn-primary" onclick="createNewProduct()">
+            <i class="fas fa-plus"></i> Vender Producto
           </button>
         </div>
       </div>
 
-      <!-- Lista de productos -->
-      <div class="row" id="productsContainer">
+      <!-- Categorías -->
+      <div class="row mb-3">
         <div class="col-12">
-          <div class="text-center py-5">
-            <i class="fas fa-store fa-3x gradient-text mb-3"></i>
-            <h2>Productos Compartidos</h2>
-            <p class="text-muted">Los productos de estudiantes aparecerán aquí</p>
-            <button class="btn btn-primary btn-lg" onclick="loadProducts()">
-              <i class="fas fa-list"></i> Cargar Productos
+          <div class="btn-group" role="group">
+            <button type="button" class="btn btn-outline-primary active" onclick="filterByCategory('all')">
+              Todos
             </button>
+            <button type="button" class="btn btn-outline-primary" onclick="filterByCategory('libros')">
+              Libros
+            </button>
+            <button type="button" class="btn btn-outline-primary" onclick="filterByCategory('materiales')">
+              Materiales
+            </button>
+            <button type="button" class="btn btn-outline-primary" onclick="filterByCategory('servicios')">
+              Servicios
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Lista de productos -->
+      <div class="row">
+        <div class="col-12">
+          <div id="productsContainer">
+            <!-- Los productos se cargarán aquí dinámicamente -->
+            <div class="text-center py-4">
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Cargando...</span>
+              </div>
+              <p class="mt-2 text-muted">Cargando productos...</p>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </main>
 
-  <!-- Modal para compartir producto -->
-  <div class="modal fade" id="shareProductModal" tabindex="-1">
+  <!-- Footer compacto -->
+  <footer class="students-footer">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-md-6">
+          <h5 class="gradient-text">Mercado StudentsPoint</h5>
+          <p>Compra y vende en tu comunidad estudiantil.</p>
+        </div>
+        <div class="col-md-6 text-end">
+          <p class="mb-0">
+            <i class="fas fa-store"></i> Comercio seguro entre estudiantes
+          </p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Herramientas de desarrollo -->
+  <div class="dev-tools" style="display: none;">
+    <button onclick="window.StudentsPointPWA?.clearCache()" title="Limpiar Cache">
+      <i class="fas fa-sync-alt"></i>
+    </button>
+    <button onclick="window.StudentsPointPWA?.getVersion()" title="Versión">
+      <i class="fas fa-info-circle"></i>
+    </button>
+    <button onclick="window.open('/admin/', '_blank')" title="Administración">
+      <i class="fas fa-cog"></i>
+    </button>
+    <button onclick="window.open('/api/', '_blank')" title="API">
+      <i class="fas fa-code"></i>
+    </button>
+  </div>
+
+  <!-- Modal para nuevo producto -->
+  <div class="modal fade" id="newProductModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Compartir Producto</h5>
+          <h5 class="modal-title">Vender Producto</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
-          <form id="shareProductForm">
+          <form id="newProductForm">
             <div class="mb-3">
-              <label class="form-label">Plataforma</label>
-              <select class="form-select" id="productPlatform" required>
-                <option value="">Selecciona una plataforma</option>
-                <option value="facebook">Facebook Marketplace</option>
-                <option value="mercadolibre">MercadoLibre</option>
-              </select>
+              <label for="productName" class="form-label">Nombre del Producto</label>
+              <input type="text" class="form-control" id="productName" required>
             </div>
             <div class="mb-3">
-              <label class="form-label">Título del Producto</label>
-              <input type="text" class="form-control" id="productTitle" required placeholder="Ej: Libro de Cálculo Diferencial">
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Descripción</label>
-              <textarea class="form-control" id="productDescription" rows="3" required placeholder="Describe el producto..."></textarea>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Categoría</label>
-              <select class="form-select" id="productCategory" required>
+              <label for="productCategory" class="form-label">Categoría</label>
+              <select class="form-control" id="productCategory" required>
                 <option value="">Selecciona una categoría</option>
                 <option value="libros">Libros</option>
-                <option value="electronica">Electrónica</option>
-                <option value="ropa">Ropa</option>
-                <option value="deportes">Deportes</option>
-                <option value="hogar">Hogar</option>
-                <option value="otro">Otro</option>
+                <option value="materiales">Materiales</option>
+                <option value="servicios">Servicios</option>
               </select>
             </div>
             <div class="mb-3">
-              <label class="form-label">Precio (opcional)</label>
-              <input type="text" class="form-control" id="productPrice" placeholder="Ej: $15.000">
+              <label for="productPrice" class="form-label">Precio ($)</label>
+              <input type="number" class="form-control" id="productPrice" min="0" step="100" required>
             </div>
             <div class="mb-3">
-              <label class="form-label">URL del Producto</label>
-              <input type="url" class="form-control" id="productUrl" required placeholder="https://...">
-              <div class="form-text">Solo se permiten enlaces de Facebook Marketplace o MercadoLibre</div>
+              <label for="productDescription" class="form-label">Descripción</label>
+              <textarea class="form-control" id="productDescription" rows="4" required></textarea>
             </div>
             <div class="mb-3">
-              <label class="form-label">Imagen del Producto (opcional)</label>
+              <label for="productImage" class="form-label">Imagen (opcional)</label>
               <input type="file" class="form-control" id="productImage" accept="image/*">
             </div>
           </form>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-          <button type="button" class="btn btn-primary" onclick="shareProduct()">Compartir Producto</button>
+          <button type="button" class="btn btn-primary" onclick="submitNewProduct()">Publicar</button>
         </div>
       </div>
     </div>
   </div>
 
-  <footer class="students-footer">
-    <div class="container">
-      <div class="row align-items-center">
-        <div class="col-md-6">
-          <h5 class="gradient-text">Marketplace StudentsPoint</h5>
-          <p>Conecta con otros estudiantes y encuentra productos únicos.</p>
-        </div>
-        <div class="col-md-6 text-end">
-          <p class="mb-0"><i class="fas fa-store"></i> Comparte y descubre</p>
-        </div>
-      </div>
-    </div>
-  </footer>
-
-  <div class="dev-tools" style="display: none;">
-    <button onclick="window.StudentsPointPWA?.clearCache()" title="Limpiar Cache"><i class="fas fa-sync-alt"></i></button>
-    <button onclick="window.StudentsPointPWA?.getVersion()" title="Versión"><i class="fas fa-info-circle"></i></button>
-    <button onclick="window.open('/admin/', '_blank')" title="Administración"><i class="fas fa-cog"></i></button>
-    <button onclick="window.open('/api/', '_blank')" title="API"><i class="fas fa-code"></i></button>
-  </div>
-
+  <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="/static/js/sounds.js"></script>
   <script src="/static/js/pwa.js"></script>
   <script src="/static/pwa-config.js"></script>
   <script src="/static/js/main.js"></script>
+  <script src="market.js"></script>
 
   <script>
-    let currentUser = null;
-    let products = [];
-
+    // Mostrar herramientas de desarrollo solo en localhost
     if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
       document.querySelector('.dev-tools').style.display = 'flex';
     }
 
+    // Variables globales
+    let currentCategory = 'all';
+    let products = [];
+
+    // Cargar productos al iniciar
     document.addEventListener('DOMContentLoaded', function() {
+      loadProducts();
+      
+      // Sonido de carga de página
       setTimeout(() => {
         if (window.playSound) {
           window.playSound('pageLoad');
         }
       }, 500);
-      
-      // Verificar autenticación
-      checkAuth();
-      
-      // Event listeners
-      document.getElementById('searchInput').addEventListener('input', filterProducts);
-      document.getElementById('platformFilter').addEventListener('change', filterProducts);
-      document.getElementById('categoryFilter').addEventListener('change', filterProducts);
     });
 
-    async function checkAuth() {
-      const token = localStorage.getItem('access_token');
-      if (token) {
-        try {
-          const response = await fetch('/api/auth/me/', {
-            headers: {
-              'Authorization': `Bearer ${token}`
-            }
-          });
-          if (response.ok) {
-            currentUser = await response.json();
-            updateUI();
-          }
-        } catch (error) {
-          console.error('Error verificando autenticación:', error);
-        }
-      }
-    }
-
-    function updateUI() {
-      if (currentUser) {
-        // Actualizar botones de autenticación
-        const authButtons = document.querySelector('.auth-buttons');
-        authButtons.innerHTML = `
-          <span class="text-white me-2">Hola, ${currentUser.name}</span>
-          <a href="/account.html" class="btn btn-outline-primary btn-sm">
-            <i class="fas fa-user"></i> Mi Cuenta
-          </a>
-          <button class="btn btn-danger btn-sm ms-2" onclick="logout()">
-            <i class="fas fa-sign-out-alt"></i> Salir
-          </button>
-        `;
-      }
-    }
-
+    // Cargar productos desde la API
     async function loadProducts() {
       try {
         const token = localStorage.getItem('access_token');
@@ -289,209 +292,407 @@
         if (token) {
           headers['Authorization'] = `Bearer ${token}`;
         }
-
-        const response = await fetch('/api/market/', { headers });
+        
+        const response = await fetch('/api/marketplace/products/', { headers });
         if (response.ok) {
-          products = await response.json();
-          displayProducts(products);
+          const data = await response.json();
+          products = Array.isArray(data) ? data : data.results || [];
         } else {
-          showError('Error cargando productos');
+          // Si no hay API, usar datos de ejemplo
+          products = getSampleProducts();
         }
+        displayProducts(products);
       } catch (error) {
         console.error('Error:', error);
-        showError('Error de conexión');
+        // Usar datos de ejemplo si hay error de conexión
+        products = getSampleProducts();
+        displayProducts(products);
       }
     }
 
+    // Datos de ejemplo para desarrollo
+    function getSampleProducts() {
+      return [
+        {
+          id: 1,
+          nombre: "Libro de Cálculo Diferencial",
+          descripcion: "Libro de cálculo diferencial en excelente estado. Incluye ejercicios resueltos y teoría completa.",
+          categoria: "libros",
+          precio: 15000,
+          vendedor: "Estudiante de Ingeniería",
+          fecha_creacion: new Date().toISOString(),
+          vistas: 12,
+          imagen: "/static/images/no-image.png"
+        },
+        {
+          id: 2,
+          nombre: "Calculadora Científica TI-84",
+          descripcion: "Calculadora científica Texas Instruments TI-84 Plus en perfecto estado. Ideal para matemáticas y estadística.",
+          categoria: "materiales",
+          precio: 45000,
+          vendedor: "Estudiante de Matemáticas",
+          fecha_creacion: new Date(Date.now() - 86400000).toISOString(),
+          vistas: 8,
+          imagen: "/static/images/no-image.png"
+        },
+        {
+          id: 3,
+          nombre: "Clases de Programación",
+          descripcion: "Ofrezco clases particulares de programación en Python y Java. Experiencia con estudiantes universitarios.",
+          categoria: "servicios",
+          precio: 8000,
+          vendedor: "Estudiante Avanzado",
+          fecha_creacion: new Date(Date.now() - 172800000).toISOString(),
+          vistas: 15,
+          imagen: "/static/images/no-image.png"
+        },
+        {
+          id: 4,
+          nombre: "Libros de Literatura",
+          descripcion: "Colección de libros de literatura chilena e hispanoamericana. Varios autores clásicos.",
+          categoria: "libros",
+          precio: 25000,
+          vendedor: "Estudiante de Letras",
+          fecha_creacion: new Date(Date.now() - 259200000).toISOString(),
+          vistas: 6,
+          imagen: "/static/images/no-image.png"
+        }
+      ];
+    }
+
+    // Mostrar productos
     function displayProducts(productsToShow) {
       const container = document.getElementById('productsContainer');
       
       if (productsToShow.length === 0) {
         container.innerHTML = `
-          <div class="col-12">
-            <div class="text-center py-5">
-              <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
-              <h3>No hay productos compartidos</h3>
-              <p class="text-muted">Los productos aparecerán aquí cuando se compartan</p>
-            </div>
+          <div class="text-center py-4">
+            <i class="fas fa-store fa-3x text-muted mb-3"></i>
+            <h5 class="text-muted">No hay productos disponibles</h5>
+            <p class="text-muted">Sé el primero en vender algo</p>
           </div>
         `;
         return;
       }
 
-      container.innerHTML = productsToShow.map(product => `
-        <div class="col-md-6 col-lg-4 mb-4">
-          <div class="card h-100">
-            <div class="card-body">
-              <div class="d-flex justify-content-between align-items-start mb-2">
-                <span class="badge ${getPlatformBadgeClass(product.plataforma)}">${getPlatformName(product.plataforma)}</span>
-                <span class="badge bg-secondary">${product.categoria}</span>
+      const productsHTML = productsToShow.map(product => `
+        <div class="card mb-3 product-card" onclick="openProduct(${product.id})">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-2">
+                <img src="${product.primary_image || '/static/images/no-image.png'}" 
+                     class="img-fluid rounded" 
+                     alt="${product.title}"
+                     style="max-height: 80px; object-fit: cover;">
               </div>
-              
-              <h5 class="card-title">${product.titulo}</h5>
-              <p class="card-text">${product.descripcion}</p>
-              
-              ${product.precio ? `<p class="text-success fw-bold">${product.precio}</p>` : ''}
-              
-              <div class="mb-3">
-                <small class="text-muted">
-                  <i class="fas fa-user"></i> Compartido por ${product.vendedor_name || 'Usuario'}
-                </small>
+              <div class="col-md-6">
+                <h5 class="card-title">${product.title}</h5>
+                <p class="card-text text-muted">${product.description ? product.description.substring(0, 100) + '...' : 'Sin descripción'}</p>
+                <div class="d-flex gap-3">
+                  <span class="badge bg-primary">${product.category ? product.category.name : 'Sin categoría'}</span>
+                  <small class="text-muted">
+                    <i class="fas fa-user"></i> ${product.seller || 'Usuario'}
+                  </small>
+                  <small class="text-muted">
+                    <i class="fas fa-clock"></i> ${new Date(product.created_at).toLocaleDateString()}
+                  </small>
+                </div>
               </div>
-
-              <div class="d-grid">
-                <a href="${product.url}" target="_blank" class="btn btn-primary">
-                  <i class="fas fa-external-link-alt"></i> Ver en ${getPlatformName(product.plataforma)}
-                </a>
+              <div class="col-md-4 text-end">
+                <div class="d-flex flex-column gap-2">
+                  <h4 class="text-success mb-0">$${parseFloat(product.price).toLocaleString()}</h4>
+                  <span class="badge bg-success">
+                    <i class="fas fa-eye"></i> ${product.views || 0}
+                  </span>
+                  <button class="btn btn-primary btn-sm" onclick="event.stopPropagation(); contactSeller(${product.id})">
+                    <i class="fas fa-envelope"></i> Contactar
+                  </button>
+                </div>
               </div>
             </div>
           </div>
         </div>
       `).join('');
+
+      container.innerHTML = productsHTML;
+
+      // Agregar efectos hover con sonido
+      const productCards = document.querySelectorAll('.product-card');
+      productCards.forEach(card => {
+        card.addEventListener('mouseenter', () => {
+          if (window.playSound) {
+            window.playSound('hover');
+          }
+        });
+      });
     }
 
-    function getPlatformName(platform) {
-      switch (platform) {
-        case 'facebook': return 'Facebook';
-        case 'mercadolibre': return 'MercadoLibre';
-        default: return 'Plataforma';
+    // Filtrar por categoría
+    function filterByCategory(category) {
+      currentCategory = category;
+      
+      // Actualizar botones activos
+      document.querySelectorAll('.btn-group .btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      event.target.classList.add('active');
+      
+      // Filtrar productos
+      let filteredProducts = products;
+      if (category !== 'all') {
+        filteredProducts = products.filter(product => 
+          product.category && product.category.name.toLowerCase() === category.toLowerCase()
+        );
+      }
+      
+      displayProducts(filteredProducts);
+      
+      if (window.playSound) {
+        window.playSound('click');
       }
     }
 
-    function getPlatformBadgeClass(platform) {
-      switch (platform) {
-        case 'facebook': return 'bg-primary';
-        case 'mercadolibre': return 'bg-warning';
-        default: return 'bg-secondary';
-      }
-    }
-
-    function showShareProductModal() {
-      const token = localStorage.getItem('access_token');
-      if (!token) {
-        showError('Debes iniciar sesión para compartir productos');
+    // Buscar productos
+    function searchProducts() {
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+      
+      if (searchTerm === '') {
+        displayProducts(products);
         return;
       }
       
-      const modal = new bootstrap.Modal(document.getElementById('shareProductModal'));
-      modal.show();
+      const filteredProducts = products.filter(product => 
+        product.title.toLowerCase().includes(searchTerm) ||
+        (product.description && product.description.toLowerCase().includes(searchTerm))
+      );
+      
+      displayProducts(filteredProducts);
+      
+      if (window.playSound) {
+        window.playSound('search');
+      }
     }
 
-    async function shareProduct() {
-      const platform = document.getElementById('productPlatform').value;
-      const title = document.getElementById('productTitle').value;
-      const description = document.getElementById('productDescription').value;
+    // Crear nuevo producto
+    function createNewProduct() {
+      const modal = new bootstrap.Modal(document.getElementById('newProductModal'));
+      modal.show();
+      
+      if (window.playSound) {
+        window.playSound('click');
+      }
+    }
+
+    // Enviar nuevo producto
+    async function submitNewProduct() {
+      const name = document.getElementById('productName').value;
       const category = document.getElementById('productCategory').value;
       const price = document.getElementById('productPrice').value;
-      const url = document.getElementById('productUrl').value;
-      const image = document.getElementById('productImage').files[0];
-
-      if (!platform || !title || !description || !category || !url) {
-        showError('Por favor completa todos los campos requeridos');
+      const description = document.getElementById('productDescription').value;
+      
+      if (!name || !category || !price || !description) {
+        showError('Por favor completa todos los campos');
         return;
       }
-
-      // Validar URL
-      if (!isValidMarketplaceUrl(url, platform)) {
-        showError(`La URL debe ser de ${getPlatformName(platform)}`);
-        return;
-      }
-
+      
       try {
-        const token = localStorage.getItem('access_token');
+        // Intentar enviar a la API real
         const formData = new FormData();
-        formData.append('plataforma', platform);
-        formData.append('titulo', title);
-        formData.append('descripcion', description);
+        formData.append('nombre', name);
         formData.append('categoria', category);
         formData.append('precio', price);
-        formData.append('url', url);
-        if (image) {
-          formData.append('imagen', image);
+        formData.append('descripcion', description);
+        
+        const imageFile = document.getElementById('productImage').files[0];
+        if (imageFile) {
+          formData.append('imagen', imageFile);
         }
-
-        const response = await fetch('/api/market/', {
+        
+        const response = await fetch('/api/marketplace/products/', {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${token}`
+            'Authorization': `Bearer ${localStorage.getItem('access_token')}`
           },
           body: formData
         });
-
+        
         if (response.ok) {
-          showSuccess('Producto compartido exitosamente');
-          bootstrap.Modal.getInstance(document.getElementById('shareProductModal')).hide();
-          document.getElementById('shareProductForm').reset();
+          const modal = bootstrap.Modal.getInstance(document.getElementById('newProductModal'));
+          modal.hide();
+          
+          document.getElementById('newProductForm').reset();
           loadProducts();
+          
+          if (window.playSound) {
+            window.playSound('success');
+          }
+          
+          showSuccess('Producto publicado exitosamente');
         } else {
-          showError('Error al compartir producto');
+          // Si falla la API, agregar localmente
+          addProductLocally(name, category, price, description);
         }
       } catch (error) {
         console.error('Error:', error);
-        showError('Error de conexión');
+        // Si hay error de conexión, agregar localmente
+        addProductLocally(name, category, price, description);
       }
     }
 
-    function isValidMarketplaceUrl(url, platform) {
-      try {
-        const urlObj = new URL(url);
-        const hostname = urlObj.hostname.toLowerCase();
-        
-        switch (platform) {
-          case 'facebook':
-            return hostname.includes('facebook.com') && url.includes('/marketplace/');
-          case 'mercadolibre':
-            return hostname.includes('mercadolibre.com') || hostname.includes('mercadolibre.cl');
-          default:
-            return false;
+    // Agregar producto localmente (modo demo)
+    function addProductLocally(name, category, price, description) {
+      const newProduct = {
+        id: Date.now(),
+        nombre: name,
+        descripcion: description,
+        categoria: category,
+        precio: parseInt(price),
+        vendedor: "Usuario Demo",
+        fecha_creacion: new Date().toISOString(),
+        vistas: 1,
+        imagen: "/static/images/no-image.png"
+      };
+      
+      products.unshift(newProduct);
+      displayProducts(products);
+      
+      const modal = bootstrap.Modal.getInstance(document.getElementById('newProductModal'));
+      modal.hide();
+      
+      document.getElementById('newProductForm').reset();
+      
+      if (window.playSound) {
+        window.playSound('success');
+      }
+      
+      showSuccess('Producto publicado exitosamente (modo demo)');
+    }
+
+    // Abrir producto
+    function openProduct(productId) {
+      // En modo demo, mostrar el producto en un modal
+      const product = products.find(p => p.id == productId);
+      if (product) {
+        showProductModal(product);
+      } else {
+        // Intentar navegar a la página del producto
+        window.location.href = `/market/product/${productId}/`;
+      }
+      
+      if (window.playSound) {
+        window.playSound('navigate');
+      }
+    }
+
+    // Mostrar producto en modal (modo demo)
+    function showProductModal(product) {
+      const modalHtml = `
+        <div class="modal fade" id="productModal" tabindex="-1">
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">${product.title}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+              </div>
+              <div class="modal-body">
+                <div class="row">
+                  <div class="col-md-4">
+                    <img src="${product.primary_image || '/static/images/no-image.png'}" alt="${product.title}" class="img-fluid rounded">
+                  </div>
+                  <div class="col-md-8">
+                    <div class="product-meta mb-3">
+                      <span class="badge bg-primary">${product.category ? product.category.name : 'Sin categoría'}</span>
+                      <small class="text-muted ms-2">
+                        <i class="fas fa-user"></i> ${product.seller || 'Usuario'} • 
+                        <i class="fas fa-clock"></i> ${new Date(product.created_at).toLocaleDateString()}
+                      </small>
+                    </div>
+                    <div class="product-description">
+                      <h6>Descripción:</h6>
+                      <p>${product.description || 'Sin descripción'}</p>
+                    </div>
+                    <div class="product-price">
+                      <h4 class="text-success">$${parseFloat(product.price).toLocaleString()}</h4>
+                    </div>
+                    <div class="product-stats mt-3">
+                      <span class="badge bg-secondary me-2">
+                        <i class="fas fa-eye"></i> ${product.views || 0} vistas
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" onclick="contactSeller(${product.id})">
+                  <i class="fas fa-envelope"></i> Contactar Vendedor
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      // Remover modal anterior si existe
+      const existingModal = document.getElementById('productModal');
+      if (existingModal) {
+        existingModal.remove();
+      }
+      
+      // Agregar nuevo modal
+      document.body.insertAdjacentHTML('beforeend', modalHtml);
+      
+      // Mostrar modal
+      const modal = new bootstrap.Modal(document.getElementById('productModal'));
+      modal.show();
+      
+      // Limpiar modal cuando se cierre
+      document.getElementById('productModal').addEventListener('hidden.bs.modal', function() {
+        this.remove();
+      });
+    }
+
+    // Contactar vendedor
+    function contactSeller(productId) {
+      // Implementar lógica de contacto
+      showSuccess('Función de contacto en desarrollo');
+      
+      if (window.playSound) {
+        window.playSound('click');
+      }
+    }
+
+    // Mostrar error
+    function showError(message) {
+      const alertDiv = document.createElement('div');
+      alertDiv.className = 'alert alert-danger alert-dismissible fade show';
+      alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      `;
+      
+      const container = document.querySelector('.container');
+      container.insertBefore(alertDiv, container.firstChild);
+      
+      setTimeout(() => {
+        if (alertDiv.parentNode) {
+          alertDiv.remove();
         }
-      } catch (error) {
-        return false;
-      }
+      }, 5000);
     }
 
-    function filterProducts() {
-      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-      const platformFilter = document.getElementById('platformFilter').value;
-      const categoryFilter = document.getElementById('categoryFilter').value;
-
-      let filteredProducts = products;
-
-      if (searchTerm) {
-        filteredProducts = filteredProducts.filter(product => 
-          product.titulo.toLowerCase().includes(searchTerm) ||
-          product.descripcion.toLowerCase().includes(searchTerm) ||
-          product.categoria.toLowerCase().includes(searchTerm)
-        );
-      }
-
-      if (platformFilter) {
-        filteredProducts = filteredProducts.filter(product => 
-          product.plataforma === platformFilter
-        );
-      }
-
-      if (categoryFilter) {
-        filteredProducts = filteredProducts.filter(product => 
-          product.categoria === categoryFilter
-        );
-      }
-
-      displayProducts(filteredProducts);
-    }
-
-    function logout() {
-      localStorage.removeItem('access_token');
-      localStorage.removeItem('refresh_token');
-      window.location.href = '/login.html';
-    }
-
+    // Mostrar éxito
     function showSuccess(message) {
       const alertDiv = document.createElement('div');
       alertDiv.className = 'alert alert-success alert-dismissible fade show';
-      alertDiv.innerHTML = `${message}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>`;
+      alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      `;
+      
       const container = document.querySelector('.container');
       container.insertBefore(alertDiv, container.firstChild);
+      
       setTimeout(() => {
         if (alertDiv.parentNode) {
           alertDiv.remove();
@@ -499,33 +700,12 @@
       }, 3000);
     }
 
-    function showError(message) {
-      const alertDiv = document.createElement('div');
-      alertDiv.className = 'alert alert-danger alert-dismissible fade show';
-      alertDiv.innerHTML = `${message}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>`;
-      const container = document.querySelector('.container');
-      container.insertBefore(alertDiv, container.firstChild);
-      setTimeout(() => {
-        if (alertDiv.parentNode) {
-          alertDiv.remove();
-        }
-      }, 5000);
-    }
+    // Búsqueda con Enter
+    document.getElementById('searchInput').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        searchProducts();
+      }
+    });
   </script>
-
-  <style>
-    .bg-gradient-primary {
-      background: linear-gradient(135deg, #0066CC, #00CC66);
-    }
-    
-    .card {
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    
-    .card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-    }
-  </style>
 </body>
 </html>

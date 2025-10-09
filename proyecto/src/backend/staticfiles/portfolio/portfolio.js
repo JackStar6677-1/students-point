@@ -90,7 +90,7 @@ class PortfolioManager {
     async loadPortfolioData() {
         try {
             const token = localStorage.getItem('access_token');
-            const response = await fetch('/api/portfolio/', {
+            const response = await fetch('/api/portfolio/completo/', {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             
@@ -106,7 +106,7 @@ class PortfolioManager {
     async savePortfolioData() {
         try {
             const token = localStorage.getItem('access_token');
-            const response = await fetch('/api/portfolio/', {
+            const response = await fetch('/api/portfolio/completo/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -604,33 +604,53 @@ class PortfolioManager {
         try {
             this.showToast('Generando PDF...', 'info');
             
-            // Usar la API del servidor para generar PDF
-            const token = localStorage.getItem('access_token');
-            if (!token) {
-                this.showToast('Debes iniciar sesión para generar PDF', 'error');
-                return;
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Add title
+            doc.setFontSize(20);
+            doc.text('Portafolio Profesional', 20, 30);
+            
+            // Add profile info
+            doc.setFontSize(16);
+            doc.text('Información Personal', 20, 50);
+            
+            doc.setFontSize(12);
+            const perfil = this.portfolioData.perfil;
+            let y = 60;
+            
+            if (perfil.nombre) {
+                doc.text(`Nombre: ${perfil.nombre}`, 20, y);
+                y += 10;
+            }
+            if (perfil.email) {
+                doc.text(`Email: ${perfil.email}`, 20, y);
+                y += 10;
+            }
+            if (perfil.carrera) {
+                doc.text(`Carrera: ${perfil.carrera}`, 20, y);
+                y += 10;
+            }
+            if (perfil.telefono) {
+                doc.text(`Teléfono: ${perfil.telefono}`, 20, y);
+                y += 10;
             }
             
-            const response = await fetch('/api/portfolio/generate_pdf/', {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
+            // Add sections
+            this.addSectionToPDF(doc, 'Logros y Certificaciones', this.portfolioData.logros, y);
+            y += 20;
+            this.addSectionToPDF(doc, 'Proyectos', this.portfolioData.proyectos, y);
+            y += 20;
+            this.addSectionToPDF(doc, 'Experiencia Laboral', this.portfolioData.experiencias, y);
             
-            if (response.ok) {
-                const blob = await response.blob();
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `portfolio_${this.portfolioData.perfil.nombre || 'usuario'}.pdf`;
-                document.body.appendChild(a);
-                a.click();
-                window.URL.revokeObjectURL(url);
-                document.body.removeChild(a);
-                this.showToast('PDF generado exitosamente', 'success');
-            } else {
-                throw new Error('Error generando PDF');
+            // Save PDF
+            const fileName = `portafolio_${perfil.nombre || 'usuario'}_${new Date().toISOString().split('T')[0]}.pdf`;
+            doc.save(fileName);
+            
+            this.showToast('PDF generado exitosamente', 'success');
+            
+            if (window.playSound) {
+                window.playSound('success');
             }
             
         } catch (error) {
