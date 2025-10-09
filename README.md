@@ -294,14 +294,27 @@ Este proyecto es de codigo abierto, desarrollado como proyecto academico.
 
 ## Estado del Proyecto
 
-- **Version Actual**: 2.0.0
+- **Version Actual**: v2.1.0 (Release)
 - **Fecha de Inicio**: Agosto 2025
-- **Fecha Actual**: Octubre 2025
-- **Estado**: En Desarrollo Activo
+- **Fecha Actual**: 9 de Octubre 2025
+- **Estado**: Sistema de Foros y Autenticacion Completos
+
+### Hitos Completados (v2.1.0)
+- Sistema de foros avanzado personalizado por carrera
+- Sistema de autenticacion completo con verificacion de email
+- Email SMTP real configurado y funcional
+- Google OAuth 2.0 configurado y funcional
+- Base de datos completamente migrada
+- Tests unitarios 6/6 pasando
+- Documentacion completa y organizada
+
+## Releases
+
+Ver [RELEASES.md](RELEASES.md) para ver todas las versiones.
 
 ## Changelog
 
-Ver [CHANGELOG.md](CHANGELOG.md) para ver el historial de cambios.
+Ver [CHANGELOG.md](CHANGELOG.md) para ver el historial de cambios detallado.
 
 ## Contacto
 
