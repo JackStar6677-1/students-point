@@ -5,431 +5,477 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mi Cuenta - StudentsPoint</title>
     
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico" />
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
-    <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="/static/images/favicon.svg" />
-    <link rel="icon" type="image/x-icon" href="/static/favicon.ico" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/static/images/icons/icon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="/static/images/icons/icon-16x16.png" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/static/images/icons/icon-192x192.png" />
-    
-    <!-- PWA Manifest -->
-    <link rel="manifest" href="/static/manifest.json">
-    
-    <!-- Meta tags para PWA -->
-    <meta name="theme-color" content="#2563eb">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="StudentsPoint">
-    
-    <style>
-        :root {
-            --primary-color: #2563eb;
-            --primary-dark: #1d4ed8;
-            --secondary-color: #64748b;
-            --accent-color: #0ea5e9;
-            --success-color: #10b981;
-            --warning-color: #f59e0b;
-            --danger-color: #ef4444;
-            --dark-color: #1e293b;
-            --light-color: #f8fafc;
-            --gradient-primary: linear-gradient(135deg, #2563eb 0%, #0ea5e9 100%);
-            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-            min-height: 100vh;
-            color: var(--dark-color);
-        }
-
-        .navbar {
-            background: var(--gradient-primary) !important;
-            box-shadow: var(--shadow-lg);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .navbar-brand {
-            font-weight: 700;
-            font-size: 1.5rem;
-            color: white !important;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .navbar-nav .nav-link {
-            color: rgba(255, 255, 255, 0.9) !important;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            padding: 0.5rem 1rem !important;
-            border-radius: 0.5rem;
-            margin: 0 0.25rem;
-        }
-
-        .navbar-nav .nav-link:hover {
-            color: white !important;
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateY(-1px);
-        }
-
-        .account-container {
-            background: white;
-            border-radius: 1.5rem;
-            box-shadow: var(--shadow-lg);
-            padding: 2rem;
-            margin: 2rem auto;
-            max-width: 800px;
-            border: 1px solid rgba(226, 232, 240, 0.5);
-        }
-
-        .profile-header {
-            text-align: center;
-            margin-bottom: 2rem;
-            padding-bottom: 2rem;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        .profile-avatar {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            background: var(--gradient-primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1rem;
-            color: white;
-            font-size: 3rem;
-            box-shadow: var(--shadow-lg);
-        }
-
-        .profile-name {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--dark-color);
-            margin-bottom: 0.5rem;
-        }
-
-        .profile-email {
-            color: var(--secondary-color);
-            margin-bottom: 0;
-        }
-
-        .form-control {
-            border: 2px solid #e2e8f0;
-            border-radius: 0.75rem;
-            padding: 0.75rem 1rem;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        .form-control:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-        }
-
-        .btn-primary {
-            background: var(--gradient-primary);
-            border: none;
-            padding: 0.75rem 2rem;
-            border-radius: 0.75rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
-        }
-
-        .btn-outline-danger {
-            color: var(--danger-color);
-            border: 2px solid var(--danger-color);
-            padding: 0.75rem 2rem;
-            border-radius: 0.75rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .btn-outline-danger:hover {
-            background: var(--danger-color);
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-        }
-
-        .form-label {
-            font-weight: 600;
-            color: var(--dark-color);
-            margin-bottom: 0.5rem;
-        }
-
-        .section-title {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--dark-color);
-            margin-bottom: 1.5rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid var(--primary-color);
-        }
-
-        .info-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem 0;
-            border-bottom: 1px solid #f1f5f9;
-        }
-
-        .info-item:last-child {
-            border-bottom: none;
-        }
-
-        .info-label {
-            font-weight: 600;
-            color: var(--secondary-color);
-        }
-
-        .info-value {
-            color: var(--dark-color);
-        }
-
-        @media (max-width: 768px) {
-            .account-container {
-                margin: 1rem;
-                padding: 1.5rem;
-            }
-        }
-    </style>
+    <!-- Tema Oscuro Premium -->
+    <link rel="stylesheet" href="/static/css/theme-dark.css">
+    <link rel="stylesheet" href="/static/css/animations.css">
+    <link rel="stylesheet" href="/static/css/components.css">
 </head>
 <body>
-  <div class="particles-bg"></div>
-  
-  <header class="students-header text-white">
-    <div class="container">
-      <div class="row align-items-center">
-        <div class="col-md-8">
-          <div class="students-logo">
-            <div class="logo-placeholder">
-              <i class="fas fa-graduation-cap fa-2x"></i>
+    <!-- Navbar Premium -->
+    <nav class="navbar-premium" id="navbar">
+        <div class="navbar-content">
+            <div class="navbar-logo">
+                <a href="/">
+                    <img src="/static/images/Logo_StudentsPoint.svg.png" alt="StudentsPoint" height="40">
+                </a>
             </div>
-            <div>
-              <h1>Mi Cuenta StudentsPoint</h1>
-              <p>Gestiona tu perfil y configuraciones</p>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4 text-end">
-          <div class="auth-buttons">
-            <a href="/" class="btn btn-outline-primary btn-sm">
-              <i class="fas fa-home"></i> Inicio
-            </a>
-            <a href="/login.html" class="btn btn-primary btn-sm">
-              <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </header>
-
-  <nav class="navbar navbar-expand-lg students-nav">
-    <div class="container">
-      <div class="collapse navbar-collapse">
-        <ul class="navbar-nav me-auto">
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-              <i class="fas fa-th-large"></i> Aplicaciones
-            </a>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="/forum/"><i class="fas fa-comments"></i> Foros</a></li>
-              <li><a class="dropdown-item" href="/market/"><i class="fas fa-store"></i> Mercado</a></li>
-              <li><a class="dropdown-item" href="/portfolio/"><i class="fas fa-briefcase"></i> Portafolio</a></li>
-              <li><a class="dropdown-item" href="/bienestar/"><i class="fas fa-heart-pulse"></i> Bienestar</a></li>
-              <li><a class="dropdown-item" href="/cursos/"><i class="fas fa-graduation-cap"></i> Cursos</a></li>
-              <li><a class="dropdown-item" href="/horarios/"><i class="fas fa-calendar"></i> Horarios</a></li>
-              <li><a class="dropdown-item" href="/encuestas/"><i class="fas fa-poll"></i> Encuestas</a></li>
-              <li><a class="dropdown-item" href="/reportes/"><i class="fas fa-chart-bar"></i> Reportes</a></li>
-              <li><a class="dropdown-item" href="/streetview/"><i class="fas fa-map"></i> Recorridos Virtuales</a></li>
-              <li><a class="dropdown-item" href="/campuses.html"><i class="fas fa-building"></i> Sedes</a></li>
-              <li><a class="dropdown-item" href="/teachers.html"><i class="fas fa-chalkboard-teacher"></i> Profesores</a></li>
-              <li><a class="dropdown-item" href="/account.html"><i class="fas fa-user"></i> Mi Cuenta</a></li>
+            
+            <ul class="navbar-menu">
+                <li><a href="/" class="navbar-link">Inicio</a></li>
+                <li><a href="/forum/" class="navbar-link">Foros</a></li>
+                <li><a href="/market/" class="navbar-link">Marketplace</a></li>
+                <li><a href="/portfolio/" class="navbar-link">Portafolio</a></li>
+                <li><a href="/bienestar/" class="navbar-link">Bienestar</a></li>
             </ul>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </nav>
+            
+            <div class="navbar-actions">
+                <div class="audio-controls">
+                    <button class="audio-btn active" id="musicToggle">
+                        <i class="fas fa-music"></i>
+                    </button>
+                    <div class="volume-slider" id="volumeSlider">
+                        <div class="volume-slider-fill" id="volumeFill" style="width: 70%"></div>
+                    </div>
+                    <button class="audio-btn active" id="soundToggle">
+                        <i class="fas fa-volume-up"></i>
+                    </button>
+                </div>
+                <img src="/static/images/icons/icon-192x192.png" alt="Usuario" class="avatar-premium" id="userAvatar" style="cursor: pointer;">
+            </div>
+        </div>
+    </nav>
 
-  <main class="main-content" style="position: relative; z-index: 2;">
-    <div class="container mt-3">
-      <div class="row">
-        <div class="col-12">
-          <div class="text-center py-5">
-            <i class="fas fa-user fa-3x gradient-text mb-3"></i>
-            <h2>Mi Cuenta</h2>
-            <p class="text-muted">Gestiona tu perfil y configuraciones</p>
-            <button class="btn btn-primary btn-lg" onclick="manageAccount()">
-              <i class="fas fa-cog"></i> Gestionar Cuenta
+    <!-- Profile Container -->
+    <div class="container-dark" style="padding-top: 6rem; padding-bottom: 4rem; min-height: 100vh;">
+        <!-- Profile Header -->
+        <div class="card-premium animate-fade-in" style="margin-bottom: 2rem;">
+            <div class="text-center">
+                <div style="position: relative; display: inline-block; margin-bottom: 1.5rem;">
+                    <img src="/static/images/icons/icon-192x192.png" alt="Avatar" class="avatar-premium avatar-large" id="profileAvatar">
+                    <button class="btn btn-sm" id="changeAvatarBtn" style="position: absolute; bottom: 0; right: 0; background: var(--gradient-gold); border-radius: 50%; width: 35px; height: 35px; padding: 0; border: 2px solid var(--color-dark-primary);">
+                        <i class="fas fa-camera"></i>
+                    </button>
+                </div>
+                <h2 id="userName" style="color: var(--color-white); margin-bottom: 0.5rem;">Cargando...</h2>
+                <p id="userEmail" style="color: var(--color-gray-light); margin-bottom: 0.5rem;"></p>
+                <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                    <span class="badge-premium">
+                        <i class="fas fa-graduation-cap"></i> <span id="userCareer">-</span>
+                    </span>
+                    <span class="badge-purple">
+                        <i class="fas fa-book"></i> Semestre <span id="userSemestre">-</span>
+                    </span>
+                    <span class="badge-premium" id="userRole">
+                        <i class="fas fa-user"></i> Estudiante
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="card-premium animate-fade-in delay-200">
+            <ul class="nav nav-tabs mb-4" style="border-bottom: 2px solid rgba(107, 70, 193, 0.3);">
+                <li class="nav-item">
+                    <a class="nav-link active" data-bs-toggle="tab" href="#perfil" style="color: var(--color-white); border: none;">
+                        <i class="fas fa-user"></i> Perfil
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#seguridad" style="color: var(--color-gray-light); border: none;">
+                        <i class="fas fa-lock"></i> Seguridad
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#preferencias" style="color: var(--color-gray-light); border: none;">
+                        <i class="fas fa-cog"></i> Preferencias
+                    </a>
+                </li>
+            </ul>
+
+            <div class="tab-content">
+                <!-- Tab Perfil -->
+                <div class="tab-pane fade show active" id="perfil">
+                    <form id="profileForm">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        <i class="fas fa-user"></i> Nombre Completo
+                                    </label>
+                                    <input type="text" class="form-input" id="name" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        <i class="fas fa-envelope"></i> Email
+                                    </label>
+                                    <input type="email" class="form-input" id="email" disabled>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        <i class="fas fa-graduation-cap"></i> Carrera
+                                    </label>
+                                    <select class="form-input form-select" id="career">
+                                        <option value="Ingenieria en Informatica">Ingeniería en Informática</option>
+                                        <option value="Ingenieria en Construccion">Ingeniería en Construcción</option>
+                                        <option value="Derecho">Derecho</option>
+                                        <option value="Medicina">Medicina</option>
+                                        <option value="Estudiante Generico">Estudiante Genérico</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        <i class="fas fa-book"></i> Semestre
+                                    </label>
+                                    <select class="form-input form-select" id="semestre">
+                                        <option value="1">1° Semestre</option>
+                                        <option value="2">2° Semestre</option>
+                                        <option value="3">3° Semestre</option>
+                                        <option value="4">4° Semestre</option>
+                                        <option value="5">5° Semestre</option>
+                                        <option value="6">6° Semestre</option>
+                                        <option value="7">7° Semestre</option>
+                                        <option value="8">8° Semestre</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-save"></i> Guardar Cambios
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Tab Seguridad -->
+                <div class="tab-pane fade" id="seguridad">
+                    <form id="passwordForm">
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-lock"></i> Contraseña Actual
+                            </label>
+                            <input type="password" class="form-input" id="currentPassword" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-key"></i> Nueva Contraseña
+                            </label>
+                            <input type="password" class="form-input" id="newPassword" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-key"></i> Confirmar Nueva Contraseña
+                            </label>
+                            <input type="password" class="form-input" id="confirmPassword" required>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-secondary btn-lg">
+                            <i class="fas fa-shield-alt"></i> Cambiar Contraseña
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Tab Preferencias -->
+                <div class="tab-pane fade" id="preferencias">
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-bell"></i> Notificaciones
+                        </label>
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                            <input type="checkbox" id="notificationsEnabled" checked style="width: 20px; height: 20px;">
+                            <span style="color: var(--color-gray-light);">Recibir notificaciones push</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-music"></i> Audio
+                        </label>
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem;">
+                            <input type="checkbox" id="musicEnabled" checked style="width: 20px; height: 20px;">
+                            <span style="color: var(--color-gray-light);">Música de fondo</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                            <input type="checkbox" id="soundsEnabled" checked style="width: 20px; height: 20px;">
+                            <span style="color: var(--color-gray-light);">Efectos de sonido</span>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-primary btn-lg">
+                        <i class="fas fa-save"></i> Guardar Preferencias
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Logout Button -->
+        <div class="text-center mt-4">
+            <button class="btn btn-outline" id="logoutBtn" style="border-color: var(--color-danger-color, #ef4444); color: #ef4444;">
+                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
             </button>
-          </div>
         </div>
-      </div>
     </div>
-  </main>
 
-  <footer class="students-footer">
-    <div class="container">
-      <div class="row align-items-center">
-        <div class="col-md-6">
-          <h5 class="gradient-text">Mi Cuenta StudentsPoint</h5>
-          <p>Gestiona tu perfil y configuraciones.</p>
-        </div>
-        <div class="col-md-6 text-end">
-          <p class="mb-0"><i class="fas fa-user"></i> Tu espacio personal</p>
-        </div>
-      </div>
-    </div>
-  </footer>
+    <!-- Alert Container -->
+    <div id="alertContainer" style="position: fixed; top: 6rem; right: 2rem; z-index: 9999; max-width: 400px;"></div>
 
-  <div class="dev-tools" style="display: none;">
-    <button onclick="window.StudentsPointPWA?.clearCache()" title="Limpiar Cache"><i class="fas fa-sync-alt"></i></button>
-    <button onclick="window.StudentsPointPWA?.getVersion()" title="Versión"><i class="fas fa-info-circle"></i></button>
-    <button onclick="window.open('/admin/', '_blank')" title="Administración"><i class="fas fa-cog"></i></button>
-    <button onclick="window.open('/api/', '_blank')" title="API"><i class="fas fa-code"></i></button>
-  </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="/static/js/sounds.js"></script>
-  <script src="/static/js/pwa.js"></script>
-  <script src="/static/pwa-config.js"></script>
-  <script src="/static/js/main.js"></script>
-
-  <script>
-    // Verificar autenticación
-    async function checkAuth() {
-      try {
-        const token = localStorage.getItem('access_token');
-        if (!token) {
-          window.location.href = '/login.html';
-          return false;
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/js/sounds.js"></script>
+    <script src="/static/js/pwa.js"></script>
+    
+    <script>
+        // Show alert
+        function showAlert(message, type = 'success') {
+            const container = document.getElementById('alertContainer');
+            const alertClass = type === 'success' ? 'alert-success' : 'alert-error';
+            const alert = document.createElement('div');
+            alert.className = `${alertClass} animate-slide-in-right`;
+            alert.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+                ${message}
+            `;
+            container.appendChild(alert);
+            
+            setTimeout(() => {
+                alert.style.opacity = '0';
+                setTimeout(() => alert.remove(), 300);
+            }, 4000);
         }
         
-        const response = await fetch('/api/auth/me/', {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
+        // Load user data
+        async function loadUserData() {
+            try {
+                const token = localStorage.getItem('access_token');
+                if (!token) {
+                    window.location.href = '/login.html';
+                    return;
+                }
+                
+                const response = await fetch('/api/auth/me/', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (!response.ok) {
+                    window.location.href = '/login.html';
+                    return;
+                }
+                
+                const user = await response.json();
+                
+                // Update UI
+                document.getElementById('userName').textContent = user.name;
+                document.getElementById('userEmail').textContent = user.email;
+                document.getElementById('userCareer').textContent = user.career;
+                document.getElementById('userSemestre').textContent = user.semestre || '1';
+                
+                // Update form
+                document.getElementById('name').value = user.name;
+                document.getElementById('email').value = user.email;
+                document.getElementById('career').value = user.career;
+                document.getElementById('semestre').value = user.semestre || '1';
+                
+                // Update avatar
+                if (user.picture_url) {
+                    document.getElementById('profileAvatar').src = user.picture_url;
+                    document.getElementById('userAvatar').src = user.picture_url;
+                }
+                
+                // Update role badge
+                const roleMap = {
+                    'student': 'Estudiante',
+                    'moderator': 'Moderador',
+                    'admin_global': 'Administrador',
+                    'director_carrera': 'Director de Carrera'
+                };
+                document.getElementById('userRole').innerHTML = `
+                    <i class="fas fa-user"></i> ${roleMap[user.role] || 'Estudiante'}
+                `;
+                
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('Error cargando datos del usuario', 'error');
+            }
+        }
+        
+        // Update profile
+        document.getElementById('profileForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const token = localStorage.getItem('access_token');
+            const name = document.getElementById('name').value;
+            const career = document.getElementById('career').value;
+            const semestre = parseInt(document.getElementById('semestre').value);
+            
+            try {
+                const response = await fetch('/api/auth/me/', {
+                    method: 'PATCH',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name, career, semestre })
+                });
+                
+                if (response.ok) {
+                    showAlert('Perfil actualizado exitosamente', 'success');
+                    if (window.playSound) window.playSound('success');
+                    loadUserData();
+                } else {
+                    showAlert('Error actualizando perfil', 'error');
+                    if (window.playSound) window.playSound('error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('Error de conexión', 'error');
+            }
         });
         
-        if (response.ok) {
-          const user = await response.json();
-          updateUIForLoggedInUser(user);
-          return true;
-        } else {
-          localStorage.removeItem('access_token');
-          localStorage.removeItem('refresh_token');
-          window.location.href = '/login.html';
-          return false;
-        }
-      } catch (error) {
-        console.error('Error verificando autenticación:', error);
-        window.location.href = '/login.html';
-        return false;
-      }
-    }
-
-    // Actualizar UI para usuario autenticado
-    function updateUIForLoggedInUser(user) {
-      const authButtons = document.querySelector('.auth-buttons');
-      if (authButtons) {
-        authButtons.innerHTML = `
-          <div class="dropdown">
-            <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
-              <i class="fas fa-user"></i> ${user.name || user.email}
-            </button>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="/account.html">
-                <i class="fas fa-user"></i> Mi Perfil
-              </a></li>
-              <li><a class="dropdown-item" href="/portfolio/">
-                <i class="fas fa-briefcase"></i> Portafolio
-              </a></li>
-              <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item" href="#" onclick="logout()">
-                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
-              </a></li>
-            </ul>
-          </div>
-        `;
-      }
-    }
-
-    // Función de logout
-    window.logout = async function() {
-      if (confirm('¿Estás seguro de que quieres cerrar sesión?')) {
-        try {
-          const token = localStorage.getItem('access_token');
-          if (token) {
-            await fetch('/api/auth/logout/', {
-              method: 'POST',
-              headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-              }
+        // Change password
+        document.getElementById('passwordForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            if (newPassword !== confirmPassword) {
+                showAlert('Las contraseñas no coinciden', 'error');
+                if (window.playSound) window.playSound('error');
+                return;
+            }
+            
+            if (newPassword.length < 8) {
+                showAlert('La contraseña debe tener al menos 8 caracteres', 'error');
+                if (window.playSound) window.playSound('error');
+                return;
+            }
+            
+            try {
+                const token = localStorage.getItem('access_token');
+                const response = await fetch('/api/auth/cambiar-password/', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ 
+                        old_password: currentPassword,
+                        new_password: newPassword
+                    })
+                });
+                
+                if (response.ok) {
+                    showAlert('Contraseña cambiada exitosamente', 'success');
+                    if (window.playSound) window.playSound('success');
+                    document.getElementById('passwordForm').reset();
+                } else {
+                    showAlert('Error cambiando contraseña. Verifica tu contraseña actual.', 'error');
+                    if (window.playSound) window.playSound('error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('Error de conexión', 'error');
+            }
+        });
+        
+        // Logout
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
+                localStorage.removeItem('access_token');
+                localStorage.removeItem('refresh_token');
+                if (window.playSound) window.playSound('click');
+                window.location.href = '/login.html';
+            }
+        });
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', async function() {
+            await loadUserData();
+            
+            // Navbar scroll effect
+            window.addEventListener('scroll', function() {
+                const navbar = document.getElementById('navbar');
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
             });
-          }
-        } catch (error) {
-          console.error('Error en logout:', error);
-        } finally {
-          localStorage.removeItem('access_token');
-          localStorage.removeItem('refresh_token');
-          window.location.href = '/';
-        }
-      }
-    };
-
-    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-      document.querySelector('.dev-tools').style.display = 'flex';
-    }
-
-    document.addEventListener('DOMContentLoaded', async function() {
-      await checkAuth();
-      
-      setTimeout(() => {
-        if (window.playSound) {
-          window.playSound('pageLoad');
-        }
-      }, 500);
-    });
-
-    function manageAccount() {
-      if (window.playSound) {
-        window.playSound('click');
-      }
-      showSuccess('Función de gestión de cuenta en desarrollo');
-    }
-
-    function showSuccess(message) {
-      const alertDiv = document.createElement('div');
-      alertDiv.className = 'alert alert-success alert-dismissible fade show';
-      alertDiv.innerHTML = `${message}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>`;
-      const container = document.querySelector('.container');
-      container.insertBefore(alertDiv, container.firstChild);
-      setTimeout(() => {
-        if (alertDiv.parentNode) {
-          alertDiv.remove();
-        }
-      }, 3000);
-    }
-  </script>
+            
+            // Audio controls
+            document.getElementById('musicToggle').addEventListener('click', function() {
+                if (window.toggleBackgroundMusic) {
+                    window.toggleBackgroundMusic();
+                    this.classList.toggle('active');
+                }
+                if (window.playSound) window.playSound('click');
+            });
+            
+            document.getElementById('soundToggle').addEventListener('click', function() {
+                if (window.sounds) {
+                    window.sounds.enabled = !window.sounds.enabled;
+                    this.classList.toggle('active');
+                }
+                if (window.playSound) window.playSound('click');
+            });
+            
+            // Volume control
+            document.getElementById('volumeSlider').addEventListener('click', function(e) {
+                const rect = this.getBoundingClientRect();
+                const percent = (e.clientX - rect.left) / rect.width;
+                if (window.setVolume) {
+                    window.setVolume(percent);
+                }
+                document.getElementById('volumeFill').style.width = (percent * 100) + '%';
+            });
+            
+            // Avatar click
+            document.getElementById('userAvatar').addEventListener('click', function() {
+                window.location.href = '/account.html';
+            });
+            
+            // Start background music
+            setTimeout(() => {
+                if (window.playBackgroundMusic) {
+                    window.playBackgroundMusic();
+                }
+            }, 1000);
+            
+            // Tab click sounds
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', function() {
+                    if (window.playSound) window.playSound('click');
+                    // Update active styles
+                    document.querySelectorAll('.nav-link').forEach(l => {
+                        l.style.color = 'var(--color-gray-light)';
+                    });
+                    this.style.color = 'var(--color-white)';
+                });
+            });
+        });
+    </script>
 </body>
 </html>
