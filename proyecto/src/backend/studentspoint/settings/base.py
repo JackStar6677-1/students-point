@@ -172,6 +172,8 @@ GOOGLE_REDIRECT_URI = os.getenv("GOOGLE_REDIRECT_URI", "http://localhost:8000/ap
 FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:8000")
 
 # ---- Configuracion de Email ----
+# Por defecto usa console (mostrar en terminal)
+# dev.py y prod.py pueden sobrescribir estas configuraciones
 EMAIL_BACKEND = os.getenv('EMAIL_BACKEND', 'django.core.mail.backends.console.EmailBackend')
 EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
 EMAIL_PORT = int(os.getenv('EMAIL_PORT', '587'))

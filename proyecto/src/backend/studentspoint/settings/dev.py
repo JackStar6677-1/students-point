@@ -52,3 +52,19 @@ STATICFILES_DIRS = [
 
 # Configuración para servir archivos estáticos en desarrollo
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+
+# Configuracion de Email - SMTP Real para desarrollo
+# Usa credenciales reales para enviar emails de verificacion
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'pablo.elias.miranda.292003@gmail.com'
+EMAIL_HOST_PASSWORD = 'jiyn qwpy soku ghfd'  # App Password de Gmail
+DEFAULT_FROM_EMAIL = 'StudentsPoint <pablo.elias.miranda.292003@gmail.com>'
+
+# Google OAuth - Credenciales de desarrollo
+GOOGLE_CLIENT_ID = '307562557576-0fd8ta7i09i1e6it5hstla13jsomeq2s.apps.googleusercontent.com'
+GOOGLE_CLIENT_SECRET = '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'
+GOOGLE_REDIRECT_URI = 'http://localhost:8000/api/auth/google/callback/web/'
+FRONTEND_URL = 'http://localhost:8000'
