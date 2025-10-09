@@ -1,13 +1,13 @@
-INSTRUCCIONES Y CONTEXTO PARA INTELIGENCIA ARTIFICIAL
-=====================================================
+INSTRUCCIONES Y CONTEXTO PARA ASISTENTES DE DESARROLLO
+=======================================================
 
 PROPOSITO DE ESTE DOCUMENTO
 ----------------------------
 
-Este documento proporciona contexto completo y directrices para que asistentes de IA 
-(como ChatGPT, Claude, Copilot, etc.) puedan entender y trabajar efectivamente con el 
-proyecto StudentsPoint. Incluye información sobre arquitectura, convenciones, patrones 
-de código y mejores prácticas seguidas en el proyecto.
+Este documento proporciona contexto completo y directrices para que asistentes 
+automatizados de desarrollo (como ChatGPT, Claude, Copilot, etc.) puedan entender 
+y trabajar efectivamente con el proyecto StudentsPoint. Incluye información sobre 
+arquitectura, convenciones, patrones de código y mejores prácticas seguidas en el proyecto.
 
 
 ================================================================================
@@ -660,7 +660,7 @@ REPOSITORIO DEL PROYECTO:
 
 
 ================================================================================
-NOTAS FINALES PARA IA
+NOTAS FINALES PARA ASISTENTES AUTOMATIZADOS
 ================================================================================
 
 1. CONTEXTO DE TRABAJO:
@@ -689,11 +689,11 @@ NOTAS FINALES PARA IA
    - Estas son decisiones de diseño, no limitaciones técnicas
 
 5. AREAS DE MEJORA FUTURA:
-   - Migración a TypeScript
-   - Implementación de WebSockets
-   - Sistema de cache más robusto
-   - App móvil nativa
-   - Integración de IA
+   - Migracion a TypeScript
+   - Implementacion de WebSockets para chat
+   - Sistema de cache mas robusto
+   - App movil nativa
+   - Chatbot para asistencia automatica
 
 
 FIN DEL DOCUMENTO

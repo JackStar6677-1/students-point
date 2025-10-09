@@ -266,23 +266,20 @@ El proyecto se desarrolla como software de código abierto, permitiendo que otra
 educativas puedan implementar y personalizar la plataforma según sus necesidades.
 
 
-VISION FUTURA:
+POTENCIAL DE EXPANSION:
 
-1. EXPANSION GLOBAL (Fase 3-5):
-   - Soporte multi-idioma
-   - Adaptación para múltiples instituciones
-   - Integración con sistemas LMS internacionales
+Como proyecto de codigo abierto, StudentsPoint puede ser:
+- Implementado por otras instituciones educativas
+- Adaptado a diferentes contextos universitarios
+- Base para proyectos similares
+- Personalizado segun necesidades institucionales
 
-2. INTELIGENCIA ARTIFICIAL (Fase 4):
-   - Recomendaciones personalizadas
-   - Asistente virtual para estudiantes
-   - Detección automática de contenido inapropiado
-
-3. FUNCIONALIDADES AVANZADAS:
-   - Chat en tiempo real
-   - Sistema de videollamadas
-   - Gamificación completa
-   - Aplicación móvil nativa
+MEJORAS FUTURAS POSIBLES:
+- Soporte multi-idioma
+- Integracion con sistemas LMS existentes
+- Chat en tiempo real para foros
+- Sistema de notificaciones mejorado
+- Aplicacion movil nativa
 
 
 ESTADO ACTUAL:

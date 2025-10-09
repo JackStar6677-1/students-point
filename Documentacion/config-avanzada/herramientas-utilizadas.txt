@@ -527,11 +527,11 @@ VENTAJAS DEL STACK ELEGIDO:
 - Costo-efectivo (mayormente open source)
 
 CONSIDERACIONES FUTURAS:
-- Posible migración a microservicios
-- Integración de GraphQL junto a REST
-- Implementación de WebSockets para tiempo real
-- App móvil nativa con React Native o Flutter
-- Integración de IA/ML para recomendaciones
+- Implementacion de WebSockets para chat en tiempo real
+- App movil nativa con React Native o Flutter
+- Integracion con sistemas LMS existentes
+- Sistema de notificaciones push mejorado
+- Chatbot para asistencia automatica a estudiantes
 
 
 ================================================================================

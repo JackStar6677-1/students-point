@@ -168,12 +168,23 @@ Ver [DEPLOYMENT.md](DEPLOYMENT.md) para instrucciones detalladas de despliegue e
 
 La documentacion completa se encuentra en:
 
+### Documentacion Tecnica
 - `Documentacion/config-avanzada/descripcion-proyecto.txt` - Descripcion completa
 - `Documentacion/config-avanzada/estructura-proyecto.txt` - Estructura detallada
 - `Documentacion/config-avanzada/herramientas-utilizadas.txt` - Stack tecnologico
-- `Documentacion/config-avanzada/instrucciones-ia.txt` - Guia para IAs
+- `Documentacion/config-avanzada/desarrollo-desde-cero.txt` - Desarrollo original
+
+### Implementaciones
 - `Documentacion/config-avanzada/autenticacion-implementacion-completa.txt` - Sistema de autenticacion
 - `Documentacion/config-avanzada/foro-implementacion-completa.txt` - Sistema de foros
+
+### Guias de Configuracion
+- `Documentacion/CONFIGURACION-GOOGLE-EMAIL.md` - Configuracion de Google OAuth y Email
+- `Documentacion/PRUEBAS-Y-ESTADO-PROYECTO.md` - Estado actual y pruebas
+- `DEPLOYMENT.md` - Guia de despliegue en produccion
+
+### Para Asistentes de Desarrollo
+- `Documentacion/config-avanzada/instrucciones-ia.txt` - Guia para herramientas automatizadas
 
 ## Testing
 
