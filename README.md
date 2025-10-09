@@ -7,9 +7,10 @@
 
 ## Descripcion
 
-StudentsPoint es una plataforma web progresiva (PWA) integral diseñada para centralizar y mejorar la experiencia estudiantil. Ofrece herramientas academicas, de desarrollo profesional y de bienestar en una sola aplicacion.
+StudentsPoint es una plataforma web progresiva (PWA) de codigo abierto diseñada para centralizar herramientas y servicios estudiantiles. Desarrollada como proyecto de Capstone, la plataforma puede ser implementada por cualquier institucion educativa.
 
-**Proyecto de Capstone** - Ingenieria en Informatica, Duoc UC
+**Proyecto de Capstone** - Ingenieria en Informatica, Duoc UC  
+**Periodo**: Agosto - Diciembre 2025
 
 ## Caracteristicas Principales
 
@@ -24,10 +25,14 @@ StudentsPoint es una plataforma web progresiva (PWA) integral diseñada para cen
 - Sistema de moderacion automatica y manual
 
 ### Autenticacion y Usuarios
-- Autenticacion dual: JWT + Google OAuth 2.0
-- Registro tradicional con validacion de correo
+- Registro con email y contraseña (verificacion por correo)
+- Login seguro con JWT y hashing de contraseñas
+- Google OAuth 2.0 como alternativa
+- Recuperacion de contraseña por email
+- Perfil personalizable (foto, datos academicos)
+- Cambio de carrera cada semestre con historial
 - Sistema de roles: admin, moderador, director de carrera, estudiante
-- Gestion de cambio de carrera con historial
+- Multiples areas de estudio disponibles
 
 ### Otras Funcionalidades
 - Marketplace estudiantil con integracion externa

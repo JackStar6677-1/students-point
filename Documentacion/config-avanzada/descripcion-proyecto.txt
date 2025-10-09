@@ -13,9 +13,9 @@ Institucion: Duoc UC
 Periodo: 2025 - Fase 1 Completada, Fase 2 en Progreso
 
 VISION GENERAL:
-StudentsPoint es una plataforma integral diseñada para centralizar y mejorar la experiencia estudiantil mediante 
-herramientas academicas, de desarrollo profesional y de bienestar en una sola aplicacion web progresiva. 
-El proyecto nacio como DuocPoint y evolucionó hacia una plataforma de código abierto con vision global.
+StudentsPoint es una plataforma web progresiva de codigo abierto desarrollada como proyecto de Capstone para 
+centralizar herramientas y servicios estudiantiles. Esta diseñada para ser implementada por cualquier 
+institucion educativa, adaptandose a diferentes contextos universitarios.
 
 
 PROPOSITO Y OBJETIVOS:
