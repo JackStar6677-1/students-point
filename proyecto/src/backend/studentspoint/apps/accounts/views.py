@@ -15,8 +15,11 @@ from .models import User
 from .serializers import (
     UserDetailSerializer, LoginSerializer, RegisterSerializer, 
     TokenPairSerializer, UserUpdateSerializer, EmailCheckSerializer,
-    StatusResponseSerializer
+    StatusResponseSerializer, VerificarEmailSerializer, ReenviarCodigoSerializer,
+    SolicitarRecuperacionSerializer, VerificarCodigoRecuperacionSerializer,
+    ResetearPasswordSerializer, CambiarCarreraSerializer, CarrerasDisponiblesSerializer
 )
+from .models import CARRERAS_DISPONIBLES
 from studentspoint.apps.campuses.models import Sede
 
 User = get_user_model()
@@ -227,13 +230,17 @@ def register(request):
             'name': name,
             'role': role,
             'career': career,
+            'is_email_verified': False,  # Requiere verificación
         }
         if campus is not None:
             user_kwargs['campus'] = campus
 
         user = User.objects.create_user(**user_kwargs)
         
-        # Generar tokens JWT
+        # Enviar código de verificación por email
+        exito, mensaje = user.enviar_codigo_verificacion()
+        
+        # Generar tokens JWT (usuario puede usar la app pero con limitaciones)
         refresh = RefreshToken.for_user(user)
         
         return Response({
@@ -245,8 +252,11 @@ def register(request):
                 'name': user.name,
                 'role': user.role,
                 'campus': user.campus.nombre if user.campus else None,
-                'career': user.career
-            }
+                'career': user.career,
+                'is_email_verified': user.is_email_verified
+            },
+            'verification_email_sent': exito,
+            'message': 'Usuario registrado. Por favor verifica tu email con el código enviado.'
         }, status=status.HTTP_201_CREATED)
         
     except Exception as e:
@@ -254,3 +264,292 @@ def register(request):
             {'detail': f'Error creando usuario: {str(e)}'}, 
             status=status.HTTP_400_BAD_REQUEST
         )
+
+
+@extend_schema(
+    summary="Verificar email con código",
+    request=VerificarEmailSerializer,
+    responses={200: StatusResponseSerializer}
+)
+@api_view(['POST'])
+@permission_classes([permissions.AllowAny])
+def verificar_email(request):
+    """Verifica el email del usuario con el código enviado."""
+    serializer = VerificarEmailSerializer(data=request.data)
+    if not serializer.is_valid():
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    email = serializer.validated_data['email'].lower()
+    codigo = serializer.validated_data['codigo']
+    
+    try:
+        user = User.objects.get(email=email)
+    except User.DoesNotExist:
+        return Response(
+            {'status': 'error', 'message': 'Usuario no encontrado'}, 
+            status=status.HTTP_404_NOT_FOUND
+        )
+    
+    exito, mensaje = user.verificar_codigo_email(codigo)
+    
+    if exito:
+        return Response({
+            'status': 'success',
+            'message': mensaje
+        })
+    else:
+        return Response(
+            {'status': 'error', 'message': mensaje}, 
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+
+@extend_schema(
+    summary="Reenviar código de verificación",
+    request=ReenviarCodigoSerializer,
+    responses={200: StatusResponseSerializer}
+)
+@api_view(['POST'])
+@permission_classes([permissions.AllowAny])
+def reenviar_codigo_verificacion(request):
+    """Reenvía el código de verificación al email del usuario."""
+    serializer = ReenviarCodigoSerializer(data=request.data)
+    if not serializer.is_valid():
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    email = serializer.validated_data['email'].lower()
+    
+    try:
+        user = User.objects.get(email=email)
+    except User.DoesNotExist:
+        return Response(
+            {'status': 'error', 'message': 'Usuario no encontrado'}, 
+            status=status.HTTP_404_NOT_FOUND
+        )
+    
+    if user.is_email_verified:
+        return Response({
+            'status': 'info',
+            'message': 'El email ya está verificado'
+        })
+    
+    exito, mensaje = user.enviar_codigo_verificacion()
+    
+    if exito:
+        return Response({
+            'status': 'success',
+            'message': 'Código reenviado al email'
+        })
+    else:
+        return Response(
+            {'status': 'error', 'message': mensaje}, 
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
+
+@extend_schema(
+    summary="Solicitar recuperación de contraseña",
+    request=SolicitarRecuperacionSerializer,
+    responses={200: StatusResponseSerializer}
+)
+@api_view(['POST'])
+@permission_classes([permissions.AllowAny])
+def solicitar_recuperacion_password(request):
+    """Envía código de recuperación de contraseña al email."""
+    serializer = SolicitarRecuperacionSerializer(data=request.data)
+    if not serializer.is_valid():
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    email = serializer.validated_data['email'].lower()
+    
+    try:
+        user = User.objects.get(email=email)
+    except User.DoesNotExist:
+        # Por seguridad, no revelar si el email existe o no
+        return Response({
+            'status': 'success',
+            'message': 'Si el email existe, se enviará un código de recuperación'
+        })
+    
+    exito, mensaje = user.enviar_codigo_recuperacion()
+    
+    return Response({
+        'status': 'success',
+        'message': 'Si el email existe, se enviará un código de recuperación'
+    })
+
+
+@extend_schema(
+    summary="Verificar código de recuperación",
+    request=VerificarCodigoRecuperacionSerializer,
+    responses={200: StatusResponseSerializer}
+)
+@api_view(['POST'])
+@permission_classes([permissions.AllowAny])
+def verificar_codigo_recuperacion(request):
+    """Verifica si el código de recuperación es válido."""
+    serializer = VerificarCodigoRecuperacionSerializer(data=request.data)
+    if not serializer.is_valid():
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    email = serializer.validated_data['email'].lower()
+    codigo = serializer.validated_data['codigo']
+    
+    try:
+        user = User.objects.get(email=email)
+    except User.DoesNotExist:
+        return Response(
+            {'status': 'error', 'message': 'Código inválido'}, 
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    exito, mensaje = user.verificar_codigo_recuperacion(codigo)
+    
+    if exito:
+        return Response({
+            'status': 'success',
+            'message': 'Código válido. Procede a cambiar tu contraseña.'
+        })
+    else:
+        return Response(
+            {'status': 'error', 'message': mensaje}, 
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+
+@extend_schema(
+    summary="Resetear contraseña con código",
+    request=ResetearPasswordSerializer,
+    responses={200: StatusResponseSerializer}
+)
+@api_view(['POST'])
+@permission_classes([permissions.AllowAny])
+def resetear_password(request):
+    """Resetea la contraseña del usuario usando el código de recuperación."""
+    serializer = ResetearPasswordSerializer(data=request.data)
+    if not serializer.is_valid():
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    email = serializer.validated_data['email'].lower()
+    codigo = serializer.validated_data['codigo']
+    nueva_password = serializer.validated_data['nueva_password']
+    
+    try:
+        user = User.objects.get(email=email)
+    except User.DoesNotExist:
+        return Response(
+            {'status': 'error', 'message': 'Código inválido'}, 
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    # Verificar código
+    exito, mensaje = user.verificar_codigo_recuperacion(codigo)
+    
+    if not exito:
+        return Response(
+            {'status': 'error', 'message': mensaje}, 
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    # Cambiar contraseña
+    user.resetear_password(nueva_password)
+    
+    return Response({
+        'status': 'success',
+        'message': 'Contraseña cambiada exitosamente'
+    })
+
+
+@extend_schema(
+    summary="Cambiar contraseña (usuario autenticado)",
+    responses={200: StatusResponseSerializer}
+)
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+def cambiar_password(request):
+    """Permite a un usuario autenticado cambiar su contraseña."""
+    password_actual = request.data.get('password_actual')
+    nueva_password = request.data.get('nueva_password')
+    confirmar_password = request.data.get('confirmar_password')
+    
+    if not all([password_actual, nueva_password, confirmar_password]):
+        return Response(
+            {'status': 'error', 'message': 'Todos los campos son requeridos'}, 
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    if nueva_password != confirmar_password:
+        return Response(
+            {'status': 'error', 'message': 'Las contraseñas no coinciden'}, 
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    if len(nueva_password) < 8:
+        return Response(
+            {'status': 'error', 'message': 'La contraseña debe tener al menos 8 caracteres'}, 
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    # Verificar contraseña actual
+    if not request.user.check_password(password_actual):
+        return Response(
+            {'status': 'error', 'message': 'Contraseña actual incorrecta'}, 
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    # Cambiar contraseña
+    request.user.set_password(nueva_password)
+    request.user.save()
+    
+    return Response({
+        'status': 'success',
+        'message': 'Contraseña cambiada exitosamente'
+    })
+
+
+@extend_schema(
+    summary="Cambiar carrera del usuario",
+    request=CambiarCarreraSerializer,
+    responses={200: UserDetailSerializer}
+)
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+def cambiar_carrera_usuario(request):
+    """Permite al usuario cambiar su carrera/área de estudio."""
+    serializer = CambiarCarreraSerializer(data=request.data)
+    if not serializer.is_valid():
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    nueva_carrera = serializer.validated_data['nueva_carrera']
+    razon = serializer.validated_data.get('razon', 'Cambio de carrera')
+    
+    # Validar que la carrera esté en la lista de disponibles
+    if nueva_carrera not in CARRERAS_DISPONIBLES:
+        return Response(
+            {'status': 'error', 'message': f'Carrera no disponible. Opciones: {", ".join(CARRERAS_DISPONIBLES)}'}, 
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    # Cambiar carrera
+    resultado = request.user.cambiar_carrera(nueva_carrera, razon)
+    
+    # Retornar perfil actualizado
+    user_serializer = UserDetailSerializer(request.user, context={'request': request})
+    return Response({
+        'status': 'success',
+        'message': resultado['mensaje'],
+        'user': user_serializer.data
+    })
+
+
+@extend_schema(
+    summary="Obtener lista de carreras disponibles",
+    responses={200: CarrerasDisponiblesSerializer}
+)
+@api_view(['GET'])
+@permission_classes([permissions.AllowAny])
+def lista_carreras(request):
+    """Retorna la lista de carreras disponibles en la plataforma."""
+    return Response({
+        'carreras': CARRERAS_DISPONIBLES
+    })

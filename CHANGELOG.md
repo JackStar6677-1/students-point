@@ -7,7 +7,7 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 
 ## [2.1.0] - 2025-10-09
 
-### Agregado
+### Agregado - Sistema de Foros
 - **Sistema de foros avanzado** personalizado por carrera
 - **Restriccion de publicacion** por carrera validada en backend
 - **Tipos de publicaciones**: comentarios, encuestas, imagenes, otros
@@ -15,22 +15,36 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 - **Revision manual de imagenes** por administradores
 - **Foros publicos y privados** con control de acceso
 - **Sistema de moderacion** automatica y manual
-- **Gestion de cambio de carrera** con historial completo
-- **Panel de administracion** mejorado con acciones masivas
-- **Modelos nuevos**: OpcionEncuesta, VotoEncuesta, CambioCarrera
+- **Modelos nuevos**: OpcionEncuesta, VotoEncuesta
+
+### Agregado - Sistema de Autenticacion
+- **Verificacion de email** con codigos de 6 digitos (anti-bots)
+- **Recuperacion de contraseña** completa por email
+- **Cambio de contraseña** para usuarios autenticados
+- **Perfil personalizable** con foto, semestre, datos academicos
+- **12 carreras disponibles** + "Estudiante Generico"
+- **Cambio de carrera** cada semestre con historial
+- **Codigos temporales** con expiracion (15-30 minutos)
+- **Endpoint de carreras** disponibles
+- **Modelo CambioCarrera** para historial
 
 ### Cambiado
+- **Modelo User** con campos: semestre, picture_file, verificacion email, recuperacion password
 - **Modelo Foro** actualizado con campos es_privado y descripcion
 - **Modelo Post** con tipos, imagen y sistema de censura
+- **Vistas de autenticacion** con verificacion por email
 - **Vistas de foros** con validacion de permisos por carrera
-- **Admin** mejorado con inline para opciones de encuesta
-- **Documentacion** completa y actualizada
-- **README y ROADMAP** actualizados con fechas correctas
+- **Admin de User** mejorado con fieldsets organizados y verificacion de email
+- **Admin de Post** mejorado con inline para opciones de encuesta
+- **Serializers** actualizados con nuevos campos
+- **URLs** con nuevos endpoints de autenticacion
+- **Settings** con configuracion de email
 
 ### Corregido
 - Referencias antiguas a "DuocPoint" eliminadas
 - Fechas actualizadas a 2025
 - Manifests actualizados con StudentsPoint
+- Documentacion ajustada a escala realista de proyecto Capstone
 
 ## [2.0.0] - 2025-08-15
 

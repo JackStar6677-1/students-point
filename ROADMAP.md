@@ -51,10 +51,16 @@ StudentsPoint es una plataforma web progresiva de codigo abierto diseñada como 
 
 ### Sistema de Autenticacion
 - [x] Registro con email y contraseña
-- [x] Login seguro con JWT
-- [x] Google OAuth 2.0
-- [x] Gestion de perfiles
-- [x] Cambio de carrera con historial
+- [x] Verificacion de email con codigos de 6 digitos
+- [x] Sistema anti-bots con codigos temporales
+- [x] Recuperacion de contraseña por email
+- [x] Cambio de contraseña para usuarios autenticados
+- [x] Login seguro con JWT y hashing
+- [x] Google OAuth 2.0 como alternativa
+- [x] Perfil personalizable (foto, semestre, datos academicos)
+- [x] 12 carreras disponibles + "Estudiante Generico"
+- [x] Cambio de carrera cada semestre con historial
+- [x] Sistema de roles y privilegios
 
 ### Sistema de Foros
 - [x] Foros por carrera

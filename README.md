@@ -171,7 +171,8 @@ La documentacion completa se encuentra en:
 - `Documentacion/config-avanzada/descripcion-proyecto.txt` - Descripcion completa
 - `Documentacion/config-avanzada/estructura-proyecto.txt` - Estructura detallada
 - `Documentacion/config-avanzada/herramientas-utilizadas.txt` - Stack tecnologico
-
+- `Documentacion/config-avanzada/instrucciones-ia.txt` - Guia para IAs
+- `Documentacion/config-avanzada/autenticacion-implementacion-completa.txt` - Sistema de autenticacion
 - `Documentacion/config-avanzada/foro-implementacion-completa.txt` - Sistema de foros
 
 ## Testing
@@ -191,11 +192,26 @@ pytest
 ## API Endpoints
 
 ### Autenticacion
-- `POST /api/auth/register/` - Registro de usuario
+- `POST /api/auth/register/` - Registro de usuario (envia codigo de verificacion)
 - `POST /api/auth/login/` - Login con email/password
 - `GET /api/auth/me/` - Informacion del usuario actual
+- `PATCH /api/auth/me/update/` - Actualizar perfil
 - `POST /api/auth/refresh/` - Renovar token
 - `GET /api/auth/google/login/web/` - Login con Google OAuth
+
+### Verificacion de Email
+- `POST /api/auth/verificar-email/` - Verificar email con codigo
+- `POST /api/auth/reenviar-codigo/` - Reenviar codigo de verificacion
+
+### Recuperacion de Contraseña
+- `POST /api/auth/recuperar-password/` - Solicitar codigo de recuperacion
+- `POST /api/auth/verificar-codigo-recuperacion/` - Verificar codigo
+- `POST /api/auth/resetear-password/` - Cambiar contraseña con codigo
+- `POST /api/auth/cambiar-password/` - Cambiar contraseña (autenticado)
+
+### Gestion de Carrera
+- `POST /api/auth/cambiar-carrera/` - Cambiar area de estudio
+- `GET /api/carreras/` - Lista de carreras disponibles
 
 ### Foros
 - `GET /api/foros/` - Lista de foros accesibles
@@ -210,13 +226,18 @@ Ver documentacion completa de API en `/api/docs/`
 ## Seguridad
 
 - Autenticacion JWT con tokens de acceso y refresco
-- OAuth 2.0 con Google
-- Censura automatica de contenido ofensivo
+- OAuth 2.0 con Google como alternativa
+- Hashing seguro de contraseñas (PBKDF2-SHA256)
+- Verificacion de email con codigos temporales (anti-bots)
+- Codigos de verificacion con expiracion (15-30 minutos)
+- Recuperacion de contraseña segura por email
+- Censura automatica de contenido ofensivo en foros
 - Moderacion automatica de posts con palabras prohibidas
-- Revision manual de imagenes
+- Revision manual de imagenes por administradores
 - Validaciones de permisos en backend
 - CORS configurado correctamente
 - Proteccion contra CSRF, XSS, SQL Injection
+- Rate limiting en API (throttling)
 
 ## Contribuciones
 

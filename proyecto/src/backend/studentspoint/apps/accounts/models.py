@@ -21,6 +21,22 @@ from django.utils import timezone
 STUDENTS_DOMAIN = "@studentspoint.app"
 DUOC_DOMAIN = "@duocuc.cl"  # Mantener compatibilidad
 
+# Carreras disponibles en la plataforma
+CARRERAS_DISPONIBLES = [
+    "Ingenieria en Informatica",
+    "Ingenieria en Construccion",
+    "Ingenieria en Electricidad",
+    "Ingenieria Industrial",
+    "Derecho",
+    "Medicina",
+    "Arquitectura",
+    "Psicologia",
+    "Administracion de Empresas",
+    "Contabilidad",
+    "Tecnico en Informatica",
+    "Estudiante Generico",  # Para estudiantes en exploracion o programas interdisciplinarios
+]
+
 
 def validate_duoc_email(value: str) -> None:
     """Ensure that the email is valid (any valid email domain allowed).
@@ -117,12 +133,25 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
     career = models.CharField(max_length=150)
     role = models.CharField(max_length=20, choices=Roles.choices, default=Roles.STUDENT)
+    semestre = models.PositiveIntegerField(default=1, help_text="Semestre actual del estudiante")
     
     # Campos adicionales para Gmail
     es_estudiante_gmail = models.BooleanField(default=False, help_text="True si es estudiante con Gmail")
     telefono = models.CharField(max_length=20, blank=True)
     linkedin_url = models.URLField(blank=True)
     github_url = models.URLField(blank=True)
+    
+    # Foto de perfil
+    picture_file = models.ImageField(upload_to='profiles/', null=True, blank=True, help_text="Foto de perfil del usuario")
+    
+    # Verificacion de email
+    email_verification_code = models.CharField(max_length=6, blank=True, help_text="Codigo de verificacion de 6 digitos")
+    email_verification_sent_at = models.DateTimeField(null=True, blank=True)
+    is_email_verified = models.BooleanField(default=False, help_text="True si el email fue verificado")
+    
+    # Recuperacion de contraseña
+    password_reset_code = models.CharField(max_length=6, blank=True, help_text="Codigo de recuperacion de contraseña")
+    password_reset_sent_at = models.DateTimeField(null=True, blank=True)
     
     # Campos para OAuth de Google
     google_id = models.CharField(max_length=100, blank=True, help_text="ID único de Google")
@@ -150,6 +179,150 @@ class User(AbstractBaseUser, PermissionsMixin):
     def es_gmail(self) -> bool:
         """Verifica si el usuario tiene correo Gmail."""
         return self.email.lower().endswith("@gmail.com")
+    
+    def generar_codigo_verificacion(self):
+        """Genera un código de verificación de 6 dígitos para email."""
+        import random
+        from django.utils import timezone
+        
+        codigo = ''.join([str(random.randint(0, 9)) for _ in range(6)])
+        self.email_verification_code = codigo
+        self.email_verification_sent_at = timezone.now()
+        self.save(update_fields=['email_verification_code', 'email_verification_sent_at'])
+        return codigo
+    
+    def verificar_codigo_email(self, codigo):
+        """Verifica el código de verificación de email.
+        
+        Returns:
+            tuple: (success: bool, message: str)
+        """
+        from django.utils import timezone
+        from datetime import timedelta
+        
+        if not self.email_verification_code:
+            return False, "No hay código de verificación pendiente"
+        
+        if self.email_verification_code != codigo:
+            return False, "Código incorrecto"
+        
+        # Verificar que no haya expirado (15 minutos)
+        if self.email_verification_sent_at:
+            expiracion = self.email_verification_sent_at + timedelta(minutes=15)
+            if timezone.now() > expiracion:
+                return False, "Código expirado"
+        
+        # Marcar como verificado
+        self.is_email_verified = True
+        self.email_verification_code = ''
+        self.save(update_fields=['is_email_verified', 'email_verification_code'])
+        return True, "Email verificado exitosamente"
+    
+    def generar_codigo_recuperacion(self):
+        """Genera un código de recuperación de contraseña de 6 dígitos."""
+        import random
+        from django.utils import timezone
+        
+        codigo = ''.join([str(random.randint(0, 9)) for _ in range(6)])
+        self.password_reset_code = codigo
+        self.password_reset_sent_at = timezone.now()
+        self.save(update_fields=['password_reset_code', 'password_reset_sent_at'])
+        return codigo
+    
+    def verificar_codigo_recuperacion(self, codigo):
+        """Verifica el código de recuperación de contraseña.
+        
+        Returns:
+            tuple: (success: bool, message: str)
+        """
+        from django.utils import timezone
+        from datetime import timedelta
+        
+        if not self.password_reset_code:
+            return False, "No hay código de recuperación pendiente"
+        
+        if self.password_reset_code != codigo:
+            return False, "Código incorrecto"
+        
+        # Verificar que no haya expirado (30 minutos)
+        if self.password_reset_sent_at:
+            expiracion = self.password_reset_sent_at + timedelta(minutes=30)
+            if timezone.now() > expiracion:
+                return False, "Código expirado"
+        
+        return True, "Código válido"
+    
+    def resetear_password(self, nueva_password):
+        """Resetea la contraseña del usuario."""
+        self.set_password(nueva_password)
+        self.password_reset_code = ''
+        self.save(update_fields=['password', 'password_reset_code'])
+    
+    def enviar_codigo_verificacion(self):
+        """Envía el código de verificación por email."""
+        from django.core.mail import send_mail
+        from django.conf import settings
+        
+        codigo = self.generar_codigo_verificacion()
+        
+        asunto = 'Verificación de email - StudentsPoint'
+        mensaje = f'''
+Hola {self.name},
+
+Tu código de verificación es: {codigo}
+
+Este código expirará en 15 minutos.
+
+Si no solicitaste este código, puedes ignorar este email.
+
+Saludos,
+Equipo StudentsPoint
+        '''
+        
+        try:
+            send_mail(
+                asunto,
+                mensaje,
+                settings.DEFAULT_FROM_EMAIL,
+                [self.email],
+                fail_silently=False,
+            )
+            return True, "Código enviado"
+        except Exception as e:
+            return False, f"Error enviando email: {str(e)}"
+    
+    def enviar_codigo_recuperacion(self):
+        """Envía el código de recuperación de contraseña por email."""
+        from django.core.mail import send_mail
+        from django.conf import settings
+        
+        codigo = self.generar_codigo_recuperacion()
+        
+        asunto = 'Recuperación de contraseña - StudentsPoint'
+        mensaje = f'''
+Hola {self.name},
+
+Tu código de recuperación de contraseña es: {codigo}
+
+Este código expirará en 30 minutos.
+
+Si no solicitaste este código, puedes ignorar este email.
+
+Saludos,
+Equipo StudentsPoint
+        '''
+        
+        try:
+            send_mail(
+                asunto,
+                mensaje,
+                settings.DEFAULT_FROM_EMAIL,
+                [self.email],
+                fail_silently=False,
+            )
+            return True, "Código enviado"
+        except Exception as e:
+            return False, f"Error enviando email: {str(e)}"
     
     def cambiar_carrera(self, nueva_carrera, razon=""):
         """Cambia la carrera del usuario.
