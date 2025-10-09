@@ -166,25 +166,43 @@ Ver [DEPLOYMENT.md](DEPLOYMENT.md) para instrucciones detalladas de despliegue e
 
 ## Documentacion
 
-La documentacion completa se encuentra en:
+La documentacion esta organizada en carpetas tematicas. Ver **[INDICE COMPLETO](Documentacion/INDICE-DOCUMENTACION.md)**
 
 ### Documentacion Tecnica
-- `Documentacion/config-avanzada/descripcion-proyecto.txt` - Descripcion completa
-- `Documentacion/config-avanzada/estructura-proyecto.txt` - Estructura detallada
-- `Documentacion/config-avanzada/herramientas-utilizadas.txt` - Stack tecnologico
-- `Documentacion/config-avanzada/desarrollo-desde-cero.txt` - Desarrollo original
+📁 `Documentacion/config-avanzada/`
+- `descripcion-proyecto.txt` - Descripcion completa
+- `estructura-proyecto.txt` - Estructura detallada
+- `herramientas-utilizadas.txt` - Stack tecnologico
+- `desarrollo-desde-cero.txt` - Desarrollo original
+- `instrucciones-ia.txt` - Guia para herramientas automatizadas
 
-### Implementaciones
-- `Documentacion/config-avanzada/autenticacion-implementacion-completa.txt` - Sistema de autenticacion
-- `Documentacion/config-avanzada/foro-implementacion-completa.txt` - Sistema de foros
+### Implementaciones Completas
+📁 `Documentacion/implementaciones/`
+- `autenticacion-implementacion-completa.txt` - Sistema de autenticacion
+- `foro-implementacion-completa.txt` - Sistema de foros
 
-### Guias de Configuracion
-- `Documentacion/CONFIGURACION-GOOGLE-EMAIL.md` - Configuracion de Google OAuth y Email
-- `Documentacion/PRUEBAS-Y-ESTADO-PROYECTO.md` - Estado actual y pruebas
-- `DEPLOYMENT.md` - Guia de despliegue en produccion
+### Especificaciones de Requisitos
+📁 `Documentacion/especificaciones/`
+- `foro detallado.txt` - Requisitos del sistema de foros
+- `login-profile-register detallado.txt` - Requisitos de autenticacion
 
-### Para Asistentes de Desarrollo
-- `Documentacion/config-avanzada/instrucciones-ia.txt` - Guia para herramientas automatizadas
+### Guias de Configuracion y Uso
+📁 `Documentacion/guias/`
+- `CONFIGURACION-GOOGLE-EMAIL.md` - OAuth y Email SMTP
+- `PRUEBAS-Y-ESTADO-PROYECTO.md` - Estado actual y tests
+- `config_email_desarrollo.txt` - Configuracion de email
+- `Recorridos_Virtuales.md` - Sistema de recorridos
+
+### Documentos Academicos
+📁 `Documentacion/academico/`
+- `FASE 1/` - Evidencias de Fase 1
+- Cronogramas, presentaciones, instructivos
+
+### Informes y Estados
+📄 `Documentacion/`
+- `INDICE-DOCUMENTACION.md` - Indice completo organizado
+- `INFORME-TESTS.md` - Estado y resultados de testing
+- `README.md` - Guia de la documentacion
 
 ## Testing
 
