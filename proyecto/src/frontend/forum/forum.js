@@ -557,7 +557,10 @@ class ForumManager {
 
     checkModeratorPermissions() {
         if (this.currentUser && this.canModerate()) {
-            document.getElementById('moderationLink').style.display = 'block';
+            const moderationLink = document.getElementById('moderationLink');
+            if (moderationLink) {
+                moderationLink.style.display = 'block';
+            }
         }
     }
 

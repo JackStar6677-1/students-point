@@ -519,7 +519,11 @@
         vistas: 1
       };
       
-      posts.unshift(newPost);
+      if (Array.isArray(posts)) {
+          posts.unshift(newPost);
+      } else {
+          posts = [newPost];
+      }
       displayPosts(posts);
       
       const modal = bootstrap.Modal.getInstance(document.getElementById('newPostModal'));

@@ -280,7 +280,9 @@ class StudentsPointSounds {
         try {
             // Verificar si el contexto de audio está suspendido
             if (this.audioContext && this.audioContext.state === 'suspended') {
-                this.audioContext.resume();
+                this.audioContext.resume().catch(error => {
+                    console.log('No se pudo reanudar el contexto de audio:', error);
+                });
             }
             
             this.sounds[soundName]();

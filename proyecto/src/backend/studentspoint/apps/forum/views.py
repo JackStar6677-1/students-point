@@ -80,7 +80,12 @@ class ForoListView(generics.ListAPIView):
         sedes = list(Sede.objects.all())
         if not sedes:
             # Crear sede base si no hay
-            sedes = [Sede.objects.create(nombre="Sede Central", slug="sede-central")]
+            sedes = [Sede.objects.create(
+                nombre="Sede Central", 
+                slug="sede-central",
+                lat=-33.4489,
+                lng=-70.6693
+            )]
         for sede in sedes:
             for carrera in carreras:
                 slug = f"{sede.slug}-{slugify(carrera)}"
