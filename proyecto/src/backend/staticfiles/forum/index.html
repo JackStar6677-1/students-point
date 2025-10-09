@@ -316,19 +316,36 @@
           const data = await response.json();
           foros = Array.isArray(data) ? data : (data.results ? data.results : []);
           
+          console.log('Foros cargados:', foros);
+          
           // Poblar select de foros
           const foroSelect = document.getElementById('postForo');
           if (foroSelect) {
             foroSelect.innerHTML = '<option value="">Selecciona un foro</option>';
+            
+            let forosDisponibles = 0;
             foros.forEach(foro => {
+              // Mostrar todos los foros, pero marcar los que puede postear
+              const option = document.createElement('option');
+              option.value = foro.id;
+              option.textContent = foro.titulo + (foro.puede_postear ? '' : ' (Solo lectura)');
+              option.disabled = !foro.puede_postear;
+              foroSelect.appendChild(option);
+              
               if (foro.puede_postear) {
-                const option = document.createElement('option');
-                option.value = foro.id;
-                option.textContent = foro.titulo;
-                foroSelect.appendChild(option);
+                forosDisponibles++;
               }
             });
+            
+            console.log('Foros donde puedes postear:', forosDisponibles);
+            
+            // Si no hay foros disponibles, mostrar mensaje
+            if (forosDisponibles === 0 && foros.length > 0) {
+              showError('No tienes permisos para postear en ningún foro. Verifica tu carrera en el perfil.');
+            }
           }
+        } else {
+          console.error('Error en respuesta de foros:', response.status);
         }
       } catch (error) {
         console.error('Error cargando foros:', error);
