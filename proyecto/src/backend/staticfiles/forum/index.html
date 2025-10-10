@@ -266,11 +266,35 @@
               <label for="postContent" class="form-label">Contenido</label>
               <textarea class="form-control" id="postContent" rows="6" required></textarea>
             </div>
+            <div class="mb-3">
+              <label class="form-label">Imagen (Opcional)</label>
+              <div class="image-upload-area" id="imageUploadArea" onclick="document.getElementById('postImage').click()">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <p class="primary">Haz clic o arrastra una imagen aquí</p>
+                <p>Máximo 5MB - JPG, PNG, GIF</p>
+              </div>
+              <input type="file" id="postImage" accept="image/*" onchange="handleImageSelect(event)">
+              <div id="imagePreviewContainer" class="image-preview-container" style="display: none;">
+                <img id="imagePreview" class="image-preview">
+                <button type="button" class="image-remove-btn" onclick="removeImage()">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+              <small class="text-muted">
+                Las imágenes requieren aprobación de un administrador antes de ser visibles públicamente.
+              </small>
+            </div>
+            <div class="mb-3 form-check">
+              <input type="checkbox" class="form-check-input" id="postAnonymous">
+              <label class="form-check-label" for="postAnonymous">
+                Publicar de forma anónima
+              </label>
+            </div>
           </form>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-          <button type="button" class="btn btn-primary" onclick="submitNewPost()">Publicar</button>
+          <button type="button" class="btn btn-primary" onclick="createPost()">Publicar</button>
         </div>
       </div>
     </div>
