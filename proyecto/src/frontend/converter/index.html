@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conversor de Documentos - StudentsPoint</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico" />
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Tema Oscuro Premium -->
+    <link rel="stylesheet" href="/static/css/theme-dark.css">
+    <link rel="stylesheet" href="/static/css/animations.css">
+    <link rel="stylesheet" href="/static/css/components.css">
+    <link rel="stylesheet" href="converter.css">
+</head>
+<body>
+    <!-- Background Pattern -->
+    <div class="hero-background bg-pattern"></div>
+    <div class="hero-particles" id="particles"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar-premium" id="navbar">
+        <div class="navbar-content">
+            <div class="navbar-logo">
+                <a href="/">
+                    <img src="/static/images/Logo_StudentsPoint.svg.png" alt="StudentsPoint" height="40">
+                </a>
+            </div>
+            
+            <ul class="navbar-menu">
+                <li><a href="/" class="navbar-link">Inicio</a></li>
+                <li><a href="/forum/" class="navbar-link">Foros</a></li>
+                <li><a href="/converter/" class="navbar-link active">Conversor</a></li>
+            </ul>
+            
+            <div class="navbar-actions">
+                <div class="user-menu" style="display: none;">
+                    <div class="user-info">
+                        <span class="user-name"></span>
+                    </div>
+                    <a href="/account.html" class="btn-icon" title="Mi Perfil">
+                        <i class="fas fa-user"></i>
+                    </a>
+                    <button class="btn-icon logout-btn" title="Cerrar Sesion">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+                <div class="auth-buttons">
+                    <a href="/login.html" class="btn btn-outline-primary">Iniciar Sesion</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container py-5" style="margin-top: 80px;">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <!-- Header -->
+                <div class="glass mb-4 p-4">
+                    <h1 class="text-gradient-gold mb-2">Conversor de Documentos</h1>
+                    <p class="text-muted">Convierte archivos Word a PDF y PDF a Word editable con OCR</p>
+                </div>
+
+                <!-- Conversion Tabs -->
+                <div class="glass mb-4">
+                    <ul class="nav nav-tabs border-0 px-4 pt-4" id="converterTabs">
+                        <li class="nav-item">
+                            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#wordToPdf">
+                                <i class="fas fa-file-word"></i> Word a PDF
+                            </button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#pdfToWord">
+                                <i class="fas fa-file-pdf"></i> PDF a Word
+                            </button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#history">
+                                <i class="fas fa-history"></i> Historial
+                            </button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content p-4">
+                        <!-- Word to PDF Tab -->
+                        <div class="tab-pane fade show active" id="wordToPdf">
+                            <div class="conversion-area">
+                                <div class="upload-zone" id="uploadZoneWord">
+                                    <i class="fas fa-file-word fa-3x mb-3" style="color: #2b579a;"></i>
+                                    <h4>Arrastra tu archivo Word aqui</h4>
+                                    <p class="text-muted">o haz click para seleccionar</p>
+                                    <p class="text-muted small">Formatos: .docx, .doc</p>
+                                    <input type="file" id="wordInput" accept=".doc,.docx" hidden>
+                                    <button class="btn btn-gradient-purple mt-3" onclick="document.getElementById('wordInput').click()">
+                                        Seleccionar Archivo
+                                    </button>
+                                </div>
+                                <div class="file-info" id="wordFileInfo" style="display: none;">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h5 class="mb-1"><i class="fas fa-file-word"></i> <span id="wordFileName"></span></h5>
+                                            <p class="text-muted small mb-0"><span id="wordFileSize"></span></p>
+                                        </div>
+                                        <button class="btn btn-danger btn-sm" onclick="clearWordFile()">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                    <button class="btn btn-gradient-gold w-100 mt-3" onclick="convertWordToPdf()">
+                                        <i class="fas fa-exchange-alt"></i> Convertir a PDF
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- PDF to Word Tab -->
+                        <div class="tab-pane fade" id="pdfToWord">
+                            <div class="conversion-area">
+                                <div class="upload-zone" id="uploadZonePdf">
+                                    <i class="fas fa-file-pdf fa-3x mb-3" style="color: #dc3545;"></i>
+                                    <h4>Arrastra tu archivo PDF aqui</h4>
+                                    <p class="text-muted">o haz click para seleccionar</p>
+                                    <p class="text-muted small">Formato: .pdf</p>
+                                    <input type="file" id="pdfInput" accept=".pdf" hidden>
+                                    <button class="btn btn-gradient-purple mt-3" onclick="document.getElementById('pdfInput').click()">
+                                        Seleccionar Archivo
+                                    </button>
+                                </div>
+                                <div class="file-info" id="pdfFileInfo" style="display: none;">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h5 class="mb-1"><i class="fas fa-file-pdf"></i> <span id="pdfFileName"></span></h5>
+                                            <p class="text-muted small mb-0"><span id="pdfFileSize"></span></p>
+                                        </div>
+                                        <button class="btn btn-danger btn-sm" onclick="clearPdfFile()">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                    <div class="form-check form-switch mt-3">
+                                        <input class="form-check-input" type="checkbox" id="useOcr">
+                                        <label class="form-check-label" for="useOcr">
+                                            Usar OCR (extrae texto de imagenes)
+                                        </label>
+                                    </div>
+                                    <button class="btn btn-gradient-gold w-100 mt-3" onclick="convertPdfToWord()">
+                                        <i class="fas fa-exchange-alt"></i> Convertir a Word
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- History Tab -->
+                        <div class="tab-pane fade" id="history">
+                            <div id="historyList">
+                                <div class="text-center py-5">
+                                    <i class="fas fa-spinner fa-spin fa-2x text-purple"></i>
+                                    <p class="mt-3 text-muted">Cargando historial...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Progress Section -->
+                <div class="glass p-4" id="progressSection" style="display: none;">
+                    <h5 class="mb-3">Convirtiendo...</h5>
+                    <div class="progress mb-3" style="height: 30px;">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated bg-gradient-purple" 
+                             role="progressbar" id="progressBar" style="width: 0%">
+                            <span id="progressText">0%</span>
+                        </div>
+                    </div>
+                    <p class="text-muted small mb-0" id="progressStatus">Iniciando conversion...</p>
+                </div>
+
+                <!-- Result Section -->
+                <div class="glass p-4" id="resultSection" style="display: none;">
+                    <div class="text-center">
+                        <i class="fas fa-check-circle fa-3x text-success mb-3"></i>
+                        <h4 class="text-gradient-gold">Conversion Completada</h4>
+                        <p class="text-muted">Tu archivo ha sido convertido exitosamente</p>
+                        <div class="d-flex gap-3 justify-content-center mt-4">
+                            <a href="#" id="downloadLink" class="btn btn-gradient-gold" download>
+                                <i class="fas fa-download"></i> Descargar Archivo
+                            </a>
+                            <button class="btn btn-outline-secondary" onclick="resetConverter()">
+                                <i class="fas fa-redo"></i> Nueva Conversion
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Info Cards -->
+                <div class="row mt-4">
+                    <div class="col-md-4">
+                        <div class="glass p-3 text-center">
+                            <i class="fas fa-bolt fa-2x text-purple mb-2"></i>
+                            <h6>Rapido</h6>
+                            <p class="text-muted small mb-0">Conversion en segundos</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="glass p-3 text-center">
+                            <i class="fas fa-shield-alt fa-2x text-gold mb-2"></i>
+                            <h6>Seguro</h6>
+                            <p class="text-muted small mb-0">Tus archivos estan protegidos</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="glass p-3 text-center">
+                            <i class="fas fa-check fa-2x text-success mb-2"></i>
+                            <h6>Gratis</h6>
+                            <p class="text-muted small mb-0">Sin limites ni costos</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/js/auth.js"></script>
+    <script src="converter.js"></script>
+</body>
+</html>
+
