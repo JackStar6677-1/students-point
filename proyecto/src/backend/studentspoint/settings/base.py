@@ -38,7 +38,6 @@ INSTALLED_APPS = [
     "studentspoint.apps.polls",
     "studentspoint.apps.portfolio",
     "studentspoint.apps.reports",
-    "studentspoint.apps.schedules",
     "studentspoint.apps.wellbeing",
     "studentspoint.apps.document_converter",
     "campus_map",

@@ -30,8 +30,8 @@ class ForumManager {
             },
             {
                 id: 2,
-                titulo: 'Consulta sobre horarios',
-                contenido: '¿Alguien sabe dónde puedo consultar los horarios de clases?',
+                titulo: 'Consulta sobre cursos',
+                contenido: '¿Alguien sabe dónde puedo consultar información sobre los cursos?',
                 autor: 'Estudiante',
                 fecha_creacion: new Date(Date.now() - 86400000).toISOString(),
                 foro: { nombre: 'Académico' },

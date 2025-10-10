@@ -35,8 +35,7 @@ const STATIC_FILES = [
   '/bienestar/',
   '/reportes/',
   '/cursos/',
-  '/encuestas/',
-  '/horarios/'
+  '/encuestas/'
 ];
 
 // Archivos de API para cache dinámico
@@ -50,7 +49,6 @@ const API_PATTERNS = [
   '/api/bienestar/',
   '/api/notifications/',
   '/api/reports/',
-  '/api/schedules/',
   '/api/otec/'
 ];
 

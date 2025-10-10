@@ -56,7 +56,6 @@ urlpatterns = [
     path('api/', include('studentspoint.apps.campuses.urls')),
     path('api/', include('studentspoint.apps.forum.urls')),
     path('api/', include('studentspoint.apps.polls.urls')),
-    path('api/', include('studentspoint.apps.schedules.urls')),
     path('api/', include('studentspoint.apps.notifications.urls')),
     path('api/', include('studentspoint.apps.reports.urls')),
     path('api/', include('studentspoint.apps.otec.urls')),
