@@ -237,79 +237,88 @@ class ForumManager {
         const statusText = this.getStatusText(post.estado);
         const isAnonymous = post.anonimo;
         const userName = isAnonymous ? 'Usuario Anónimo' : (post.usuario_name || 'Usuario');
+        const tipoClass = post.tipo || 'comentario';
         
         return `
-            <div class="card post-card ${statusClass} mb-3" data-post-id="${post.id}">
-                <div class="card-body">
+            <div class="post-card fade-in" data-post-id="${post.id}">
+                <div class="type-indicator ${tipoClass}"></div>
+                <div class="vote-section">
+                    <button class="vote-btn upvote" onclick="forumManager.votePost(${post.id}, 1)" title="Upvote">
+                        <i class="fas fa-arrow-up"></i>
+                    </button>
+                    <span class="vote-count ${this.getScoreClass(post.score)}">${post.score}</span>
+                    <button class="vote-btn downvote" onclick="forumManager.votePost(${post.id}, -1)" title="Downvote">
+                        <i class="fas fa-arrow-down"></i>
+                    </button>
+                </div>
+                <div class="post-content">
                     <div class="post-header">
-                        <div>
-                            <h5 class="card-title mb-1">${this.escapeHtml(post.titulo)}</h5>
-                            <div class="post-meta">
-                                <span class="anonymous-user">${userName}</span> • 
-                                <span>${this.formatDate(post.created_at)}</span>
-                                ${post.updated_at !== post.created_at ? `• <span class="text-muted">Editado</span>` : ''}
-                            </div>
+                        ${post.foro_info ? `
+                            <a href="#" class="post-foro-tag" onclick="filterByForum(${post.foro_info.id}); return false;">
+                                ${post.foro_info.carrera}
+                            </a>
+                        ` : ''}
+                        <div class="post-author">
+                            <strong>${userName}</strong>
+                            ${post.usuario_career ? `<span>• ${post.usuario_career}</span>` : ''}
+                            <span class="post-time">• ${this.formatDate(post.created_at)}</span>
                         </div>
-                        <div class="score-display ${this.getScoreClass(post.score)}">
-                            <i class="fas fa-arrow-up"></i>
-                            <span>${post.score}</span>
-                        </div>
+                        ${tipoClass !== 'comentario' ? `<span class="post-badge badge-${tipoClass}">${tipoClass}</span>` : ''}
+                        ${post.estado !== 'publicado' ? `<span class="post-badge badge-${post.estado}">${statusText}</span>` : ''}
                     </div>
                     
-                    <div class="card-text">
+                    <h2 class="post-title">${this.escapeHtml(post.titulo)}</h2>
+                    
+                    <div class="post-body-preview">
                         ${this.escapeHtml(post.cuerpo).replace(/\n/g, '<br>')}
                     </div>
                     
-                    <div class="post-actions">
-                        <button class="btn btn-outline-primary btn-sm vote-btn" 
-                                onclick="forumManager.votePost(${post.id}, 1)" 
-                                data-vote="1">
-                            <i class="fas fa-arrow-up"></i> Me gusta
+                    ${post.imagen_url ? `
+                        <div class="post-image-container">
+                            ${!post.imagen_aprobada ? `
+                                <div class="image-pending-approval">
+                                    <i class="fas fa-clock"></i> Imagen en revisión por moderadores
+                                </div>
+                            ` : `
+                                <img src="${post.imagen_url}" alt="${this.escapeHtml(post.titulo)}" class="post-image" 
+                                     onclick="window.open('${post.imagen_url}', '_blank')">
+                            `}
+                        </div>
+                    ` : ''}
+                    
+                    <div class="post-footer">
+                        <button class="post-action" onclick="forumManager.showComments(${post.id})">
+                            <i class="fas fa-comment"></i>
+                            ${post.total_comentarios || 0} Comentarios
                         </button>
-                        <button class="btn btn-outline-danger btn-sm vote-btn" 
-                                onclick="forumManager.votePost(${post.id}, -1)" 
-                                data-vote="-1">
-                            <i class="fas fa-arrow-down"></i> No me gusta
-                        </button>
-                        <button class="btn btn-outline-secondary btn-sm" 
-                                onclick="forumManager.showComments(${post.id})">
-                            <i class="fas fa-comments"></i> Comentarios (${post.total_comentarios || 0})
-                        </button>
-                        <button class="btn btn-outline-warning btn-sm" 
-                                onclick="forumManager.reportPost(${post.id})">
-                            <i class="fas fa-flag"></i> Reportar
+                        <button class="post-action" onclick="forumManager.reportPost(${post.id})">
+                            <i class="fas fa-flag"></i>
+                            Reportar
                         </button>
                         ${this.canModerate() ? `
-                            <button class="btn btn-outline-info btn-sm" 
-                                    onclick="forumManager.moderatePost(${post.id})">
-                                <i class="fas fa-shield-alt"></i> Moderar
+                            <button class="post-action" onclick="forumManager.moderatePost(${post.id})">
+                                <i class="fas fa-shield-alt"></i>
+                                Moderar
                             </button>
                         ` : ''}
-                    </div>
-                    
-                    <div class="mt-2">
-                        <span class="badge bg-${this.getStatusColor(post.estado)} status-badge">
-                            ${statusText}
-                        </span>
                         ${post.total_reportes > 0 ? `
-                            <span class="badge bg-warning text-dark status-badge">
+                            <span class="text-warning">
+                                <i class="fas fa-exclamation-triangle"></i>
                                 ${post.total_reportes} reporte${post.total_reportes > 1 ? 's' : ''}
                             </span>
                         ` : ''}
                     </div>
                     
                     ${post.razon_moderacion ? `
-                        <div class="moderation-panel">
-                            <h6><i class="fas fa-shield-alt me-2"></i>Moderación</h6>
-                            <p class="mb-0">${this.escapeHtml(post.razon_moderacion)}</p>
-                            <small class="text-muted">
-                                Moderado por ${post.moderado_por?.name || 'Sistema'} 
-                                ${post.moderado_at ? `el ${this.formatDate(post.moderado_at)}` : ''}
-                            </small>
+                        <div class="alert alert-warning mt-2">
+                            <strong><i class="fas fa-shield-alt me-2"></i>Moderación:</strong>
+                            ${this.escapeHtml(post.razon_moderacion)}
+                            <br><small>Moderado por ${post.moderado_por?.name || 'Sistema'} 
+                            ${post.moderado_at ? `el ${this.formatDate(post.moderado_at)}` : ''}</small>
                         </div>
                     ` : ''}
                     
-                    <div id="comments-${post.id}" class="comment-section" style="display: none;">
+                    <div id="comments-${post.id}" class="comments-section" style="display: none;">
                         <!-- Comments will be loaded here -->
                     </div>
                 </div>
