@@ -48,7 +48,7 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 
 ## [2.0.0] - 2025-08-15
 
-### 🎉 Agregado
+###  Agregado
 - **Migración completa** de Duoc Point a Students Point
 - **Sistema de recorridos virtuales** con navegación por diapositivas
 - **Sistema de encuestas completo** con votación y resultados en tiempo real
@@ -57,21 +57,21 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 - **Configuración de producción** optimizada
 - **Documentación completa** con instrucciones paso a paso
 
-### 🔧 Cambiado
+###  Cambiado
 - **URLs de imágenes** actualizadas (`imagenes/` → `static/images/`)
 - **Serializers duplicados** resueltos (`SimpleStatusSerializer` → `NotificationStatusSerializer`)
 - **Configuración de base de datos** mejorada para producción
 - **Dockerfile de producción** actualizado
 - **Scripts de instalación** actualizados
 
-### 🐛 Corregido
+###  Corregido
 - **29 warnings** del sistema resueltos
 - **Servidor no iniciaba** - problema de configuración corregido
 - **Rutas de archivos estáticos** corregidas
 - **Referencias legacy** a Duoc Point eliminadas
 - **Configuración CORS** para producción
 
-### 🗑️ Eliminado
+###  Eliminado
 - **Carpeta `duocpoint/`** legacy eliminada
 - **Configuraciones obsoletas** removidas
 - **Archivos duplicados** consolidados

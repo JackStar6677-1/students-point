@@ -56,8 +56,9 @@ class ProfileAPITestCase(TestCase):
     def test_change_password(self):
         """Prueba cambiar contraseña"""
         change_password_data = {
-            'old_password': 'testpass123',
-            'new_password': 'newpass456'
+            'password_actual': 'testpass123',
+            'nueva_password': 'newpass456',
+            'confirmar_password': 'newpass456'
         }
         
         response = self.client.post('/api/auth/cambiar-password/', change_password_data)
@@ -70,8 +71,9 @@ class ProfileAPITestCase(TestCase):
     def test_change_password_wrong_old_password(self):
         """Prueba cambiar contraseña con contraseña antigua incorrecta"""
         change_password_data = {
-            'old_password': 'wrongpass',
-            'new_password': 'newpass456'
+            'password_actual': 'wrongpass',
+            'nueva_password': 'newpass456',
+            'confirmar_password': 'newpass456'
         }
         
         response = self.client.post('/api/auth/cambiar-password/', change_password_data)
@@ -102,8 +104,9 @@ class ProfileAPITestCase(TestCase):
         """Prueba obtener lista de carreras disponibles"""
         response = self.client.get('/api/carreras/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertIsInstance(response.data, list)
-        self.assertGreater(len(response.data), 0)
+        self.assertIn('carreras', response.data)
+        self.assertIsInstance(response.data['carreras'], list)
+        self.assertGreater(len(response.data['carreras']), 0)
         
     def test_unauthenticated_cannot_access_profile(self):
         """Prueba que usuario no autenticado no puede acceder al perfil"""

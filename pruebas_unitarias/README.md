@@ -148,9 +148,9 @@ python run_pytest.py -v
 3. pytest descubre test_*.py en pruebas_unitarias/
    ↓
 4. Por cada función test_*():
-   ├─ Crea BD temporal
-   ├─ Ejecuta test (arrange → act → assert)
-   └─ Destruye BD
+    Crea BD temporal
+    Ejecuta test (arrange → act → assert)
+    Destruye BD
    ↓
 5. Muestra resumen: X passed, Y skipped, Z failed
 ```

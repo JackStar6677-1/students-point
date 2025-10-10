@@ -1,0 +1,22 @@
+[Unit]
+Description=StudentsPoint Alert System
+After=network.target studentspoint-gunicorn.service
+
+[Service]
+Type=simple
+User=studentspoint
+Group=studentspoint
+WorkingDirectory=/home/studentspoint/students-point/proyecto/src/backend
+Environment="PATH=/home/studentspoint/students-point/proyecto/src/backend/venv/bin"
+Environment="DJANGO_SETTINGS_MODULE=studentspoint.settings.prod"
+ExecStart=/bin/bash -c 'while true; do \
+    /home/studentspoint/students-point/proyecto/src/backend/venv/bin/python \
+    /home/studentspoint/students-point/proyecto/src/backend/alert_system.py; \
+    sleep 300; \
+    done'
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+

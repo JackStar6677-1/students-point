@@ -1,20 +1,70 @@
-/* Forum Styles */
+/* Forum Styles - Reddit-style Professional */
 .post-card {
-    transition: all 0.3s ease;
-    border-left: 4px solid transparent;
+    transition: all 0.2s ease;
+    background: #1a1a1b;
+    border: 1px solid #343536;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    display: flex;
+    overflow: hidden;
 }
 
 .post-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    border-color: #818384;
+}
+
+/* Vote section estilo Reddit */
+.vote-section {
+    width: 40px;
+    background: #0b0b0c;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px 4px;
+    gap: 4px;
+}
+
+.vote-button {
+    background: none;
+    border: none;
+    color: #818384;
+    cursor: pointer;
+    padding: 4px;
+    transition: color 0.2s;
+}
+
+.vote-button:hover {
+    color: #d7dadc;
+}
+
+.vote-button.upvote:hover,
+.vote-button.upvote.active {
+    color: #ff4500;
+}
+
+.vote-button.downvote:hover,
+.vote-button.downvote.active {
+    color: #7193ff;
+}
+
+.vote-count {
+    font-size: 12px;
+    font-weight: 700;
+    color: #d7dadc;
+}
+
+/* Content section */
+.post-content-wrapper {
+    flex: 1;
+    padding: 8px;
 }
 
 .post-card.publicado {
-    border-left-color: #28a745;
+    border-left-color: var(--color-purple, #6b46c1);
 }
 
 .post-card.revision {
-    border-left-color: #ffc107;
+    border-left-color: var(--color-gold, #fbbf24);
 }
 
 .post-card.oculto {

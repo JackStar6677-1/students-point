@@ -23,14 +23,14 @@
 ### Estructura
 ```
 pruebas_unitarias/
-├── __init__.py
-├── conftest.py              # Configuracion de pytest
-├── README.md                # Documentacion de tests
-└── api/
-    ├── test_auth_me.py      # Tests de perfil de usuario
-    ├── test_campus_map.py   # Tests de API de campus
-    ├── test_login_api.py    # Tests de login
-    └── test_register_api.py # Tests de registro
+ __init__.py
+ conftest.py              # Configuracion de pytest
+ README.md                # Documentacion de tests
+ api/
+     test_auth_me.py      # Tests de perfil de usuario
+     test_campus_map.py   # Tests de API de campus
+     test_login_api.py    # Tests de login
+     test_register_api.py # Tests de registro
 ```
 
 ### Comando de Ejecucion
@@ -160,10 +160,10 @@ python_functions = test_*
 ### Estructura
 ```
 pruebas_automatizadas/
-├── README.md           # Documentacion de tests E2E
-├── test_homepage.py    # Tests de pagina principal
-├── test_login.py       # Tests de flujo de login
-└── test_register.py    # Tests de flujo de registro
+ README.md           # Documentacion de tests E2E
+ test_homepage.py    # Tests de pagina principal
+ test_login.py       # Tests de flujo de login
+ test_register.py    # Tests de flujo de registro
 ```
 
 ### Comando de Ejecucion

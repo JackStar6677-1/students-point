@@ -15,25 +15,25 @@ Este proyecto cuenta con un sistema completo de testing automatizado que cubre:
 
 ```
 students-point/
-├── pruebas_unitarias/          # Pruebas unitarias del backend
-│   ├── api/                    # Pruebas de APIs específicas
-│   │   ├── test_auth_me.py
-│   │   ├── test_campus_map.py
-│   │   ├── test_email_verification.py
-│   │   ├── test_forum_api.py
-│   │   ├── test_login_api.py
-│   │   ├── test_profile_api.py
-│   │   └── test_register_api.py
-│   ├── conftest.py             # Configuración de pytest
-│   └── README.md
-├── pruebas_automatizadas/      # Pruebas E2E con Selenium
-│   ├── test_forum_e2e.py
-│   ├── test_homepage.py
-│   ├── test_login.py
-│   └── test_register.py
-├── test_suite_completo.py      # Sistema completo de testing
-├── ejecutar_tests_dev.bat      # Script rápido para desarrollo
-└── TESTING.md                  # Este archivo
+ pruebas_unitarias/          # Pruebas unitarias del backend
+    api/                    # Pruebas de APIs específicas
+       test_auth_me.py
+       test_campus_map.py
+       test_email_verification.py
+       test_forum_api.py
+       test_login_api.py
+       test_profile_api.py
+       test_register_api.py
+    conftest.py             # Configuración de pytest
+    README.md
+ pruebas_automatizadas/      # Pruebas E2E con Selenium
+    test_forum_e2e.py
+    test_homepage.py
+    test_login.py
+    test_register.py
+ test_suite_completo.py      # Sistema completo de testing
+ ejecutar_tests_dev.bat      # Script rápido para desarrollo
+ TESTING.md                  # Este archivo
 ```
 
 ---
@@ -128,60 +128,60 @@ El reporte HTML se genera en `htmlcov/index.html`
 ### Pruebas Unitarias
 
 #### Autenticación
-- ✅ Login con credenciales válidas
-- ✅ Login con credenciales inválidas
-- ✅ Registro de nuevo usuario
-- ✅ Verificación de email
-- ✅ Reenvío de código de verificación
-- ✅ Recuperación de contraseña
-- ✅ Cambio de contraseña
-- ✅ Usuario no verificado no puede hacer login
+-  Login con credenciales válidas
+-  Login con credenciales inválidas
+-  Registro de nuevo usuario
+-  Verificación de email
+-  Reenvío de código de verificación
+-  Recuperación de contraseña
+-  Cambio de contraseña
+-  Usuario no verificado no puede hacer login
 
 #### Perfil de Usuario
-- ✅ Obtener perfil de usuario autenticado
-- ✅ Actualizar perfil (nombre, carrera, semestre)
-- ✅ Cambiar contraseña
-- ✅ Cambiar carrera
-- ✅ Subir foto de perfil
-- ✅ Validaciones de datos
+-  Obtener perfil de usuario autenticado
+-  Actualizar perfil (nombre, carrera, semestre)
+-  Cambiar contraseña
+-  Cambiar carrera
+-  Subir foto de perfil
+-  Validaciones de datos
 
 #### Foro
-- ✅ Listar foros (autenticado/no autenticado)
-- ✅ Crear post
-- ✅ Listar posts
-- ✅ Censura de contenido ofensivo
-- ✅ Posts anónimos
-- ✅ Permisos de foro por carrera
-- ✅ Sistema de votación
+-  Listar foros (autenticado/no autenticado)
+-  Crear post
+-  Listar posts
+-  Censura de contenido ofensivo
+-  Posts anónimos
+-  Permisos de foro por carrera
+-  Sistema de votación
 
 #### Email
-- ✅ Envío de email de verificación
-- ✅ Formato de código de verificación
-- ✅ Verificación con código válido
-- ✅ Verificación con código inválido
-- ✅ Expiración de código
+-  Envío de email de verificación
+-  Formato de código de verificación
+-  Verificación con código válido
+-  Verificación con código inválido
+-  Expiración de código
 
 ### Pruebas End-to-End
 
 #### Navegación
-- ✅ Homepage carga correctamente
-- ✅ Redirección a login si no autenticado
+-  Homepage carga correctamente
+-  Redirección a login si no autenticado
 
 #### Login
-- ✅ Formulario de login visible
-- ✅ Login exitoso redirige correctamente
-- ✅ Login fallido muestra error
+-  Formulario de login visible
+-  Login exitoso redirige correctamente
+-  Login fallido muestra error
 
 #### Registro
-- ✅ Formulario de registro visible
-- ✅ Registro exitoso
-- ✅ Validación de campos
+-  Formulario de registro visible
+-  Registro exitoso
+-  Validación de campos
 
 #### Foro
-- ✅ Página de foro carga
-- ✅ Acceso requiere autenticación
-- ✅ Crear nuevo post
-- ✅ Ver posts existentes
+-  Página de foro carga
+-  Acceso requiere autenticación
+-  Crear nuevo post
+-  Ver posts existentes
 
 ---
 
@@ -384,11 +384,11 @@ taskkill /PID <PID> /F
 
 Al agregar nuevas funcionalidades:
 
-1. ✅ Escribir pruebas unitarias primero (TDD)
-2. ✅ Asegurar > 80% de cobertura
-3. ✅ Agregar pruebas E2E para UI
-4. ✅ Ejecutar suite completa antes de PR
-5. ✅ Documentar pruebas en este archivo
+1.  Escribir pruebas unitarias primero (TDD)
+2.  Asegurar > 80% de cobertura
+3.  Agregar pruebas E2E para UI
+4.  Ejecutar suite completa antes de PR
+5.  Documentar pruebas en este archivo
 
 ---
 

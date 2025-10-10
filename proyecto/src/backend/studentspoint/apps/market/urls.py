@@ -8,11 +8,13 @@ from .views import (
     ProductoReporteViewSet, ProductoAnalyticsViewSet
 )
 
+app_name = 'market'
+
 router = DefaultRouter()
-router.register(r'categorias', CategoriaProductoViewSet)
-router.register(r'productos', ProductoViewSet)
-router.register(r'reportes', ProductoReporteViewSet)
-router.register(r'analytics', ProductoAnalyticsViewSet)
+router.register(r'categories', CategoriaProductoViewSet, basename='category')
+router.register(r'products', ProductoViewSet, basename='product')
+router.register(r'reports', ProductoReporteViewSet, basename='report')
+router.register(r'analytics', ProductoAnalyticsViewSet, basename='analytics')
 
 urlpatterns = [
     path('', include(router.urls)),

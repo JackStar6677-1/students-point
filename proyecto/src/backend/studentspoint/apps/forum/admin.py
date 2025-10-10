@@ -34,9 +34,9 @@ class PostAdmin(admin.ModelAdmin):
     def imagen_status(self, obj):
         if obj.imagen:
             if obj.imagen_aprobada:
-                return format_html('<span style="color: green;">✓ Aprobada</span>')
+                return format_html('<span style="color: green;"> Aprobada</span>')
             else:
-                return format_html('<span style="color: orange;">⚠ Pendiente</span>')
+                return format_html('<span style="color: orange;"> Pendiente</span>')
         return '-'
     imagen_status.short_description = 'Imagen'
     

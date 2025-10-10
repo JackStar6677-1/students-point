@@ -111,7 +111,7 @@ GOOGLE_CLIENT_SECRET = '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'
 GOOGLE_REDIRECT_URI = 'http://localhost:8000/api/auth/google/callback/web/'
 ```
 
-✓ Ya configuradas
+ Ya configuradas
 
 ### Verificar URIs en Google Cloud
 

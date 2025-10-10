@@ -30,10 +30,10 @@ class ForumE2ETest:
             # Debería redirigir a login si no está autenticado
             self.wait.until(EC.presence_of_element_located((By.ID, "email")))
             
-            print("✅ Página del foro carga y redirige a login correctamente")
+            print(" Página del foro carga y redirige a login correctamente")
             return True
         except Exception as e:
-            print(f"❌ Error cargando página del foro: {e}")
+            print(f" Error cargando página del foro: {e}")
             return False
             
     def test_login_and_access_forum(self):
@@ -61,10 +61,10 @@ class ForumE2ETest:
             # Verificar que la página carga
             self.wait.until(EC.presence_of_element_located((By.TAG_NAME, "body")))
             
-            print("✅ Login exitoso y acceso al foro funcionando")
+            print(" Login exitoso y acceso al foro funcionando")
             return True
         except Exception as e:
-            print(f"❌ Error en login y acceso al foro: {e}")
+            print(f" Error en login y acceso al foro: {e}")
             return False
             
     def test_create_new_post(self):
@@ -109,19 +109,19 @@ class ForumE2ETest:
                 
                 time.sleep(2)
                 
-                print("✅ Creación de post en foro funcionando")
+                print(" Creación de post en foro funcionando")
                 return True
             except Exception as e:
-                print(f"⚠️ No se pudo crear post (puede ser esperado si no hay foros): {e}")
+                print(f" No se pudo crear post (puede ser esperado si no hay foros): {e}")
                 return True
                 
         except Exception as e:
-            print(f"❌ Error creando post: {e}")
+            print(f" Error creando post: {e}")
             return False
             
     def run_all_tests(self):
         """Ejecuta todas las pruebas E2E del foro"""
-        print("\n🧪 Ejecutando pruebas E2E del foro...")
+        print("\n Ejecutando pruebas E2E del foro...")
         
         results = []
         results.append(self.test_forum_page_loads())
@@ -133,7 +133,7 @@ class ForumE2ETest:
         passed = sum(results)
         total = len(results)
         
-        print(f"\n📊 Resultados: {passed}/{total} pruebas pasaron")
+        print(f"\n Resultados: {passed}/{total} pruebas pasaron")
         
         return all(results)
 
@@ -142,8 +142,8 @@ if __name__ == "__main__":
     success = test.run_all_tests()
     
     if success:
-        print("✅ Todas las pruebas E2E del foro pasaron!")
+        print(" Todas las pruebas E2E del foro pasaron!")
         exit(0)
     else:
-        print("❌ Algunas pruebas E2E del foro fallaron")
+        print(" Algunas pruebas E2E del foro fallaron")
         exit(1)

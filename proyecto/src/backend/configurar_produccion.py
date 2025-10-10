@@ -30,10 +30,10 @@ def verificar_postgresql():
             database='postgres'  # Conectar a base por defecto
         )
         conn.close()
-        print("✅ Conexión a PostgreSQL exitosa")
+        print(" Conexión a PostgreSQL exitosa")
         return True
     except Exception as e:
-        print(f"❌ Error conectando a PostgreSQL: {e}")
+        print(f" Error conectando a PostgreSQL: {e}")
         return False
 
 def crear_base_datos():
@@ -52,16 +52,16 @@ def crear_base_datos():
         # Verificar si la base de datos existe
         cursor.execute("SELECT 1 FROM pg_database WHERE datname = %s", (DB_CONFIG['database'],))
         if cursor.fetchone():
-            print(f"✅ Base de datos '{DB_CONFIG['database']}' ya existe")
+            print(f" Base de datos '{DB_CONFIG['database']}' ya existe")
         else:
             cursor.execute(f"CREATE DATABASE {DB_CONFIG['database']}")
-            print(f"✅ Base de datos '{DB_CONFIG['database']}' creada")
+            print(f" Base de datos '{DB_CONFIG['database']}' creada")
         
         cursor.close()
         conn.close()
         return True
     except Exception as e:
-        print(f"❌ Error creando base de datos: {e}")
+        print(f" Error creando base de datos: {e}")
         return False
 
 def configurar_variables_entorno():
@@ -95,7 +95,7 @@ CELERY_RESULT_BACKEND=redis://localhost:6379/0
     with open(env_file, 'w', encoding='utf-8') as f:
         f.write(env_content)
     
-    print("✅ Archivo .env creado con configuración de producción")
+    print(" Archivo .env creado con configuración de producción")
 
 def aplicar_migraciones():
     """Aplicar migraciones de Django"""
@@ -109,13 +109,13 @@ def aplicar_migraciones():
         ], capture_output=True, text=True)
         
         if result.returncode == 0:
-            print("✅ Migraciones aplicadas exitosamente")
+            print(" Migraciones aplicadas exitosamente")
             return True
         else:
-            print(f"❌ Error aplicando migraciones: {result.stderr}")
+            print(f" Error aplicando migraciones: {result.stderr}")
             return False
     except Exception as e:
-        print(f"❌ Error ejecutando migraciones: {e}")
+        print(f" Error ejecutando migraciones: {e}")
         return False
 
 def crear_superusuario():
@@ -126,13 +126,13 @@ def crear_superusuario():
         ], capture_output=True, text=True)
         
         if result.returncode == 0:
-            print("✅ Superusuario creado exitosamente")
+            print(" Superusuario creado exitosamente")
             return True
         else:
-            print(f"❌ Error creando superusuario: {result.stderr}")
+            print(f" Error creando superusuario: {result.stderr}")
             return False
     except Exception as e:
-        print(f"❌ Error ejecutando script de superusuario: {e}")
+        print(f" Error ejecutando script de superusuario: {e}")
         return False
 
 def recolectar_archivos_estaticos():
@@ -143,33 +143,33 @@ def recolectar_archivos_estaticos():
         ], capture_output=True, text=True)
         
         if result.returncode == 0:
-            print("✅ Archivos estáticos recolectados")
+            print(" Archivos estáticos recolectados")
             return True
         else:
-            print(f"❌ Error recolectando archivos estáticos: {result.stderr}")
+            print(f" Error recolectando archivos estáticos: {result.stderr}")
             return False
     except Exception as e:
-        print(f"❌ Error ejecutando collectstatic: {e}")
+        print(f" Error ejecutando collectstatic: {e}")
         return False
 
 def main():
     """Función principal"""
-    print("🚀 Configurando StudentsPoint para Producción")
+    print(" Configurando StudentsPoint para Producción")
     print("=" * 50)
     
     # Verificar que estamos en el directorio correcto
     if not Path('manage.py').exists():
-        print("❌ Error: Ejecutar este script desde el directorio backend")
+        print(" Error: Ejecutar este script desde el directorio backend")
         sys.exit(1)
     
     # Paso 1: Verificar PostgreSQL
     if not verificar_postgresql():
-        print("❌ No se puede continuar sin PostgreSQL")
+        print(" No se puede continuar sin PostgreSQL")
         sys.exit(1)
     
     # Paso 2: Crear base de datos
     if not crear_base_datos():
-        print("❌ No se puede continuar sin la base de datos")
+        print(" No se puede continuar sin la base de datos")
         sys.exit(1)
     
     # Paso 3: Configurar variables de entorno
@@ -177,26 +177,26 @@ def main():
     
     # Paso 4: Aplicar migraciones
     if not aplicar_migraciones():
-        print("❌ Error en migraciones")
+        print(" Error en migraciones")
         sys.exit(1)
     
     # Paso 5: Crear superusuario
     if not crear_superusuario():
-        print("⚠️  Advertencia: No se pudo crear superusuario automáticamente")
+        print("  Advertencia: No se pudo crear superusuario automáticamente")
         print("   Crear manualmente con: python manage.py createsuperuser --settings=studentspoint.settings.prod")
     
     # Paso 6: Recolectar archivos estáticos
     if not recolectar_archivos_estaticos():
-        print("⚠️  Advertencia: Error recolectando archivos estáticos")
+        print("  Advertencia: Error recolectando archivos estáticos")
     
     print("\n" + "=" * 50)
-    print("✅ Configuración de producción completada")
-    print("\n📋 Próximos pasos:")
+    print(" Configuración de producción completada")
+    print("\n Próximos pasos:")
     print("1. Verificar configuración en archivo .env")
     print("2. Iniciar servidor: python manage.py runserver 0.0.0.0:8000 --settings=studentspoint.settings.prod")
     print("3. Configurar nginx/apache para servir archivos estáticos")
     print("4. Configurar SSL/HTTPS")
-    print("\n🔗 URLs de acceso:")
+    print("\n URLs de acceso:")
     print("- Aplicación: http://localhost:8000")
     print("- Admin: http://localhost:8000/admin/")
     print("- API Docs: http://localhost:8000/api/docs/")

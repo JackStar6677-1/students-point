@@ -320,7 +320,7 @@ class TestSuiteManager:
 <body>
     <div class="container">
         <div class="header">
-            <h1>🧪 Reporte de Pruebas - StudentsPoint</h1>
+            <h1> Reporte de Pruebas - StudentsPoint</h1>
             <p class="timestamp">Generado el: {self.results['timestamp']}</p>
         </div>
         
@@ -350,7 +350,7 @@ class TestSuiteManager:
             status_class = test_data["status"].lower()
             html_content += f"""
             <div class="test-section">
-                <h2>🔍 {test_name.replace('_', ' ').title()}</h2>
+                <h2> {test_name.replace('_', ' ').title()}</h2>
                 <div class="test-details">
                     <p><strong>Estado:</strong> <span class="{status_class}">{test_data['status']}</span></p>
                     <p><strong>Duración:</strong> {test_data['duration']:.2f} segundos</p>
@@ -375,7 +375,7 @@ class TestSuiteManager:
         
     def run_all_tests(self):
         """Ejecuta todas las pruebas del proyecto"""
-        self.log("🚀 Iniciando suite completa de pruebas...")
+        self.log(" Iniciando suite completa de pruebas...")
         
         if not self.setup_test_environment():
             self.log("Error configurando entorno de testing", "ERROR")
@@ -393,7 +393,7 @@ class TestSuiteManager:
         
         # Mostrar resumen
         summary = self.results["summary"]
-        self.log(f"📊 RESUMEN FINAL:")
+        self.log(f" RESUMEN FINAL:")
         self.log(f"   Total: {summary['total_tests']} pruebas")
         self.log(f"   Exitosas: {summary['passed_tests']}")
         self.log(f"   Fallidas: {summary['failed_tests']}")
@@ -418,10 +418,10 @@ def main():
     success = test_manager.run_all_tests()
     
     if success:
-        print("\n✅ Todas las pruebas pasaron exitosamente!")
+        print("\n Todas las pruebas pasaron exitosamente!")
         sys.exit(0)
     else:
-        print("\n❌ Algunas pruebas fallaron. Revisa el reporte para más detalles.")
+        print("\n Algunas pruebas fallaron. Revisa el reporte para más detalles.")
         sys.exit(1)
 
 if __name__ == "__main__":

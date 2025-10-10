@@ -38,7 +38,9 @@ class ForoListView(generics.ListAPIView):
     def get_queryset(self):
         # Asegurar foros por defecto si no existen
         self._ensure_default_foros()
-        queryset = Foro.objects.all()
+        
+        # Optimización: usar select_related para evitar N+1
+        queryset = Foro.objects.select_related('sede').all()
         
         # Filtrar foros según permisos del usuario
         if self.request.user.is_authenticated:
@@ -111,7 +113,17 @@ class PostListCreateView(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get_queryset(self):
-        queryset = Post.objects.all()
+        # Optimización: usar select_related y prefetch_related para evitar N+1
+        queryset = Post.objects.select_related(
+            'foro', 
+            'foro__sede', 
+            'usuario'
+        ).prefetch_related(
+            'comentarios',
+            'votos',
+            'reportes'
+        ).all()
+        
         foro_id = self.request.query_params.get("foro_id")
         if foro_id:
             queryset = queryset.filter(foro_id=foro_id)

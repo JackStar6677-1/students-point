@@ -26,7 +26,7 @@ def sincronizar_foros():
     )
     
     if created:
-        print(f"✅ Sede creada: {sede.nombre}")
+        print(f" Sede creada: {sede.nombre}")
     
     foros_creados = 0
     foros_existentes = 0
@@ -46,22 +46,22 @@ def sincronizar_foros():
         )
         
         if created:
-            print(f"✅ Foro creado: {foro.titulo}")
+            print(f" Foro creado: {foro.titulo}")
             foros_creados += 1
         else:
             foros_existentes += 1
     
-    print(f"\n📊 Resumen:")
+    print(f"\n Resumen:")
     print(f"   Foros creados: {foros_creados}")
     print(f"   Foros existentes: {foros_existentes}")
     print(f"   Total de foros: {Foro.objects.count()}")
     
-    print(f"\n📋 Foros disponibles:")
+    print(f"\n Foros disponibles:")
     for foro in Foro.objects.all().order_by('carrera'):
         print(f"   - {foro.titulo} (Carrera: {foro.carrera})")
 
 if __name__ == "__main__":
-    print("🔄 Sincronizando foros con carreras disponibles...\n")
+    print(" Sincronizando foros con carreras disponibles...\n")
     sincronizar_foros()
-    print("\n✅ Sincronización completada!")
+    print("\n Sincronización completada!")
 

@@ -8,6 +8,7 @@ from rest_framework.test import APIClient
 from rest_framework import status
 from studentspoint.apps.forum.models import Foro, Post, Comentario
 from studentspoint.apps.accounts.models import User
+from studentspoint.apps.campuses.models import Sede
 
 User = get_user_model()
 
@@ -20,8 +21,21 @@ class ForumAPITestCase(TestCase):
             name='Test User',
             career='Ingeniería en Informática'
         )
+        
+        # Crear sede para los foros
+        self.sede = Sede.objects.create(
+            nombre='Sede de Prueba',
+            slug='sede-prueba',
+            direccion='Dirección de prueba 123',
+            lat=-33.4489,
+            lng=-70.6693
+        )
+        
+        # Crear foro
         self.foro = Foro.objects.create(
-            nombre='Foro de Prueba',
+            sede=self.sede,
+            carrera='Ingeniería en Informática',
+            titulo='Foro de Prueba',
             descripcion='Foro para pruebas',
             slug='foro-prueba'
         )
@@ -121,7 +135,9 @@ class ForumAPITestCase(TestCase):
         """Prueba permisos de foro basados en carrera"""
         # Crear foro específico para una carrera
         foro_carrera = Foro.objects.create(
-            nombre='Foro de Ingeniería',
+            sede=self.sede,
+            carrera='Ingeniería en Informática',
+            titulo='Foro de Ingeniería',
             descripcion='Solo para estudiantes de ingeniería',
             slug='foro-ingenieria',
             es_privado=True
@@ -132,8 +148,8 @@ class ForumAPITestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         
         # Verificar que el foro aparece en la lista
-        foro_names = [f['nombre'] for f in response.data]
-        self.assertIn('Foro de Ingeniería', foro_names)
+        foro_titles = [f.get('titulo', f.get('nombre', '')) for f in response.data]
+        self.assertIn('Foro de Ingeniería', foro_titles)
         
     def test_post_voting(self):
         """Prueba sistema de votación de posts"""

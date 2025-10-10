@@ -12,7 +12,7 @@ django.setup()
 
 from django.contrib.auth import get_user_model
 from django.utils import timezone
-from marketplace.models import Category, Product
+from studentspoint.apps.market.models import CategoriaProducto as Category, Producto as Product
 from campus_map.models import Campus, Location, VirtualTour, TourStep, MapMarker
 from studentspoint.apps.campuses.models import Sede
 
@@ -23,21 +23,21 @@ def create_sample_data():
     
     # Crear categorías para marketplace
     categories_data = [
-        {'name': 'Libros', 'description': 'Libros de texto y académicos', 'icon': 'fas fa-book'},
-        {'name': 'Electrónicos', 'description': 'Dispositivos electrónicos', 'icon': 'fas fa-laptop'},
-        {'name': 'Ropa', 'description': 'Ropa y accesorios', 'icon': 'fas fa-tshirt'},
-        {'name': 'Hogar', 'description': 'Artículos para el hogar', 'icon': 'fas fa-home'},
-        {'name': 'Deportes', 'description': 'Artículos deportivos', 'icon': 'fas fa-dumbbell'},
-        {'name': 'Otros', 'description': 'Otros productos', 'icon': 'fas fa-tag'},
+        {'nombre': 'Libros', 'descripcion': 'Libros de texto y académicos', 'icono': 'fas fa-book'},
+        {'nombre': 'Electrónicos', 'descripcion': 'Dispositivos electrónicos', 'icono': 'fas fa-laptop'},
+        {'nombre': 'Ropa', 'descripcion': 'Ropa y accesorios', 'icono': 'fas fa-tshirt'},
+        {'nombre': 'Hogar', 'descripcion': 'Artículos para el hogar', 'icono': 'fas fa-home'},
+        {'nombre': 'Deportes', 'descripcion': 'Artículos deportivos', 'icono': 'fas fa-dumbbell'},
+        {'nombre': 'Otros', 'descripcion': 'Otros productos', 'icono': 'fas fa-tag'},
     ]
     
     for cat_data in categories_data:
         category, created = Category.objects.get_or_create(
-            name=cat_data['name'],
+            nombre=cat_data['nombre'],
             defaults=cat_data
         )
         if created:
-            print(f"Creada categoría: {category.name}")
+            print(f"Creada categoría: {category.nombre}")
     
     # Crear campus
     campuses_data = [
@@ -159,7 +159,7 @@ def create_sample_data():
                         print(f"    Creado paso: {step.title}")
     
     # Crear datos de ejemplo para monitoreo de infraestructura
-    print("📊 Creando datos de ejemplo para monitoreo de infraestructura...")
+    print(" Creando datos de ejemplo para monitoreo de infraestructura...")
     
     from infrastructure_monitoring.models import InfraestructuraItem, AlertaInfraestructura, MantenimientoProgramado, MetricasInfraestructura, ReporteInfraestructura, DashboardConfig
     from datetime import timedelta
@@ -352,8 +352,8 @@ def create_sample_data():
             }
         )
 
-    print("✅ Datos de ejemplo creados exitosamente!")
-    print("\n📊 Resumen:")
+    print(" Datos de ejemplo creados exitosamente!")
+    print("\n Resumen:")
     print(f"   - Categorías: {Category.objects.count()}")
     print(f"   - Productos: {Product.objects.count()}")
     print(f"   - Sedes: {Campus.objects.count()}")
@@ -366,7 +366,7 @@ def create_sample_data():
     print(f"   - Mantenimientos: {MantenimientoProgramado.objects.count()}")
     print(f"   - Métricas: {MetricasInfraestructura.objects.count()}")
     print(f"   - Reportes: {ReporteInfraestructura.objects.count()}")
-    print("\n🚀 ¡El sistema está listo para usar!")
+    print("\n ¡El sistema está listo para usar!")
 
 if __name__ == '__main__':
     create_sample_data()

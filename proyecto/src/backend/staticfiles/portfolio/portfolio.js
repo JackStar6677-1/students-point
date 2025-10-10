@@ -515,7 +515,7 @@ class PortfolioManager {
     }
     
     renderHabilidad(habilidad) {
-        const stars = '★'.repeat(habilidad.nivel) + '☆'.repeat(5 - habilidad.nivel);
+        const stars = ''.repeat(habilidad.nivel) + ''.repeat(5 - habilidad.nivel);
         
         return `
             <div class="skill-item">
@@ -803,7 +803,7 @@ class PortfolioManager {
                             ${this.portfolioData.habilidades.map(habilidad => `
                                 <div style="padding: 10px; background: #f5f5f5; border-radius: 5px;">
                                     <strong>${habilidad.nombre}</strong>
-                                    <div>${'★'.repeat(habilidad.nivel)}${'☆'.repeat(5 - habilidad.nivel)}</div>
+                                    <div>${''.repeat(habilidad.nivel)}${''.repeat(5 - habilidad.nivel)}</div>
                                     <small style="color: #666;">${habilidad.categoria}</small>
                                 </div>
                             `).join('')}

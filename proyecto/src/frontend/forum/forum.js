@@ -75,9 +75,18 @@ class ForumManager {
             });
 
             if (response.ok) {
-                this.currentUser = await response.json();
-                this.updateUserInterface();
+                const contentType = response.headers.get('content-type');
+                if (contentType && contentType.includes('application/json')) {
+                    this.currentUser = await response.json();
+                    this.updateUserInterface();
+                } else {
+                    const text = await response.text();
+                    console.error('Respuesta no es JSON:', text);
+                    throw new Error('Respuesta inválida del servidor');
+                }
             } else {
+                const errorText = await response.text();
+                console.error('Error de autenticación:', errorText);
                 localStorage.removeItem('access_token');
                 localStorage.removeItem('refresh_token');
                 window.location.href = '../index.html';

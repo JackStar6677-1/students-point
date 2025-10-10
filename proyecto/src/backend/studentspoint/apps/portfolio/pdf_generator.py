@@ -150,15 +150,15 @@ class PortfolioPDFGenerator:
         
         contact_items = []
         if portfolio_data.get('email'):
-            contact_items.append(f"📧 {portfolio_data['email']}")
+            contact_items.append(f" {portfolio_data['email']}")
         if portfolio_data.get('telefono'):
-            contact_items.append(f"📱 {portfolio_data['telefono']}")
+            contact_items.append(f" {portfolio_data['telefono']}")
         if portfolio_data.get('linkedin'):
-            contact_items.append(f"💼 LinkedIn: {portfolio_data['linkedin']}")
+            contact_items.append(f" LinkedIn: {portfolio_data['linkedin']}")
         if portfolio_data.get('github'):
-            contact_items.append(f"💻 GitHub: {portfolio_data['github']}")
+            contact_items.append(f" GitHub: {portfolio_data['github']}")
         if portfolio_data.get('sitio_web'):
-            contact_items.append(f"🌐 Sitio Web: {portfolio_data['sitio_web']}")
+            contact_items.append(f" Sitio Web: {portfolio_data['sitio_web']}")
         
         if contact_items:
             contact_text = " | ".join(contact_items)

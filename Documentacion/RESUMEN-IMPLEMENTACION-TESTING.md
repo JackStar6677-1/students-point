@@ -70,17 +70,17 @@
 
 ```
 students-point/
-├── test_suite_completo.py          # Sistema maestro de testing
-├── ejecutar_tests_dev.bat          # Script para Windows
-├── ejecutar_tests_completo.sh      # Script para Linux/Mac
-├── TESTING.md                      # Documentación completa
-├── pruebas_unitarias/
-│   └── api/
-│       ├── test_forum_api.py       # Pruebas de API del foro
-│       ├── test_email_verification.py  # Pruebas de email
-│       └── test_profile_api.py     # Pruebas de perfil
-└── pruebas_automatizadas/
-    └── test_forum_e2e.py          # Pruebas E2E del foro
+ test_suite_completo.py          # Sistema maestro de testing
+ ejecutar_tests_dev.bat          # Script para Windows
+ ejecutar_tests_completo.sh      # Script para Linux/Mac
+ TESTING.md                      # Documentación completa
+ pruebas_unitarias/
+    api/
+        test_forum_api.py       # Pruebas de API del foro
+        test_email_verification.py  # Pruebas de email
+        test_profile_api.py     # Pruebas de perfil
+ pruebas_automatizadas/
+     test_forum_e2e.py          # Pruebas E2E del foro
 ```
 
 ### Componentes del Sistema
@@ -108,42 +108,42 @@ python test_suite_completo.py --verbose --coverage --parallel
 #### 2. Pruebas Unitarias Nuevas
 
 **test_forum_api.py** - Cobertura de Foro
-- ✅ Listar foros (autenticado/no autenticado)
-- ✅ Crear posts
-- ✅ Listar posts
-- ✅ Censura de contenido ofensivo
-- ✅ Posts anónimos
-- ✅ Permisos por carrera
-- ✅ Sistema de votación
+-  Listar foros (autenticado/no autenticado)
+-  Crear posts
+-  Listar posts
+-  Censura de contenido ofensivo
+-  Posts anónimos
+-  Permisos por carrera
+-  Sistema de votación
 
 **test_email_verification.py** - Cobertura de Email
-- ✅ Envío de email de verificación al registrar
-- ✅ Formato correcto del código (6 dígitos)
-- ✅ Verificación con código válido
-- ✅ Verificación con código inválido
-- ✅ Reenvío de código
-- ✅ Expiración de código (24 horas)
-- ✅ Usuario no verificado no puede hacer login
-- ✅ Usuario verificado puede hacer login
+-  Envío de email de verificación al registrar
+-  Formato correcto del código (6 dígitos)
+-  Verificación con código válido
+-  Verificación con código inválido
+-  Reenvío de código
+-  Expiración de código (24 horas)
+-  Usuario no verificado no puede hacer login
+-  Usuario verificado puede hacer login
 
 **test_profile_api.py** - Cobertura de Perfil
-- ✅ Obtener perfil de usuario
-- ✅ Actualizar perfil (nombre, carrera, semestre)
-- ✅ Validación de semestre inválido
-- ✅ Cambio de contraseña
-- ✅ Validación de contraseña antigua
-- ✅ Cambio de carrera
-- ✅ Validación de carrera inválida
-- ✅ Listar carreras disponibles
-- ✅ Acceso requiere autenticación
-- ✅ Subir foto de perfil
+-  Obtener perfil de usuario
+-  Actualizar perfil (nombre, carrera, semestre)
+-  Validación de semestre inválido
+-  Cambio de contraseña
+-  Validación de contraseña antigua
+-  Cambio de carrera
+-  Validación de carrera inválida
+-  Listar carreras disponibles
+-  Acceso requiere autenticación
+-  Subir foto de perfil
 
 #### 3. Pruebas E2E Nuevas
 
 **test_forum_e2e.py** - Testing de Interfaz
-- ✅ Página del foro carga y redirige a login
-- ✅ Login exitoso permite acceso al foro
-- ✅ Crear nuevo post (con modal)
+-  Página del foro carga y redirige a login
+-  Login exitoso permite acceso al foro
+-  Crear nuevo post (con modal)
 
 #### 4. Scripts de Ejecución
 
@@ -260,25 +260,25 @@ Agregada sección de Testing con:
 ## Beneficios Implementados
 
 ### Para Desarrollo
-✅ Detección temprana de bugs  
-✅ Refactorización segura  
-✅ Documentación viva del código  
-✅ Feedback inmediato de cambios  
-✅ Prevención de regresiones  
+ Detección temprana de bugs  
+ Refactorización segura  
+ Documentación viva del código  
+ Feedback inmediato de cambios  
+ Prevención de regresiones  
 
 ### Para Calidad
-✅ >80% de cobertura de código  
-✅ Validación automática de APIs  
-✅ Testing de flujos completos  
-✅ Verificación de UI/UX  
-✅ Reportes detallados  
+ >80% de cobertura de código  
+ Validación automática de APIs  
+ Testing de flujos completos  
+ Verificación de UI/UX  
+ Reportes detallados  
 
 ### Para Producción
-✅ Confianza en deploys  
-✅ Reducción de bugs en producción  
-✅ Mantenibilidad a largo plazo  
-✅ Facilita onboarding de nuevos dev  
-✅ CI/CD ready  
+ Confianza en deploys  
+ Reducción de bugs en producción  
+ Mantenibilidad a largo plazo  
+ Facilita onboarding de nuevos dev  
+ CI/CD ready  
 
 ---
 
@@ -354,11 +354,11 @@ Para pruebas E2E, se requiere Chromedriver:
 ## Conclusión
 
 Se ha implementado exitosamente un **sistema completo de testing automatizado** que cubre:
-- ✅ Todas las APIs principales
-- ✅ Flujos críticos de usuario
-- ✅ Interfaces de usuario principales
-- ✅ Validaciones de seguridad básicas
-- ✅ Métricas de rendimiento
+-  Todas las APIs principales
+-  Flujos críticos de usuario
+-  Interfaces de usuario principales
+-  Validaciones de seguridad básicas
+-  Métricas de rendimiento
 
 El sistema está **listo para uso en desarrollo** y puede integrarse fácilmente en pipelines de CI/CD.
 

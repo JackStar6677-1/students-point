@@ -66,13 +66,13 @@ Todos los archivos HTML principales ahora incluyen:
 ```
 
 ### Archivos Actualizados
-- ✅ `index.html`
-- ✅ `forum/index.html`
-- ✅ `account.html`
-- ✅ `teachers.html`
-- ✅ `login.html` (pendiente)
-- ✅ `register.html` (pendiente)
-- ✅ Otros HTML (pendientes)
+-  `index.html`
+-  `forum/index.html`
+-  `account.html`
+-  `teachers.html`
+-  `login.html` (pendiente)
+-  `register.html` (pendiente)
+-  Otros HTML (pendientes)
 
 ---
 
@@ -104,16 +104,16 @@ Todos los archivos HTML principales ahora incluyen:
 ## Compatibilidad
 
 ### Navegadores Soportados
-- ✅ **Chrome/Edge:** SVG favicon
-- ✅ **Firefox:** SVG favicon
-- ✅ **Safari:** PNG fallback
-- ✅ **Internet Explorer:** ICO fallback
-- ✅ **Móviles:** PNG específicos por plataforma
+-  **Chrome/Edge:** SVG favicon
+-  **Firefox:** SVG favicon
+-  **Safari:** PNG fallback
+-  **Internet Explorer:** ICO fallback
+-  **Móviles:** PNG específicos por plataforma
 
 ### PWA (Progressive Web App)
-- ✅ **Instalación:** Icono SVG escalable
-- ✅ **Splash Screen:** Iconos PNG de alta resolución
-- ✅ **App Icon:** Múltiples tamaños para diferentes pantallas
+-  **Instalación:** Icono SVG escalable
+-  **Splash Screen:** Iconos PNG de alta resolución
+-  **App Icon:** Múltiples tamaños para diferentes pantallas
 
 ---
 
@@ -182,22 +182,22 @@ El icono representa "StudentsPoint" con:
 ### Rutas de Iconos
 ```
 proyecto/src/backend/staticfiles/
-├── favicon.ico                           # Favicon principal
-├── images/
-│   ├── favicon.svg                       # Favicon SVG
-│   ├── studentspoint-icon.svg            # Icono PWA SVG
-│   └── icons/
-│       ├── icon-16x16.png               # Favicon pequeño
-│       ├── icon-32x32.png               # Favicon mediano
-│       ├── icon-72x72.png               # PWA Android
-│       ├── icon-96x96.png               # PWA estándar
-│       ├── icon-128x128.png             # PWA Chrome
-│       ├── icon-144x144.png             # PWA Windows
-│       ├── icon-152x152.png             # PWA iOS
-│       ├── icon-192x192.png             # PWA Android HD
-│       ├── icon-384x384.png             # PWA Android XL
-│       └── icon-512x512.png             # PWA Android XXL
-└── manifest.json                        # Configuración PWA
+ favicon.ico                           # Favicon principal
+ images/
+    favicon.svg                       # Favicon SVG
+    studentspoint-icon.svg            # Icono PWA SVG
+    icons/
+        icon-16x16.png               # Favicon pequeño
+        icon-32x32.png               # Favicon mediano
+        icon-72x72.png               # PWA Android
+        icon-96x96.png               # PWA estándar
+        icon-128x128.png             # PWA Chrome
+        icon-144x144.png             # PWA Windows
+        icon-152x152.png             # PWA iOS
+        icon-192x192.png             # PWA Android HD
+        icon-384x384.png             # PWA Android XL
+        icon-512x512.png             # PWA Android XXL
+ manifest.json                        # Configuración PWA
 ```
 
 ---

@@ -146,47 +146,47 @@ Documentos academicos y evidencias del proyecto Capstone
 
 ```
 STUDENTSPOINT/
-│
-├── README.md ............................ Documentacion principal
-├── ROADMAP.md ........................... Plan del proyecto
-├── CHANGELOG.md ......................... Historial de cambios
-├── DEPLOYMENT.md ........................ Guia de despliegue
-│
-└── Documentacion/
-    │
-    ├── README.md ........................ Este archivo
-    ├── INDICE-DOCUMENTACION.md .......... Indice completo
-    ├── INFORME-TESTS.md ................. Estado de testing
-    │
-    ├── config-avanzada/
-    │   ├── descripcion-proyecto.txt ..... Descripcion completa
-    │   ├── estructura-proyecto.txt ...... Organizacion de archivos
-    │   ├── herramientas-utilizadas.txt .. Stack tecnologico
-    │   ├── desarrollo-desde-cero.txt .... Desarrollo original
-    │   └── instrucciones-ia.txt ......... Guia para herramientas
-    │
-    ├── implementaciones/
-    │   ├── autenticacion-implementacion-completa.txt
-    │   └── foro-implementacion-completa.txt
-    │
-    ├── especificaciones/
-    │   ├── foro detallado.txt ........... Requisitos de foros
-    │   └── login-profile-register detallado.txt
-    │
-    ├── guias/
-    │   ├── CONFIGURACION-GOOGLE-EMAIL.md
-    │   ├── PRUEBAS-Y-ESTADO-PROYECTO.md
-    │   ├── config_email_desarrollo.txt
-    │   └── Recorridos_Virtuales.md
-    │
-    └── academico/
-        ├── FASE 1/ ...................... Evidencias Fase 1
-        ├── 2025_2_Cronograma_Capstone.xlsx
-        ├── Duoc-Point.pptx
-        ├── II2020.pdf
-        ├── Instructivo 2025.pdf
-        ├── Resumen evidencias.xlsx
-        └── N3qcyggF - duoc-point-kanban.json
+
+ README.md ............................ Documentacion principal
+ ROADMAP.md ........................... Plan del proyecto
+ CHANGELOG.md ......................... Historial de cambios
+ DEPLOYMENT.md ........................ Guia de despliegue
+
+ Documentacion/
+    
+     README.md ........................ Este archivo
+     INDICE-DOCUMENTACION.md .......... Indice completo
+     INFORME-TESTS.md ................. Estado de testing
+    
+     config-avanzada/
+        descripcion-proyecto.txt ..... Descripcion completa
+        estructura-proyecto.txt ...... Organizacion de archivos
+        herramientas-utilizadas.txt .. Stack tecnologico
+        desarrollo-desde-cero.txt .... Desarrollo original
+        instrucciones-ia.txt ......... Guia para herramientas
+    
+     implementaciones/
+        autenticacion-implementacion-completa.txt
+        foro-implementacion-completa.txt
+    
+     especificaciones/
+        foro detallado.txt ........... Requisitos de foros
+        login-profile-register detallado.txt
+    
+     guias/
+        CONFIGURACION-GOOGLE-EMAIL.md
+        PRUEBAS-Y-ESTADO-PROYECTO.md
+        config_email_desarrollo.txt
+        Recorridos_Virtuales.md
+    
+     academico/
+         FASE 1/ ...................... Evidencias Fase 1
+         2025_2_Cronograma_Capstone.xlsx
+         Duoc-Point.pptx
+         II2020.pdf
+         Instructivo 2025.pdf
+         Resumen evidencias.xlsx
+         N3qcyggF - duoc-point-kanban.json
 ```
 
 ---

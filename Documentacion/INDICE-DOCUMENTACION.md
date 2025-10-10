@@ -9,11 +9,11 @@ organizada por categorias para facilitar su navegacion.
 
 ```
 Documentacion/
-├── config-avanzada/          # Documentacion tecnica del proyecto
-├── implementaciones/         # Implementaciones completas de sistemas
-├── especificaciones/         # Especificaciones de requisitos
-├── guias/                    # Guias de configuracion y uso
-└── academico/                # Documentos academicos y evidencias
+ config-avanzada/          # Documentacion tecnica del proyecto
+ implementaciones/         # Implementaciones completas de sistemas
+ especificaciones/         # Especificaciones de requisitos
+ guias/                    # Guias de configuracion y uso
+ academico/                # Documentos academicos y evidencias
 ```
 
 ---
