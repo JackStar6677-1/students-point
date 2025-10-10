@@ -1,4 +1,4 @@
-#  Guía de Deployment a Producción - StudentsPoint
+# Guía de Deployment a Producción - StudentsPoint
 
 ## Tabla de Contenidos
 1. [Requisitos Previos](#requisitos-previos)
