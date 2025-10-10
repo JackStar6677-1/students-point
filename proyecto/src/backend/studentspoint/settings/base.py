@@ -111,10 +111,13 @@ USE_TZ = True
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 # Configurar archivos estáticos del frontend
-# Los HTMLs se copian desde la raíz de frontend
-# Los recursos estáticos (CSS, JS, etc.) se copian desde frontend/static
 STATICFILES_DIRS = [
-    BASE_DIR.parent / "frontend",  # HTMLs en la raíz de staticfiles
+    BASE_DIR.parent / "frontend",  # HTMLs y subcarpetas
+]
+# Copiar contenido de frontend/static/ directamente a staticfiles/static/
+STATICFILES_FINDERS = [
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 ]
 
 MEDIA_URL = "/media/"

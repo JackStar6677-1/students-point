@@ -124,7 +124,7 @@ def google_login_redirect(request):
         }, status=500)
 
 
-@api_view(['POST'])
+@api_view(['GET', 'POST'])
 @permission_classes([AllowAny])
 def google_callback_web(request):
     """
