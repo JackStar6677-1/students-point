@@ -45,12 +45,8 @@ CORS_ALLOW_HEADERS = [
 
 # (única definición) ALLOWED_HOSTS definida arriba
 
-# Configuración de archivos estáticos para desarrollo
-STATICFILES_DIRS = [
-    BASE_DIR.parent / "frontend",  # Incluir toda la carpeta frontend para HTMLs
-]
-
 # Configuración para servir archivos estáticos en desarrollo
+# (STATICFILES_DIRS se define en base.py - no sobrescribir aquí)
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
 # Configuracion de Email - SMTP Real para desarrollo
