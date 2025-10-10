@@ -51,12 +51,12 @@ CACHES = {
     }
 }
 
-# Static files configuration
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+# Static files configuration (STATIC_ROOT ya está en base.py)
+# STATIC_ROOT = BASE_DIR / 'staticfiles'  # Redundante, comentado
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
 
-# Media files
-MEDIA_ROOT = BASE_DIR / 'media'
+# Media files (MEDIA_ROOT ya está en base.py)
+# MEDIA_ROOT = BASE_DIR / 'media'  # Redundante, comentado
 
 # Email configuration
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
