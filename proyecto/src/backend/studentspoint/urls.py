@@ -25,6 +25,11 @@ from rest_framework_simplejwt.views import TokenRefreshView
 
 
 def spa_serve(request, path=""):
+    # No servir archivos estaticos aqui - ya se manejan antes
+    if path.startswith('static/'):
+        from django.http import HttpResponse
+        return HttpResponse(status=404)
+    
     # Servir desde staticfiles en lugar de frontend
     base = Path(settings.STATIC_ROOT)
     target = base / path
