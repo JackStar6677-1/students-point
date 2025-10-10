@@ -683,6 +683,85 @@ function logout() {
     window.location.href = '../index.html';
 }
 
+// Image upload handling functions
+function handleImageSelect(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    // Validar tamaño (máx 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+        alert('La imagen no puede superar los 5MB');
+        event.target.value = '';
+        return;
+    }
+    
+    // Validar tipo
+    if (!file.type.startsWith('image/')) {
+        alert('Solo se permiten archivos de imagen');
+        event.target.value = '';
+        return;
+    }
+    
+    // Mostrar preview
+    showImagePreview(file);
+}
+
+function showImagePreview(file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const preview = document.getElementById('imagePreview');
+        const container = document.getElementById('imagePreviewContainer');
+        if (preview && container) {
+            preview.src = e.target.result;
+            container.style.display = 'block';
+            
+            // Ocultar área de upload
+            const uploadArea = document.getElementById('imageUploadArea');
+            if (uploadArea) {
+                uploadArea.style.display = 'none';
+            }
+        }
+    };
+    reader.readAsDataURL(file);
+}
+
+function removeImage() {
+    const input = document.getElementById('postImage');
+    const container = document.getElementById('imagePreviewContainer');
+    const uploadArea = document.getElementById('imageUploadArea');
+    
+    if (input) input.value = '';
+    if (container) container.style.display = 'none';
+    if (uploadArea) uploadArea.style.display = 'block';
+}
+
+// Drag and drop handling
+document.addEventListener('DOMContentLoaded', () => {
+    const uploadArea = document.getElementById('imageUploadArea');
+    if (uploadArea) {
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('drag-over');
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('drag-over');
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('drag-over');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                const input = document.getElementById('postImage');
+                input.files = files;
+                handleImageSelect({ target: input });
+            }
+        });
+    }
+});
+
 // Initialize forum manager
 let forumManager;
 document.addEventListener('DOMContentLoaded', () => {
