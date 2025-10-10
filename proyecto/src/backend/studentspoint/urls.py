@@ -25,12 +25,7 @@ from rest_framework_simplejwt.views import TokenRefreshView
 
 
 def spa_serve(request, path=""):
-    # DEBUG: NO servir archivos /static/ aquí
-    if path.startswith('static/'):
-        from django.http import Http404
-        raise Http404("Static files should be handled by static pattern")
-    
-    # Servir desde staticfiles en lugar de frontend
+    # Servir HTMLs y otros archivos desde staticfiles
     base = Path(settings.STATIC_ROOT)
     target = base / path
     
@@ -79,8 +74,8 @@ urlpatterns = [
     re_path(r'^sw\.js$', serve, {'document_root': Path(settings.STATIC_ROOT), 'path': 'sw.js'}),
     # Servir favicon específicamente
     re_path(r'^favicon\.ico$', serve, {'document_root': Path(settings.STATIC_ROOT), 'path': 'favicon.ico'}),
-    # Servir archivos estaticos ANTES del catch-all (desde staticfiles/static/)
-    re_path(r'^static/(?P<path>.*)$', serve, {'document_root': Path(settings.STATIC_ROOT) / "static"}),
+    # Servir archivos estaticos ANTES del catch-all (directamente desde staticfiles/)
+    re_path(r'^static/(?P<path>.*)$', serve, {'document_root': Path(settings.STATIC_ROOT)}),
     # Servir imágenes desde staticfiles (sin /static/)
     re_path(r'^images/(?P<path>.*)$', serve, {'document_root': Path(settings.STATIC_ROOT) / "images"}),
     # Servir imágenes desde la carpeta imagenes (legacy)
