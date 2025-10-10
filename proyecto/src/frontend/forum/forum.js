@@ -205,12 +205,13 @@ class ForumManager {
             });
         }
         
-        if (postForum) {
+        const postForo = document.getElementById('postForo'); // Corregido: postForo
+        if (postForo) {
             // Clear existing options
-            postForum.innerHTML = '<option value="">Selecciona un foro</option>';
+            postForo.innerHTML = '<option value="">Selecciona un foro</option>';
             this.forums.forEach(forum => {
                 const option = new Option(forum.titulo, forum.id);
-                postForum.add(option);
+                postForo.add(option);
             });
         }
     }
@@ -488,19 +489,22 @@ class ForumManager {
     async createPost() {
         try {
             const token = localStorage.getItem('access_token');
-            const forumIdElement = document.getElementById('postForum');
+            const forumIdElement = document.getElementById('postForo'); // Corregido: postForo en vez de postForum
             const titleElement = document.getElementById('postTitle');
             const contentElement = document.getElementById('postContent');
             const anonymousElement = document.getElementById('postAnonymous');
             const imageElement = document.getElementById('postImage');
             
             const forumId = forumIdElement ? forumIdElement.value : '';
-            const title = titleElement ? titleElement.value : '';
-            const content = contentElement ? contentElement.value : '';
+            const title = titleElement ? titleElement.value.trim() : '';
+            const content = contentElement ? contentElement.value.trim() : '';
             const anonymous = anonymousElement ? anonymousElement.checked : false;
+
+            console.log('Create Post - Forum ID:', forumId, 'Title:', title, 'Content:', content);
 
             if (!forumId || !title || !content) {
                 this.showAlert('Por favor completa todos los campos requeridos', 'warning');
+                console.error('Missing fields:', {forumId, title, content});
                 return;
             }
 

@@ -19,9 +19,18 @@ class ForoSerializer(serializers.ModelSerializer):
     def get_puede_postear(self, obj):
         """Indica si el usuario actual puede postear en este foro."""
         request = self.context.get('request')
-        if request and request.user.is_authenticated:
-            return obj.puede_postear(request.user)
-        return False
+        if not request or not request.user.is_authenticated:
+            return False
+        
+        user = request.user
+        
+        # Optimización: calcular directamente sin llamar al modelo
+        # Admin o moderador puede postear en todos
+        if user.is_staff or user.role in ['moderator', 'admin_global']:
+            return True
+        
+        # Usuario normal solo en su carrera
+        return obj.carrera == user.career
 
 
 class OpcionEncuestaSerializer(serializers.ModelSerializer):
