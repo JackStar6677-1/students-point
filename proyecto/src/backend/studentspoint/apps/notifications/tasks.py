@@ -11,7 +11,7 @@ from pywebpush import WebPushException, webpush
 import yaml
 
 from .models import PushSub
-from studentspoint.apps.schedules.models import Horario
+# from studentspoint.apps.schedules.models import Horario  # Eliminado: schedules ya no existe
 
 CONFIG_DIR = Path(settings.BASE_DIR).parent.parent / "config"
 PUSH_CONFIG_FILE = CONFIG_DIR / "push.yaml"
@@ -28,40 +28,24 @@ except FileNotFoundError:
     }
 
 
-@shared_task
-def schedule_class_alerts(user_id: str):
-    """Schedule push notifications 20 minutes before each class for 30 days."""
-
-    tz = pytz.timezone("America/Santiago")
-    today = datetime.now(tz).date()
-    for horario in Horario.objects.filter(usuario_id=user_id):
-        for i in range(30):
-            day = today + timedelta(days=i)
-            if day.weekday() != horario.dia_semana:
-                continue
-            start_dt = datetime.combine(day, horario.inicio, tz)
-            alert_dt = start_dt - timedelta(minutes=20)
-            send_class_push.apply_async(
-                args=[user_id, str(horario.id), start_dt.isoformat(), alert_dt.isoformat()],
-                eta=alert_dt,
-            )
+# @shared_task
+# def schedule_class_alerts(user_id: str):
+#     """Schedule push notifications 20 minutes before each class for 30 days."""
+#     # DESHABILITADO: schedules/Horario eliminado - funcionalidad de horarios removida del proyecto
+#     pass
 
 
 @shared_task
-def send_class_push(user_id: str, horario_id, fecha_clase, hora_alerta, test_only=False):
+def send_class_push(user_id: str, horario_id=None, fecha_clase=None, hora_alerta=None, test_only=True):
     """Send a Web Push notification to all active subscriptions of a user."""
 
     subs = PushSub.objects.filter(usuario_id=user_id, activo=True)
     if not subs:
         return
 
-    if test_only:
-        title = "Prueba de notificación"
-        body = "Service worker operativo"
-    else:
-        horario = Horario.objects.get(id=horario_id)
-        title = "Tienes clase en 20 minutos"
-        body = f"{horario.asignatura} - {horario.sala} ({horario.inicio})"
+    # Solo modo de prueba disponible (schedules/Horario eliminado)
+    title = "Prueba de notificación"
+    body = "Service worker operativo"
 
     payload = json.dumps({"title": title, "body": body})
 
