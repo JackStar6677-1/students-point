@@ -40,37 +40,26 @@ class LogMonitor:
     def count_errors(self, log_file, level='ERROR'):
         """Cuenta errores en un archivo de log"""
         try:
-            result = subprocess.run(
-                ['grep', '-c', level, str(self.logs_dir / log_file)],
-                capture_output=True,
-                text=True
-            )
-            return int(result.stdout.strip()) if result.returncode == 0 else 0
-        except:
-            # Fallback para Windows
-            try:
-                with open(self.logs_dir / log_file, 'r', encoding='utf-8') as f:
-                    return sum(1 for line in f if level in line)
-            except FileNotFoundError:
-                return 0
+            # Usar metodo directo en Windows (grep no disponible)
+            with open(self.logs_dir / log_file, 'r', encoding='utf-8', errors='ignore') as f:
+                return sum(1 for line in f if level in line)
+        except FileNotFoundError:
+            return 0
+        except Exception as e:
+            print(f"Error leyendo {log_file}: {e}")
+            return 0
             
     def get_recent_errors(self, log_file, lines=10):
         """Obtiene los últimos errores del log"""
         try:
-            result = subprocess.run(
-                ['tail', '-n', str(lines), str(self.logs_dir / log_file)],
-                capture_output=True,
-                text=True
-            )
-            return result.stdout if result.returncode == 0 else ""
-        except:
-            # Fallback para Windows
-            try:
-                with open(self.logs_dir / log_file, 'r', encoding='utf-8') as f:
-                    lines_list = f.readlines()
-                    return ''.join(lines_list[-lines:])
-            except FileNotFoundError:
-                return ""
+            with open(self.logs_dir / log_file, 'r', encoding='utf-8', errors='ignore') as f:
+                lines_list = f.readlines()
+                return ''.join(lines_list[-lines:])
+        except FileNotFoundError:
+            return ""
+        except Exception as e:
+            print(f"Error leyendo {log_file}: {e}")
+            return ""
     
     def check_for_critical(self, log_file):
         """Verifica si hay errores críticos nuevos"""

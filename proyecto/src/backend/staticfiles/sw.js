@@ -3,9 +3,9 @@
  * Versión: 1.0.0
  */
 
-const CACHE_NAME = 'StudentsPoint-v1.2.0';
-const STATIC_CACHE = 'StudentsPoint-static-v1.2.0';
-const DYNAMIC_CACHE = 'StudentsPoint-dynamic-v1.2.0';
+const CACHE_NAME = 'StudentsPoint-v1.2.1';
+const STATIC_CACHE = 'StudentsPoint-static-v1.2.1';
+const DYNAMIC_CACHE = 'StudentsPoint-dynamic-v1.2.1';
 
 // Archivos estáticos para cache
 const STATIC_FILES = [
@@ -48,35 +48,46 @@ const API_PATTERNS = [
   '/api/polls/',
   '/api/campuses/',
   '/api/bienestar/',
-  '/api/reports/',
-  '/api/otec/',
   '/api/notifications/',
-  '/api/schedules/'
+  '/api/reports/',
+  '/api/schedules/',
+  '/api/otec/'
 ];
 
-// Instalación del Service Worker
+// Estrategia de cache: Network First para APIs, Cache First para estáticos
+const CACHE_STRATEGY = {
+  networkFirst: ['/api/'],
+  cacheFirst: ['/static/', '/imagenes/'],
+  staleWhileRevalidate: ['/']
+};
+
+/**
+ * Instalación del Service Worker
+ */
 self.addEventListener('install', (event) => {
-  console.log('Service Worker: Instalando...');
+  console.log('SW: Instalando Service Worker...');
   
   event.waitUntil(
     caches.open(STATIC_CACHE)
       .then((cache) => {
-        console.log('Service Worker: Cacheando archivos estáticos');
+        console.log('SW: Cacheando archivos estáticos...');
         return cache.addAll(STATIC_FILES);
       })
       .then(() => {
-        console.log('Service Worker: Instalación completada');
+        console.log('SW: Service Worker instalado correctamente');
         return self.skipWaiting();
       })
       .catch((error) => {
-        console.error('Service Worker: Error en instalación:', error);
+        console.error('SW: Error durante la instalación:', error);
       })
   );
 });
 
-// Activación del Service Worker
+/**
+ * Activación del Service Worker
+ */
 self.addEventListener('activate', (event) => {
-  console.log('Service Worker: Activando...');
+  console.log('SW: Activando Service Worker...');
   
   event.waitUntil(
     caches.keys()
@@ -84,119 +95,199 @@ self.addEventListener('activate', (event) => {
         return Promise.all(
           cacheNames.map((cacheName) => {
             if (cacheName !== STATIC_CACHE && cacheName !== DYNAMIC_CACHE) {
-              console.log('Service Worker: Eliminando cache antiguo:', cacheName);
+              console.log('SW: Eliminando cache obsoleto:', cacheName);
               return caches.delete(cacheName);
             }
           })
         );
       })
       .then(() => {
-        console.log('Service Worker: Activación completada');
+        console.log('SW: Service Worker activado correctamente');
         return self.clients.claim();
+      })
+      .catch((error) => {
+        console.error('SW: Error durante la activación:', error);
       })
   );
 });
 
-// Interceptación de requests
+/**
+ * Interceptar requests
+ */
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
   
-  // Estrategia para archivos estáticos
-  if (STATIC_FILES.includes(url.pathname)) {
-    event.respondWith(
-      caches.match(request)
-        .then((response) => {
-          if (response) {
-            return response;
-          }
-          return fetch(request)
-            .then((response) => {
-              if (response.status === 200) {
-                const responseClone = response.clone();
-                caches.open(STATIC_CACHE)
-                  .then((cache) => {
-                    cache.put(request, responseClone);
-                  });
-              }
-              return response;
-            });
-        })
-    );
+  // Solo interceptar requests del mismo origen
+  if (url.origin !== location.origin) {
+    return;
   }
   
-  // Estrategia para APIs
-  else if (API_PATTERNS.some(pattern => url.pathname.startsWith(pattern))) {
-    event.respondWith(
-      fetch(request)
-        .then((response) => {
-          // Cachear respuestas exitosas de API
-          if (response.status === 200) {
-            const responseClone = response.clone();
-            caches.open(DYNAMIC_CACHE)
-              .then((cache) => {
-                cache.put(request, responseClone);
-              });
-          }
-          return response;
-        })
-        .catch(() => {
-          // Fallback a cache si no hay conexión
-          return caches.match(request)
-            .then((response) => {
-              if (response) {
-                return response;
-              }
-              // Respuesta offline para APIs
-              return new Response(
-                JSON.stringify({
-                  error: 'Sin conexión',
-                  message: 'No se pudo conectar al servidor. Verifica tu conexión a internet.'
-                }),
-                {
-                  status: 503,
-                  statusText: 'Service Unavailable',
-                  headers: {
-                    'Content-Type': 'application/json'
-                  }
-                }
-              );
-            });
-        })
-    );
+  // No cachear requests POST, PUT, DELETE, etc.
+  if (request.method !== 'GET') {
+    return;
   }
   
-  // Estrategia para otros recursos
-  else {
-    event.respondWith(
-      fetch(request)
-        .then((response) => {
-          // Cachear recursos exitosos
-          if (response.status === 200) {
-            const responseClone = response.clone();
-            caches.open(DYNAMIC_CACHE)
-              .then((cache) => {
-                cache.put(request, responseClone);
-              });
-          }
-          return response;
-        })
-        .catch(() => {
-          // Fallback a cache
-          return caches.match(request);
-        })
-    );
+  // Determinar estrategia de cache
+  const strategy = getCacheStrategy(request.url);
+  
+  switch (strategy) {
+    case 'networkFirst':
+      event.respondWith(networkFirst(request));
+      break;
+    case 'cacheFirst':
+      event.respondWith(cacheFirst(request));
+      break;
+    case 'staleWhileRevalidate':
+      event.respondWith(staleWhileRevalidate(request));
+      break;
+    default:
+      event.respondWith(fetch(request));
   }
 });
 
-// Manejo de notificaciones push
+/**
+ * Determinar estrategia de cache basada en la URL
+ */
+function getCacheStrategy(url) {
+  for (const [strategy, patterns] of Object.entries(CACHE_STRATEGY)) {
+    if (patterns.some(pattern => url.includes(pattern))) {
+      return strategy;
+    }
+  }
+  return 'networkFirst'; // Default
+}
+
+/**
+ * Estrategia: Network First
+ * Intenta la red primero, si falla usa cache
+ */
+async function networkFirst(request) {
+  try {
+    const networkResponse = await fetch(request);
+    
+    // Cachear respuesta exitosa
+    if (networkResponse.ok) {
+      const cache = await caches.open(DYNAMIC_CACHE);
+      cache.put(request, networkResponse.clone());
+    }
+    
+    return networkResponse;
+  } catch (error) {
+    console.log('SW: Red no disponible, usando cache:', request.url);
+    const cachedResponse = await caches.match(request);
+    
+    if (cachedResponse) {
+      return cachedResponse;
+    }
+    
+    // Si es una página HTML, devolver index.html
+    if (request.headers.get('accept').includes('text/html')) {
+      return caches.match('/index.html');
+    }
+    
+    throw error;
+  }
+}
+
+/**
+ * Estrategia: Cache First
+ * Usa cache primero, si no existe va a la red
+ */
+async function cacheFirst(request) {
+  const cachedResponse = await caches.match(request);
+  
+  if (cachedResponse) {
+    return cachedResponse;
+  }
+  
+  try {
+    const networkResponse = await fetch(request);
+    
+    if (networkResponse.ok) {
+      const cache = await caches.open(STATIC_CACHE);
+      cache.put(request, networkResponse.clone());
+    }
+    
+    return networkResponse;
+  } catch (error) {
+    console.error('SW: Error en cache first:', error);
+    throw error;
+  }
+}
+
+/**
+ * Estrategia: Stale While Revalidate
+ * Devuelve cache inmediatamente y actualiza en background
+ */
+async function staleWhileRevalidate(request) {
+  const cache = await caches.open(DYNAMIC_CACHE);
+  const cachedResponse = await cache.match(request);
+  
+  // Actualizar cache en background
+  const fetchPromise = fetch(request).then((networkResponse) => {
+    if (networkResponse.ok) {
+      cache.put(request, networkResponse.clone());
+    }
+    return networkResponse;
+  }).catch((error) => {
+    console.log('SW: Error actualizando cache:', error);
+    // No hacer throw del error para evitar romper la app
+    return null;
+  });
+  
+  // Devolver cache si existe, sino esperar la red
+  return cachedResponse || fetchPromise;
+}
+
+/**
+ * Manejar mensajes del cliente
+ */
+self.addEventListener('message', (event) => {
+  const { type, payload } = event.data;
+  
+  switch (type) {
+    case 'SKIP_WAITING':
+      self.skipWaiting();
+      break;
+    case 'GET_VERSION':
+      event.ports[0].postMessage({
+        version: CACHE_NAME,
+        staticCache: STATIC_CACHE,
+        dynamicCache: DYNAMIC_CACHE
+      });
+      break;
+    case 'CLEAR_CACHE':
+      clearAllCaches().then(() => {
+        event.ports[0].postMessage({ success: true });
+      });
+      break;
+    default:
+      console.log('SW: Mensaje no reconocido:', type);
+  }
+});
+
+/**
+ * Limpiar todos los caches
+ */
+async function clearAllCaches() {
+  const cacheNames = await caches.keys();
+  await Promise.all(
+    cacheNames.map(cacheName => caches.delete(cacheName))
+  );
+  console.log('SW: Todos los caches limpiados');
+}
+
+/**
+ * Manejar notificaciones push
+ */
 self.addEventListener('push', (event) => {
-  console.log('Service Worker: Notificación push recibida');
+  console.log('SW: Push recibido:', event);
   
   const options = {
-    body: 'Tienes una nueva notificación de StudentsPoint',
-    icon: '/static/images/icon-192x192.png',
-    badge: '/static/images/icon-72x72.png',
+    body: event.data ? event.data.text() : 'Nueva notificación de StudentsPoint',
+    icon: '/static/images/icons/icon-192x192.png',
+    badge: '/static/images/icons/icon-72x72.png',
     vibrate: [100, 50, 100],
     data: {
       dateOfArrival: Date.now(),
@@ -205,31 +296,27 @@ self.addEventListener('push', (event) => {
     actions: [
       {
         action: 'explore',
-        title: 'Ver notificación',
-        icon: '/static/images/icon-96x96.png'
+        title: 'Ver detalles',
+        icon: '/static/images/icons/icon-192x192.png'
       },
       {
         action: 'close',
         title: 'Cerrar',
-        icon: '/static/images/icon-96x96.png'
+        icon: '/static/images/icons/icon-192x192.png'
       }
     ]
   };
-  
-  if (event.data) {
-    const data = event.data.json();
-    options.body = data.body || options.body;
-    options.data = { ...options.data, ...data };
-  }
   
   event.waitUntil(
     self.registration.showNotification('StudentsPoint', options)
   );
 });
 
-// Manejo de clics en notificaciones
+/**
+ * Manejar clics en notificaciones
+ */
 self.addEventListener('notificationclick', (event) => {
-  console.log('Service Worker: Click en notificación');
+  console.log('SW: Click en notificación:', event);
   
   event.notification.close();
   
@@ -248,53 +335,46 @@ self.addEventListener('notificationclick', (event) => {
   }
 });
 
-// Sincronización en segundo plano
+/**
+ * Manejar sincronización en background
+ */
 self.addEventListener('sync', (event) => {
-  console.log('Service Worker: Sincronización en segundo plano');
+  console.log('SW: Sincronización en background:', event.tag);
   
   if (event.tag === 'background-sync') {
-    event.waitUntil(
-      // Aquí se pueden agregar tareas de sincronización
-      Promise.resolve()
-    );
+    event.waitUntil(doBackgroundSync());
   }
 });
 
-// Manejo de mensajes del cliente
-self.addEventListener('message', (event) => {
-  console.log('Service Worker: Mensaje recibido:', event.data);
-  
-  if (event.data && event.data.type === 'SKIP_WAITING') {
-    self.skipWaiting();
+/**
+ * Realizar sincronización en background
+ */
+async function doBackgroundSync() {
+  try {
+    // Aquí puedes implementar lógica de sincronización
+    console.log('SW: Realizando sincronización en background...');
+    
+    // Ejemplo: sincronizar datos offline
+    const cache = await caches.open(DYNAMIC_CACHE);
+    const requests = await cache.keys();
+    
+    for (const request of requests) {
+      if (request.url.includes('/api/')) {
+        try {
+          const response = await fetch(request);
+          if (response.ok) {
+            await cache.put(request, response);
+          }
+        } catch (error) {
+          console.log('SW: Error sincronizando:', request.url, error);
+        }
+      }
+    }
+    
+    console.log('SW: Sincronización completada');
+  } catch (error) {
+    console.error('SW: Error en sincronización:', error);
   }
-  
-  if (event.data && event.data.type === 'GET_VERSION') {
-    event.ports[0].postMessage({
-      version: CACHE_NAME
-    });
-  }
-});
+}
 
-// Limpieza de cache
-self.addEventListener('message', (event) => {
-  if (event.data && event.data.type === 'CLEAN_CACHE') {
-    event.waitUntil(
-      caches.keys()
-        .then((cacheNames) => {
-          return Promise.all(
-            cacheNames.map((cacheName) => {
-              return caches.delete(cacheName);
-            })
-          );
-        })
-        .then(() => {
-          event.ports[0].postMessage({
-            success: true,
-            message: 'Cache limpiado exitosamente'
-          });
-        })
-    );
-  }
-});
-
-console.log('Service Worker: Cargado correctamente');
+console.log('SW: Service Worker cargado correctamente');
