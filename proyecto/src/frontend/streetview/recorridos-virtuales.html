@@ -114,457 +114,117 @@
             </header>
 
             <div class="content-wrapper fade-in">
-<div class="particles-bg"></div>
-  
-  <header class="students-header text-white">
-    <div class="container">
-      <div class="row align-items-center">
-        <div class="col-md-8">
-          <div class="students-logo">
-            <div class="logo-placeholder">
-              <i class="fas fa-graduation-cap fa-2x"></i>
-            </div>
-            <div>
-              <h1>Recorridos Virtuales StudentsPoint</h1>
-              <p>Explora las sedes con diapositivas virtuales</p>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4 text-end">
-          <div class="auth-buttons">
-            <a href="/" class="btn btn-outline-primary btn-sm">
-              <i class="fas fa-home"></i> Inicio
-            </a>
-            <a href="/login.html" class="btn btn-primary btn-sm">
-              <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </header>
-
-  
-
-  <main class="main-content" style="position: relative; z-index: 2;">
-    <!-- Selector de Sede -->
-    <div class="container mt-3" id="sede-selector">
-      <div class="row">
-        <div class="col-12">
-          <div class="text-center py-5">
-            <i class="fas fa-map fa-3x gradient-text mb-3"></i>
-            <h2>Recorridos Virtuales</h2>
-            <p class="text-muted">Explora las sedes de StudentsPoint con recorridos interactivos</p>
-            <div class="row justify-content-center">
-              <div class="col-md-6">
-                <select class="form-select form-select-lg mb-3" id="sede-select">
-                  <option value="">Selecciona una sede...</option>
-                </select>
-                <button class="btn btn-primary btn-lg" onclick="loadRecorridos()" id="load-btn" disabled>
-                  <i class="fas fa-play"></i> Cargar Recorridos
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Recorridos Disponibles -->
-    <div class="container mt-3" id="recorridos-container" style="display: none;">
-      <div class="row">
-        <div class="col-12">
-          <h3 class="text-center mb-4">Recorridos Disponibles</h3>
-          <div class="row" id="recorridos-list">
-            <!-- Los recorridos se cargarán aquí dinámicamente -->
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Visor de Diapositivas -->
-    <div class="container-fluid" id="slideshow-container" style="display: none;">
-      <div class="row">
-        <div class="col-12">
-          <!-- Navegación del recorrido -->
-          <div class="recorrido-header bg-dark text-white p-3">
-            <div class="d-flex justify-content-between align-items-center">
-              <div>
-                <h4 id="recorrido-titulo">Título del Recorrido</h4>
-                <small id="recorrido-sede">Sede</small>
-              </div>
-              <div>
-                <button class="btn btn-outline-light btn-sm me-2" onclick="exitSlideshow()">
-                  <i class="fas fa-times"></i> Salir
-                </button>
-                <span id="slide-counter">1 / 5</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Contenedor de diapositivas -->
-          <div class="slideshow-wrapper">
-            <div class="slide-container" id="slide-container">
-              <!-- Las diapositivas se cargarán aquí -->
-            </div>
-          </div>
-
-          <!-- Controles de navegación -->
-          <div class="slide-controls bg-dark text-white p-3">
-            <div class="d-flex justify-content-between align-items-center">
-              <button class="btn btn-outline-light" onclick="previousSlide()" id="prev-btn" disabled>
-                <i class="fas fa-chevron-left"></i> Anterior
-              </button>
-              
-              <div class="slide-progress">
-                <div class="progress" style="width: 200px;">
-                  <div class="progress-bar" id="progress-bar" style="width: 0%"></div>
+                <div class="particles-bg"></div>
+                
+                <!-- Selector de Sede -->
+                <div class="container mt-4" id="sede-selector">
+                    <div class="text-center mb-5">
+                        <i class="fas fa-university fa-4x mb-3" style="color: var(--gold);"></i>
+                        <h2 class="mb-3">Recorridos Virtuales DuocUC</h2>
+                        <p class="text-muted">Explora nuestras sedes con recorridos interactivos en 360°</p>
+                    </div>
+                    
+                    <div class="row justify-content-center">
+                        <div class="col-md-8 col-lg-6">
+                            <div class="sede-selector-card">
+                                <h4 class="text-center mb-4">Selecciona una Sede</h4>
+                                <select class="form-select form-select-lg mb-4" id="sede-select">
+                                    <option value="">Elige una sede...</option>
+                                    <option value="maipu">DuocUC Sede Maipú</option>
+                                    <option value="central" disabled>DuocUC Sede Central (Próximamente)</option>
+                                    <option value="san-carlos" disabled>DuocUC Sede San Carlos (Próximamente)</option>
+                                    <option value="vina" disabled>DuocUC Sede Viña del Mar (Próximamente)</option>
+                                    <option value="valpo" disabled>DuocUC Sede Valparaíso (Próximamente)</option>
+                                </select>
+                                <button class="btn btn-primary btn-lg w-100" onclick="loadRecorridos()" id="load-btn" disabled>
+                                    <i class="fas fa-map-marked-alt"></i> Explorar Recorridos
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-              </div>
-              
-              <button class="btn btn-outline-light" onclick="nextSlide()" id="next-btn">
-                Siguiente <i class="fas fa-chevron-right"></i>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </main>
 
-  <footer class="students-footer">
-    <div class="container">
-      <div class="row align-items-center">
-        <div class="col-md-6">
-          <h5 class="gradient-text">Recorridos Virtuales StudentsPoint</h5>
-          <p>Explora las sedes con diapositivas virtuales.</p>
-        </div>
-        <div class="col-md-6 text-end">
-          <p class="mb-0"><i class="fas fa-map"></i> Explora desde casa</p>
-        </div>
-      </div>
-    </div>
-  </footer>
+                <!-- Recorridos Disponibles -->
+                <div class="container mt-4" id="recorridos-container" style="display: none;">
+                    <div class="text-center mb-4">
+                        <button class="btn btn-outline-secondary" onclick="backToSelector()">
+                            <i class="fas fa-arrow-left"></i> Cambiar Sede
+                        </button>
+                    </div>
+                    
+                    <h3 class="text-center mb-4" id="sede-title">Recorridos Disponibles</h3>
+                    
+                    <div class="row g-4" id="recorridos-list">
+                        <!-- Las cards se cargarán aquí dinámicamente -->
+                    </div>
+                </div>
 
-  <div class="dev-tools" style="display: none;">
-    <button onclick="window.StudentsPointPWA?.clearCache()" title="Limpiar Cache"><i class="fas fa-sync-alt"></i></button>
-    <button onclick="window.StudentsPointPWA?.getVersion()" title="Versión"><i class="fas fa-info-circle"></i></button>
-    <button onclick="window.open('/admin/', '_blank')" title="Administración"><i class="fas fa-cog"></i></button>
-    <button onclick="window.open('/api/', '_blank')" title="API"><i class="fas fa-code"></i></button>
-  </div>
+                <!-- Sub-menú para Baños -->
+                <div class="container mt-4" id="banos-submenu" style="display: none;">
+                    <div class="text-center mb-4">
+                        <button class="btn btn-outline-secondary" onclick="backToRecorridos()">
+                            <i class="fas fa-arrow-left"></i> Volver a Recorridos
+                        </button>
+                    </div>
+                    
+                    <h3 class="text-center mb-4">Baños - DuocUC Sede Maipú</h3>
+                    
+                    <div class="row g-4" id="banos-list">
+                        <!-- Las cards de baños se cargarán aquí -->
+                    </div>
+                </div>
+
+                <!-- Visor de Diapositivas -->
+                <div class="slideshow-fullscreen" id="slideshow-container" style="display: none;">
+                    <!-- Header del visor -->
+                    <div class="slideshow-header">
+                        <div class="slideshow-info">
+                            <h4 id="slideshow-titulo">Título del Recorrido</h4>
+                            <p id="slideshow-subtitulo" class="mb-0">DuocUC Sede Maipú</p>
+                        </div>
+                        <div class="slideshow-controls-header">
+                            <span class="slide-counter" id="slide-counter">1 / 5</span>
+                            <button class="btn btn-sm btn-outline-light" onclick="exitSlideshow()">
+                                <i class="fas fa-times"></i> Salir
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Contenedor de diapositivas -->
+                    <div class="slideshow-main" id="slide-container">
+                        <!-- Las diapositivas se cargarán aquí -->
+                    </div>
+
+                    <!-- Controles de navegación -->
+                    <div class="slideshow-nav">
+                        <button class="nav-arrow nav-arrow-left" onclick="previousSlide()" id="prev-btn">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <button class="nav-arrow nav-arrow-right" onclick="nextSlide()" id="next-btn">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+
+                    <!-- Indicadores (dots) -->
+                    <div class="slideshow-dots" id="slideshow-dots">
+                        <!-- Los dots se generarán dinámicamente -->
+                    </div>
+
+                    <!-- Barra de progreso -->
+                    <div class="slideshow-progress">
+                        <div class="progress-bar-custom" id="progress-bar"></div>
+                    </div>
+                </div>
             </div>
         </main>
     </div>
 
     <!-- Scripts -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="/static/js/sounds.js"></script>
-<script src="/static/js/pwa.js"></script>
-<script src="/static/pwa-config.js"></script>
-<script src="/static/js/main.js"></script>
-<script>
-    // Variables globales
-    let sedes = [];
-    let recorridos = [];
-    let pasos = [];
-    let currentSlide = 0;
-    let currentRecorrido = null;
-
-    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-      document.querySelector('.dev-tools').style.display = 'flex';
-    }
-
-    document.addEventListener('DOMContentLoaded', function() {
-      setTimeout(() => {
-        if (window.playSound) {
-          window.playSound('pageLoad');
-        }
-      }, 500);
-      
-      // Cargar sedes al iniciar
-      loadSedes();
-    });
-
-    // Cargar sedes desde la API
-    async function loadSedes() {
-      try {
-        const response = await fetch('/api/campus/campuses/');
-        if (response.ok) {
-          sedes = await response.json();
-          populateSedeSelect();
-        } else {
-          // Datos de ejemplo si la API no está disponible
-          sedes = [
-            { id: 1, name: 'Sede San Carlos de Apoquindo', slug: 'san-carlos' },
-            { id: 2, name: 'Sede Maipú', slug: 'maipu' },
-            { id: 3, name: 'Sede San Joaquín', slug: 'san-joaquin' }
-          ];
-          populateSedeSelect();
-        }
-      } catch (error) {
-        console.error('Error cargando sedes:', error);
-        showError('Error cargando sedes. Usando datos de ejemplo.');
-        // Datos de ejemplo
-        sedes = [
-          { id: 1, name: 'Sede San Carlos de Apoquindo', slug: 'san-carlos' },
-          { id: 2, name: 'Sede Maipú', slug: 'maipu' },
-          { id: 3, name: 'Sede San Joaquín', slug: 'san-joaquin' }
-        ];
-        populateSedeSelect();
-      }
-    }
-
-    function populateSedeSelect() {
-      const select = document.getElementById('sede-select');
-      if (!select) return;
-      
-      select.innerHTML = '<option value="">Selecciona una sede...</option>';
-      
-      // Asegurar que sedes es un array
-      if (Array.isArray(sedes)) {
-        sedes.forEach(sede => {
-          const option = document.createElement('option');
-          option.value = sede.id;
-          option.textContent = sede.name || sede.nombre;
-          select.appendChild(option);
-        });
-      }
-      
-      select.addEventListener('change', function() {
-        const loadBtn = document.getElementById('load-btn');
-        if (loadBtn) {
-          loadBtn.disabled = !this.value;
-        }
-      });
-    }
-
-    // Cargar recorridos de una sede
-    async function loadRecorridos() {
-      const sedeId = document.getElementById('sede-select').value;
-      if (!sedeId) return;
-
-      try {
-        const response = await fetch(`/api/campus/tours/?campus=${sedeId}`);
-        if (response.ok) {
-          recorridos = await response.json();
-        } else {
-          // Datos de ejemplo
-          recorridos = [
-            {
-              id: 1,
-              title: 'Recorrido Principal',
-              campus: sedes.find(s => s.id == sedeId)?.name || 'Sede',
-              steps: [
-                {
-                  id: 1,
-                  order: 1,
-                  title: 'Entrada Principal',
-                  description: 'Bienvenido a la sede. Aquí encontrarás información general y recepción.',
-                  image: '/static/images/placeholder-campus.jpg',
-                  location: {
-                    latitude: -33.4172,
-                    longitude: -70.6067
-                  }
-                },
-                {
-                  id: 2,
-                  order: 2,
-                  title: 'Biblioteca',
-                  description: 'Espacio de estudio y consulta con amplia colección de libros y recursos digitales.',
-                  image: '/static/images/placeholder-campus.jpg',
-                  location: {
-                    latitude: -33.4175,
-                    longitude: -70.6070
-                  }
-                },
-                {
-                  id: 3,
-                  order: 3,
-                  title: 'Laboratorios',
-                  description: 'Laboratorios equipados con tecnología de punta para prácticas y proyectos.',
-                  image: '/static/images/placeholder-campus.jpg',
-                  location: {
-                    latitude: -33.4178,
-                    longitude: -70.6073
-                  }
-                }
-              ]
-            }
-          ];
-        }
-        
-        showRecorridos();
-      } catch (error) {
-        console.error('Error cargando recorridos:', error);
-        showError('Error cargando recorridos');
-      }
-    }
-
-    function showRecorridos() {
-      const container = document.getElementById('recorridos-container');
-      const list = document.getElementById('recorridos-list');
-      
-      if (!list) return;
-      
-      list.innerHTML = '';
-      
-      // Asegurar que recorridos es un array
-      if (!Array.isArray(recorridos)) {
-        recorridos = [];
-      }
-      
-      recorridos.forEach(recorrido => {
-        const card = document.createElement('div');
-        card.className = 'col-md-6 col-lg-4 mb-4';
-        card.innerHTML = `
-          <div class="card h-100">
-            <div class="card-body">
-              <h5 class="card-title">${recorrido.title}</h5>
-              <p class="card-text text-muted">${recorrido.campus}</p>
-              <p class="card-text">${recorrido.steps ? recorrido.steps.length : 0} pasos</p>
-            </div>
-            <div class="card-footer">
-              <button class="btn btn-primary w-100" onclick="startSlideshow(${recorrido.id})">
-                <i class="fas fa-play"></i> Iniciar Recorrido
-              </button>
-            </div>
-          </div>
-        `;
-        list.appendChild(card);
-      });
-      
-      document.getElementById('sede-selector').style.display = 'none';
-      container.style.display = 'block';
-    }
-
-    function startSlideshow(recorridoId) {
-      currentRecorrido = recorridos.find(r => r.id === recorridoId);
-      if (!currentRecorrido) return;
-
-      pasos = currentRecorrido.steps || [];
-      currentSlide = 0;
-
-      document.getElementById('recorridos-container').style.display = 'none';
-      document.getElementById('slideshow-container').style.display = 'block';
-      
-      updateSlideInfo();
-      renderSlide();
-    }
-
-    function updateSlideInfo() {
-      document.getElementById('recorrido-titulo').textContent = currentRecorrido.title;
-      document.getElementById('recorrido-sede').textContent = currentRecorrido.campus;
-      document.getElementById('slide-counter').textContent = `${currentSlide + 1} / ${pasos.length}`;
-      
-      const progress = ((currentSlide + 1) / pasos.length) * 100;
-      document.getElementById('progress-bar').style.width = `${progress}%`;
-      
-      // Actualizar botones
-      document.getElementById('prev-btn').disabled = currentSlide === 0;
-      document.getElementById('next-btn').disabled = currentSlide === pasos.length - 1;
-    }
-
-    function renderSlide() {
-      const container = document.getElementById('slide-container');
-      const paso = pasos[currentSlide];
-      
-      container.innerHTML = `
-        <div class="slide-content">
-          <div class="row h-100">
-            <div class="col-md-6 d-flex align-items-center">
-              <div class="slide-text p-4">
-                <h3 class="slide-title">${paso.title}</h3>
-                <p class="slide-description">${paso.description}</p>
-                ${paso.location && paso.location.latitude && paso.location.longitude ? `
-                  <div class="slide-location mt-3">
-                    <small class="text-muted">
-                      <i class="fas fa-map-marker-alt"></i> 
-                      Coordenadas: ${paso.location.latitude.toFixed(4)}, ${paso.location.longitude.toFixed(4)}
-                    </small>
-                  </div>
-                ` : ''}
-              </div>
-            </div>
-            <div class="col-md-6 d-flex align-items-center">
-              <div class="slide-image">
-                <img src="${paso.image || '/static/images/placeholder-campus.jpg'}" alt="${paso.title}" class="img-fluid rounded">
-              </div>
-            </div>
-          </div>
-        </div>
-      `;
-    }
-
-    function nextSlide() {
-      if (currentSlide < pasos.length - 1) {
-        currentSlide++;
-        updateSlideInfo();
-        renderSlide();
-        if (window.playSound) window.playSound('click');
-      }
-    }
-
-    function previousSlide() {
-      if (currentSlide > 0) {
-        currentSlide--;
-        updateSlideInfo();
-        renderSlide();
-        if (window.playSound) window.playSound('click');
-      }
-    }
-
-    function exitSlideshow() {
-      document.getElementById('slideshow-container').style.display = 'none';
-      document.getElementById('recorridos-container').style.display = 'block';
-      if (window.playSound) window.playSound('click');
-    }
-
-    function showSuccess(message) {
-      const alertDiv = document.createElement('div');
-      alertDiv.className = 'alert alert-success alert-dismissible fade show';
-      alertDiv.innerHTML = `${message}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>`;
-      const container = document.querySelector('.container');
-      container.insertBefore(alertDiv, container.firstChild);
-      setTimeout(() => {
-        if (alertDiv.parentNode) {
-          alertDiv.remove();
-        }
-      }, 3000);
-    }
-
-    function showError(message) {
-      const alertDiv = document.createElement('div');
-      alertDiv.className = 'alert alert-danger alert-dismissible fade show';
-      alertDiv.innerHTML = `${message}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>`;
-      const container = document.querySelector('.container');
-      container.insertBefore(alertDiv, container.firstChild);
-      setTimeout(() => {
-        if (alertDiv.parentNode) {
-          alertDiv.remove();
-        }
-      }, 5000);
-    }
-
-    // Navegación con teclado
-    document.addEventListener('keydown', function(e) {
-      if (document.getElementById('slideshow-container').style.display !== 'none') {
-        if (e.key === 'ArrowRight' || e.key === ' ') {
-          e.preventDefault();
-          nextSlide();
-        } else if (e.key === 'ArrowLeft') {
-          e.preventDefault();
-          previousSlide();
-        } else if (e.key === 'Escape') {
-          e.preventDefault();
-          exitSlideshow();
-        }
-      }
-    });
-  </script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="/static/js/sounds.js"></script>
-<script src="/static/js/pwa.js"></script>
-<script src="/static/pwa-config.js"></script>
-<script src="/static/js/main.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/js/sounds.js"></script>
+    <script src="/static/js/pwa.js"></script>
+    <script src="/static/pwa-config.js"></script>
+    <script src="/static/js/main.js"></script>
+    <script src="/static/streetview/streetview.js"></script>
 </body>
 </html>

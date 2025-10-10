@@ -1,344 +1,527 @@
 /**
- * Navegación Virtual - StudentsPoint
- * Sistema de navegación paso a paso por el campus
+ * RECORRIDOS VIRTUALES - STUDENTSPOINT
+ * Sistema de navegación con diapositivas para recorridos virtuales
  */
 
-class VirtualNavigation {
-    constructor() {
-        this.currentIndex = 0;
-        this.points = [
+// ========================================
+// VARIABLES GLOBALES
+// ========================================
+
+let currentSlide = 0;
+let totalSlides = 0;
+let currentRecorrido = null;
+let touchStartX = 0;
+let touchEndX = 0;
+
+// Datos de recorridos disponibles
+const recorridosData = {
+    'maipu': {
+        nombre: 'DuocUC Sede Maipú',
+        recorridos: [
             {
-                id: 1,
-                title: "Entrada Principal",
-                description: "Bienvenido al campus StudentsPoint Maipú. Aquí comienza tu recorrido virtual por nuestras instalaciones.",
-                image: "/static/images/placeholder-campus.jpg",
-                detailTitle: "Entrada Principal",
-                detailDescription: "La entrada principal del campus StudentsPoint Maipú es el punto de acceso principal para estudiantes, profesores y visitantes.",
-                features: [
-                    "Recepción y atención al público",
-                    "Información general del campus",
-                    "Acceso a todas las instalaciones",
-                    "Estacionamiento para visitantes"
-                ],
-                location: "Entrada Principal",
-                hours: "Lunes a Viernes: 8:00 - 20:00",
-                services: "Recepción, Información"
+                id: 'biblioteca',
+                titulo: 'Biblioteca',
+                descripcion: 'Explora nuestra biblioteca con recursos académicos',
+                icono: 'fa-book',
+                disponible: false,
+                imagenes: []
             },
             {
-                id: 2,
-                title: "Biblioteca",
-                description: "Centro de recursos académicos con amplia colección de libros, computadores y espacios de estudio.",
-                image: "/static/images/placeholder-campus.jpg",
-                detailTitle: "Biblioteca Central",
-                detailDescription: "La biblioteca del campus cuenta con una amplia colección de recursos académicos y espacios de estudio.",
-                features: [
-                    "Más de 10,000 libros físicos",
-                    "Acceso a bases de datos académicas",
-                    "Espacios de estudio individual y grupal",
-                    "Computadores con internet"
-                ],
-                location: "Edificio Principal - 2do Piso",
-                hours: "Lunes a Viernes: 8:00 - 21:00",
-                services: "Préstamo de libros, Consultas, Estudio"
+                id: 'casino',
+                titulo: 'Casino',
+                descripcion: 'Recorrido por el casino y espacios de alimentación',
+                icono: 'fa-utensils',
+                disponible: true,
+                imagenes: [
+                    {
+                        url: '/imagenes/mapa/casino/img1casino.jpeg',
+                        titulo: 'Entrada al Casino',
+                        descripcion: 'Vista principal de la entrada al casino estudiantil'
+                    },
+                    {
+                        url: '/imagenes/mapa/casino/img2casino.jpeg',
+                        titulo: 'Área de Servicio',
+                        descripcion: 'Zona de servicio y atención del casino'
+                    },
+                    {
+                        url: '/imagenes/mapa/casino/img3casino.jpeg',
+                        titulo: 'Comedor Principal',
+                        descripcion: 'Amplio espacio del comedor para estudiantes'
+                    },
+                    {
+                        url: '/imagenes/mapa/casino/img4casino.jpeg',
+                        titulo: 'Zona de Mesas',
+                        descripcion: 'Área de mesas y asientos para disfrutar tus alimentos'
+                    },
+                    {
+                        url: '/imagenes/mapa/casino/img5casino.jpeg',
+                        titulo: 'Vista General',
+                        descripcion: 'Vista panorámica del casino estudiantil'
+                    }
+                ]
             },
             {
-                id: 3,
-                title: "Laboratorio de Computación",
-                description: "Laboratorios equipados con tecnología de última generación para el aprendizaje práctico.",
-                image: "/static/images/placeholder-campus.jpg",
-                detailTitle: "Laboratorios de Computación",
-                detailDescription: "Nuestros laboratorios están equipados con computadores de última generación y software especializado.",
-                features: [
-                    "Computadores de última generación",
-                    "Software especializado por carrera",
-                    "Conexión de alta velocidad",
-                    "Proyectores y pantallas interactivas"
-                ],
-                location: "Edificio Tecnológico - 1er y 2do Piso",
-                hours: "Lunes a Viernes: 8:00 - 22:00",
-                services: "Clases prácticas, Proyectos, Consultas técnicas"
+                id: 'administracion',
+                titulo: 'Administración',
+                descripcion: 'Conoce las oficinas administrativas',
+                icono: 'fa-building',
+                disponible: false,
+                imagenes: []
             },
             {
-                id: 4,
-                title: "Aula Magna",
-                description: "Espacio principal para eventos, conferencias y presentaciones importantes del campus.",
-                image: "/static/images/placeholder-campus.jpg",
-                detailTitle: "Aula Magna",
-                detailDescription: "El Aula Magna es nuestro espacio principal para eventos académicos y conferencias.",
-                features: [
-                    "Capacidad para 200 personas",
-                    "Sistema de audio profesional",
-                    "Proyección HD y 4K",
-                    "Iluminación profesional"
-                ],
-                location: "Edificio Principal - 3er Piso",
-                hours: "Según programación de eventos",
-                services: "Eventos, Conferencias, Presentaciones"
+                id: 'banos',
+                titulo: 'Baños',
+                descripcion: 'Ubicación de baños por piso',
+                icono: 'fa-restroom',
+                disponible: false,
+                tieneSubmenu: true,
+                submenu: [
+                    { id: 'banos-piso1', titulo: 'Baños Primer Piso', descripcion: 'Ubicación de baños en el primer piso' },
+                    { id: 'banos-piso2', titulo: 'Baños Segundo Piso', descripcion: 'Ubicación de baños en el segundo piso' },
+                    { id: 'banos-piso3', titulo: 'Baños Tercer Piso', descripcion: 'Ubicación de baños en el tercer piso' },
+                    { id: 'banos-piso4', titulo: 'Baños Cuarto Piso', descripcion: 'Ubicación de baños en el cuarto piso' },
+                    { id: 'banos-subterraneo', titulo: 'Baños Subterráneo', descripcion: 'Ubicación de baños en el subterráneo' }
+                ]
             },
             {
-                id: 5,
-                title: "Casino",
-                description: "Espacio de alimentación con variedad de menús y opciones para estudiantes.",
-                image: "/static/images/placeholder-campus.jpg",
-                detailTitle: "Casino Estudiantil",
-                detailDescription: "El casino es el punto de alimentación principal del campus, con opciones para todos.",
-                features: [
-                    "Variedad de comidas saludables",
-                    "Precios accesibles para estudiantes",
-                    "Espacios de descanso y socialización",
-                    "WiFi gratuito"
-                ],
-                location: "Edificio Principal - Planta Baja (Casino)",
-                hours: "Lunes a Viernes: 7:30 - 19:00",
-                services: "Alimentación, Descanso, Socialización"
+                id: 'punto-estudiantil',
+                titulo: 'Punto Estudiantil',
+                descripcion: 'Centro de atención y servicios estudiantiles',
+                icono: 'fa-info-circle',
+                disponible: false,
+                imagenes: []
             },
             {
-                id: 6,
-                title: "Laboratorio de Ciencias",
-                description: "Laboratorios especializados para prácticas de ciencias básicas y experimentos.",
-                image: "/static/images/placeholder-campus.jpg",
-                detailTitle: "Laboratorios de Ciencias",
-                detailDescription: "Laboratorios especializados para las carreras que requieren prácticas de ciencias básicas.",
-                features: [
-                    "Instrumentos de laboratorio especializados",
-                    "Materiales para experimentos",
-                    "Medidas de seguridad completas",
-                    "Supervisión de técnicos especializados"
-                ],
-                location: "Edificio de Ciencias - 1er Piso",
-                hours: "Lunes a Viernes: 8:00 - 18:00",
-                services: "Prácticas de laboratorio, Experimentos, Investigación"
-            },
-            {
-                id: 7,
-                title: "Área de Estudio",
-                description: "Espacios tranquilos y cómodos para el estudio individual y grupal de los estudiantes.",
-                image: "/static/images/placeholder-campus.jpg",
-                detailTitle: "Áreas de Estudio",
-                detailDescription: "Espacios diseñados específicamente para el estudio, con mobiliario cómodo y ambiente tranquilo.",
-                features: [
-                    "Mobiliario cómodo y ergonómico",
-                    "Iluminación natural y artificial",
-                    "Ambiente silencioso",
-                    "Enchufes para dispositivos"
-                ],
-                location: "Edificio Principal - 2do y 3er Piso",
-                hours: "Lunes a Domingo: 7:00 - 23:00",
-                services: "Estudio individual, Estudio grupal, Consultas"
-            },
-            {
-                id: 8,
-                title: "Patio Central",
-                description: "Espacio al aire libre para el descanso, actividades recreativas y eventos al aire libre.",
-                image: "/static/images/placeholder-campus.jpg",
-                detailTitle: "Patio Central",
-                detailDescription: "El patio central es un espacio al aire libre que sirve como punto de encuentro para estudiantes.",
-                features: [
-                    "Espacio al aire libre amplio",
-                    "Áreas verdes y jardines",
-                    "Mobiliario para descanso",
-                    "Área para eventos al aire libre"
-                ],
-                location: "Centro del Campus",
-                hours: "Acceso 24/7",
-                services: "Descanso, Recreación, Eventos, Socialización"
+                id: 'salas',
+                titulo: 'Salas',
+                descripcion: 'Recorrido por salas de clases',
+                icono: 'fa-chalkboard-teacher',
+                disponible: false,
+                imagenes: []
             }
-        ];
-        
-        this.init();
+        ]
     }
-    
-    init() {
-        this.setupEventListeners();
-        this.renderPointsList();
-        this.updateDisplay();
-        this.updateProgress();
-        
-        // Reproducir sonido de carga
+};
+
+// ========================================
+// INICIALIZACIÓN
+// ========================================
+
+document.addEventListener('DOMContentLoaded', function() {
+    initializeApp();
+    setupEventListeners();
+});
+
+function initializeApp() {
+    // Reproducir sonido de carga si está disponible
         if (window.playSound) {
-            window.playSound('pageLoad');
-        }
+        setTimeout(() => window.playSound('pageLoad'), 500);
     }
-    
-    setupEventListeners() {
-        // Botones de navegación
-        document.getElementById('btnPrev').addEventListener('click', () => this.previousPoint());
-        document.getElementById('btnNext').addEventListener('click', () => this.nextPoint());
-        
-        // Navegación por teclado
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowLeft') {
-                this.previousPoint();
-            } else if (e.key === 'ArrowRight') {
-                this.nextPoint();
+
+    // Habilitar selector de sede
+    const sedeSelect = document.getElementById('sede-select');
+    if (sedeSelect) {
+        sedeSelect.addEventListener('change', function() {
+            const loadBtn = document.getElementById('load-btn');
+            if (loadBtn) {
+                loadBtn.disabled = !this.value;
             }
         });
-        
-        // Botones del header
-        document.getElementById('btnFullscreen').addEventListener('click', () => this.toggleFullscreen());
-        document.getElementById('btnInfo').addEventListener('click', () => this.showInfo());
-        
-        // Navegación por lista
-        document.getElementById('points-list').addEventListener('click', (e) => {
-            const pointItem = e.target.closest('.list-group-item');
-            if (pointItem) {
-                const index = parseInt(pointItem.dataset.index);
-                this.goToPoint(index);
-            }
-        });
-    }
-    
-    renderPointsList() {
-        const pointsList = document.getElementById('points-list');
-        pointsList.innerHTML = '';
-        
-        this.points.forEach((point, index) => {
-            const listItem = document.createElement('div');
-            listItem.className = `list-group-item ${index === this.currentIndex ? 'active' : ''}`;
-            listItem.dataset.index = index;
-            
-            listItem.innerHTML = `
-                <span class="point-number">${point.id}</span>
-                <div>
-                    <strong>${point.title}</strong>
-                    <br>
-                    <small>${point.description}</small>
-                </div>
-            `;
-            
-            pointsList.appendChild(listItem);
-        });
-    }
-    
-    updateDisplay() {
-        const point = this.points[this.currentIndex];
-        
-        // Actualizar imagen
-        const image = document.getElementById('current-image');
-        image.src = point.image;
-        image.alt = point.title;
-        
-        // Actualizar información del overlay
-        document.getElementById('point-title').textContent = point.title;
-        document.getElementById('point-description').textContent = point.description;
-        
-        // Actualizar detalles
-        document.getElementById('detail-title').textContent = point.detailTitle;
-        document.getElementById('detail-description').textContent = point.detailDescription;
-        
-        // Actualizar características
-        const featuresList = document.getElementById('detail-features');
-        featuresList.innerHTML = '';
-        point.features.forEach(feature => {
-            const li = document.createElement('li');
-            li.textContent = feature;
-            featuresList.appendChild(li);
-        });
-        
-        // Actualizar meta información
-        document.getElementById('meta-location').textContent = point.location;
-        document.getElementById('meta-hours').textContent = point.hours;
-        document.getElementById('meta-services').textContent = point.services;
-        
-        // Actualizar indicador de posición
-        document.getElementById('current-position').textContent = this.currentIndex + 1;
-        document.getElementById('total-positions').textContent = this.points.length;
-        
-        // Actualizar botones
-        document.getElementById('btnPrev').disabled = this.currentIndex === 0;
-        document.getElementById('btnNext').disabled = this.currentIndex === this.points.length - 1;
-        
-        // Actualizar lista
-        this.renderPointsList();
-        
-        // Reproducir sonido de navegación
-        if (window.playSound) {
-            window.playSound('navigate');
-        }
-    }
-    
-    updateProgress() {
-        const progress = ((this.currentIndex + 1) / this.points.length) * 100;
-        document.getElementById('route-progress').style.width = `${progress}%`;
-    }
-    
-    nextPoint() {
-        if (this.currentIndex < this.points.length - 1) {
-            this.currentIndex++;
-            this.updateDisplay();
-            this.updateProgress();
-        }
-    }
-    
-    previousPoint() {
-        if (this.currentIndex > 0) {
-            this.currentIndex--;
-            this.updateDisplay();
-            this.updateProgress();
-        }
-    }
-    
-    goToPoint(index) {
-        if (index >= 0 && index < this.points.length) {
-            this.currentIndex = index;
-            this.updateDisplay();
-            this.updateProgress();
-        }
-    }
-    
-    toggleFullscreen() {
-        if (!document.fullscreenElement) {
-            document.documentElement.requestFullscreen().catch(err => {
-                console.log('Error al entrar en pantalla completa:', err);
-            });
-        } else {
-            document.exitFullscreen();
-        }
-        
-        // Reproducir sonido
-        if (window.playSound) {
-            window.playSound('click');
-        }
-    }
-    
-    showInfo() {
-        const modal = new bootstrap.Modal(document.getElementById('modalInfo'));
-        modal.show();
-        
-        // Reproducir sonido
-        if (window.playSound) {
-            window.playSound('click');
-        }
     }
 }
 
-// Inicializar cuando el DOM esté listo
-document.addEventListener('DOMContentLoaded', () => {
-    window.virtualNavigation = new VirtualNavigation();
-    
-    // Agregar efectos hover con sonido
-    const interactiveElements = document.querySelectorAll('.btn, .list-group-item');
-    interactiveElements.forEach(element => {
-        element.addEventListener('mouseenter', () => {
-            if (window.playSound) {
-                window.playSound('hover');
-            }
-        });
-    });
-    
-    // Animación de entrada
-    const elements = document.querySelectorAll('.students-card, .streetview-container');
-    elements.forEach((element, index) => {
-        element.style.opacity = '0';
-        element.style.transform = 'translateY(30px)';
-        element.style.transition = 'all 0.6s ease';
-        
-        setTimeout(() => {
-            element.style.opacity = '1';
-            element.style.transform = 'translateY(0)';
-        }, index * 200);
-    });
-});
+function setupEventListeners() {
+    // Navegación con teclado
+    document.addEventListener('keydown', handleKeyPress);
 
-// Exportar para uso global
-window.VirtualNavigation = VirtualNavigation;
+    // Touch events para swipe
+    const slideContainer = document.getElementById('slideshow-container');
+    if (slideContainer) {
+        slideContainer.addEventListener('touchstart', handleTouchStart, { passive: true });
+        slideContainer.addEventListener('touchend', handleTouchEnd, { passive: true });
+    }
+}
+
+// ========================================
+// NAVEGACIÓN PRINCIPAL
+// ========================================
+
+function loadRecorridos() {
+    const sedeSelect = document.getElementById('sede-select');
+    const sedeValue = sedeSelect.value;
+
+    if (!sedeValue) return;
+
+    const sedeData = recorridosData[sedeValue];
+    if (!sedeData) return;
+
+    // Actualizar título
+    document.getElementById('sede-title').textContent = `Recorridos Disponibles - ${sedeData.nombre}`;
+
+    // Renderizar cards de recorridos
+    renderRecorridosCards(sedeData.recorridos);
+
+    // Cambiar vista
+    document.getElementById('sede-selector').style.display = 'none';
+    document.getElementById('recorridos-container').style.display = 'block';
+
+    // Reproducir sonido
+    if (window.playSound) window.playSound('click');
+}
+
+function renderRecorridosCards(recorridos) {
+    const container = document.getElementById('recorridos-list');
+    container.innerHTML = '';
+
+    recorridos.forEach(recorrido => {
+        const col = document.createElement('div');
+        col.className = 'col-md-6 col-lg-4';
+
+        const card = document.createElement('div');
+        card.className = `recorrido-card ${!recorrido.disponible ? 'disabled' : ''}`;
+
+        if (recorrido.disponible || recorrido.tieneSubmenu) {
+            card.onclick = () => {
+                if (recorrido.tieneSubmenu) {
+                    showBanosSubmenu(recorrido);
+                } else {
+                    startSlideshow(recorrido);
+                }
+            };
+        }
+
+        card.innerHTML = `
+            <div class="recorrido-icon">
+                <i class="fas ${recorrido.icono}"></i>
+            </div>
+            <h5>${recorrido.titulo}</h5>
+            <p>${recorrido.descripcion}</p>
+            ${!recorrido.disponible && !recorrido.tieneSubmenu ? '<span class="badge-proximamente">Próximamente</span>' : ''}
+        `;
+
+        col.appendChild(card);
+        container.appendChild(col);
+    });
+}
+
+function backToSelector() {
+    document.getElementById('recorridos-container').style.display = 'none';
+    document.getElementById('sede-selector').style.display = 'block';
+
+    // Reproducir sonido
+    if (window.playSound) window.playSound('click');
+}
+
+// ========================================
+// SUBMENU DE BAÑOS
+// ========================================
+
+function showBanosSubmenu(recorrido) {
+    const container = document.getElementById('banos-list');
+    container.innerHTML = '';
+
+    recorrido.submenu.forEach(item => {
+        const col = document.createElement('div');
+        col.className = 'col-md-6 col-lg-4';
+
+        const card = document.createElement('div');
+        card.className = 'recorrido-card disabled';
+
+        card.innerHTML = `
+            <div class="recorrido-icon">
+                <i class="fas fa-restroom"></i>
+                </div>
+            <h5>${item.titulo}</h5>
+            <p>${item.descripcion}</p>
+            <span class="badge-proximamente">Próximamente</span>
+        `;
+
+        col.appendChild(card);
+        container.appendChild(col);
+    });
+
+    // Cambiar vista
+    document.getElementById('recorridos-container').style.display = 'none';
+    document.getElementById('banos-submenu').style.display = 'block';
+
+    // Reproducir sonido
+    if (window.playSound) window.playSound('click');
+}
+
+function backToRecorridos() {
+    document.getElementById('banos-submenu').style.display = 'none';
+    document.getElementById('recorridos-container').style.display = 'block';
+
+    // Reproducir sonido
+    if (window.playSound) window.playSound('click');
+}
+
+// ========================================
+// VISOR DE DIAPOSITIVAS
+// ========================================
+
+function startSlideshow(recorrido) {
+    if (!recorrido.disponible || !recorrido.imagenes || recorrido.imagenes.length === 0) {
+        showNotification('Este recorrido aún no está disponible', 'info');
+        return;
+    }
+
+    currentRecorrido = recorrido;
+    totalSlides = recorrido.imagenes.length;
+    currentSlide = 0;
+
+    // Actualizar información del header
+    document.getElementById('slideshow-titulo').textContent = recorrido.titulo;
+    document.getElementById('slideshow-subtitulo').textContent = 'DuocUC Sede Maipú';
+
+    // Renderizar slides
+    renderSlides();
+
+    // Renderizar dots
+    renderDots();
+
+    // Mostrar visor
+    document.getElementById('recorridos-container').style.display = 'none';
+    document.getElementById('slideshow-container').style.display = 'flex';
+
+    // Actualizar navegación
+    updateSlideNavigation();
+
+    // Reproducir sonido
+    if (window.playSound) window.playSound('click');
+
+    // Precargar siguiente imagen
+    preloadNextImage();
+}
+
+function renderSlides() {
+    const container = document.getElementById('slide-container');
+    container.innerHTML = '';
+
+    currentRecorrido.imagenes.forEach((imagen, index) => {
+        const slide = document.createElement('div');
+        slide.className = `slide ${index === 0 ? 'active' : ''}`;
+
+        const img = document.createElement('img');
+        img.src = imagen.url;
+        img.alt = imagen.titulo;
+        img.loading = index === 0 ? 'eager' : 'lazy';
+
+        // Agregar título y descripción overlay (opcional para mobile)
+        const overlay = document.createElement('div');
+        overlay.className = 'slide-overlay';
+        overlay.innerHTML = `
+            <div class="slide-info">
+                <h3>${imagen.titulo}</h3>
+                <p>${imagen.descripcion}</p>
+            </div>
+        `;
+
+        slide.appendChild(img);
+        // Descomentar si quieres overlay en las imágenes
+        // slide.appendChild(overlay);
+        
+        container.appendChild(slide);
+    });
+}
+
+function renderDots() {
+    const container = document.getElementById('slideshow-dots');
+    container.innerHTML = '';
+
+    for (let i = 0; i < totalSlides; i++) {
+        const dot = document.createElement('div');
+        dot.className = `dot ${i === 0 ? 'active' : ''}`;
+        dot.onclick = () => goToSlide(i);
+        container.appendChild(dot);
+    }
+}
+
+function updateSlideNavigation() {
+    // Actualizar contador
+    document.getElementById('slide-counter').textContent = `${currentSlide + 1} / ${totalSlides}`;
+
+    // Actualizar barra de progreso
+    const progress = ((currentSlide + 1) / totalSlides) * 100;
+    document.getElementById('progress-bar').style.width = `${progress}%`;
+        
+        // Actualizar botones
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+
+    if (prevBtn) prevBtn.disabled = currentSlide === 0;
+    if (nextBtn) nextBtn.disabled = currentSlide === totalSlides - 1;
+
+    // Actualizar dots
+    const dots = document.querySelectorAll('.dot');
+    dots.forEach((dot, index) => {
+        dot.classList.toggle('active', index === currentSlide);
+    });
+
+    // Actualizar slides
+    const slides = document.querySelectorAll('.slide');
+    slides.forEach((slide, index) => {
+        slide.classList.toggle('active', index === currentSlide);
+    });
+}
+
+function nextSlide() {
+    if (currentSlide < totalSlides - 1) {
+        currentSlide++;
+        updateSlideNavigation();
+        preloadNextImage();
+        if (window.playSound) window.playSound('navigate');
+    }
+}
+
+function previousSlide() {
+    if (currentSlide > 0) {
+        currentSlide--;
+        updateSlideNavigation();
+        if (window.playSound) window.playSound('navigate');
+    }
+}
+
+function goToSlide(index) {
+    if (index >= 0 && index < totalSlides && index !== currentSlide) {
+        currentSlide = index;
+        updateSlideNavigation();
+        preloadNextImage();
+        if (window.playSound) window.playSound('click');
+    }
+}
+
+function exitSlideshow() {
+    document.getElementById('slideshow-container').style.display = 'none';
+    
+    // Volver a la vista anterior
+    if (document.getElementById('banos-submenu').style.display === 'block') {
+        // Ya está en submenu
+    } else {
+        document.getElementById('recorridos-container').style.display = 'block';
+    }
+
+    // Limpiar
+    currentRecorrido = null;
+    currentSlide = 0;
+    totalSlides = 0;
+
+    // Reproducir sonido
+    if (window.playSound) window.playSound('click');
+}
+
+function preloadNextImage() {
+    if (currentSlide < totalSlides - 1) {
+        const nextImage = new Image();
+        nextImage.src = currentRecorrido.imagenes[currentSlide + 1].url;
+    }
+}
+
+// ========================================
+// CONTROLES DE TECLADO
+// ========================================
+
+function handleKeyPress(e) {
+    // Solo funciona si el visor está activo
+    const slideshowContainer = document.getElementById('slideshow-container');
+    if (!slideshowContainer || slideshowContainer.style.display === 'none') return;
+
+    switch(e.key) {
+        case 'ArrowRight':
+        case ' ':
+            e.preventDefault();
+            nextSlide();
+            break;
+        case 'ArrowLeft':
+            e.preventDefault();
+            previousSlide();
+            break;
+        case 'Escape':
+            e.preventDefault();
+            exitSlideshow();
+            break;
+        case 'Home':
+            e.preventDefault();
+            goToSlide(0);
+            break;
+        case 'End':
+            e.preventDefault();
+            goToSlide(totalSlides - 1);
+            break;
+    }
+}
+
+// ========================================
+// GESTOS TOUCH (SWIPE)
+// ========================================
+
+function handleTouchStart(e) {
+    touchStartX = e.changedTouches[0].screenX;
+}
+
+function handleTouchEnd(e) {
+    touchEndX = e.changedTouches[0].screenX;
+    handleSwipe();
+}
+
+function handleSwipe() {
+    const swipeThreshold = 50; // mínimo de píxeles para considerar swipe
+    const difference = touchStartX - touchEndX;
+
+    if (Math.abs(difference) < swipeThreshold) return;
+
+    if (difference > 0) {
+        // Swipe left - siguiente
+        nextSlide();
+    } else {
+        // Swipe right - anterior
+        previousSlide();
+    }
+}
+
+// ========================================
+// UTILIDADES
+// ========================================
+
+function showNotification(message, type = 'info') {
+    // Crear notificación temporal
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-3`;
+    alertDiv.style.zIndex = '10000';
+    alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    document.body.appendChild(alertDiv);
+
+    // Auto-eliminar después de 3 segundos
+    setTimeout(() => {
+        alertDiv.remove();
+    }, 3000);
+}
+
+function logout() {
+    // Implementar lógica de logout según tu sistema
+    if (confirm('¿Deseas cerrar sesión?')) {
+        localStorage.clear();
+        sessionStorage.clear();
+        window.location.href = '/login.html';
+    }
+}
+
+// ========================================
+// EXPORTAR FUNCIONES GLOBALES
+// ========================================
+
+// Hacer funciones accesibles globalmente para onclick en HTML
+window.loadRecorridos = loadRecorridos;
+window.backToSelector = backToSelector;
+window.backToRecorridos = backToRecorridos;
+window.nextSlide = nextSlide;
+window.previousSlide = previousSlide;
+window.goToSlide = goToSlide;
+window.exitSlideshow = exitSlideshow;
+window.logout = logout;
+
+console.log('✅ Recorridos Virtuales - Sistema cargado correctamente');
