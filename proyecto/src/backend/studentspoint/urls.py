@@ -29,16 +29,40 @@ def spa_serve(request, path=""):
     base = Path(settings.STATIC_ROOT)
     target = base / path
     
-    # Si es un directorio, servir index.html
+    # Mapeo de rutas a archivos HTML específicos
+    route_map = {
+        'forum': 'foro.html',
+        'market': 'mercado.html',
+        'bienestar': 'bienestar.html',
+        'portfolio': 'portafolio.html',
+        'encuestas': 'encuestas.html',
+        'cursos': 'cursos.html',
+        'reportes': 'reportes.html',
+        'streetview': 'recorridos-virtuales.html',
+        'converter': 'conversor.html',
+    }
+    
+    # Si es un directorio, buscar archivo específico o index.html
     if target.is_dir():
-        path = f"{path.rstrip('/')}/index.html"
+        route_name = path.rstrip('/').split('/')[-1]
+        if route_name in route_map:
+            path = f"{path.rstrip('/')}/{route_map[route_name]}"
+        else:
+            path = f"{path.rstrip('/')}/index.html"
         target = base / path
     
-    # Si el archivo no existe, intentar servir index.html para rutas SPA
+    # Si el archivo no existe, intentar servir archivo específico para rutas SPA
     if not target.exists():
-        # Para rutas como /forum/, /market/, etc., servir su index.html
+        # Para rutas como /forum/, /market/, etc., servir su archivo específico
         if path and not path.endswith('.html') and not path.endswith('.ico') and not path.endswith('.css') and not path.endswith('.js'):
-            spa_path = f"{path.rstrip('/')}/index.html"
+            route_parts = path.rstrip('/').split('/')
+            route_name = route_parts[-1]
+            
+            if route_name in route_map:
+                spa_path = f"{path.rstrip('/')}/{route_map[route_name]}"
+            else:
+                spa_path = f"{path.rstrip('/')}/index.html"
+            
             spa_target = base / spa_path
             if spa_target.exists():
                 return serve(request, spa_path, document_root=base)
