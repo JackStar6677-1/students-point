@@ -43,11 +43,18 @@ def me(request):
     request=UserUpdateSerializer,
     responses={200: UserDetailSerializer}
 )
-@api_view(['PATCH'])
+@api_view(['PATCH', 'PUT'])
 @permission_classes([permissions.IsAuthenticated])
 def update_profile(request):
     """Actualiza el perfil del usuario."""
-    serializer = UserUpdateSerializer(data=request.data)
+    # Verificar que el usuario esté autenticado
+    if not request.user or not request.user.is_authenticated:
+        return Response(
+            {'error': 'Usuario no autenticado'},
+            status=status.HTTP_401_UNAUTHORIZED
+        )
+    
+    serializer = UserUpdateSerializer(data=request.data, partial=True)
     if serializer.is_valid():
         user = request.user
         for field, value in serializer.validated_data.items():
