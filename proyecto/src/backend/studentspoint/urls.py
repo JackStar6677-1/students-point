@@ -74,12 +74,8 @@ urlpatterns = [
     re_path(r'^sw\.js$', serve, {'document_root': Path(settings.STATIC_ROOT), 'path': 'sw.js'}),
     # Servir favicon específicamente
     re_path(r'^favicon\.ico$', serve, {'document_root': Path(settings.STATIC_ROOT), 'path': 'favicon.ico'}),
-    # Servir archivos estaticos ANTES del catch-all
-    re_path(r'^static/css/(?P<path>.*)$', serve, {'document_root': Path(settings.STATIC_ROOT) / "css"}),
-    re_path(r'^static/js/(?P<path>.*)$', serve, {'document_root': Path(settings.STATIC_ROOT) / "js"}),
-    re_path(r'^static/images/(?P<path>.*)$', serve, {'document_root': Path(settings.STATIC_ROOT) / "images"}),
-    re_path(r'^static/audio/(?P<path>.*)$', serve, {'document_root': Path(settings.STATIC_ROOT) / "audio"}),
-    re_path(r'^static/(?P<path>.*)$', serve, {'document_root': Path(settings.STATIC_ROOT)}),
+    # Servir archivos estaticos ANTES del catch-all (desde staticfiles/static/)
+    re_path(r'^static/(?P<path>.*)$', serve, {'document_root': Path(settings.STATIC_ROOT) / "static"}),
     # Servir imágenes desde staticfiles (sin /static/)
     re_path(r'^images/(?P<path>.*)$', serve, {'document_root': Path(settings.STATIC_ROOT) / "images"}),
     # Servir imágenes desde la carpeta imagenes (legacy)
