@@ -1,144 +1,129 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-bs-theme="dark">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Foros - StudentsPoint</title>
-  
-  <!-- Favicon -->
-  <link rel="manifest" href="/static/manifest.json" />
-  <link rel="icon" type="image/x-icon" href="/static/favicon.ico" />
-  <link rel="icon" type="image/png" sizes="32x32" href="/static/images/icons/icon-32x32.png" />
-  <link rel="icon" type="image/png" sizes="16x16" href="/static/images/icons/icon-16x16.png" />
-  <link rel="apple-touch-icon" sizes="180x180" href="/static/images/icons/icon-192x192.png" />
-  
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  
-  <!-- Bootstrap 5 -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
-  
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  
-  <!-- Tema Oscuro Premium -->
-  <link rel="stylesheet" href="/static/css/theme-dark.css" />
-  <link rel="stylesheet" href="/static/css/animations.css" />
-  <link rel="stylesheet" href="/static/css/components.css" />
-  <link rel="stylesheet" href="/static/forum/forum.css" />
-  
-  <!-- PWA Meta -->
-  <meta name="theme-color" content="#1a0933">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Foro Estudiantil - StudentsPoint</title>
+    
+    <!-- Bootstrap 5.3.2 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Font Awesome 6.5.1 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="/static/css/theme-dark.css">
+    <link rel="stylesheet" href="/static/css/base-layout.css">
+    <link rel="stylesheet" href="/static/css/animations.css">
+    <link rel="stylesheet" href="/static/forum/forum.css">
+    
+    <!-- PWA -->
+    <link rel="manifest" href="/static/manifest.json">
+    <meta name="theme-color" content="#1a1a1b">
+    <link rel="icon" href="/static/favicon.ico">
+    <link rel="apple-touch-icon" href="/static/images/icons/icon-192x192.png">
 </head>
 <body>
-  <!-- Fondo de partículas -->
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="brand-section">
+                    <img src="/static/images/Logo_StudentsPoint.svg.png" alt="StudentsPoint" class="brand-logo">
+                    <h1 class="brand-title">StudentsPoint</h1>
+                </div>
+                <div class="user-section">
+                    <div class="user-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="user-info">
+                        <span class="user-name" id="sidebarUserName">Cargando...</span>
+                        <span class="user-role" id="sidebarUserRole">Estudiante</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="sidebar-menu">
+                <a href="/" class="menu-item">
+                    <i class="fas fa-home"></i>
+                    <span>Inicio</span>
+                </a>
+                <a href="/forum/" class="menu-item active">
+                    <i class="fas fa-comments"></i>
+                    <span>Foro</span>
+                </a>
+                <a href="/market/" class="menu-item">
+                    <i class="fas fa-store"></i>
+                    <span>Marketplace</span>
+                </a>
+                <a href="/portfolio/" class="menu-item">
+                    <i class="fas fa-briefcase"></i>
+                    <span>Portafolio</span>
+                </a>
+                <a href="/cursos/" class="menu-item">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>Cursos</span>
+                </a>
+                <a href="/encuestas/" class="menu-item">
+                    <i class="fas fa-poll"></i>
+                    <span>Encuestas</span>
+                </a>
+                <a href="/reportes/" class="menu-item">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Reportes</span>
+                </a>
+                <a href="/bienestar/" class="menu-item">
+                    <i class="fas fa-heart"></i>
+                    <span>Bienestar</span>
+                </a>
+                <a href="/converter/" class="menu-item">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Conversor</span>
+                </a>
+                <a href="/streetview/" class="menu-item">
+                    <i class="fas fa-map-marked-alt"></i>
+                    <span>Recorridos</span>
+                </a>
+            </div>
+            
+            <div class="sidebar-footer">
+                <a href="/account.html" class="menu-item">
+                    <i class="fas fa-user-circle"></i>
+                    <span>Mi Cuenta</span>
+                </a>
+                <a href="#" class="menu-item" onclick="logout(); return false;">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Cerrar Sesión</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-header">
+                <h1 class="header-title">Foro Estudiantil</h1>
+                <div class="header-actions">
+                    <button class="btn-icon" id="notificationsBtn" title="Notificaciones">
+                        <i class="fas fa-bell"></i>
+                    </button>
+                    <button class="btn-icon" id="settingsBtn" title="Configuración">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                </div>
+            </header>
+
+            <div class="content-wrapper fade-in">
+<!-- Fondo de partículas -->
   <div class="particles-bg"></div>
 
   <!-- Header Premium -->
   <header class="navbar-dark sticky-top">
-    <nav class="container">
-      <div class="d-flex justify-content-between align-items-center py-3">
-        <div class="d-flex align-items-center">
-          <img src="/static/images/Logo_StudentsPoint.svg.png" alt="StudentsPoint" height="40" class="me-3">
-          <div>
-            <h4 class="mb-0 text-gradient-gold">Foros StudentsPoint</h4>
-            <small class="text-white-50">Comunícate con tu comunidad estudiantil</small>
-          </div>
-        </div>
-        <div class="d-flex align-items-center gap-3">
-          <a href="/" class="btn btn-outline-light btn-sm">
-            <i class="fas fa-home"></i> Inicio
-          </a>
-          <a href="/login.html" class="btn btn-gradient-purple btn-sm login-button">
-            <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
-          </a>
-          <div class="user-menu" style="display: none;">
-            <div class="dropdown">
-              <button class="btn btn-gradient-gold dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                <i class="fas fa-user"></i> <span class="user-name"></span>
-              </button>
-              <ul class="dropdown-menu dropdown-menu-end">
-                <li><a class="dropdown-item" href="/account.html"><i class="fas fa-user-circle"></i> Mi Perfil</a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item logout-link" href="#"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-    </nav>
+    
   </header>
 
   <!-- Navegación compacta -->
-  <nav class="navbar navbar-expand-lg students-nav">
-    <div class="container">
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav me-auto">
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-              <i class="fas fa-th-large"></i> Aplicaciones
-            </a>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="/forum/">
-                <i class="fas fa-comments"></i> Foros
-              </a></li>
-              <li><a class="dropdown-item" href="/market/">
-                <i class="fas fa-store"></i> Mercado
-              </a></li>
-              <li><a class="dropdown-item" href="/portfolio/">
-                <i class="fas fa-briefcase"></i> Portafolio
-              </a></li>
-              <li><a class="dropdown-item" href="/bienestar/">
-                <i class="fas fa-heart-pulse"></i> Bienestar
-              </a></li>
-              <li><a class="dropdown-item" href="/cursos/">
-                <i class="fas fa-graduation-cap"></i> Cursos
-              </a></li>
-              <li><a class="dropdown-item" href="/encuestas/">
-                <i class="fas fa-poll"></i> Encuestas
-              </a></li>
-              <li><a class="dropdown-item" href="/reportes/">
-                <i class="fas fa-chart-bar"></i> Reportes
-              </a></li>
-              <li><a class="dropdown-item" href="/streetview/">
-                <i class="fas fa-map"></i> Recorridos Virtuales
-              </a></li>
-              <li><a class="dropdown-item" href="/campuses.html">
-                <i class="fas fa-building"></i> Sedes
-              </a></li>
-              <li><a class="dropdown-item" href="/teachers.html">
-                <i class="fas fa-chalkboard-teacher"></i> Profesores
-              </a></li>
-              <li><a class="dropdown-item" href="/account.html">
-                <i class="fas fa-user"></i> Mi Cuenta
-              </a></li>
-            </ul>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/forum/?categoria=general">
-              <i class="fas fa-globe"></i> General
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/forum/?categoria=academico">
-              <i class="fas fa-graduation-cap"></i> Académico
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/forum/?categoria=social">
-              <i class="fas fa-users"></i> Social
-            </a>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </nav>
+  
 
   <!-- Contenido principal -->
   <main class="main-content" style="position: relative; z-index: 2;">
@@ -298,14 +283,18 @@
   </div>
 
   <!-- Scripts -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="/static/js/sounds.js"></script>
-  <script src="/static/js/pwa.js"></script>
-  <script src="/static/pwa-config.js"></script>
-  <script src="/static/js/main.js"></script>
-  <script src="/static/forum/forum.js"></script>
+            </div>
+        </main>
+    </div>
 
-  <script>
+    <!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/static/js/sounds.js"></script>
+<script src="/static/js/pwa.js"></script>
+<script src="/static/pwa-config.js"></script>
+<script src="/static/js/main.js"></script>
+<script src="/static/forum/forum.js"></script>
+<script>
     // Mostrar herramientas de desarrollo solo en localhost
     if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
       document.querySelector('.dev-tools').style.display = 'flex';
@@ -792,5 +781,11 @@
       }
     });
   </script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/static/js/sounds.js"></script>
+<script src="/static/js/pwa.js"></script>
+<script src="/static/pwa-config.js"></script>
+<script src="/static/js/main.js"></script>
+<script src="/static/forum/forum.js"></script>
 </body>
 </html>
