@@ -67,6 +67,9 @@ class Foro(models.Model):
     )
     descripcion = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    
+    class Meta:
+        ordering = ['carrera', 'titulo']  # Evitar UnorderedObjectListWarning
 
     def __str__(self) -> str:  # pragma: no cover - representación simple
         return self.titulo

@@ -40,6 +40,8 @@ class PostSerializer(serializers.ModelSerializer):
     - encuesta: Post con opciones para votar
     - imagen: Post con imagen adjunta (requiere aprobación)
     - otro: Otros tipos
+    
+    IMPORTANTE: Para subir imágenes, usar multipart/form-data
     """
     
     usuario_name = serializers.CharField(source="usuario.name", read_only=True)
@@ -49,6 +51,7 @@ class PostSerializer(serializers.ModelSerializer):
     total_reportes = serializers.IntegerField(read_only=True)
     opciones_encuesta = OpcionEncuestaSerializer(many=True, read_only=True)
     foro_info = serializers.SerializerMethodField()
+    imagen_url = serializers.SerializerMethodField()
 
     class Meta:
         model = Post
@@ -65,6 +68,7 @@ class PostSerializer(serializers.ModelSerializer):
             "cuerpo",
             "tipo",
             "imagen",
+            "imagen_url",
             "imagen_aprobada",
             "score",
             "estado",
@@ -81,7 +85,7 @@ class PostSerializer(serializers.ModelSerializer):
             "usuario", "usuario_name", "usuario_career", "usuario_campus",
             "score", "estado", "created_at", "updated_at", "imagen_aprobada",
             "total_comentarios", "total_reportes", "opciones_encuesta",
-            "moderado_por", "razon_moderacion", "moderado_at", "foro_info"
+            "moderado_por", "razon_moderacion", "moderado_at", "foro_info", "imagen_url"
         ]
     
     def get_total_comentarios(self, obj):
@@ -94,6 +98,15 @@ class PostSerializer(serializers.ModelSerializer):
             "carrera": obj.foro.carrera,
             "titulo": obj.foro.titulo
         }
+    
+    def get_imagen_url(self, obj):
+        """Retorna la URL completa de la imagen si existe."""
+        if obj.imagen:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.imagen.url)
+            return obj.imagen.url
+        return None
 
 
 class ComentarioSerializer(serializers.ModelSerializer):

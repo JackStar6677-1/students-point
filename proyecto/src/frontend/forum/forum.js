@@ -483,6 +483,8 @@ class ForumManager {
             const titleElement = document.getElementById('postTitle');
             const contentElement = document.getElementById('postContent');
             const anonymousElement = document.getElementById('postAnonymous');
+            const imageElement = document.getElementById('postImage');
+            
             const forumId = forumIdElement ? forumIdElement.value : '';
             const title = titleElement ? titleElement.value : '';
             const content = contentElement ? contentElement.value : '';
@@ -493,18 +495,25 @@ class ForumManager {
                 return;
             }
 
+            // Usar FormData para soportar subida de imágenes
+            const formData = new FormData();
+            formData.append('foro', forumId);
+            formData.append('titulo', title);
+            formData.append('cuerpo', content);
+            formData.append('anonimo', anonymous);
+            
+            // Agregar imagen si existe
+            if (imageElement && imageElement.files.length > 0) {
+                formData.append('imagen', imageElement.files[0]);
+            }
+
             const response = await fetch('/api/forum/posts/', {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
+                    // NO incluir Content-Type para que el navegador lo configure con boundary
                 },
-                body: JSON.stringify({
-                    foro: forumId,
-                    titulo: title,
-                    cuerpo: content,
-                    anonimo: anonymous
-                })
+                body: formData
             });
 
             if (response.ok) {

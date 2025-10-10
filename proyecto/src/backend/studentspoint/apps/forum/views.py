@@ -151,6 +151,12 @@ class PostListCreateView(generics.ListCreateAPIView):
                     f"Este foro es para {foro.carrera}. Puedes comentar en posts de otros foros."
                 )
         
+        # Manejar imagen si se subió
+        imagen = self.request.FILES.get('imagen')
+        if imagen:
+            serializer.validated_data['imagen'] = imagen
+            serializer.validated_data['tipo'] = Post.TipoPost.IMAGEN
+        
         post = serializer.save(usuario=self.request.user)
         # Verificar contenido automáticamente
         estado = post.verificar_contenido()
