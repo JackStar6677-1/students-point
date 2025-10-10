@@ -39,8 +39,12 @@ class ForoListView(generics.ListAPIView):
         # Asegurar foros por defecto si no existen
         self._ensure_default_foros()
         
-        # Optimización: usar select_related para evitar N+1
-        queryset = Foro.objects.select_related('sede').all()
+        # Optimización máxima: usar select_related y solo() para evitar N+1
+        queryset = Foro.objects.select_related('sede').only(
+            'id', 'sede__id', 'sede__nombre', 'sede__slug',
+            'carrera', 'titulo', 'slug', 'es_privado', 
+            'descripcion', 'created_at'
+        ).order_by('carrera', 'titulo')
         
         # Filtrar foros según permisos del usuario
         if self.request.user.is_authenticated:

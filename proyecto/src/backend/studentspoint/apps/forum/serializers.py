@@ -9,11 +9,12 @@ class ForoSerializer(serializers.ModelSerializer):
     """Representa un foro temático."""
     
     puede_postear = serializers.SerializerMethodField()
+    sede_nombre = serializers.CharField(source='sede.nombre', read_only=True)
 
     class Meta:
         model = Foro
-        fields = ["id", "sede", "carrera", "titulo", "slug", "es_privado", "descripcion", "created_at", "puede_postear"]
-        read_only_fields = ["created_at"]
+        fields = ["id", "sede", "sede_nombre", "carrera", "titulo", "slug", "es_privado", "descripcion", "created_at", "puede_postear"]
+        read_only_fields = ["created_at", "sede_nombre"]
     
     def get_puede_postear(self, obj):
         """Indica si el usuario actual puede postear en este foro."""
