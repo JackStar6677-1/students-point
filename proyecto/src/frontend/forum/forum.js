@@ -771,6 +771,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+// Helper function para filtrar por foro
+function filterByForum(foroId) {
+    const forumFilter = document.getElementById('forumFilter');
+    if (forumFilter) {
+        forumFilter.value = foroId;
+        if (forumManager) {
+            forumManager.loadPosts();
+        }
+    }
+}
+
 // Initialize forum manager
 let forumManager;
 document.addEventListener('DOMContentLoaded', () => {
