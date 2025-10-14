@@ -132,9 +132,15 @@ def login(request):
         _ok, _score = verify_recaptcha(captcha_token, request.META.get('REMOTE_ADDR'))
         
         # Buscar usuario por email
+        import logging
+        logger = logging.getLogger(__name__)
+        
         try:
             user = User.objects.get(email=email)
+            logger.info(f"Login attempt for user: {email}")
+            logger.info(f"User email verified: {user.is_email_verified}")
         except User.DoesNotExist:
+            logger.warning(f"Login failed: User {email} not found")
             return Response(
                 {'detail': 'Credenciales inválidas'}, 
                 status=status.HTTP_401_UNAUTHORIZED
@@ -145,6 +151,7 @@ def login(request):
             email_l = (user.email or '').lower()
             dominios_laxos = ('@duocuc.cl', '@studentspoint.app')
             if not any(email_l.endswith(d) for d in dominios_laxos):
+                logger.warning(f"Login failed: Email {email} not verified")
                 return Response(
                     {'error': 'Debes verificar tu email antes de iniciar sesión. Revisa tu bandeja e ingresa el código de verificación.'},
                     status=status.HTTP_400_BAD_REQUEST
@@ -152,6 +159,7 @@ def login(request):
 
         # Verificar contraseña
         if user.check_password(password):
+            logger.info(f"Login successful for user: {email}")
             # Generar tokens JWT
             refresh = RefreshToken.for_user(user)
             
@@ -168,6 +176,7 @@ def login(request):
                 }
             })
         else:
+            logger.warning(f"Login failed: Invalid password for user {email}")
             return Response(
                 {'detail': 'Credenciales inválidas'}, 
                 status=status.HTTP_401_UNAUTHORIZED
