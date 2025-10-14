@@ -140,12 +140,15 @@ def login(request):
                 status=status.HTTP_401_UNAUTHORIZED
             )
         
-        # Requerir email verificado
+        # Requerir email verificado salvo dominios institucionales permitidos
         if not user.is_email_verified:
-            return Response(
-                {'error': 'Debes verificar tu email antes de iniciar sesión. Revisa tu bandeja e ingresa el código de verificación.'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            email_l = (user.email or '').lower()
+            dominios_laxos = ('@duocuc.cl', '@studentspoint.app')
+            if not any(email_l.endswith(d) for d in dominios_laxos):
+                return Response(
+                    {'error': 'Debes verificar tu email antes de iniciar sesión. Revisa tu bandeja e ingresa el código de verificación.'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
 
         # Verificar contraseña
         if user.check_password(password):
