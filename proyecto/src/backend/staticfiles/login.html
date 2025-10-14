@@ -280,6 +280,40 @@
             showAlert('Funcionalidad de recuperación de contraseña disponible próximamente.', 'warning');
         });
         
+        // Capturar tokens de Google OAuth desde la URL
+        function checkGoogleAuthTokens() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const accessToken = urlParams.get('access_token');
+            const refreshToken = urlParams.get('refresh_token');
+            const googleAuth = urlParams.get('google_auth');
+            
+            if (accessToken && refreshToken && googleAuth === 'true') {
+                console.log('Tokens de Google OAuth detectados, guardando...');
+                
+                // Guardar tokens en localStorage
+                localStorage.setItem('access_token', accessToken);
+                localStorage.setItem('refresh_token', refreshToken);
+                
+                // Mostrar mensaje y redirigir
+                showAlert('Inicio de sesión con Google exitoso. Redirigiendo...', 'success');
+                if (window.playSound) window.playSound('success');
+                
+                // Limpiar la URL y redirigir
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 1500);
+                
+                return true;
+            }
+            return false;
+        }
+        
+        // Verificar tokens al cargar la página
+        if (!checkGoogleAuthTokens()) {
+            // Solo mostrar la página si no hay tokens de Google
+            console.log('No hay tokens de Google, mostrando página de login normal');
+        }
+        
         // Fill demo credentials
         window.fillDemoCredentials = function(type) {
             if (type === 'admin') {
