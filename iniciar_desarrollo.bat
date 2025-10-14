@@ -48,6 +48,11 @@ python ensure_superuser.py
 echo [OK] Superusuario configurado
 echo.
 
+echo Creando usuarios de prueba...
+python manage.py create_demo_users >nul 2>&1
+echo [OK] Usuarios de prueba listos
+echo.
+
 REM Crear directorio de logs si no existe
 if not exist logs mkdir logs
 
