@@ -38,12 +38,16 @@ class EncuestaVotarView(APIView):
         if post.tipo != Post.TipoPost.ENCUESTA:
             return Response({"detail": "El post no es una encuesta"}, status=status.HTTP_400_BAD_REQUEST)
         opcion = get_object_or_404(post.opciones_encuesta, pk=opcion_id)
-        # Registrar voto único por usuario
+        # Registrar voto único por usuario en la ENCUESTA (no por opción)
         from .models import VotoEncuesta
+        # Eliminar votos anteriores del usuario sobre otras opciones de esta encuesta
+        VotoEncuesta.objects.filter(usuario=request.user, opcion__post=post).exclude(opcion=opcion).delete()
+        # Crear/actualizar voto en esta opción
         VotoEncuesta.objects.update_or_create(opcion=opcion, usuario=request.user)
-        # Recalcular votos
-        opcion.votos = opcion.votos_usuarios.count()
-        opcion.save(update_fields=["votos"])
+        # Recalcular votos de todas las opciones
+        for opt in post.opciones_encuesta.all():
+            opt.votos = opt.votos_usuarios.count()
+            opt.save(update_fields=["votos"])
         total = post.opciones_encuesta.aggregate(total=Sum("votos")) or {"total": 0}
         return Response({"total_votos": total.get("total", 0)})
 

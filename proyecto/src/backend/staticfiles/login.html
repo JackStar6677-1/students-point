@@ -114,6 +114,10 @@
                 ¿No tienes cuenta? 
                 <a href="/register.html" class="text-gradient-gold" style="font-weight: 600;">Regístrate aquí</a>
             </p>
+            <p class="text-center" style="color: var(--color-gray-light); margin-top: 0.5rem;">
+                ¿No te llegó el código de verificación? 
+                <a href="#" id="resendVerificationLogin" class="text-gradient-purple" style="font-weight: 600;">Reenviar código</a>
+            </p>
         </form>
     </div>
 
@@ -160,12 +164,13 @@
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            const email = document.getElementById('email').value;
+            const email = (document.getElementById('email').value || '').trim().toLowerCase();
             const password = document.getElementById('password').value;
             const remember = document.getElementById('remember').checked;
             const loginBtn = document.getElementById('loginBtn');
             
             // Disable button
+            if (loginBtn.disabled) return; // evitar doble envío
             loginBtn.disabled = true;
             loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Iniciando sesión...';
             
@@ -201,7 +206,12 @@
                         window.location.href = '/';
                     }, 1500);
                 } else {
-                    showAlert(data.detail || 'Credenciales incorrectas. Por favor, intenta de nuevo.');
+                    const msg = (data.error || data.detail || '').toString().toLowerCase();
+                    if (msg.includes('verificar') && email) {
+                        showAlert('Tu email no está verificado. Puedes reenviar el código desde el enlace bajo el botón.', 'error');
+                    } else {
+                        showAlert(data.detail || data.error || 'Credenciales incorrectas. Por favor, intenta de nuevo.');
+                    }
                     if (window.playSound) window.playSound('error');
                     loginBtn.disabled = false;
                     loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Iniciar Sesión';
@@ -212,6 +222,30 @@
                 if (window.playSound) window.playSound('error');
                 loginBtn.disabled = false;
                 loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Iniciar Sesión';
+            }
+        });
+        // Resend verification code from login page
+        document.getElementById('resendVerificationLogin').addEventListener('click', async function(e) {
+            e.preventDefault();
+            const email = (document.getElementById('email').value || '').trim().toLowerCase();
+            if (!email) {
+                showAlert('Ingresa tu email para reenviar el código.');
+                return;
+            }
+            try {
+                const resp = await fetch('/api/auth/reenviar-codigo/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+                const data = await resp.json().catch(() => ({}));
+                if (resp.ok) {
+                    showAlert('Código reenviado. Revisa tu correo.', 'success');
+                } else {
+                    showAlert(data.message || data.detail || 'No fue posible reenviar el código.');
+                }
+            } catch (err) {
+                showAlert('Error de conexión al reenviar el código.');
             }
         });
         
