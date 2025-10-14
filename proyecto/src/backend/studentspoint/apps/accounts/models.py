@@ -263,7 +263,9 @@ class User(AbstractBaseUser, PermissionsMixin):
         """Envía el código de verificación por email."""
         from django.core.mail import send_mail
         from django.conf import settings
+        import logging
         
+        logger = logging.getLogger(__name__)
         codigo = self.generar_codigo_verificacion()
         
         asunto = 'Verificación de email - StudentsPoint'
@@ -280,6 +282,11 @@ Saludos,
 Equipo StudentsPoint
         '''
         
+        logger.info(f"========================================")
+        logger.info(f"CODIGO DE VERIFICACION PARA: {self.email}")
+        logger.info(f"CODIGO: {codigo}")
+        logger.info(f"========================================")
+        
         try:
             send_mail(
                 asunto,
@@ -288,15 +295,19 @@ Equipo StudentsPoint
                 [self.email],
                 fail_silently=False,
             )
+            logger.info(f"Email de verificación enviado exitosamente a {self.email}")
             return True, "Código enviado"
         except Exception as e:
+            logger.error(f"Error enviando email a {self.email}: {str(e)}")
             return False, f"Error enviando email: {str(e)}"
     
     def enviar_codigo_recuperacion(self):
         """Envía el código de recuperación de contraseña por email."""
         from django.core.mail import send_mail
         from django.conf import settings
+        import logging
         
+        logger = logging.getLogger(__name__)
         codigo = self.generar_codigo_recuperacion()
         
         asunto = 'Recuperación de contraseña - StudentsPoint'
@@ -313,6 +324,11 @@ Saludos,
 Equipo StudentsPoint
         '''
         
+        logger.info(f"========================================")
+        logger.info(f"CODIGO DE RECUPERACION PARA: {self.email}")
+        logger.info(f"CODIGO: {codigo}")
+        logger.info(f"========================================")
+        
         try:
             send_mail(
                 asunto,
@@ -321,8 +337,10 @@ Equipo StudentsPoint
                 [self.email],
                 fail_silently=False,
             )
+            logger.info(f"Email de recuperación enviado exitosamente a {self.email}")
             return True, "Código enviado"
         except Exception as e:
+            logger.error(f"Error enviando email a {self.email}: {str(e)}")
             return False, f"Error enviando email: {str(e)}"
     
     def cambiar_carrera(self, nueva_carrera, razon=""):
