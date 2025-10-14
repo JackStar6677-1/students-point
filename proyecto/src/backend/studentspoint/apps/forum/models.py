@@ -112,6 +112,8 @@ class Post(models.Model):
         COMENTARIO = "comentario", "Comentario"
         ENCUESTA = "encuesta", "Encuesta"
         IMAGEN = "imagen", "Imagen"
+        ENLACE = "enlace", "Enlace"
+        ARCHIVO = "archivo", "Archivo"
         OTRO = "otro", "Otro"
 
     foro = models.ForeignKey(Foro, on_delete=models.CASCADE, related_name="posts")
@@ -127,6 +129,8 @@ class Post(models.Model):
         default=TipoPost.COMENTARIO,
         help_text="Tipo de publicación"
     )
+    # Enlace asociado al post (solo para tipo ENLACE)
+    enlace_url = models.URLField(null=True, blank=True, help_text="URL asociada al post cuando es de tipo enlace")
     imagen = models.ImageField(
         upload_to='forum/images/', 
         null=True, 
@@ -136,6 +140,13 @@ class Post(models.Model):
     imagen_aprobada = models.BooleanField(
         default=False,
         help_text="True si la imagen fue aprobada por un administrador"
+    )
+    # Archivo adjunto (solo para tipo ARCHIVO)
+    archivo = models.FileField(
+        upload_to='forum/files/',
+        null=True,
+        blank=True,
+        help_text="Archivo adjunto para publicaciones de tipo archivo"
     )
     score = models.IntegerField(default=0)
     estado = models.CharField(max_length=20, choices=Estado.choices, default=Estado.PUBLICADO)
@@ -196,6 +207,9 @@ class Post(models.Model):
         
         if accion == "aprobar":
             self.estado = Post.Estado.PUBLICADO
+            # Si hay imagen pendiente, marcar como aprobada
+            if self.imagen and not self.imagen_aprobada:
+                self.imagen_aprobada = True
         elif accion == "rechazar":
             self.estado = Post.Estado.RECHAZADO
         elif accion == "ocultar":
@@ -300,6 +314,11 @@ class PostReporte(models.Model):
         VIOLENCIA = "violencia", "Violencia"
         OTRO = "otro", "Otro"
     
+    class Estado(models.TextChoices):
+        PENDIENTE = "pendiente", "Pendiente"
+        RESUELTO = "resuelto", "Resuelto"
+        DESCARTADO = "descartado", "Descartado"
+    
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="reportes")
     usuario = models.ForeignKey(
         settings.AUTH_USER_MODEL, 
@@ -308,6 +327,7 @@ class PostReporte(models.Model):
     )
     tipo = models.CharField(max_length=30, choices=TipoReporte.choices)
     descripcion = models.TextField(blank=True)
+    estado = models.CharField(max_length=20, choices=Estado.choices, default=Estado.PENDIENTE)
     created_at = models.DateTimeField(auto_now_add=True)
     
     class Meta:

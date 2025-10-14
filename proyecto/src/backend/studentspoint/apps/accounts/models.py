@@ -23,18 +23,19 @@ DUOC_DOMAIN = "@duocuc.cl"  # Mantener compatibilidad
 
 # Carreras disponibles en la plataforma
 CARRERAS_DISPONIBLES = [
-    "Ingenieria en Informatica",
-    "Ingenieria en Construccion",
-    "Ingenieria en Electricidad",
-    "Ingenieria Industrial",
+    "Ingeniería en Informática",
+    "Ingeniería en Conectividad y Redes",
+    "Ingeniería en Construcción",
+    "Ingeniería en Electricidad",
+    "Ingeniería Industrial",
     "Derecho",
     "Medicina",
     "Arquitectura",
-    "Psicologia",
-    "Administracion de Empresas",
+    "Psicología",
+    "Administración de Empresas",
     "Contabilidad",
-    "Tecnico en Informatica",
-    "Estudiante Generico",  # Para estudiantes en exploracion o programas interdisciplinarios
+    "Técnico en Informática",
+    "Estudiante Genérico",  # Para estudiantes en exploración o programas interdisciplinarios
 ]
 
 

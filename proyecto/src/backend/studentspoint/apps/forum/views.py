@@ -3,10 +3,13 @@
 from django.db.models import Q, Sum
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, status
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.exceptions import PermissionDenied, Throttled
+from django.utils import timezone
+from datetime import timedelta
 from drf_spectacular.utils import extend_schema
 
 from studentspoint.apps.accounts.permissions import IsModerator
@@ -14,6 +17,7 @@ from studentspoint.apps.accounts.permissions import IsModerator
 from .models import BANNED_WORDS, MODERATION_WORDS, Comentario, Foro, Post, PostReporte, VotoPost
 from .serializers import (
     ComentarioSerializer,
+    OpcionEncuestaSerializer,
     ForumDetailSerializer,
     ForoSerializer,
     ModeracionSerializer,
@@ -22,6 +26,35 @@ from .serializers import (
     ScoreSerializer,
     VoteSerializer,
 )
+
+
+class EncuestaVotarView(APIView):
+    """Permite a un usuario votar por una opción de encuesta."""
+    permission_classes = [IsAuthenticated]
+
+    @extend_schema(description="Votar por una opción de encuesta del post", responses=ScoreSerializer)
+    def post(self, request, pk, opcion_id):
+        post = get_object_or_404(Post, pk=pk)
+        if post.tipo != Post.TipoPost.ENCUESTA:
+            return Response({"detail": "El post no es una encuesta"}, status=status.HTTP_400_BAD_REQUEST)
+        opcion = get_object_or_404(post.opciones_encuesta, pk=opcion_id)
+        # Registrar voto único por usuario
+        from .models import VotoEncuesta
+        VotoEncuesta.objects.update_or_create(opcion=opcion, usuario=request.user)
+        # Recalcular votos
+        opcion.votos = opcion.votos_usuarios.count()
+        opcion.save(update_fields=["votos"])
+        total = post.opciones_encuesta.aggregate(total=Sum("votos")) or {"total": 0}
+        return Response({"total_votos": total.get("total", 0)})
+
+
+class EncuestaOpcionesListView(generics.ListAPIView):
+    """Lista opciones de encuesta de un post."""
+    serializer_class = OpcionEncuestaSerializer
+
+    def get_queryset(self):
+        post = get_object_or_404(Post, pk=self.kwargs["pk"])
+        return post.opciones_encuesta.all()
 
 
 class ForoListView(generics.ListAPIView):
@@ -34,6 +67,8 @@ class ForoListView(generics.ListAPIView):
     """
 
     serializer_class = ForoSerializer
+    pagination_class = None
+    permission_classes = [AllowAny]
 
     def get_queryset(self):
         # Asegurar foros por defecto si no existen
@@ -58,7 +93,7 @@ class ForoListView(generics.ListAPIView):
                     Q(es_privado=True, carrera=self.request.user.career)
                 )
         else:
-            # Usuarios no autenticados solo ven foros públicos
+            # Usuarios no autenticados: permitir ver foros públicos
             queryset = queryset.filter(es_privado=False)
         
         # Filtros adicionales
@@ -115,6 +150,19 @@ class PostListCreateView(generics.ListCreateAPIView):
 
     serializer_class = PostSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
+    pagination_class = None
+
+    def create(self, request, *args, **kwargs):  # pragma: no cover - thin wrapper
+        # Compatibilidad: aceptar 'texto' como alias de 'comentario'
+        data = request.data.copy()
+        if data.get('tipo') == 'texto':
+            data['tipo'] = Post.TipoPost.COMENTARIO
+
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def get_queryset(self):
         # Optimización: usar select_related y prefetch_related para evitar N+1
@@ -139,6 +187,23 @@ class PostListCreateView(generics.ListCreateAPIView):
         estado = self.request.query_params.get("estado")
         if estado:
             queryset = queryset.filter(estado=estado)
+        # Restringir visibilidad según foro privado
+        user = self.request.user
+        if user.is_authenticated:
+            if not (user.is_staff or user.role in ['moderator', 'admin_global']):
+                queryset = queryset.filter(
+                    Q(foro__es_privado=False) | Q(foro__es_privado=True, foro__carrera=user.career)
+                )
+        else:
+            # Usuarios no autenticados: listar solo foros públicos y limitar cantidad si se pasa ?limit=
+            queryset = queryset.filter(foro__es_privado=False)
+            try:
+                limit = int(self.request.query_params.get("limit", "0"))
+                if limit > 0:
+                    queryset = queryset[:limit]
+            except Exception:
+                pass
+
         return queryset
 
     def perform_create(self, serializer):
@@ -155,11 +220,28 @@ class PostListCreateView(generics.ListCreateAPIView):
                     f"Este foro es para {foro.carrera}. Puedes comentar en posts de otros foros."
                 )
         
-        # Manejar imagen si se subió
+        # Rate limiting: máximo 5 posts por hora por usuario (anti-spam)
+        limite_hora = timezone.now() - timedelta(hours=1)
+        creados_ultima_hora = Post.objects.filter(
+            usuario=self.request.user,
+            created_at__gte=limite_hora
+        ).count()
+        if creados_ultima_hora >= 5:
+            raise Throttled(detail="Has alcanzado el límite de 5 publicaciones por hora. Intenta más tarde.")
+
+        # Manejar imagen, enlace o archivo si se enviaron
         imagen = self.request.FILES.get('imagen')
+        archivo = self.request.FILES.get('archivo')
+        enlace_url = self.request.data.get('enlace_url')
         if imagen:
             serializer.validated_data['imagen'] = imagen
             serializer.validated_data['tipo'] = Post.TipoPost.IMAGEN
+        elif archivo:
+            serializer.validated_data['archivo'] = archivo
+            serializer.validated_data['tipo'] = Post.TipoPost.ARCHIVO
+        elif enlace_url:
+            serializer.validated_data['enlace_url'] = enlace_url
+            serializer.validated_data['tipo'] = Post.TipoPost.ENLACE
         
         post = serializer.save(usuario=self.request.user)
         # Verificar contenido automáticamente
@@ -185,6 +267,7 @@ class CommentCreateView(generics.ListCreateAPIView):
 
 class PostVoteView(APIView):
     """Registra el voto del usuario para un post."""
+    permission_classes = [IsAuthenticated]
     @extend_schema(request=VoteSerializer, responses=ScoreSerializer)
     def post(self, request, pk):
         post = get_object_or_404(Post, pk=pk)
@@ -206,6 +289,7 @@ class PostReporteView(generics.CreateAPIView):
     """Permite a usuarios reportar posts inapropiados."""
     
     serializer_class = PostReporteSerializer
+    permission_classes = [IsAuthenticated]
     
     def perform_create(self, serializer):
         post = get_object_or_404(Post, pk=self.kwargs["pk"])
@@ -229,7 +313,13 @@ class PostModeracionView(generics.GenericAPIView):
         
         post.moderar(request.user, accion, razon)
         
-        return Response({"detail": f"Post {accion}do exitosamente"})
+        detalle = {"detail": f"Post {accion}do exitosamente", "estado": post.estado}
+        if post.imagen:
+            detalle.update({
+                "imagen_aprobada": post.imagen_aprobada,
+                "imagen_url": request.build_absolute_uri(post.imagen.url) if post.imagen else None,
+            })
+        return Response(detalle)
 
 
 class PostHideView(generics.GenericAPIView):
@@ -253,7 +343,15 @@ class ModeracionListView(generics.ListAPIView):
     serializer_class = PostSerializer
     
     def get_queryset(self):
-        return Post.objects.filter(estado=Post.Estado.REVISION).order_by("-created_at")
+        qs = Post.objects.filter(estado=Post.Estado.REVISION).order_by("-created_at")
+        # Filtros opcionales
+        foro_id = self.request.query_params.get("foro_id")
+        usuario_id = self.request.query_params.get("usuario_id")
+        if foro_id:
+            qs = qs.filter(foro_id=foro_id)
+        if usuario_id:
+            qs = qs.filter(usuario_id=usuario_id)
+        return qs
 
 
 class PostReportesListView(generics.ListAPIView):
@@ -264,5 +362,18 @@ class PostReportesListView(generics.ListAPIView):
     
     def get_queryset(self):
         post = get_object_or_404(Post, pk=self.kwargs["pk"])
-        return PostReporte.objects.filter(post=post).order_by("-created_at")
+        qs = PostReporte.objects.filter(post=post).order_by("-created_at")
+        estado = self.request.query_params.get("estado")
+        if estado:
+            qs = qs.filter(estado=estado)
+        return qs
+
+
+class ReporteUpdateView(generics.UpdateAPIView):
+    """Permite a moderadores actualizar el estado de un reporte."""
+    permission_classes = [IsModerator]
+    serializer_class = PostReporteSerializer
+
+    def get_queryset(self):
+        return PostReporte.objects.all()
 

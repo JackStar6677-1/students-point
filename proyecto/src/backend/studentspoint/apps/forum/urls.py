@@ -4,6 +4,8 @@ from django.urls import path
 
 from .views import (
     CommentCreateView,
+    EncuestaOpcionesListView,
+    EncuestaVotarView,
     ForoListView,
     ModeracionListView,
     PostHideView,
@@ -12,6 +14,7 @@ from .views import (
     PostReporteView,
     PostReportesListView,
     PostVoteView,
+    ReporteUpdateView,
 )
 
 urlpatterns = [
@@ -23,5 +26,9 @@ urlpatterns = [
     path("forum/posts/<int:pk>/moderar", PostModeracionView.as_view(), name="post-moderate"),
     path("forum/posts/<int:pk>/ocultar", PostHideView.as_view(), name="post-hide"),
     path("forum/posts/<int:pk>/reportes", PostReportesListView.as_view(), name="post-reports"),
+    path("forum/reportes/<int:pk>", ReporteUpdateView.as_view(), name="report-update"),
     path("forum/moderacion", ModeracionListView.as_view(), name="moderation-list"),
+    # Encuestas
+    path("forum/posts/<int:pk>/encuesta/opciones", EncuestaOpcionesListView.as_view(), name="encuesta-opciones"),
+    path("forum/posts/<int:pk>/encuesta/opciones/<int:opcion_id>/votar", EncuestaVotarView.as_view(), name="encuesta-votar"),
 ]

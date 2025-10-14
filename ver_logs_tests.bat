@@ -39,7 +39,7 @@ if exist logs_tests\pytest_summary_latest.log (
     type logs_tests\pytest_summary_latest.log
 ) else (
     echo [INFO] No hay resumen disponible
-    echo [INFO] Ejecuta primero: python run_pytest.py
+    echo [INFO] Ejecuta primero: python tests\run_pytest.py
 )
 echo.
 pause
@@ -71,7 +71,7 @@ if exist logs_tests\tests_execution.log (
     powershell -Command "Get-Content logs_tests\tests_execution.log -Tail 100"
 ) else (
     echo [ERROR] Archivo no encontrado
-    echo [INFO] Ejecuta primero: python run_pytest.py
+    echo [INFO] Ejecuta primero: python tests\run_pytest.py
 )
 echo.
 pause

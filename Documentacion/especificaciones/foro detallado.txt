@@ -1,47 +1,181 @@
-### 1. Sistema de Foros
-
-**Sistema de Foros Personalizados por Carrera**
-
-**Objetivo:** Desarrollar un sistema de foros segmentado por carreras dentro de la plataforma **StudentPoint**, donde cada estudiante pueda interactuar en su foro específico, pero también pueda comentar en los foros de otras carreras sin poder postear contenido directamente allí.
-
-### Funcionalidades:
-
-1. **Foros por Carrera:**
-
-   * Cada carrera tiene su propio foro (por ejemplo: “Informática-Point”, “Leyes-Point”).
-   * Los usuarios solo pueden crear publicaciones (posts) en el foro correspondiente a su carrera. Esto es determinado por el campo de “Área de Estudio” en el perfil del usuario.
-   * Los usuarios pueden interactuar con los posts de otras carreras, pero solo como comentaristas, no como creadores de publicaciones.
-
-2. **Tipos de Publicaciones:**
-
-   * **Encuestas:** Los usuarios pueden crear encuestas con opciones definidas para interactuar con la comunidad.
-   * **Comentarios:** Publicaciones comunes para compartir pensamientos, dudas o información.
-   * **Imágenes:** Permite la publicación de imágenes, pero estas deben ser revisadas manualmente por los administradores para asegurar que cumplan con las normas de la comunidad.
-   * **Otros:** Se pueden agregar tipos personalizados según sea necesario (por ejemplo, enlaces, archivos adjuntos).
-
-3. **Filtrado de Contenido:**
-
-   * Todos los comentarios y publicaciones que contengan texto serán revisados automáticamente para detectar palabras o frases inapropiadas (como insultos o lenguaje ofensivo).
-   * **Censura:** El sistema censura parcialmente las palabras ofensivas (ejemplo: "mierda" se convierte en "m#####").
-
-4. **Revisión de Imágenes:**
-
-   * Las imágenes subidas deben ser enviadas a un área de procesamiento especial, accesible solo por usuarios administradores.
-   * Los administradores revisarán manualmente las imágenes para asegurar que no infringen las normas de la comunidad.
-
-5. **Segmentación y Roles de Usuario:**
-
-   * Los usuarios pueden tener distintos roles: administrador, moderador, estudiante de carrera específica.
-   * Los administradores tienen acceso completo al sistema de foros y a la gestión de imágenes.
-   * Los moderadores pueden revisar y moderar los comentarios, pero no tienen acceso al panel de administración.
-
-6. **Foro Público vs Foro Privado:**
-
-   * Los foros podrían dividirse en públicos y privados según las necesidades, permitiendo conversaciones privadas entre grupos de estudiantes de la misma carrera o abiertos a toda la comunidad de la plataforma.
-
-7. **Cambio de Carrera:**
-
-   * Los estudiantes pueden cambiar de carrera (si así lo requieren) pero al hacerlo, perderán los privilegios de publicación en el foro de la carrera anterior y se les asignará automáticamente el foro correspondiente a su nueva carrera.
+> **Objetivo:** Adaptar e integrar un sistema de foros completo dentro de la plataforma *Student Point*. Cada carrera debe tener su propio espacio de foro (ej.: “Informática-Point”, “Leyes-Point”, “Medicina-Point”, etc.). Además debe existir un perfil genérico `Estudiante` para usuarios que no coincidan con las carreras predefinidas.
+>
+> **Reglas principales de interacción entre foros:**
+>
+> * Los usuarios solo pueden **publicar** (crear post) en el foro correspondiente a su *área de estudio activa* (p. ej. un alumno con área “Ingeniería en Informática” puede postear en “Informática-Point” pero **no** en “Leyes-Point”).
+> * Los usuarios pueden **comentar** en posts de otros foros (p. ej. informáticos pueden comentar en “Leyes-Point”).
+> * Excepciones: roles `Administrador` y `Moderador` pueden postear/comentar en cualquier foro según permisos.
+>
+> **Tipos de post:** post estándar (texto), encuesta, imagen, enlace, archivo, otro. Al abrir la caja de creación debe aparecer una pequeña pestaña desplegable para seleccionar el tipo.
+>
+> **Moderación y seguridad de contenido:**
+>
+> * Todo contenido textual pasa por un filtro automático de lenguaje ofensivo: las palabras prohibidas quedan censuradas conservando la primera letra y el largo (ej.: “mierda” → `m#####`).
+> * Las imágenes **siempre** van a una cola de revisión manual (no se publican hasta aprobación por administrador).
+> * Cada imagen subida se envía a una página de procesamiento visible **solo** para administradores/moderadores con herramientas de revisión (previews, metadatos, usuario que subió, opción aprobar/rechazar, motivo).
+>
+> **Personalización de usuario y cambio de área de estudio:**
+>
+> * El perfil de usuario contiene: nombre, alias, correo institucional, `área_de_estudio_actual`, historial de áreas (timestamped), semestre_actual, documentación/verificación (opcional).
+> * La `área_de_estudio_actual` puede cambiar **una vez por semestre** mediante un flujo de cambio: solicitud → verificación automática/manual → confirmación; registrar en historial y bloquear nuevos cambios hasta el próximo semestre.
+>
+> **Requisitos no funcionales:** logs de auditoría completos, trazabilidad de cambios, APIs REST/GraphQL para integración, pruebas automatizadas para moderación, escalabilidad horizontal para manejar picos de uso estudiantil.
+>
+> **Entrega:** documentación técnica (endpoints, modelo de datos), mockups de UI (creación post, cola de imágenes, panel admin), y pruebas de aceptación.
 
 ---
 
+# Especificación ampliada (funciones, reglas y tecnicismos)
+
+## 1) Estructura de foros y modelos de carrera
+
+* Cada **carrera** es una entidad con `id`, `nombre`, `slug` (ej. `informatica-point`), `visibilidad` (pública/privada).
+* Foros por defecto: se debe soportar **n** carreras (no solo Informática/Leyes). Debe haber la opción de añadir/editar carreras desde el admin.
+* Perfil `Estudiante` genérico: usado cuando el usuario no encaja en carreras predefinidas — tiene permisos idénticos para comentar, pero **no** puede postear en foros cerrados por carrera a menos que se asigne un área.
+
+## 2) Roles y permisos (matriz)
+
+* `Administrador` — pleno: crear/editar/eliminar posts y foros, revisar imágenes, gestionar usuarios, cambiar áreas sin límite (solo por admin).
+* `Moderador` — revisar reports, aprobar/rechazar imágenes, suspender posts/usuarios temporales.
+* `Estudiante` (por carrera) — **POST** solo en su foro; **COMMENT** en cualquier foro; editar sus posts por tiempo limitado; reportar contenido.
+* `Estudiante (genérico)` — igual que estudiante, salvo que no tiene un foro propio hasta asignarle un área.
+* `Invitado` — lectura pública limitada según la configuración.
+
+## 3) Flujo de creación de post (UI / UX)
+
+1. Usuario hace clic en “Nuevo post” dentro del foro (solo aparece activo si el foro corresponde a su `área_de_estudio_actual`, salvo admin/mod).
+2. Se abre modal con textarea + toolbar + select tipo (desplegable): `Texto`, `Encuesta`, `Imagen`, `Enlace`, `Archivo`, `Otro`.
+3. Si selecciona `Imagen`, al subir:
+
+   * Se muestra preview *local* (no publicado).
+   * Archivo enviado a la cola de procesamiento (ID de revisión). Post queda en estado `PendienteImagen` o `Borrador` hasta aprobación.
+4. Al enviar texto, el back aplica filtro de lenguaje (ver sección 5) y guarda post en estado `Publicado` o `Modificado` según aprobaciones.
+
+## 4) Tipos de post — comportamiento
+
+* **Texto:** publicación normal. Pasa por filtro de texto.
+* **Encuesta:** creador define opciones, duración, y visibilidad de votos (anon/nominal). Encuestas con imágenes también deben esperar aprobación de imagen.
+* **Imagen:** no visible públicamente hasta aprobación admin. Se permite múltiples imágenes por post; cada imagen individual tiene su estado.
+* **Archivo/Enlace:** virus/URL scanning opcional y revisión automatizada (p. ej. check de dominios maliciosos).
+* **Otro:** etiqueta libre para futuros tipos (ej. tarea, evento).
+
+## 5) Filtro / Censura de lenguaje ofensivo
+
+* **Lista base:** lista configurable en DB (`forbidden_words`) con variantes y regex.
+* **Algoritmo de censura (reglas):**
+
+  * Detección case-insensitive y con normalización (quitar acentos, normalizar caracteres Unicode confusos).
+  * Reemplazo: conservar primera y última letra opcional o solo la primera (según política). Tú pediste conservar **solo la primera** y rellenar con `#` manteniendo longitud. Ejemplo implementable en pseudocódigo:
+
+    ```python
+    def censor_word(word):
+        if len(word) <= 1: return word
+        return word[0] + '#' * (len(word)-1)
+    ```
+  * Para palabras compuestas o con puntuación interna, separar por tokens.
+  * Mantener contexto: si palabra aparece dentro de otra palabra (ej. “mierdoso”), censurar también respetando longitud.
+  * Registro: cuando se censura, registrar `post_id`, `user_id`, palabra_detectada, posición, timestamp — para analytics y appeals.
+* **Excepciones:** si el administrador decide permitir ciertas palabras en contextos académicos (p. ej. análisis literario), se puede añadir a `allowlist` por foro o por role.
+
+## 6) Moderación de imágenes (workflow)
+
+* **Subida → Quarantine**: imagen marcada `pending_review` y no se muestra públicamente.
+* **Procesamiento automático (opcional):** antivirus, detección NSFW/violencia con modelo; si score alto, marcar prioridad alta para revisión.
+* **Cola de revisión**: página con filtros (prioridad, usuario, fecha, foro, tags de detección automática). Herramientas en UI:
+
+  * Preview a tamaño real, metadatos (IP, EXIF, timestamp), botón `Aprobar` / `Rechazar` (con motivo), `Eliminar` y `Marcar para revisión legal`.
+* **Acciones:** al `Aprobar` la imagen pasa a `Publicado`; al `Rechazar` se notifica al autor con motivo y posible sanción.
+* **Logs:** cada acción guarda `admin_id`, `action`, `comment`, `timestamp`.
+
+## 7) Cambio de área de estudio (política + mecanismo)
+
+* **Regla:** usuario puede cambiar su `área_de_estudio_actual` **una vez por semestre**.
+* **Implementación técnica:**
+
+  * Campo `area_change_requested_at` y `area_change_effective_at` en usuario.
+  * Cambio mediante:
+
+    1. **Autogestión:** el usuario solicita cambio desde perfil -> se valida (si está dentro de ventana de cambio del semestre y si no cambió ya en el semestre actual).
+    2. **Verificación:** si la plataforma requiere verificación, subir prueba/adjunto o verificación por integración con registro académico.
+    3. **Aprobación automática/manual:** si todo OK, el sistema actualiza `area_de_estudio_actual`, añade entrada en `area_history` con timestamp y bloquea nuevos cambios hasta el próximo semestre (control por `last_area_change_semester`).
+* **Interacciones de permisos tras cambio:**
+
+  * Al cambiar, el usuario **pierde** permisos de posteo en el foro anterior y adquiere posteo en el nuevo foro.
+  * Los posts previos permanecen con autor original y no se reasignan; su historial indica la carrera vigente cuando se creó el post.
+* **Excepciones:** Admin puede forzar cambios (ej. correcciones).
+
+## 8) Auditoría, reportes y appeals
+
+* Todos los cambios críticos guardan logs: creación/edición/eliminación de post, cambios de área, acciones de moderación, revisiones de imágenes.
+* Sistema de reporte por usuarios con categorías (spam, insultos, imagen inapropiada, otro). Los reports se envían a cola de moderación.
+* Mecanismo de apelación: usuario puede apelar acciones (baneo, eliminación de post) y se crea ticket en admin.
+
+## 9) Modelo de datos (básico)
+
+* `users` (id, name, email, role, area_id, semester, last_area_change_at, area_history JSON/tabla relacional, created_at)
+* `areas` (id, name, slug, visibility, created_at)
+* `forums` (id, area_id, name, settings)
+* `posts` (id, forum_id, user_id, title, body, type, status, created_at, updated_at)
+* `comments` (id, post_id, user_id, body, created_at)
+* `images` (id, post_id/null, user_id, file_path, status, admin_review_id, created_at)
+* `forbidden_words` (word, regex, severity)
+* `moderation_logs` (id, entity_type, entity_id, action, actor_id, reason, timestamp)
+* `reports` (id, reporter_id, entity_type, entity_id, reason, status, created_at)
+
+## 10) Endpoints API (ejemplos)
+
+* `POST /api/posts` {forum_id, type, title, body, attachments[] } — valida permisos según `area`.
+* `GET /api/forums/:area_slug/posts` — paginado.
+* `POST /api/images/upload` — devuelve `image_id` y coloca en `pending_review`.
+* `POST /api/admin/images/:id/review` {action, reason} — admin only.
+* `POST /api/users/:id/change-area` {new_area_id, documentation?} — aplica regla semestral.
+
+## 11) UI mockups / elementos clave
+
+* Barra superior: selector de foro (según áreas del usuario).
+* Modal creación con pestaña desplegable de tipo y ayuda contextual (ej. tamaño máximo imagen, formatos, reglas de conducta).
+* Panel admin: cola de imágenes, logs de moderación, métricas (posts por día, reports, tiempos de revisión).
+* Perfil usuario: botón `Solicitar cambio de área` con historial visible (últimos cambios y fecha cuando podrá cambiar de nuevo).
+
+## 12) Reglas de negocio adicionales y escenarios
+
+* **Posts duplicados/spam:** detección por similitud; rate limit de creación (p. ej. max 5 posts en 1h).
+* **Edición de posts:** se permite edición dentro de 30 minutos sin historial; después queda registro con `edit_history`. Admin/Moderador puede editar por razones de censura legal.
+* **Borrado vs. ocultación:** preferir `ocultar` (soft delete) para auditoría; solo admin puede hard-delete con justificación.
+* **Notificaciones:** push/email cuando:
+
+  * post aprobado/rechazado (imagen),
+  * request de cambio de área aprobado/rechazado,
+  * reply/comment en su post,
+  * report result.
+
+## 13) Tests, QA y rollout
+
+* Tests unitarios para filtro de texto (lista de ejemplos con palabras borde).
+* Tests de integración para reglas de permisos (un usuario informático no puede postear en leyes).
+* Simulación de cola de imágenes con carga para medir latencia de revisión.
+* Rollout en fases: sandbox → beta con 1 facultad → full campus.
+
+## 14) Métricas y KPIs
+
+* Tiempo medio de revisión de imágenes.
+* % de posts que requieren moderación manual.
+* Incidencias por área (reports por 1k posts).
+* Cambios de área por semestre (para detectar abuso).
+
+## 15) Ejemplo de pseudocódigo para censura (JS)
+
+```javascript
+function censorText(text, forbiddenWordsList) {
+  // normalizar
+  const normalized = text.normalize('NFKD').toLowerCase();
+  let result = text;
+  forbiddenWordsList.forEach(word => {
+    const re = new RegExp('\\b' + escapeRegExp(word) + '\\b','gi');
+    result = result.replace(re, (match) => {
+      if (match.length <= 1) return match;
+      return match[0] + '#'.repeat(match.length - 1);
+    });
+  });
+  return result;
+}

@@ -48,9 +48,10 @@ class ForumAPITestCase(TestCase):
         self.assertIsInstance(response.data, list)
         
     def test_list_foros_unauthenticated(self):
-        """Prueba listar foros sin autenticación"""
+        """Prueba listar foros sin autenticación (foros públicos visibles)"""
         response = self.client.get('/api/forum/foros/')
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIsInstance(response.data, list)
         
     def test_create_post_authenticated(self):
         """Prueba crear post con usuario autenticado"""
@@ -84,14 +85,14 @@ class ForumAPITestCase(TestCase):
             usuario=self.user,
             titulo='Post 1',
             cuerpo='Contenido 1',
-            tipo='texto'
+            tipo='comentario'
         )
         post2 = Post.objects.create(
             foro=self.foro,
             usuario=self.user,
             titulo='Post 2',
             cuerpo='Contenido 2',
-            tipo='texto'
+            tipo='comentario'
         )
         
         self.client.force_authenticate(user=self.user)
@@ -104,16 +105,16 @@ class ForumAPITestCase(TestCase):
         self.client.force_authenticate(user=self.user)
         data = {
             'foro': self.foro.id,
-            'titulo': 'Post con palabra ofensiva',
-            'cuerpo': 'Este es un contenido con la palabra estúpido que debería ser censurada',
-            'tipo': 'texto'
+            'titulo': 'mierda en el titulo',
+            'cuerpo': 'Este es un contenido con la palabra estupido que deberia ser censurada',
+            'tipo': 'comentario'
         }
         response = self.client.post('/api/forum/posts/', data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         
         # Verificar que el contenido fue censurado
         post = Post.objects.get(id=response.data['id'])
-        self.assertIn('***', post.cuerpo)
+        self.assertIn('#', post.cuerpo)
         
     def test_anonymous_post(self):
         """Prueba crear post anónimo"""
@@ -122,7 +123,7 @@ class ForumAPITestCase(TestCase):
             'foro': self.foro.id,
             'titulo': 'Post anónimo',
             'cuerpo': 'Contenido anónimo',
-            'tipo': 'texto',
+            'tipo': 'comentario',
             'anonimo': True
         }
         response = self.client.post('/api/forum/posts/', data)
@@ -158,13 +159,13 @@ class ForumAPITestCase(TestCase):
             usuario=self.user,
             titulo='Post para votar',
             cuerpo='Contenido',
-            tipo='texto'
+            tipo='comentario'
         )
         
         self.client.force_authenticate(user=self.user)
         
         # Votar positivo
-        response = self.client.post(f'/api/forum/posts/{post.id}/vote/', {'vote': 'up'})
+        response = self.client.post(f'/api/forum/posts/{post.id}/votar', {'valor': 1})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         
         # Verificar que el score aumentó
@@ -172,7 +173,7 @@ class ForumAPITestCase(TestCase):
         self.assertEqual(post.score, 1)
         
         # Votar negativo
-        response = self.client.post(f'/api/forum/posts/{post.id}/vote/', {'vote': 'down'})
+        response = self.client.post(f'/api/forum/posts/{post.id}/votar', {'valor': -1})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         
         # Verificar que el score cambió

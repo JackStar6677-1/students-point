@@ -9,15 +9,20 @@ import os
 import sys
 from pathlib import Path
 import pytest
+import django
 
 
 def main() -> int:
-    repo_root = Path(__file__).resolve().parent
+    # Ubicar raíz del repo y backend
+    tests_dir = Path(__file__).resolve().parent
+    repo_root = tests_dir.parent
     backend_root = repo_root / 'proyecto' / 'src' / 'backend'
     if str(backend_root) not in sys.path:
         sys.path.insert(0, str(backend_root))
 
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'studentspoint.settings.base')
+    # Inicializar Django para evitar AppRegistryNotReady
+    django.setup()
 
     args = sys.argv[1:] or []
     return pytest.main(args)

@@ -6,9 +6,9 @@
 ![License](https://img.shields.io/badge/license-Open%20Source-blue)
 ![Status](https://img.shields.io/badge/status-production--ready-success)
 
->  **NUEVO USUARIO:** Lee [`START-HERE.md`](START-HERE.md) o [`LEEME-PRIMERO.md`](LEEME-PRIMERO.md) para inicio super rápido.
+>  **NUEVO USUARIO:** Lee [`Documentacion/GUIA-COMPLETA.md`](Documentacion/GUIA-COMPLETA.md) para inicio super rapido.
 
->  **TODA LA DOCUMENTACIÓN:** Ver [`INDICE-MAESTRO.md`](INDICE-MAESTRO.md) para índice completo.
+>  **TODA LA DOCUMENTACION:** Ver [`Documentacion/INDICE-MAESTRO.md`](Documentacion/INDICE-MAESTRO.md) para indice completo.
 
 ## Descripcion
 
@@ -33,9 +33,9 @@ chmod +x iniciar_desarrollo.sh
 
 **¡Eso es todo!** El servidor y el monitor de logs se inician automáticamente.
 
->  **Documentación completa**: Ver [`INDICE-MAESTRO.md`](INDICE-MAESTRO.md) para guía completa de toda la documentación disponible.
+>  **Documentacion completa**: Ver [`Documentacion/INDICE-MAESTRO.md`](Documentacion/INDICE-MAESTRO.md) para guia completa de toda la documentacion disponible.
 
->  **Sistema de Logs**: Ver [`INICIO-RAPIDO-LOGS.md`](INICIO-RAPIDO-LOGS.md) para guía de monitoreo y logs.
+>  **Sistema de Logs**: Ver [`Documentacion/INICIO-RAPIDO-LOGS.md`](Documentacion/INICIO-RAPIDO-LOGS.md) para guia de monitoreo y logs.
 
 ## Caracteristicas Principales
 
@@ -103,10 +103,10 @@ ejecutar_tests_dev.bat
 ./ejecutar_tests_completo.sh
 
 # Suite completa con reporte
-python test_suite_completo.py --verbose --coverage
+python tests/test_suite_completo.py --verbose --coverage
 ```
 
-Para mas detalles, ver [TESTING.md](TESTING.md)
+Para mas detalles, ver [Documentacion/TESTING.md](Documentacion/TESTING.md)
 
 ## Stack Tecnologico
 
@@ -225,11 +225,15 @@ students-point/
 
 ## Configuracion de Produccion
 
-Ver [DEPLOYMENT.md](DEPLOYMENT.md) para instrucciones detalladas de despliegue en produccion.
+Ver [Documentacion/DEPLOYMENT.md](Documentacion/DEPLOYMENT.md) para instrucciones detalladas de despliegue en produccion.
 
 ## Documentacion
 
-La documentacion esta organizada en carpetas tematicas. Ver **[INDICE COMPLETO](Documentacion/INDICE-DOCUMENTACION.md)**
+La documentacion esta organizada en carpetas tematicas. Ver:
+- **[Documentacion/GUIA-COMPLETA.md](Documentacion/GUIA-COMPLETA.md)** - Guia de inicio completa
+- **[Documentacion/INDICE-MAESTRO.md](Documentacion/INDICE-MAESTRO.md)** - Indice general de toda la documentacion
+- **[Documentacion/ESTRUCTURA-DOCUMENTACION.md](Documentacion/ESTRUCTURA-DOCUMENTACION.md)** - Como esta organizada la documentacion
+- **[Documentacion/INDICE-DOCUMENTACION.md](Documentacion/INDICE-DOCUMENTACION.md)** - Indice de Documentacion/ completo
 
 ### Documentacion Tecnica
  `Documentacion/config-avanzada/`
@@ -373,11 +377,11 @@ Este proyecto es de codigo abierto, desarrollado como proyecto academico.
 
 ## Releases
 
-Ver [RELEASES.md](RELEASES.md) para ver todas las versiones.
+Ver [Documentacion/RELEASES.md](Documentacion/RELEASES.md) para ver todas las versiones.
 
 ## Changelog
 
-Ver [CHANGELOG.md](CHANGELOG.md) para ver el historial de cambios detallado.
+Ver [Documentacion/CHANGELOG.md](Documentacion/CHANGELOG.md) para ver el historial de cambios detallado.
 
 ## Contacto
 

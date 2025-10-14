@@ -56,7 +56,7 @@ ver_resumen() {
         cat "$LOGS_DIR/pytest_summary_latest.log"
     else
         echo -e "${YELLOW}[INFO]${NC} No hay resumen disponible"
-        echo -e "${YELLOW}[INFO]${NC} Ejecuta primero: python run_pytest.py"
+        echo -e "${YELLOW}[INFO]${NC} Ejecuta primero: python tests/run_pytest.py"
     fi
     
     echo ""
@@ -94,7 +94,7 @@ ver_completo() {
         tail -n 100 "$LOGS_DIR/tests_execution.log"
     else
         echo -e "${RED}[ERROR]${NC} Archivo no encontrado"
-        echo -e "${YELLOW}[INFO]${NC} Ejecuta primero: python run_pytest.py"
+        echo -e "${YELLOW}[INFO]${NC} Ejecuta primero: python tests/run_pytest.py"
     fi
     
     echo ""

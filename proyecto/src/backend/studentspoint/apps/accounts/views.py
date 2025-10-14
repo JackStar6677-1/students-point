@@ -21,6 +21,7 @@ from .serializers import (
 )
 from .models import CARRERAS_DISPONIBLES
 from studentspoint.apps.campuses.models import Sede
+from studentspoint.utils import verify_recaptcha
 
 User = get_user_model()
 
@@ -126,6 +127,9 @@ def login(request):
                 {'detail': 'Email y contraseña son requeridos'}, 
                 status=status.HTTP_400_BAD_REQUEST
             )
+        # Verificación reCAPTCHA (no estricta)
+        captcha_token = request.data.get('captcha_token')
+        _ok, _score = verify_recaptcha(captcha_token, request.META.get('REMOTE_ADDR'))
         
         # Buscar usuario por email
         try:
@@ -136,6 +140,13 @@ def login(request):
                 status=status.HTTP_401_UNAUTHORIZED
             )
         
+        # Requerir email verificado
+        if not user.is_email_verified:
+            return Response(
+                {'error': 'Debes verificar tu email antes de iniciar sesión. Revisa tu bandeja e ingresa el código de verificación.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
         # Verificar contraseña
         if user.check_password(password):
             # Generar tokens JWT
@@ -180,6 +191,9 @@ def register(request):
     como el payload directo del backend (name, career, campus).
     """
     email = (request.data.get('email') or '').lower()
+    # Verificación reCAPTCHA (no estricta)
+    captcha_token = request.data.get('captcha_token')
+    _ok, _score = verify_recaptcha(captcha_token, request.META.get('REMOTE_ADDR'))
     password = request.data.get('password', '')
 
     # Mapear nombre completo
@@ -282,7 +296,11 @@ def register(request):
 @permission_classes([permissions.AllowAny])
 def verificar_email(request):
     """Verifica el email del usuario con el código enviado."""
-    serializer = VerificarEmailSerializer(data=request.data)
+    # Aceptar alias 'code' además de 'codigo' para compatibilidad
+    payload = request.data.copy()
+    if 'codigo' not in payload and 'code' in payload:
+        payload['codigo'] = payload.get('code')
+    serializer = VerificarEmailSerializer(data=payload)
     if not serializer.is_valid():
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
@@ -531,14 +549,25 @@ def cambiar_carrera_usuario(request):
     razon = serializer.validated_data.get('razon', 'Cambio de carrera')
     
     # Validar que la carrera esté en la lista de disponibles
-    if nueva_carrera not in CARRERAS_DISPONIBLES:
+    # Normalizar para comparar con acentos: comparar en minúsculas sin tildes
+    import unicodedata
+    def norm(s):
+        return ''.join(c for c in unicodedata.normalize('NFKD', s) if not unicodedata.combining(c)).lower()
+    disponibles_norm = [norm(c) for c in CARRERAS_DISPONIBLES]
+    if norm(nueva_carrera) not in disponibles_norm:
         return Response(
             {'status': 'error', 'message': f'Carrera no disponible. Opciones: {", ".join(CARRERAS_DISPONIBLES)}'}, 
             status=status.HTTP_400_BAD_REQUEST
         )
     
     # Cambiar carrera
-    resultado = request.user.cambiar_carrera(nueva_carrera, razon)
+    # Usar la forma original con acentos de la carrera elegida si hay match
+    try:
+        idx = disponibles_norm.index(norm(nueva_carrera))
+        nueva_carrera_normalizada = CARRERAS_DISPONIBLES[idx]
+    except ValueError:
+        nueva_carrera_normalizada = nueva_carrera
+    resultado = request.user.cambiar_carrera(nueva_carrera_normalizada, razon)
     
     # Retornar perfil actualizado
     user_serializer = UserDetailSerializer(request.user, context={'request': request})

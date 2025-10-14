@@ -1,51 +1,46 @@
-### 2. Sistema de Registro, Login y Personalización de Perfil
+## 2. Sistema de Registro, Login y Personalización de Perfil
 
-La segunda parte se refiere a cómo gestionar el registro de usuarios, la personalización de su perfil y la autenticación. Este sistema debe ser intuitivo y flexible, permitiendo que los usuarios puedan modificar su área de estudio y otros aspectos de su cuenta.
+Esta sección define cómo se gestionará el registro, autenticación y personalización de los usuarios. El sistema debe ser seguro, intuitivo y flexible, permitiendo que los estudiantes modifiquen su área de estudio y otros aspectos de su cuenta de forma controlada.
 
 ---
 
-**Sistema de Registro, Login y Personalización de Perfil**
+**Objetivo:**
+Implementar un sistema robusto de registro y autenticación que permita crear perfiles personalizados y gestionar credenciales de manera segura. Además, debe ofrecer opciones de personalización, incluyendo el cambio de área de estudio o carrera una vez por semestre.
 
-**Objetivo:** Crear un flujo de registro de usuarios robusto, que permita la creación de perfiles personalizados y la gestión de credenciales de manera segura y eficiente. Además, ofrecer un sistema de personalización que permita a los usuarios cambiar su área de estudio o carrera cada semestre.
+### Funcionalidades
 
-### Funcionalidades:
+1. **Registro de Usuario**
 
-1. **Registro de Usuario:**
+   * Los usuarios deben registrarse con un correo electrónico y contraseña, confirmando su identidad mediante un correo de verificación.
+   * Se recomienda agregar una capa anti-bots (captcha o código de confirmación).
+   * El registro será manual (sin OAuth), garantizando control total sobre las credenciales.
 
-   * Los usuarios deben registrar su cuenta proporcionando un correo electrónico, una contraseña y confirmando su identidad a través de un correo de verificación.
-   * Puede implementarse una capa adicional de seguridad como un **captcha** o un código de confirmación en el correo para evitar registros automáticos (anti-bots).
-   * La plataforma debe permitir un registro manual sin OAuth para evitar los problemas mencionados, garantizando que los usuarios gestionen sus credenciales desde el inicio.
+2. **Login**
 
-2. **Login:**
+   * La autenticación se basará en las credenciales creadas durante el registro.
+   * Las contraseñas deben almacenarse de forma segura utilizando **hashing** y políticas de seguridad estándar.
 
-   * El sistema de login debe estar basado en las credenciales proporcionadas durante el registro (usuario y contraseña).
-   * La autenticación debe ser segura (utilizando, por ejemplo, **hashing** de contraseñas) para proteger las contraseñas de los usuarios.
+3. **Cambio de Contraseña**
 
-3. **Cambio de Contraseña:**
+   * Los usuarios podrán restablecer o cambiar su contraseña a través de un proceso de verificación por correo electrónico.
 
-   * Los usuarios deben poder cambiar su contraseña de manera segura mediante un flujo de recuperación que involucre la verificación por correo electrónico (código de confirmación).
+4. **Personalización de Perfil**
 
-4. **Personalización de Perfil:**
+   * El perfil debe incluir foto, nombre, apellidos, semestre y área de estudio actual.
+   * Los usuarios podrán modificar su área de estudio cada semestre, reflejándose automáticamente en sus permisos dentro de los foros correspondientes.
 
-   * El perfil debe incluir:
+5. **Áreas de Estudio y Flexibilidad**
 
-     * Foto de perfil (permitiendo subir imágenes y almacenarlas en la base de datos).
-     * Información personal básica (nombre, apellidos, carrera actual, semestre, etc.).
-     * Los usuarios pueden seleccionar su **Área de Estudio**, la cual puede ser modificada cada semestre.
-     * El área de estudio inicial puede estar predefinida, pero los usuarios deben tener la capacidad de cambiarla si, por ejemplo, deciden cambiar de carrera o especialización.
+   * Deben existir múltiples carreras (Informática, Leyes, Medicina, Ingeniería, Arquitectura, Psicología, etc.).
+   * Se debe incluir un perfil de **“Estudiante Genérico”** para quienes no encajen en áreas predefinidas o estén en programas mixtos.
+   * El cambio de carrera actualizará automáticamente los foros y permisos asociados al usuario.
 
-5. **Área de Estudio y Flexibilidad:**
+6. **Gestión de Perfiles y Privilegios**
 
-   * Los usuarios no solo deben ser parte de áreas como **Informática** o **Leyes**, sino que deben existir múltiples opciones de carreras como **Medicina**, **Ingeniería Industrial**, **Arquitectura**, **Psicología**, etc.
-   * Además, debe haber una opción para un perfil de "Estudiante Genérico" para aquellos que no encajen en ninguna de las áreas predeterminadas. Esta opción podría ser útil para aquellos estudiantes que se encuentren en procesos de exploración académica o en programas interdisciplinarios.
-   * El sistema debe permitir a los usuarios **cambiar su carrera o área de estudio** cada semestre, reflejándose automáticamente en su foro y en sus permisos de publicación. Este cambio también debería actualizarse en su perfil y en las interacciones dentro de la plataforma.
+   * Los estudiantes tendrán acceso limitado según su área y rol.
+   * Administradores y moderadores podrán modificar perfiles, asignar roles y supervisar publicaciones.
 
-6. **Gestión de Perfiles y Privilegios:**
+7. **Verificación de Correo (Anti-Bots)**
 
-   * Los estudiantes tienen un acceso limitado a las funciones del foro basado en su carrera y rol (estudiante).
-   * Los administradores y moderadores pueden modificar los perfiles de los estudiantes, asignarles roles específicos y revisar sus publicaciones.
-
-7. **Verificación de Correo Electrónico (Anti-Bots):**
-
-   * Para asegurar que los usuarios son legítimos y evitar registros automáticos, se debe enviar un código de confirmación al correo electrónico proporcionado durante el registro. Este código debe ser ingresado por el usuario antes de que su cuenta sea activada.
-   * Esto también previene la creación de múltiples cuentas de un solo usuario.
+   * Para validar la autenticidad de las cuentas, se enviará un código de confirmación al correo del usuario.
+   * La cuenta solo se activará tras completar este paso, evitando registros duplicados o automáticos.

@@ -7,19 +7,8 @@ echo    StudentsPoint - Modo Desarrollo
 echo ============================================================
 echo.
 
-REM Preguntar si limpiar cache
-set /p CLEAN_CACHE="¿Limpiar cache y sesiones? (S/N): "
-if /i "%CLEAN_CACHE%"=="S" (
-    echo [INFO] Limpiando cache de Django...
-    cd proyecto\src\backend
-    python manage.py clearsessions
-    python manage.py clear_cache
-    if exist db.sqlite3 (
-        echo [INFO] Eliminando base de datos de desarrollo...
-        del db.sqlite3
-    )
-    cd ..\..\..
-)
+REM Desactivar borrado de cache/DB para evitar pérdidas accidentales
+REM (Si necesitas limpiar, hazlo manualmente con comandos dedicados)
 
 echo Verificando Python...
 python --version >nul 2>&1
@@ -49,8 +38,8 @@ python manage.py migrate --run-syncdb
 echo [OK] Migraciones aplicadas
 echo.
 
-echo Recolectando archivos estáticos (forzado)...
-python manage.py collectstatic --noinput --clear
+echo Recolectando archivos estáticos...
+python manage.py collectstatic --noinput
 echo [OK] Archivos estáticos actualizados
 echo.
 

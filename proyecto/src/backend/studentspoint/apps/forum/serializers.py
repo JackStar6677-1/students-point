@@ -49,6 +49,8 @@ class PostSerializer(serializers.ModelSerializer):
     - comentario: Post estándar con texto
     - encuesta: Post con opciones para votar
     - imagen: Post con imagen adjunta (requiere aprobación)
+    - enlace: Post con URL asociada
+    - archivo: Post con archivo adjunto
     - otro: Otros tipos
     
     IMPORTANTE: Para subir imágenes, usar multipart/form-data
@@ -77,9 +79,11 @@ class PostSerializer(serializers.ModelSerializer):
             "titulo",
             "cuerpo",
             "tipo",
+            "enlace_url",
             "imagen",
             "imagen_url",
             "imagen_aprobada",
+            "archivo",
             "score",
             "estado",
             "created_at",
@@ -97,6 +101,57 @@ class PostSerializer(serializers.ModelSerializer):
             "total_comentarios", "total_reportes", "opciones_encuesta",
             "moderado_por", "razon_moderacion", "moderado_at", "foro_info", "imagen_url"
         ]
+
+    def validate(self, attrs):
+        """Valida consistencia entre tipo de post y campos adjuntos.
+        Args:
+            attrs (dict): Datos de entrada.
+        Returns:
+            dict: Datos validados.
+        """
+        tipo = attrs.get("tipo")
+        # Aceptar alias 'texto' como 'comentario' para compatibilidad
+        if tipo == 'texto':
+            attrs["tipo"] = Post.TipoPost.COMENTARIO
+            tipo = attrs["tipo"]
+        tiene_imagen = attrs.get("imagen") is not None
+        tiene_archivo = attrs.get("archivo") is not None
+        enlace = attrs.get("enlace_url")
+
+        if tipo == Post.TipoPost.IMAGEN and not tiene_imagen:
+            raise serializers.ValidationError({"imagen": "Se requiere imagen cuando tipo es 'imagen'."})
+        if tipo == Post.TipoPost.ARCHIVO and not tiene_archivo:
+            raise serializers.ValidationError({"archivo": "Se requiere archivo cuando tipo es 'archivo'."})
+        if tipo == Post.TipoPost.ENLACE and not enlace:
+            raise serializers.ValidationError({"enlace_url": "Se requiere enlace_url cuando tipo es 'enlace'."})
+
+        # Evitar adjuntar múltiples tipos simultáneamente
+        adjuntos = sum([1 if tiene_imagen else 0, 1 if tiene_archivo else 0, 1 if bool(enlace) else 0])
+        if adjuntos > 1:
+            raise serializers.ValidationError("Solo se permite un tipo de adjunto por publicación (imagen, archivo o enlace).")
+
+        return attrs
+
+    def create(self, validated_data):
+        """Crea post y, si corresponde, opciones de encuesta.
+        Acepta 'opciones_encuesta' en request.data cuando tipo=encuesta.
+        """
+        request = self.context.get('request')
+        opciones_payload = []
+        if request:
+            opciones_payload = request.data.get("opciones_encuesta") or []
+
+        post = super().create(validated_data)
+
+        # Crear opciones de encuesta si corresponde
+        if post.tipo == Post.TipoPost.ENCUESTA and opciones_payload:
+            if isinstance(opciones_payload, (list, tuple)):
+                for idx, opcion in enumerate(opciones_payload):
+                    texto = opcion.get("texto") if isinstance(opcion, dict) else str(opcion)
+                    if texto:
+                        OpcionEncuesta.objects.create(post=post, texto=texto, orden=idx)
+
+        return post
     
     def get_total_comentarios(self, obj):
         return obj.comentarios.count()
@@ -160,7 +215,7 @@ class PostReporteSerializer(serializers.ModelSerializer):
         model = PostReporte
         fields = [
             "id", "post", "usuario", "usuario_name", "tipo", 
-            "descripcion", "created_at"
+            "descripcion", "estado", "created_at"
         ]
         read_only_fields = ["usuario", "created_at"]
 
