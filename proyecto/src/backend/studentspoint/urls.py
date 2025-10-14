@@ -27,45 +27,46 @@ from rest_framework_simplejwt.views import TokenRefreshView
 def spa_serve(request, path=""):
     # Servir HTMLs y otros archivos desde staticfiles
     base = Path(settings.STATIC_ROOT)
+    
+    # Si la ruta está vacía, servir index.html directamente
+    if not path or path == '/':
+        return serve(request, "index.html", document_root=base)
+    
     target = base / path
     
     # Mapeo de rutas a archivos HTML específicos
     route_map = {
-        'forum': 'foro.html',
-        'market': 'mercado.html',
-        'bienestar': 'bienestar.html',
-        'portfolio': 'portafolio.html',
-        'encuestas': 'encuestas.html',
-        'cursos': 'cursos.html',
-        'reportes': 'reportes.html',
-        'streetview': 'recorridos-virtuales.html',
-        'converter': 'conversor.html',
+        'forum': 'forum/foro.html',
+        'market': 'market/mercado.html',
+        'bienestar': 'bienestar/bienestar.html',
+        'portfolio': 'portfolio/portafolio.html',
+        'encuestas': 'encuestas/encuestas.html',
+        'cursos': 'cursos/cursos.html',
+        'reportes': 'reportes/reportes.html',
+        'streetview': 'streetview/recorridos-virtuales.html',
+        'converter': 'converter/conversor.html',
     }
     
     # Si es un directorio, buscar archivo específico o index.html
     if target.is_dir():
         route_name = path.rstrip('/').split('/')[-1]
         if route_name in route_map:
-            path = f"{path.rstrip('/')}/{route_map[route_name]}"
+            path = route_map[route_name]
         else:
             path = f"{path.rstrip('/')}/index.html"
         target = base / path
     
     # Si el archivo no existe, intentar servir archivo específico para rutas SPA
     if not target.exists():
-        # Para rutas como /forum/, /market/, etc., servir su archivo específico
+        # Para rutas como /forum, /market, etc., servir su archivo específico
         if path and not path.endswith('.html') and not path.endswith('.ico') and not path.endswith('.css') and not path.endswith('.js'):
-            route_parts = path.rstrip('/').split('/')
-            route_name = route_parts[-1]
+            route_name = path.rstrip('/').split('/')[-1]
             
             if route_name in route_map:
-                spa_path = f"{path.rstrip('/')}/{route_map[route_name]}"
-            else:
-                spa_path = f"{path.rstrip('/')}/index.html"
-            
-            spa_target = base / spa_path
-            if spa_target.exists():
-                return serve(request, spa_path, document_root=base)
+                spa_path = route_map[route_name]
+                spa_target = base / spa_path
+                if spa_target.exists():
+                    return serve(request, spa_path, document_root=base)
         
         # Si no existe, servir index.html principal
         if (base / "index.html").exists():
@@ -74,7 +75,6 @@ def spa_serve(request, path=""):
     return serve(request, path, document_root=base)
 
 urlpatterns = [
-    path('', RedirectView.as_view(url='/index.html', permanent=False)),
     path('admin/', admin.site.urls),
     path('api/', include('studentspoint.apps.accounts.urls')),
     path('api/', include('studentspoint.apps.campuses.urls')),
