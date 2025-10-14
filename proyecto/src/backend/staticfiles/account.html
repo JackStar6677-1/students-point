@@ -17,6 +17,41 @@
     <link rel="stylesheet" href="/static/css/base-layout.css">
     <link rel="stylesheet" href="/static/css/animations.css">
     
+    <style>
+        /* Mejorar contraste de textos */
+        .form-control, .form-select {
+            color: #ffffff !important;
+            background: rgba(255, 255, 255, 0.05) !important;
+        }
+        
+        .form-control:disabled, .form-control[readonly] {
+            color: rgba(255, 255, 255, 0.7) !important;
+            background: rgba(255, 255, 255, 0.02) !important;
+        }
+        
+        .form-label {
+            color: #ffffff !important;
+            font-weight: 500;
+        }
+        
+        .text-muted {
+            color: rgba(255, 255, 255, 0.6) !important;
+        }
+        
+        h5, h6 {
+            color: #ffffff !important;
+        }
+        
+        .card-body {
+            color: #ffffff;
+        }
+        
+        /* Mejorar visibilidad de badges */
+        .badge {
+            font-weight: 600;
+        }
+    </style>
+    
     <!-- PWA -->
     <link rel="manifest" href="/static/manifest.json">
     <meta name="theme-color" content="#1a1a1b">
@@ -285,13 +320,15 @@
                 // Update email verification status
                 const statusElement = document.getElementById('emailVerifiedStatus');
                 const verifyBtn = document.getElementById('verifyEmailBtn');
-                if (currentUser.email_verified) {
+                const isVerified = currentUser.is_email_verified || currentUser.email_verified;
+                if (isVerified) {
                     statusElement.textContent = 'Tu email está verificado';
-                    statusElement.className = 'text-success mb-0';
+                    statusElement.className = 'text-success mb-0 fw-bold';
+                    if (verifyBtn) verifyBtn.style.display = 'none';
                 } else {
                     statusElement.textContent = 'Tu email no está verificado';
-                    statusElement.className = 'text-warning mb-0';
-                    verifyBtn.style.display = 'block';
+                    statusElement.className = 'text-warning mb-0 fw-bold';
+                    if (verifyBtn) verifyBtn.style.display = 'block';
                 }
             } catch (error) {
                 console.error('Error loading user data:', error);
@@ -301,13 +338,27 @@
 
         async function loadCareerList() {
             try {
-                const response = await fetch('/api/auth/carreras/');
-                const data = await response.json();
-                const select = document.getElementById('editUserCareer');
-                select.innerHTML = '<option value="">Selecciona una carrera</option>';
-                data.carreras.forEach(career => {
-                    select.innerHTML += `<option value="${career}">${career}</option>`;
-                });
+                const token = localStorage.getItem('access_token');
+                const headers = {
+                    'Content-Type': 'application/json'
+                };
+                
+                if (token) {
+                    headers['Authorization'] = `Bearer ${token}`;
+                }
+                
+                const response = await fetch('/api/auth/carreras/', { headers });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    const select = document.getElementById('editUserCareer');
+                    select.innerHTML = '<option value="">Selecciona una carrera</option>';
+                    data.carreras.forEach(career => {
+                        select.innerHTML += `<option value="${career}">${career}</option>`;
+                    });
+                } else {
+                    console.warn('No se pudieron cargar las carreras');
+                }
             } catch (error) {
                 console.error('Error loading careers:', error);
             }
