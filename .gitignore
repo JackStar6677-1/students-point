@@ -46,6 +46,15 @@ config_local.env
 *.swo
 *~
 
+# Cursor AI y referencias a IA
+.cursor/
+.cursorrules
+.cursorignore
+*.mdc
+*cursor*
+*ai-*
+*AI-*
+
 # OS
 .DS_Store
 Thumbs.db
