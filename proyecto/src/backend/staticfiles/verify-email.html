@@ -212,12 +212,23 @@
         const data = await response.json();
         
         if (response.ok && data.status === 'success') {
-          showAlert('¡Email verificado exitosamente! Redirigiendo...', 'success');
+          // Guardar tokens y datos del usuario en localStorage
+          if (data.access) {
+            localStorage.setItem('access_token', data.access);
+          }
+          if (data.refresh) {
+            localStorage.setItem('refresh_token', data.refresh);
+          }
+          if (data.user) {
+            localStorage.setItem('user_data', JSON.stringify(data.user));
+          }
+          
+          showAlert('¡Email verificado exitosamente! Iniciando sesión...', 'success');
           if (window.playSound) window.playSound('success');
           
           setTimeout(() => {
-            window.location.href = '/index.html';
-          }, 2000);
+            window.location.href = '/';
+          }, 1500);
         } else {
           showAlert(data.message || 'Código incorrecto o expirado', 'error');
           if (window.playSound) window.playSound('error');

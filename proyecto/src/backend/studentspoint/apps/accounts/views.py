@@ -321,9 +321,23 @@ def verificar_email(request):
     exito, mensaje = user.verificar_codigo_email(codigo)
     
     if exito:
+        # Generar tokens JWT para iniciar sesión automáticamente
+        refresh = RefreshToken.for_user(user)
+        
         return Response({
             'status': 'success',
-            'message': mensaje
+            'message': mensaje,
+            'access': str(refresh.access_token),
+            'refresh': str(refresh),
+            'user': {
+                'id': user.id,
+                'email': user.email,
+                'name': user.name,
+                'role': user.role,
+                'campus': user.campus.nombre if user.campus else None,
+                'career': user.career,
+                'is_email_verified': user.is_email_verified
+            }
         })
     else:
         return Response(
