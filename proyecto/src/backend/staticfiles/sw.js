@@ -7,35 +7,14 @@ const CACHE_NAME = 'StudentsPoint-v1.2.5';
 const STATIC_CACHE = 'StudentsPoint-static-v1.2.5';
 const DYNAMIC_CACHE = 'StudentsPoint-dynamic-v1.2.5';
 
-// Archivos estáticos para cache
+// Archivos estáticos para cache (solo los esenciales)
 const STATIC_FILES = [
   '/index.html',
   '/login.html',
   '/register.html',
-  '/account.html',
-  '/static/css/styles.css',
-  '/static/css/theme-dark.css',
-  '/static/css/students-theme.css',
-  '/static/js/main.js',
-  '/static/js/pwa.js',
-  '/static/js/sounds.js',
-  // Manifest y favicon (asegurar rutas válidas)
   '/static/manifest.json',
-  '/static/images/icons/icon-192x192.png',
-  '/static/images/icons/icon-512x512.png',
-  'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css',
-  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
-  'https://code.jquery.com/jquery-3.7.1.min.js',
-  'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js',
-  // Íconos ya listados arriba
-  '/forum/',
-  '/market/',
-  '/portfolio/',
-  '/streetview/',
-  '/bienestar/',
-  '/reportes/',
-  '/cursos/',
-  '/encuestas/'
+  '/static/css/theme-dark.css',
+  '/static/js/sounds.js'
 ];
 
 // Archivos de API para cache dinámico
@@ -63,17 +42,28 @@ const CACHE_STRATEGY = {
  * Instalación del Service Worker
  */
 self.addEventListener('install', (event) => {
-  console.log('SW: Instalando Service Worker...');
+  console.log('SW: Instalando Service Worker v1.2.5...');
   
   event.waitUntil(
     caches.open(STATIC_CACHE)
       .then((cache) => {
         console.log('SW: Cacheando archivos estáticos...');
-        return cache.addAll(STATIC_FILES);
+        // Intentar cachear archivos, pero no fallar si alguno no está disponible
+        return Promise.allSettled(
+          STATIC_FILES.map(url => 
+            cache.add(url).catch(err => {
+              console.warn(`SW: No se pudo cachear ${url}:`, err.message);
+              return null;
+            })
+          )
+        );
       })
       .then(() => {
         console.log('SW: Service Worker instalado correctamente');
-        return self.skipWaiting();
+        // Solo skipWaiting en desarrollo, en producción esperar
+        if (self.location.hostname === 'localhost' || self.location.hostname === '127.0.0.1') {
+          return self.skipWaiting();
+        }
       })
       .catch((error) => {
         console.error('SW: Error durante la instalación:', error);
