@@ -78,9 +78,9 @@ echo.
 echo Presiona Ctrl+C para detener el servidor
 echo.
 
-REM Iniciar monitor de logs en ventana separada
-echo Iniciando monitor de logs...
-start "StudentsPoint - Monitor de Logs" cmd /k "color 0E && python monitor_logs.py --interval 30"
+REM Monitor de logs deshabilitado por defecto
+REM Para habilitar, descomenta la siguiente linea:
+REM start "StudentsPoint - Monitor de Logs" cmd /k "color 0E && python monitor_logs.py --interval 30"
 
 timeout /t 2 /nobreak >nul
 start http://127.0.0.1:8000
