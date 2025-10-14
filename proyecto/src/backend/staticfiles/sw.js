@@ -3,19 +3,16 @@
  * Versión: 1.0.0
  */
 
-const CACHE_NAME = 'StudentsPoint-v1.2.4';
-const STATIC_CACHE = 'StudentsPoint-static-v1.2.4';
-const DYNAMIC_CACHE = 'StudentsPoint-dynamic-v1.2.4';
+const CACHE_NAME = 'StudentsPoint-v1.2.5';
+const STATIC_CACHE = 'StudentsPoint-static-v1.2.5';
+const DYNAMIC_CACHE = 'StudentsPoint-dynamic-v1.2.5';
 
 // Archivos estáticos para cache
 const STATIC_FILES = [
-  '/',
   '/index.html',
   '/login.html',
   '/register.html',
   '/account.html',
-  '/teachers.html',
-  '/campuses.html',
   '/static/css/styles.css',
   '/static/css/theme-dark.css',
   '/static/css/students-theme.css',
