@@ -208,13 +208,17 @@
                 } else {
                     const msg = (data.error || data.detail || '').toString().toLowerCase();
                     if (msg.includes('verificar') && email) {
-                        showAlert('Tu email no está verificado. Puedes reenviar el código desde el enlace bajo el botón.', 'error');
+                        showAlert('Email no verificado. Redirigiendo a página de verificación...', 'error');
+                        if (window.playSound) window.playSound('error');
+                        setTimeout(() => {
+                            window.location.href = `/verify-email.html?email=${encodeURIComponent(email)}`;
+                        }, 2000);
                     } else {
                         showAlert(data.detail || data.error || 'Credenciales incorrectas. Por favor, intenta de nuevo.');
+                        if (window.playSound) window.playSound('error');
+                        loginBtn.disabled = false;
+                        loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Iniciar Sesión';
                     }
-                    if (window.playSound) window.playSound('error');
-                    loginBtn.disabled = false;
-                    loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Iniciar Sesión';
                 }
             } catch (error) {
                 console.error('Error:', error);
