@@ -17,14 +17,12 @@
     <link rel="stylesheet" href="/static/css/animations.css">
     <link rel="stylesheet" href="/static/css/components.css">
     <link rel="stylesheet" href="/static/css/homepage.css">
-    <link rel="stylesheet" href="/static/css/visibility-fixes.css">
     
     <!-- PWA -->
     <link rel="manifest" href="/static/manifest.json">
     <meta name="theme-color" content="#1a1a1b">
-    <link rel="icon" type="image/png" href="/static/images/Logo_StudentsPoint.svg.png">
-    <link rel="shortcut icon" type="image/png" href="/static/images/Logo_StudentsPoint.svg.png">
-    <link rel="apple-touch-icon" href="/static/images/Logo_StudentsPoint.svg.png">
+    <link rel="icon" href="/static/favicon.ico">
+    <link rel="apple-touch-icon" href="/static/images/icons/icon-192x192.png">
     
     <!-- Meta tags -->
     <meta name="description" content="StudentsPoint - Plataforma integral para estudiantes de Duoc UC">
@@ -302,8 +300,7 @@
             try {
                 const token = localStorage.getItem('access_token');
                 if (!token) {
-                    // No hay token, mostrar interfaz para usuario no autenticado
-                    updateUserInterface();
+                    window.location.href = '/login.html';
                     return;
                 }
                 
@@ -318,48 +315,20 @@
                     currentUser = await response.json();
                     updateUserInterface();
                 } else {
-                    // Token inválido o expirado
                     localStorage.removeItem('access_token');
                     localStorage.removeItem('refresh_token');
-                    localStorage.removeItem('user_data');
-                    currentUser = null;
-                    updateUserInterface();
+                    window.location.href = '/login.html';
                 }
             } catch (error) {
                 console.error('Error loading user:', error);
-                currentUser = null;
-                updateUserInterface();
+                window.location.href = '/login.html';
             }
         }
         
         function updateUserInterface() {
-            const userNameEl = document.getElementById('userName');
-            const userRoleEl = document.getElementById('userRole');
-            
             if (currentUser) {
-                // Usuario autenticado
-                if (userNameEl) userNameEl.textContent = currentUser.name || 'Usuario';
-                if (userRoleEl) userRoleEl.textContent = currentUser.career || 'Estudiante';
-                
-                // Mostrar elementos para usuarios autenticados
-                document.querySelectorAll('[data-auth-required="true"]').forEach(el => {
-                    el.style.display = '';
-                });
-                document.querySelectorAll('[data-auth-required="false"]').forEach(el => {
-                    el.style.display = 'none';
-                });
-            } else {
-                // Usuario no autenticado
-                if (userNameEl) userNameEl.textContent = 'Invitado';
-                if (userRoleEl) userRoleEl.textContent = 'Visitante';
-                
-                // Ocultar elementos que requieren autenticación
-                document.querySelectorAll('[data-auth-required="true"]').forEach(el => {
-                    el.style.display = 'none';
-                });
-                document.querySelectorAll('[data-auth-required="false"]').forEach(el => {
-                    el.style.display = '';
-                });
+                document.getElementById('userName').textContent = currentUser.name || 'Usuario';
+                document.getElementById('userRole').textContent = currentUser.career || 'Estudiante';
             }
         }
         
@@ -418,29 +387,17 @@
         async function loadRecentPosts() {
             try {
                 const token = localStorage.getItem('access_token');
-                const headers = {
-                    'Content-Type': 'application/json'
-                };
-                
-                // Solo agregar Authorization si hay token
-                if (token) {
-                    headers['Authorization'] = `Bearer ${token}`;
-                }
-                
                 const response = await fetch('/api/forum/posts/?limit=3', {
-                    headers: headers
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
                 });
                 
                 if (response.ok) {
                     const data = await response.json();
                     const posts = Array.isArray(data) ? data : data.results || [];
                     updatePostsPreview(posts);
-                } else if (response.status === 401) {
-                    // No autenticado, mostrar mensaje
-                    const container = document.getElementById('postsPreview');
-                    if (container) {
-                        container.innerHTML = '<p class="text-muted"><i class="fas fa-lock"></i> Inicia sesión para ver posts recientes</p>';
-                    }
                 }
             } catch (error) {
                 console.error('Error loading recent posts:', error);

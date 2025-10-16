@@ -151,19 +151,264 @@
 
   <!-- Contenido principal -->
   <main class="main-content" style="position: relative; z-index: 2;">
-    <div class="container mt-3">
-      <div class="row">
-        <div class="col-12">
-          <div class="text-center py-5">
-            <i class="fas fa-briefcase fa-3x gradient-text mb-3"></i>
-            <h2>Portafolio Profesional</h2>
-            <p class="text-muted">Muestra tus proyectos y logros profesionales</p>
-            <button class="btn btn-primary btn-lg" onclick="createNewPortfolio()">
-              <i class="fas fa-plus"></i> Crear Portafolio
-            </button>
+    <div class="container mt-3 portfolio-container">
+      <!-- Progreso de completitud -->
+      <section class="progress-section">
+        <div class="progress-header">
+          <div class="progress-title"><i class="fas fa-id-card-clip"></i> Constructor de Currículum</div>
+          <div class="progress-percentage" id="completitudPorcentaje">0%</div>
+        </div>
+        <div class="progress-bar-custom">
+          <div class="progress-fill" id="completitudFill" style="width: 0%;"></div>
+        </div>
+        <div id="completitudStats"></div>
+        <div class="mt-3 d-flex gap-2">
+          <button id="btnVistaPrevia" class="btn-portfolio btn-secondary-portfolio"><i class="fas fa-eye"></i> Vista previa</button>
+          <button id="btnGenerarPDF" class="btn-portfolio btn-primary-portfolio"><i class="fas fa-file-pdf"></i> Generar PDF</button>
+        </div>
+      </section>
+
+      <!-- Tabs -->
+      <section class="tabs-container">
+        <nav class="tabs-nav">
+          <button class="tab-btn active" data-tab="perfil"><i class="fas fa-user"></i> Perfil</button>
+          <button class="tab-btn" data-tab="configuracion"><i class="fas fa-sliders"></i> Configuración</button>
+          <button class="tab-btn" data-tab="logros"><i class="fas fa-trophy"></i> Logros</button>
+          <button class="tab-btn" data-tab="proyectos"><i class="fas fa-code"></i> Proyectos</button>
+          <button class="tab-btn" data-tab="experiencias"><i class="fas fa-briefcase"></i> Experiencia</button>
+          <button class="tab-btn" data-tab="habilidades"><i class="fas fa-cogs"></i> Habilidades</button>
+        </nav>
+
+        <!-- Tab: Perfil -->
+        <div class="tab-content active" id="tab-perfil">
+          <form id="formPerfil" class="form-section">
+            <h3><i class="fas fa-user-circle"></i> Información personal</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="inputNombre">Nombre completo</label>
+                <input type="text" id="inputNombre" class="form-control" placeholder="Tu nombre y apellidos">
+              </div>
+              <div class="form-group">
+                <label for="inputEmail">Email</label>
+                <input type="email" id="inputEmail" class="form-control" placeholder="tu@correo.com">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="inputCarrera">Carrera</label>
+                <input type="text" id="inputCarrera" class="form-control" placeholder="Ej. Ingeniería en Informática">
+              </div>
+              <div class="form-group">
+                <label for="inputCampus">Campus</label>
+                <input type="text" id="inputCampus" class="form-control" placeholder="Ej. Sede Maipú">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="inputTelefono">Teléfono</label>
+                <input type="text" id="inputTelefono" class="form-control" placeholder="+56 9 1234 5678">
+              </div>
+              <div class="form-group">
+                <label for="inputLinkedin">LinkedIn</label>
+                <input type="text" id="inputLinkedin" class="form-control" placeholder="https://linkedin.com/in/usuario">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="inputGithub">GitHub</label>
+                <input type="text" id="inputGithub" class="form-control" placeholder="https://github.com/usuario">
+              </div>
+              <div class="form-group"></div>
+            </div>
+            <div class="mt-3">
+              <button type="submit" class="btn-portfolio btn-primary-portfolio"><i class="fas fa-save"></i> Guardar perfil</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Tab: Configuración -->
+        <div class="tab-content" id="tab-configuracion">
+          <form id="formConfiguracion" class="form-section">
+            <h3><i class="fas fa-sliders-h"></i> Preferencias del CV</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="inputTituloProfesional">Título profesional</label>
+                <input type="text" id="inputTituloProfesional" class="form-control" placeholder="Ej. Desarrollador Fullstack">
+              </div>
+              <div class="form-group">
+                <label for="inputTemaColor">Color del tema</label>
+                <input type="color" id="inputTemaColor" class="form-control" value="#2e004f">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="inputResumenProfesional">Resumen profesional</label>
+              <textarea id="inputResumenProfesional" class="form-control" rows="4" placeholder="Un breve resumen de tus fortalezas y objetivos..."></textarea>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <div class="form-check"><input type="checkbox" id="inputMostrarContacto" checked> <label for="inputMostrarContacto">Mostrar contacto</label></div>
+                <div class="form-check"><input type="checkbox" id="inputMostrarRedes" checked> <label for="inputMostrarRedes">Mostrar redes</label></div>
+              </div>
+              <div class="form-group">
+                <div class="form-check"><input type="checkbox" id="inputMostrarLogros" checked> <label for="inputMostrarLogros">Mostrar logros</label></div>
+                <div class="form-check"><input type="checkbox" id="inputMostrarProyectos" checked> <label for="inputMostrarProyectos">Mostrar proyectos</label></div>
+                <div class="form-check"><input type="checkbox" id="inputMostrarExperiencia" checked> <label for="inputMostrarExperiencia">Mostrar experiencia</label></div>
+                <div class="form-check"><input type="checkbox" id="inputMostrarHabilidades" checked> <label for="inputMostrarHabilidades">Mostrar habilidades</label></div>
+              </div>
+            </div>
+            <div class="mt-3">
+              <button type="submit" class="btn-portfolio btn-primary-portfolio"><i class="fas fa-save"></i> Guardar configuración</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Tab: Logros -->
+        <div class="tab-content" id="tab-logros">
+          <div class="form-section">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h3><i class="fas fa-trophy"></i> Logros y certificaciones</h3>
+              <button id="btnAgregarLogro" class="btn-portfolio btn-secondary-portfolio"><i class="fas fa-plus"></i> Agregar logro</button>
+            </div>
+            <div id="logrosList" class="items-list"></div>
+          </div>
+        </div>
+
+        <!-- Tab: Proyectos -->
+        <div class="tab-content" id="tab-proyectos">
+          <div class="form-section">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h3><i class="fas fa-code"></i> Proyectos</h3>
+              <button id="btnAgregarProyecto" class="btn-portfolio btn-secondary-portfolio"><i class="fas fa-plus"></i> Agregar proyecto</button>
+            </div>
+            <div id="proyectosList" class="items-list"></div>
+          </div>
+        </div>
+
+        <!-- Tab: Experiencias -->
+        <div class="tab-content" id="tab-experiencias">
+          <div class="form-section">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h3><i class="fas fa-briefcase"></i> Experiencia laboral</h3>
+              <button id="btnAgregarExperiencia" class="btn-portfolio btn-secondary-portfolio"><i class="fas fa-plus"></i> Agregar experiencia</button>
+            </div>
+            <div id="experienciasList" class="items-list"></div>
+          </div>
+        </div>
+
+        <!-- Tab: Habilidades -->
+        <div class="tab-content" id="tab-habilidades">
+          <div class="form-section">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h3><i class="fas fa-cogs"></i> Habilidades</h3>
+              <button id="btnAgregarHabilidad" class="btn-portfolio btn-secondary-portfolio"><i class="fas fa-plus"></i> Agregar habilidad</button>
+            </div>
+            <div id="habilidadesList" class="skills-grid"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Modales -->
+      <div class="modal" id="modalLogro">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2 class="modal-title" id="modalLogroTitulo">Agregar</h2>
+            <button class="modal-close">&times;</button>
+          </div>
+          <div class="modal-body">
+            <form id="formLogro">
+              <div class="form-group"><label for="inputLogroTitulo">Título</label><input id="inputLogroTitulo" class="form-control" type="text"></div>
+              <div class="form-group"><label for="inputLogroDescripcion">Descripción</label><textarea id="inputLogroDescripcion" class="form-control" rows="3"></textarea></div>
+              <div class="form-row">
+                <div class="form-group"><label for="inputLogroTipo">Tipo</label><input id="inputLogroTipo" class="form-control" type="text" placeholder="Certificación, Premio..."></div>
+                <div class="form-group"><label for="inputLogroFecha">Fecha</label><input id="inputLogroFecha" class="form-control" type="date"></div>
+              </div>
+              <div class="form-group"><label for="inputLogroInstitucion">Institución</label><input id="inputLogroInstitucion" class="form-control" type="text"></div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary modal-close">Cancelar</button>
+                <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Guardar</button>
+              </div>
+            </form>
           </div>
         </div>
       </div>
+
+      <div class="modal" id="modalProyecto">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2 class="modal-title" id="modalProyectoTitulo">Agregar</h2>
+            <button class="modal-close">&times;</button>
+          </div>
+          <div class="modal-body">
+            <form id="formProyecto">
+              <div class="form-group"><label for="inputProyectoTitulo">Título</label><input id="inputProyectoTitulo" class="form-control" type="text"></div>
+              <div class="form-group"><label for="inputProyectoDescripcion">Descripción</label><textarea id="inputProyectoDescripcion" class="form-control" rows="3"></textarea></div>
+              <div class="form-row">
+                <div class="form-group"><label for="inputProyectoEstado">Estado</label><input id="inputProyectoEstado" class="form-control" type="text" placeholder="Completado, En desarrollo..."></div>
+                <div class="form-group"><label for="inputProyectoFechaInicio">Inicio</label><input id="inputProyectoFechaInicio" class="form-control" type="date"></div>
+              </div>
+              <div class="form-group"><label for="inputProyectoTecnologias">Tecnologías</label><input id="inputProyectoTecnologias" class="form-control" type="text" placeholder="React, Django..."></div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary modal-close">Cancelar</button>
+                <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Guardar</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal" id="modalExperiencia">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2 class="modal-title" id="modalExperienciaTitulo">Agregar</h2>
+            <button class="modal-close">&times;</button>
+          </div>
+          <div class="modal-body">
+            <form id="formExperiencia">
+              <div class="form-row">
+                <div class="form-group"><label for="inputExperienciaCargo">Cargo</label><input id="inputExperienciaCargo" class="form-control" type="text"></div>
+                <div class="form-group"><label for="inputExperienciaEmpresa">Empresa</label><input id="inputExperienciaEmpresa" class="form-control" type="text"></div>
+              </div>
+              <div class="form-group"><label for="inputExperienciaDescripcion">Descripción</label><textarea id="inputExperienciaDescripcion" class="form-control" rows="3"></textarea></div>
+              <div class="form-row">
+                <div class="form-group"><label for="inputExperienciaTipo">Tipo</label><input id="inputExperienciaTipo" class="form-control" type="text" placeholder="Práctica, Jornada completa..."></div>
+                <div class="form-group"><label for="inputExperienciaUbicacion">Ubicación</label><input id="inputExperienciaUbicacion" class="form-control" type="text"></div>
+              </div>
+              <div class="form-row">
+                <div class="form-group"><label for="inputExperienciaFechaInicio">Inicio</label><input id="inputExperienciaFechaInicio" class="form-control" type="date"></div>
+                <div class="form-group"><label for="inputExperienciaFechaFin">Término</label><input id="inputExperienciaFechaFin" class="form-control" type="date"></div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary modal-close">Cancelar</button>
+                <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Guardar</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal" id="modalHabilidad">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2 class="modal-title" id="modalHabilidadTitulo">Agregar</h2>
+            <button class="modal-close">&times;</button>
+          </div>
+          <div class="modal-body">
+            <form id="formHabilidad">
+              <div class="form-row">
+                <div class="form-group"><label for="inputHabilidadNombre">Nombre</label><input id="inputHabilidadNombre" class="form-control" type="text"></div>
+                <div class="form-group"><label for="inputHabilidadCategoria">Categoría</label><input id="inputHabilidadCategoria" class="form-control" type="text" placeholder="Técnica, Blanda..."></div>
+              </div>
+              <div class="form-group"><label for="inputHabilidadNivel">Nivel (1-5)</label><input id="inputHabilidadNivel" class="form-control" type="number" min="1" max="5" value="3"></div>
+              <div class="form-group"><label for="inputHabilidadDescripcion">Descripción</label><textarea id="inputHabilidadDescripcion" class="form-control" rows="3"></textarea></div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary modal-close">Cancelar</button>
+                <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Guardar</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
     </div>
   </main>
 
@@ -207,219 +452,11 @@
 
     <!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script src="/static/js/sounds.js"></script>
 <script src="/static/js/pwa.js"></script>
 <script src="/static/pwa-config.js"></script>
 <script src="/static/js/main.js"></script>
-<script>
-    // Mostrar herramientas de desarrollo solo en localhost
-    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-      document.querySelector('.dev-tools').style.display = 'flex';
-    }
-
-    // Variables globales
-    let portfolios = [];
-
-    // Cargar portafolios al iniciar
-    document.addEventListener('DOMContentLoaded', function() {
-      loadPortfolios();
-      
-      // Sonido de carga de página
-      setTimeout(() => {
-        if (window.playSound) {
-          window.playSound('pageLoad');
-        }
-      }, 500);
-    });
-
-    // Cargar portafolios
-    function loadPortfolios() {
-      portfolios = getSamplePortfolios();
-      displayPortfolios(portfolios);
-    }
-
-    // Datos de ejemplo para desarrollo
-    function getSamplePortfolios() {
-      return [
-        {
-          id: 1,
-          titulo: "Proyecto de Aplicación Web",
-          descripcion: "Desarrollo de una aplicación web completa usando React y Node.js para gestión de inventario.",
-          tecnologias: ["React", "Node.js", "MongoDB", "Express"],
-          imagen: "/static/images/no-image.png",
-          fecha: new Date().toISOString(),
-          autor: "Estudiante de Informática"
-        },
-        {
-          id: 2,
-          titulo: "Sistema de Gestión Escolar",
-          descripcion: "Sistema completo para la gestión de estudiantes, profesores y calificaciones desarrollado en Java.",
-          tecnologias: ["Java", "Spring Boot", "MySQL", "Bootstrap"],
-          imagen: "/static/images/no-image.png",
-          fecha: new Date(Date.now() - 86400000).toISOString(),
-          autor: "Estudiante de Ingeniería"
-        },
-        {
-          id: 3,
-          titulo: "App Móvil de Delivery",
-          descripcion: "Aplicación móvil para delivery de comida con geolocalización y pagos integrados.",
-          tecnologias: ["Flutter", "Firebase", "Google Maps API"],
-          imagen: "/static/images/no-image.png",
-          fecha: new Date(Date.now() - 172800000).toISOString(),
-          autor: "Estudiante de Desarrollo Móvil"
-        }
-      ];
-    }
-
-    // Mostrar portafolios
-    function displayPortfolios(portfoliosToShow) {
-      const container = document.querySelector('.container .row');
-      if (!container) return;
-
-      if (portfoliosToShow.length === 0) {
-        container.innerHTML = `
-          <div class="col-12 text-center py-5">
-            <i class="fas fa-briefcase fa-3x text-muted mb-3"></i>
-            <h5 class="text-muted">No hay portafolios disponibles</h5>
-            <p class="text-muted">Sé el primero en compartir tu proyecto</p>
-          </div>
-        `;
-        return;
-      }
-
-      const portfoliosHTML = portfoliosToShow.map(portfolio => `
-        <div class="col-md-4 mb-4">
-          <div class="card portfolio-card" onclick="viewPortfolio(${portfolio.id})">
-            <img src="${portfolio.imagen}" class="card-img-top" alt="${portfolio.titulo}" style="height: 200px; object-fit: cover;">
-            <div class="card-body">
-              <h5 class="card-title">${portfolio.titulo}</h5>
-              <p class="card-text">${portfolio.descripcion.substring(0, 100)}...</p>
-              <div class="mb-2">
-                ${portfolio.tecnologias.map(tech => `<span class="badge bg-primary me-1">${tech}</span>`).join('')}
-              </div>
-              <small class="text-muted">
-                <i class="fas fa-user"></i> ${portfolio.autor} • 
-                <i class="fas fa-clock"></i> ${new Date(portfolio.fecha).toLocaleDateString()}
-              </small>
-            </div>
-          </div>
-        </div>
-      `).join('');
-
-      container.innerHTML = portfoliosHTML;
-    }
-
-    // Ver portafolio
-    function viewPortfolio(portfolioId) {
-      const portfolio = portfolios.find(p => p.id == portfolioId);
-      if (portfolio) {
-        showPortfolioModal(portfolio);
-      }
-      
-      if (window.playSound) {
-        window.playSound('navigate');
-      }
-    }
-
-    // Mostrar portafolio en modal
-    function showPortfolioModal(portfolio) {
-      const modalHtml = `
-        <div class="modal fade" id="portfolioModal" tabindex="-1">
-          <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title">${portfolio.titulo}</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-              </div>
-              <div class="modal-body">
-                <div class="row">
-                  <div class="col-md-6">
-                    <img src="${portfolio.imagen}" alt="${portfolio.titulo}" class="img-fluid rounded">
-                  </div>
-                  <div class="col-md-6">
-                    <h6>Descripción:</h6>
-                    <p>${portfolio.descripcion}</p>
-                    <h6>Tecnologías utilizadas:</h6>
-                    <div class="mb-3">
-                      ${portfolio.tecnologias.map(tech => `<span class="badge bg-primary me-1">${tech}</span>`).join('')}
-                    </div>
-                    <small class="text-muted">
-                      <i class="fas fa-user"></i> ${portfolio.autor} • 
-                      <i class="fas fa-clock"></i> ${new Date(portfolio.fecha).toLocaleDateString()}
-                    </small>
-                  </div>
-                </div>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                <button type="button" class="btn btn-primary" onclick="contactAuthor(${portfolio.id})">
-                  <i class="fas fa-envelope"></i> Contactar Autor
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      `;
-      
-      // Remover modal anterior si existe
-      const existingModal = document.getElementById('portfolioModal');
-      if (existingModal) {
-        existingModal.remove();
-      }
-      
-      // Agregar nuevo modal
-      document.body.insertAdjacentHTML('beforeend', modalHtml);
-      
-      // Mostrar modal
-      const modal = new bootstrap.Modal(document.getElementById('portfolioModal'));
-      modal.show();
-      
-      // Limpiar modal cuando se cierre
-      document.getElementById('portfolioModal').addEventListener('hidden.bs.modal', function() {
-        this.remove();
-      });
-    }
-
-    // Contactar autor
-    function contactAuthor(portfolioId) {
-      showSuccess('Función de contacto en desarrollo (modo demo)');
-      
-      if (window.playSound) {
-        window.playSound('success');
-      }
-    }
-
-    // Crear nuevo portafolio
-    function createNewPortfolio() {
-      if (window.playSound) {
-        window.playSound('click');
-      }
-      showSuccess('Función de creación de portafolio en desarrollo (modo demo)');
-    }
-
-    // Mostrar éxito
-    function showSuccess(message) {
-      const alertDiv = document.createElement('div');
-      alertDiv.className = 'alert alert-success alert-dismissible fade show';
-      alertDiv.innerHTML = `
-        ${message}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-      `;
-      
-      const container = document.querySelector('.container');
-      container.insertBefore(alertDiv, container.firstChild);
-      
-      setTimeout(() => {
-        if (alertDiv.parentNode) {
-          alertDiv.remove();
-        }
-      }, 3000);
-    }
-  </script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="/static/js/sounds.js"></script>
-<script src="/static/js/pwa.js"></script>
-<script src="/static/pwa-config.js"></script>
-<script src="/static/js/main.js"></script>
+<script src="/static/portfolio/portfolio.js"></script>
 </body>
 </html>

@@ -6,8 +6,7 @@
     <title>Iniciar Sesión - StudentsPoint</title>
     
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="/static/images/Logo_StudentsPoint.svg.png" />
-    <link rel="shortcut icon" type="image/png" href="/static/images/Logo_StudentsPoint.svg.png" />
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico" />
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -24,7 +23,6 @@
     <link rel="stylesheet" href="/static/css/theme-dark.css">
     <link rel="stylesheet" href="/static/css/animations.css">
     <link rel="stylesheet" href="/static/css/components.css">
-    <link rel="stylesheet" href="/static/css/visibility-fixes.css">
 </head>
 <body style="min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem;">
     
@@ -116,10 +114,6 @@
                 ¿No tienes cuenta? 
                 <a href="/register.html" class="text-gradient-gold" style="font-weight: 600;">Regístrate aquí</a>
             </p>
-            <p class="text-center" style="color: var(--color-gray-light); margin-top: 0.5rem;">
-                ¿No te llegó el código de verificación? 
-                <a href="#" id="resendVerificationLogin" class="text-gradient-purple" style="font-weight: 600;">Reenviar código</a>
-            </p>
         </form>
     </div>
 
@@ -166,13 +160,12 @@
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            const email = (document.getElementById('email').value || '').trim().toLowerCase();
+            const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             const remember = document.getElementById('remember').checked;
             const loginBtn = document.getElementById('loginBtn');
             
             // Disable button
-            if (loginBtn.disabled) return; // evitar doble envío
             loginBtn.disabled = true;
             loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Iniciando sesión...';
             
@@ -208,19 +201,10 @@
                         window.location.href = '/';
                     }, 1500);
                 } else {
-                    const msg = (data.error || data.detail || '').toString().toLowerCase();
-                    if (msg.includes('verificar') && email) {
-                        showAlert('Email no verificado. Redirigiendo a página de verificación...', 'error');
-                        if (window.playSound) window.playSound('error');
-                        setTimeout(() => {
-                            window.location.href = `/verify-email.html?email=${encodeURIComponent(email)}`;
-                        }, 2000);
-                    } else {
-                        showAlert(data.detail || data.error || 'Credenciales incorrectas. Por favor, intenta de nuevo.');
-                        if (window.playSound) window.playSound('error');
-                        loginBtn.disabled = false;
-                        loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Iniciar Sesión';
-                    }
+                    showAlert(data.detail || 'Credenciales incorrectas. Por favor, intenta de nuevo.');
+                    if (window.playSound) window.playSound('error');
+                    loginBtn.disabled = false;
+                    loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Iniciar Sesión';
                 }
             } catch (error) {
                 console.error('Error:', error);
@@ -228,30 +212,6 @@
                 if (window.playSound) window.playSound('error');
                 loginBtn.disabled = false;
                 loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Iniciar Sesión';
-            }
-        });
-        // Resend verification code from login page
-        document.getElementById('resendVerificationLogin').addEventListener('click', async function(e) {
-            e.preventDefault();
-            const email = (document.getElementById('email').value || '').trim().toLowerCase();
-            if (!email) {
-                showAlert('Ingresa tu email para reenviar el código.');
-                return;
-            }
-            try {
-                const resp = await fetch('/api/auth/reenviar-codigo/', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email })
-                });
-                const data = await resp.json().catch(() => ({}));
-                if (resp.ok) {
-                    showAlert('Código reenviado. Revisa tu correo.', 'success');
-                } else {
-                    showAlert(data.message || data.detail || 'No fue posible reenviar el código.');
-                }
-            } catch (err) {
-                showAlert('Error de conexión al reenviar el código.');
             }
         });
         
@@ -280,40 +240,6 @@
             if (window.playSound) window.playSound('click');
             showAlert('Funcionalidad de recuperación de contraseña disponible próximamente.', 'warning');
         });
-        
-        // Capturar tokens de Google OAuth desde la URL
-        function checkGoogleAuthTokens() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const accessToken = urlParams.get('access_token');
-            const refreshToken = urlParams.get('refresh_token');
-            const googleAuth = urlParams.get('google_auth');
-            
-            if (accessToken && refreshToken && googleAuth === 'true') {
-                console.log('Tokens de Google OAuth detectados, guardando...');
-                
-                // Guardar tokens en localStorage
-                localStorage.setItem('access_token', accessToken);
-                localStorage.setItem('refresh_token', refreshToken);
-                
-                // Mostrar mensaje y redirigir
-                showAlert('Inicio de sesión con Google exitoso. Redirigiendo...', 'success');
-                if (window.playSound) window.playSound('success');
-                
-                // Limpiar la URL y redirigir
-                setTimeout(() => {
-                    window.location.href = '/';
-                }, 1500);
-                
-                return true;
-            }
-            return false;
-        }
-        
-        // Verificar tokens al cargar la página
-        if (!checkGoogleAuthTokens()) {
-            // Solo mostrar la página si no hay tokens de Google
-            console.log('No hay tokens de Google, mostrando página de login normal');
-        }
         
         // Fill demo credentials
         window.fillDemoCredentials = function(type) {

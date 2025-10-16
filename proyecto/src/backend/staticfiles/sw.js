@@ -3,18 +3,39 @@
  * Versión: 1.0.0
  */
 
-const CACHE_NAME = 'StudentsPoint-v1.2.5';
-const STATIC_CACHE = 'StudentsPoint-static-v1.2.5';
-const DYNAMIC_CACHE = 'StudentsPoint-dynamic-v1.2.5';
+const CACHE_NAME = 'StudentsPoint-v1.2.1';
+const STATIC_CACHE = 'StudentsPoint-static-v1.2.1';
+const DYNAMIC_CACHE = 'StudentsPoint-dynamic-v1.2.1';
 
-// Archivos estáticos para cache (solo los esenciales)
+// Archivos estáticos para cache
 const STATIC_FILES = [
+  '/',
   '/index.html',
   '/login.html',
   '/register.html',
+  '/account.html',
+  '/teachers.html',
+  '/campuses.html',
+  '/static/css/styles.css',
+  '/static/css/students-theme.css',
+  '/static/js/main.js',
+  '/static/js/pwa.js',
+  '/static/js/sounds.js',
   '/static/manifest.json',
-  '/static/css/theme-dark.css',
-  '/static/js/sounds.js'
+  'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css',
+  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
+  'https://code.jquery.com/jquery-3.7.1.min.js',
+  'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js',
+  '/static/images/icons/icon-192x192.png',
+  '/static/images/icons/icon-512x512.png',
+  '/forum/',
+  '/market/',
+  '/portfolio/',
+  '/streetview/',
+  '/bienestar/',
+  '/reportes/',
+  '/cursos/',
+  '/encuestas/'
 ];
 
 // Archivos de API para cache dinámico
@@ -42,28 +63,17 @@ const CACHE_STRATEGY = {
  * Instalación del Service Worker
  */
 self.addEventListener('install', (event) => {
-  console.log('SW: Instalando Service Worker v1.2.5...');
+  console.log('SW: Instalando Service Worker...');
   
   event.waitUntil(
     caches.open(STATIC_CACHE)
       .then((cache) => {
         console.log('SW: Cacheando archivos estáticos...');
-        // Intentar cachear archivos, pero no fallar si alguno no está disponible
-        return Promise.allSettled(
-          STATIC_FILES.map(url => 
-            cache.add(url).catch(err => {
-              console.warn(`SW: No se pudo cachear ${url}:`, err.message);
-              return null;
-            })
-          )
-        );
+        return cache.addAll(STATIC_FILES);
       })
       .then(() => {
         console.log('SW: Service Worker instalado correctamente');
-        // Solo skipWaiting en desarrollo, en producción esperar
-        if (self.location.hostname === 'localhost' || self.location.hostname === '127.0.0.1') {
-          return self.skipWaiting();
-        }
+        return self.skipWaiting();
       })
       .catch((error) => {
         console.error('SW: Error durante la instalación:', error);
@@ -108,14 +118,6 @@ self.addEventListener('fetch', (event) => {
   
   // Solo interceptar requests del mismo origen
   if (url.origin !== location.origin) {
-    return;
-  }
-
-  // Favicon fallback: servir icono PNG si piden /static/favicon.ico
-  if (url.pathname === '/static/favicon.ico') {
-    event.respondWith(
-      caches.match('/static/images/icons/icon-144x144.png').then((resp) => resp || fetch('/static/images/icons/icon-144x144.png'))
-    );
     return;
   }
   
@@ -221,28 +223,19 @@ async function staleWhileRevalidate(request) {
   const cachedResponse = await cache.match(request);
   
   // Actualizar cache en background
-  const fetchPromise = fetch(request)
-    .then((networkResponse) => {
-      if (networkResponse && networkResponse.ok) {
-        cache.put(request, networkResponse.clone());
-      }
-      return networkResponse;
-    })
-    .catch((error) => {
-      console.log('SW: Error actualizando cache:', error);
-      // No hacer throw ni devolver null (devolver cached si existe o Response genérico)
-      return undefined;
-    });
+  const fetchPromise = fetch(request).then((networkResponse) => {
+    if (networkResponse.ok) {
+      cache.put(request, networkResponse.clone());
+    }
+    return networkResponse;
+  }).catch((error) => {
+    console.log('SW: Error actualizando cache:', error);
+    // No hacer throw del error para evitar romper la app
+    return null;
+  });
   
   // Devolver cache si existe, sino esperar la red
-  if (cachedResponse) return cachedResponse;
-  const networkOrUndefined = await fetchPromise;
-  if (networkOrUndefined instanceof Response) return networkOrUndefined;
-  // Fallback seguro si no hay cache ni red
-  if (request.headers.get('accept') && request.headers.get('accept').includes('text/html')) {
-    return caches.match('/index.html');
-  }
-  return new Response('', { status: 504, statusText: 'Gateway Timeout' });
+  return cachedResponse || fetchPromise;
 }
 
 /**

@@ -16,155 +16,11 @@
     <link rel="stylesheet" href="/static/css/theme-dark.css">
     <link rel="stylesheet" href="/static/css/base-layout.css">
     <link rel="stylesheet" href="/static/css/animations.css">
-    <link rel="stylesheet" href="/static/css/visibility-fixes.css">
-    
-    <style>
-        /* Forzar colores visibles en toda la página */
-        body, .main-content {
-            color: #ffffff !important;
-        }
-        
-        /* Labels siempre visibles */
-        label, .form-label {
-            color: #e0e0e0 !important;
-            font-weight: 600 !important;
-            margin-bottom: 0.5rem !important;
-            display: block !important;
-            font-size: 0.95rem !important;
-        }
-        
-        /* Mejorar contraste de inputs */
-        .form-control, .form-select, select.form-control {
-            color: #ffffff !important;
-            background: rgba(30, 30, 40, 0.9) !important;
-            border: 1px solid rgba(255, 255, 255, 0.3) !important;
-        }
-        
-        /* Campos deshabilitados o readonly */
-        .form-control:disabled, .form-control[readonly] {
-            color: rgba(255, 255, 255, 0.85) !important;
-            background: rgba(50, 50, 60, 0.7) !important;
-            border: 1px solid rgba(255, 255, 255, 0.2) !important;
-            cursor: not-allowed;
-        }
-        
-        /* Placeholders */
-        .form-control::placeholder {
-            color: rgba(255, 255, 255, 0.45) !important;
-        }
-        
-        /* Opciones de select */
-        .form-select option, select.form-control option {
-            background: #2a2a3a !important;
-            color: #ffffff !important;
-        }
-        
-        /* Texto general */
-        .text-muted {
-            color: rgba(255, 255, 255, 0.7) !important;
-        }
-        
-        /* Títulos */
-        h1, h2, h3, h4, h5, h6 {
-            color: #ffffff !important;
-        }
-        
-        .card-title-standard {
-            color: #ffffff !important;
-        }
-        
-        /* Contenido de cards */
-        .card-body, .card-body-standard {
-            color: #ffffff !important;
-        }
-        
-        .card-body p, .card-body span, .card-body-standard p, .card-body-standard span {
-            color: rgba(255, 255, 255, 0.95) !important;
-        }
-        
-        /* Badges */
-        .badge {
-            font-weight: 600;
-            padding: 0.4em 0.8em;
-        }
-        
-        /* Inputs de password */
-        input[type="password"] {
-            color: #ffffff !important;
-            background: rgba(30, 30, 40, 0.9) !important;
-        }
-        
-        /* Focus state */
-        .form-control:focus, .form-select:focus {
-            background: rgba(40, 40, 50, 0.95) !important;
-            border-color: rgba(107, 70, 193, 0.6) !important;
-            color: #ffffff !important;
-            box-shadow: 0 0 0 0.2rem rgba(107, 70, 193, 0.25) !important;
-        }
-        
-        /* Asegurar que todo el texto sea visible */
-        * {
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
-        
-        /* Secciones especificas de account.html */
-        #emailVerifiedStatus {
-            color: rgba(255, 255, 255, 0.85) !important;
-            font-size: 0.95rem !important;
-        }
-        
-        .card-body-standard h5 {
-            color: #ffffff !important;
-            font-weight: 600 !important;
-            margin-bottom: 0.5rem !important;
-        }
-        
-        .card-body-standard .text-muted {
-            color: rgba(255, 255, 255, 0.75) !important;
-        }
-        
-        .card-header-standard h2,
-        .card-header-standard .card-title-standard {
-            color: #ffffff !important;
-            font-weight: 600 !important;
-        }
-        
-        /* Botones */
-        .btn-studentspoint, .btn-studentspoint-outline {
-            color: #ffffff !important;
-            font-weight: 500 !important;
-        }
-        
-        .btn-studentspoint-outline {
-            border: 1px solid rgba(107, 70, 193, 0.6) !important;
-            color: rgba(107, 70, 193, 1) !important;
-        }
-        
-        .btn-studentspoint-outline:hover {
-            background: rgba(107, 70, 193, 0.1) !important;
-            color: #ffffff !important;
-        }
-        
-        /* Asegurar que todos los divs dentro de cards sean visibles */
-        .card-body-standard > div,
-        .card-body-standard .d-flex > div {
-            color: #ffffff !important;
-        }
-        
-        /* Todos los h5 y p dentro de card-body */
-        .card-body-standard h5,
-        .card-body-standard h6,
-        .card-body-standard p {
-            color: rgba(255, 255, 255, 0.95) !important;
-        }
-    </style>
     
     <!-- PWA -->
     <link rel="manifest" href="/static/manifest.json">
     <meta name="theme-color" content="#1a1a1b">
-    <link rel="icon" type="image/png" href="/static/images/Logo_StudentsPoint.svg.png">
-    <link rel="shortcut icon" type="image/png" href="/static/images/Logo_StudentsPoint.svg.png">
+    <link rel="icon" href="/static/favicon.ico">
     <link rel="apple-touch-icon" href="/static/images/icons/icon-192x192.png">
 </head>
 <body>
@@ -428,15 +284,13 @@
                 // Update email verification status
                 const statusElement = document.getElementById('emailVerifiedStatus');
                 const verifyBtn = document.getElementById('verifyEmailBtn');
-                const isVerified = currentUser.is_email_verified || currentUser.email_verified;
-                if (isVerified) {
+                if (currentUser.email_verified) {
                     statusElement.textContent = 'Tu email está verificado';
-                    statusElement.className = 'text-success mb-0 fw-bold';
-                    if (verifyBtn) verifyBtn.style.display = 'none';
+                    statusElement.className = 'text-success mb-0';
                 } else {
                     statusElement.textContent = 'Tu email no está verificado';
-                    statusElement.className = 'text-warning mb-0 fw-bold';
-                    if (verifyBtn) verifyBtn.style.display = 'block';
+                    statusElement.className = 'text-warning mb-0';
+                    verifyBtn.style.display = 'block';
                 }
             } catch (error) {
                 console.error('Error loading user data:', error);
@@ -446,27 +300,13 @@
 
         async function loadCareerList() {
             try {
-                const token = localStorage.getItem('access_token');
-                const headers = {
-                    'Content-Type': 'application/json'
-                };
-                
-                if (token) {
-                    headers['Authorization'] = `Bearer ${token}`;
-                }
-                
-                const response = await fetch('/api/carreras/', { headers });
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    const select = document.getElementById('editUserCareer');
-                    select.innerHTML = '<option value="">Selecciona una carrera</option>';
-                    data.carreras.forEach(career => {
-                        select.innerHTML += `<option value="${career}">${career}</option>`;
-                    });
-                } else {
-                    console.warn('No se pudieron cargar las carreras');
-                }
+                const response = await fetch('/api/auth/carreras/');
+                const data = await response.json();
+                const select = document.getElementById('editUserCareer');
+                select.innerHTML = '<option value="">Selecciona una carrera</option>';
+                data.carreras.forEach(career => {
+                    select.innerHTML += `<option value="${career}">${career}</option>`;
+                });
             } catch (error) {
                 console.error('Error loading careers:', error);
             }
