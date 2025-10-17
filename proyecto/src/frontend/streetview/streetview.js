@@ -65,8 +65,34 @@ const recorridosData = {
                 titulo: 'Administración',
                 descripcion: 'Conoce las oficinas administrativas',
                 icono: 'fa-building',
-                disponible: false,
-                imagenes: []
+                disponible: true,
+                imagenes: [
+                    {
+                        url: '/imagenes/mapa/administracion/img1administracion.jpeg',
+                        titulo: 'Entrada a Administración',
+                        descripcion: 'Vista principal de la entrada a las oficinas administrativas'
+                    },
+                    {
+                        url: '/imagenes/mapa/administracion/img2administracion.jpeg',
+                        titulo: 'Recepción Administrativa',
+                        descripcion: 'Área de recepción y atención al público'
+                    },
+                    {
+                        url: '/imagenes/mapa/administracion/img3administracion.jpeg',
+                        titulo: 'Oficinas Administrativas',
+                        descripcion: 'Espacios de trabajo del personal administrativo'
+                    },
+                    {
+                        url: '/imagenes/mapa/administracion/img4administracion.jpeg',
+                        titulo: 'Sala de Reuniones',
+                        descripcion: 'Espacio para reuniones y sesiones administrativas'
+                    },
+                    {
+                        url: '/imagenes/mapa/administracion/img5administracion.jpeg',
+                        titulo: 'Vista General',
+                        descripcion: 'Vista panorámica de las oficinas administrativas'
+                    }
+                ]
             },
             {
                 id: 'banos',

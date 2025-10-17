@@ -446,7 +446,7 @@ class PortfolioManager {
         return `
             <div class="item-card">
                 <div class="item-header">
-                    <h3 class="item-title">${logro.titulo}</h3>
+                    <h3 class="item-title">${logro.titulo || 'Sin título'}</h3>
                     <div class="item-actions">
                         <button class="btn btn-sm btn-secondary-portfolio btn-edit" data-id="${logro.id}">
                             <i class="fas fa-edit"></i>
@@ -456,10 +456,10 @@ class PortfolioManager {
                         </button>
                     </div>
                 </div>
-                <div class="item-content">${logro.descripcion}</div>
+                <div class="item-content">${logro.descripcion || 'Sin descripción'}</div>
                 <div class="item-meta">
-                    <span><i class="fas fa-tag"></i> ${logro.tipo}</span>
-                    <span><i class="fas fa-calendar"></i> ${this.formatDate(logro.fecha)}</span>
+                    <span><i class="fas fa-tag"></i> ${logro.tipo || 'No especificado'}</span>
+                    <span><i class="fas fa-calendar"></i> ${logro.fecha ? this.formatDate(logro.fecha) : 'Sin fecha'}</span>
                     ${logro.institucion ? `<span><i class="fas fa-building"></i> ${logro.institucion}</span>` : ''}
                 </div>
             </div>
@@ -470,7 +470,7 @@ class PortfolioManager {
         return `
             <div class="item-card">
                 <div class="item-header">
-                    <h3 class="item-title">${proyecto.titulo}</h3>
+                    <h3 class="item-title">${proyecto.titulo || 'Sin título'}</h3>
                     <div class="item-actions">
                         <button class="btn btn-sm btn-secondary-portfolio btn-edit" data-id="${proyecto.id}">
                             <i class="fas fa-edit"></i>
@@ -480,10 +480,10 @@ class PortfolioManager {
                         </button>
                     </div>
                 </div>
-                <div class="item-content">${proyecto.descripcion}</div>
+                <div class="item-content">${proyecto.descripcion || 'Sin descripción'}</div>
                 <div class="item-meta">
-                    <span><i class="fas fa-info-circle"></i> ${proyecto.estado}</span>
-                    <span><i class="fas fa-calendar"></i> ${this.formatDate(proyecto.fechaInicio)}</span>
+                    <span><i class="fas fa-info-circle"></i> ${proyecto.estado || 'No especificado'}</span>
+                    <span><i class="fas fa-calendar"></i> ${proyecto.fechaInicio ? this.formatDate(proyecto.fechaInicio) : 'Sin fecha'}</span>
                     ${proyecto.tecnologias ? `<span><i class="fas fa-code"></i> ${proyecto.tecnologias}</span>` : ''}
                 </div>
             </div>
@@ -494,7 +494,7 @@ class PortfolioManager {
         return `
             <div class="item-card">
                 <div class="item-header">
-                    <h3 class="item-title">${experiencia.cargo} - ${experiencia.empresa}</h3>
+                    <h3 class="item-title">${experiencia.cargo || 'Sin cargo'} - ${experiencia.empresa || 'Sin empresa'}</h3>
                     <div class="item-actions">
                         <button class="btn btn-sm btn-secondary-portfolio btn-edit" data-id="${experiencia.id}">
                             <i class="fas fa-edit"></i>
@@ -504,10 +504,10 @@ class PortfolioManager {
                         </button>
                     </div>
                 </div>
-                <div class="item-content">${experiencia.descripcion}</div>
+                <div class="item-content">${experiencia.descripcion || 'Sin descripción'}</div>
                 <div class="item-meta">
-                    <span><i class="fas fa-briefcase"></i> ${experiencia.tipo}</span>
-                    <span><i class="fas fa-calendar"></i> ${this.formatDate(experiencia.fechaInicio)} - ${experiencia.fechaFin || 'Actual'}</span>
+                    <span><i class="fas fa-briefcase"></i> ${experiencia.tipo || 'No especificado'}</span>
+                    <span><i class="fas fa-calendar"></i> ${experiencia.fechaInicio ? this.formatDate(experiencia.fechaInicio) : 'Sin fecha'} - ${experiencia.fechaFin ? this.formatDate(experiencia.fechaFin) : 'Actual'}</span>
                     ${experiencia.ubicacion ? `<span><i class="fas fa-map-marker-alt"></i> ${experiencia.ubicacion}</span>` : ''}
                 </div>
             </div>
@@ -515,13 +515,14 @@ class PortfolioManager {
     }
     
     renderHabilidad(habilidad) {
-        const stars = ''.repeat(habilidad.nivel) + ''.repeat(5 - habilidad.nivel);
+        const nivel = habilidad.nivel || 1;
+        const stars = '★'.repeat(nivel) + '☆'.repeat(5 - nivel);
         
         return `
             <div class="skill-item">
-                <div class="skill-name">${habilidad.nombre}</div>
+                <div class="skill-name">${habilidad.nombre || 'Sin nombre'}</div>
                 <div class="skill-level">${stars}</div>
-                <div class="skill-category">${habilidad.categoria}</div>
+                <div class="skill-category">${habilidad.categoria || 'No especificado'}</div>
                 <div class="item-actions mt-2">
                     <button class="btn btn-sm btn-secondary-portfolio btn-edit" data-id="${habilidad.id}">
                         <i class="fas fa-edit"></i>
@@ -604,12 +605,17 @@ class PortfolioManager {
         try {
             this.showToast('Generando PDF...', 'info');
             
+            // Verificar que jsPDF esté disponible
+            if (typeof window.jspdf === 'undefined') {
+                throw new Error('jsPDF no está cargado');
+            }
+            
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
             
             // Add title
             doc.setFontSize(20);
-            doc.text('Portafolio Profesional', 20, 30);
+            doc.text('Curriculum Vitae', 20, 30);
             
             // Add profile info
             doc.setFontSize(16);
@@ -637,14 +643,13 @@ class PortfolioManager {
             }
             
             // Add sections
-            this.addSectionToPDF(doc, 'Logros y Certificaciones', this.portfolioData.logros, y);
-            y += 20;
-            this.addSectionToPDF(doc, 'Proyectos', this.portfolioData.proyectos, y);
-            y += 20;
-            this.addSectionToPDF(doc, 'Experiencia Laboral', this.portfolioData.experiencias, y);
+            y = this.addSectionToPDF(doc, 'Logros y Certificaciones', this.portfolioData.logros, y + 20);
+            y = this.addSectionToPDF(doc, 'Proyectos', this.portfolioData.proyectos, y + 20);
+            y = this.addSectionToPDF(doc, 'Experiencia Laboral', this.portfolioData.experiencias, y + 20);
+            y = this.addSectionToPDF(doc, 'Habilidades', this.portfolioData.habilidades, y + 20);
             
             // Save PDF
-            const fileName = `portafolio_${perfil.nombre || 'usuario'}_${new Date().toISOString().split('T')[0]}.pdf`;
+            const fileName = `cv_${(perfil.nombre || 'usuario').replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`;
             doc.save(fileName);
             
             this.showToast('PDF generado exitosamente', 'success');
@@ -655,11 +660,15 @@ class PortfolioManager {
             
         } catch (error) {
             console.error('Error generating PDF:', error);
-            this.showToast('Error al generar el PDF', 'error');
+            this.showToast(`Error al generar el PDF: ${error.message}`, 'error');
         }
     }
     
     addSectionToPDF(doc, title, items, startY) {
+        if (!items || items.length === 0) {
+            return startY;
+        }
+        
         doc.setFontSize(16);
         doc.text(title, 20, startY);
         
@@ -671,15 +680,36 @@ class PortfolioManager {
             }
             
             doc.setFontSize(12);
-            doc.text(item.titulo || item.nombre || item.cargo, 20, y);
+            const titulo = item.titulo || item.nombre || item.cargo || 'Sin título';
+            doc.text(titulo, 20, y);
             y += 10;
             
             doc.setFontSize(10);
             const descripcion = item.descripcion || '';
-            const lines = doc.splitTextToSize(descripcion, 170);
-            doc.text(lines, 20, y);
-            y += lines.length * 5 + 5;
+            if (descripcion) {
+                const lines = doc.splitTextToSize(descripcion, 170);
+                doc.text(lines, 20, y);
+                y += lines.length * 5 + 5;
+            }
+            
+            // Agregar información adicional según el tipo
+            if (item.tipo) {
+                doc.text(`Tipo: ${item.tipo}`, 20, y);
+                y += 8;
+            }
+            if (item.estado) {
+                doc.text(`Estado: ${item.estado}`, 20, y);
+                y += 8;
+            }
+            if (item.nivel && title === 'Habilidades') {
+                doc.text(`Nivel: ${item.nivel}/5`, 20, y);
+                y += 8;
+            }
+            
+            y += 5; // Espacio entre items
         });
+        
+        return y;
     }
     
     // === VISTA PREVIA ===

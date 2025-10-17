@@ -1,18 +1,20 @@
 /* Portfolio Styles */
 .portfolio-container {
-    background: linear-gradient(135deg, var(--bg-start) 0%, var(--bg-end) 100%);
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
     min-height: 100vh;
     padding: 2rem 0;
+    color: #333;
 }
 
 /* Progress Bar */
 .progress-section {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.9);
     backdrop-filter: blur(10px);
     border-radius: var(--border-radius);
     padding: 2rem;
     margin-bottom: 2rem;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .progress-header {
@@ -23,7 +25,7 @@
 }
 
 .progress-title {
-    color: var(--gold);
+    color: #2e004f;
     font-size: 1.5rem;
     font-weight: 600;
 }
@@ -31,12 +33,12 @@
 .progress-percentage {
     font-size: 2rem;
     font-weight: bold;
-    color: var(--students-cyan);
+    color: #0dcaf0;
 }
 
 .progress-bar-custom {
     height: 20px;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.1);
     border-radius: 10px;
     overflow: hidden;
     margin-bottom: 1rem;
@@ -44,7 +46,7 @@
 
 .progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, var(--students-cyan), var(--students-teal));
+    background: linear-gradient(90deg, #0dcaf0, #20c997);
     border-radius: 10px;
     transition: width 0.5s ease;
     position: relative;
@@ -63,17 +65,18 @@
 
 /* Tabs */
 .tabs-container {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.9);
     backdrop-filter: blur(10px);
     border-radius: var(--border-radius);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(0, 0, 0, 0.1);
     overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .tabs-nav {
     display: flex;
-    background: rgba(0, 0, 0, 0.2);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.05);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .tab-btn {
@@ -81,19 +84,19 @@
     padding: 1rem;
     background: transparent;
     border: none;
-    color: rgba(255, 255, 255, 0.7);
+    color: rgba(0, 0, 0, 0.7);
     cursor: pointer;
     transition: all var(--transition-medium);
     position: relative;
 }
 
 .tab-btn:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: var(--gold);
+    background: rgba(0, 0, 0, 0.05);
+    color: #2e004f;
 }
 
 .tab-btn.active {
-    background: var(--students-purple);
+    background: #2e004f;
     color: white;
 }
 
@@ -104,7 +107,7 @@
     left: 0;
     right: 0;
     height: 3px;
-    background: var(--gold);
+    background: #ffc107;
 }
 
 .tab-content {
@@ -119,16 +122,17 @@
 
 /* Forms */
 .form-section {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.9);
     backdrop-filter: blur(10px);
     border-radius: var(--border-radius);
     padding: 2rem;
     margin-bottom: 2rem;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .form-section h3 {
-    color: var(--gold);
+    color: #2e004f;
     margin-bottom: 1.5rem;
     display: flex;
     align-items: center;
@@ -141,7 +145,7 @@
 
 .form-group label {
     display: block;
-    color: rgba(255, 255, 255, 0.9);
+    color: #333;
     margin-bottom: 0.5rem;
     font-weight: 500;
 }
@@ -149,22 +153,22 @@
 .form-control {
     width: 100%;
     padding: 0.75rem;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(0, 0, 0, 0.2);
     border-radius: var(--border-radius);
-    color: white;
+    color: #333;
     transition: all var(--transition-medium);
 }
 
 .form-control:focus {
     outline: none;
-    border-color: var(--students-cyan);
+    border-color: #0dcaf0;
     box-shadow: 0 0 0 3px rgba(13, 202, 240, 0.2);
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 1);
 }
 
 .form-control::placeholder {
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(0, 0, 0, 0.5);
 }
 
 .form-row {
@@ -187,7 +191,7 @@
 }
 
 .form-check label {
-    color: rgba(255, 255, 255, 0.9);
+    color: #333;
     margin: 0;
     cursor: pointer;
 }
@@ -207,7 +211,7 @@
 }
 
 .btn-primary-portfolio {
-    background: linear-gradient(135deg, var(--students-cyan), var(--students-teal));
+    background: linear-gradient(135deg, #0dcaf0, #20c997);
     color: white;
 }
 
@@ -217,13 +221,13 @@
 }
 
 .btn-secondary-portfolio {
-    background: rgba(255, 255, 255, 0.1);
-    color: white;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.9);
+    color: #333;
+    border: 1px solid rgba(0, 0, 0, 0.2);
 }
 
 .btn-secondary-portfolio:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(0, 0, 0, 0.05);
     transform: translateY(-2px);
 }
 
@@ -244,18 +248,19 @@
 }
 
 .item-card {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.9);
     backdrop-filter: blur(10px);
     border-radius: var(--border-radius);
     padding: 1.5rem;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(0, 0, 0, 0.1);
     transition: all var(--transition-medium);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .item-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-    border-color: var(--students-cyan);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    border-color: #0dcaf0;
 }
 
 .item-header {
@@ -266,7 +271,7 @@
 }
 
 .item-title {
-    color: var(--gold);
+    color: #2e004f;
     font-size: 1.25rem;
     font-weight: 600;
     margin: 0;
@@ -283,7 +288,7 @@
 }
 
 .item-content {
-    color: rgba(255, 255, 255, 0.8);
+    color: #333;
     line-height: 1.6;
 }
 
@@ -293,11 +298,11 @@
     gap: 1rem;
     margin-top: 1rem;
     padding-top: 1rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .item-meta span {
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(0, 0, 0, 0.6);
     font-size: 0.875rem;
     display: flex;
     align-items: center;
@@ -312,22 +317,24 @@
 }
 
 .skill-item {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.9);
     backdrop-filter: blur(10px);
     border-radius: var(--border-radius);
     padding: 1rem;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(0, 0, 0, 0.1);
     text-align: center;
     transition: all var(--transition-medium);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .skill-item:hover {
     transform: translateY(-3px);
-    border-color: var(--students-cyan);
+    border-color: #0dcaf0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 .skill-name {
-    color: var(--gold);
+    color: #2e004f;
     font-weight: 600;
     margin-bottom: 0.5rem;
 }
@@ -337,19 +344,21 @@
     justify-content: center;
     gap: 0.25rem;
     margin-bottom: 0.5rem;
+    font-size: 1.2rem;
+    color: #ffc107;
 }
 
 .skill-star {
-    color: var(--students-yellow);
+    color: #ffc107;
     font-size: 1.2rem;
 }
 
 .skill-star.empty {
-    color: rgba(255, 255, 255, 0.3);
+    color: rgba(0, 0, 0, 0.3);
 }
 
 .skill-category {
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(0, 0, 0, 0.6);
     font-size: 0.875rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -566,17 +575,17 @@
 .empty-state {
     text-align: center;
     padding: 3rem 2rem;
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(0, 0, 0, 0.6);
 }
 
 .empty-state i {
     font-size: 3rem;
     margin-bottom: 1rem;
-    color: rgba(255, 255, 255, 0.3);
+    color: rgba(0, 0, 0, 0.3);
 }
 
 .empty-state h3 {
-    color: rgba(255, 255, 255, 0.8);
+    color: rgba(0, 0, 0, 0.8);
     margin-bottom: 1rem;
 }
 
