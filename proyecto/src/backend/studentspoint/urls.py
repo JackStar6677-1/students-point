@@ -99,6 +99,15 @@ urlpatterns = [
     re_path(r'^favicon\.ico$', serve, {'document_root': Path(settings.STATIC_ROOT), 'path': 'favicon.ico'}),
     # Servir archivos estaticos ANTES del catch-all (directamente desde staticfiles/)
     re_path(r'^static/(?P<path>.*)$', serve, {'document_root': Path(settings.STATIC_ROOT)}),
+    # Servir archivos del conversor con MIME type correcto
+    re_path(r'^converter/(?P<path>.*\.js)$', serve, {
+        'document_root': Path(settings.STATIC_ROOT) / 'converter',
+        'content_type': 'application/javascript'
+    }),
+    re_path(r'^converter/(?P<path>.*\.css)$', serve, {
+        'document_root': Path(settings.STATIC_ROOT) / 'converter',
+        'content_type': 'text/css'
+    }),
     # Servir imágenes desde staticfiles (sin /static/)
     re_path(r'^images/(?P<path>.*)$', serve, {'document_root': Path(settings.STATIC_ROOT) / "images"}),
     # Servir imágenes desde la carpeta imagenes (legacy)

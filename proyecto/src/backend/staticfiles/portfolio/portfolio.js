@@ -235,18 +235,25 @@ class PortfolioManager {
     
     // === GUARDAR DATOS ===
     savePerfil() {
+        // Capturar todos los valores del formulario
         this.portfolioData.perfil = {
-            nombre: document.getElementById('inputNombre').value,
-            email: document.getElementById('inputEmail').value,
-            telefono: document.getElementById('inputTelefono').value,
-            linkedin: document.getElementById('inputLinkedin').value,
-            github: document.getElementById('inputGithub').value,
-            carrera: document.getElementById('inputCarrera').value,
-            campus: document.getElementById('inputCampus').value
+            nombre: document.getElementById('inputNombre')?.value || '',
+            email: document.getElementById('inputEmail')?.value || '',
+            telefono: document.getElementById('inputTelefono')?.value || '',
+            linkedin: document.getElementById('inputLinkedin')?.value || '',
+            github: document.getElementById('inputGithub')?.value || '',
+            carrera: document.getElementById('inputCarrera')?.value || '',
+            campus: document.getElementById('inputCampus')?.value || '',
+            sitioWeb: document.getElementById('inputSitioWeb')?.value || '',
+            resumenProfesional: document.getElementById('inputResumenBio')?.value || ''
         };
+        
+        // Debug: mostrar datos capturados
+        console.log('Datos de perfil guardados:', this.portfolioData.perfil);
         
         this.savePortfolioData();
         this.updateProgress();
+        this.showToast('Perfil guardado exitosamente', 'success');
         
         if (window.playSound) {
             window.playSound('success');
@@ -254,19 +261,31 @@ class PortfolioManager {
     }
     
     saveConfiguracion() {
+        // Capturar configuración y datos adicionales del perfil
+        const tituloProfesional = document.getElementById('inputTituloProfesional')?.value || '';
+        const resumenProfesional = document.getElementById('inputResumenProfesional')?.value || '';
+        
         this.portfolioData.configuracion = {
-            tituloProfesional: document.getElementById('inputTituloProfesional').value,
-            resumenProfesional: document.getElementById('inputResumenProfesional').value,
-            temaColor: document.getElementById('inputTemaColor').value,
-            mostrarContacto: document.getElementById('inputMostrarContacto').checked,
-            mostrarRedes: document.getElementById('inputMostrarRedes').checked,
-            mostrarLogros: document.getElementById('inputMostrarLogros').checked,
-            mostrarProyectos: document.getElementById('inputMostrarProyectos').checked,
-            mostrarExperiencia: document.getElementById('inputMostrarExperiencia').checked,
-            mostrarHabilidades: document.getElementById('inputMostrarHabilidades').checked
+            tituloProfesional: tituloProfesional,
+            resumenProfesional: resumenProfesional,
+            temaColor: document.getElementById('inputTemaColor')?.value || '#2e004f',
+            mostrarContacto: document.getElementById('inputMostrarContacto')?.checked ?? true,
+            mostrarRedes: document.getElementById('inputMostrarRedes')?.checked ?? true,
+            mostrarLogros: document.getElementById('inputMostrarLogros')?.checked ?? true,
+            mostrarProyectos: document.getElementById('inputMostrarProyectos')?.checked ?? true,
+            mostrarExperiencia: document.getElementById('inputMostrarExperiencia')?.checked ?? true,
+            mostrarHabilidades: document.getElementById('inputMostrarHabilidades')?.checked ?? true
         };
         
+        // Actualizar también el perfil con título y resumen
+        this.portfolioData.perfil.tituloProfesional = tituloProfesional;
+        this.portfolioData.perfil.resumenProfesional = resumenProfesional;
+        
+        // Debug: mostrar configuración guardada
+        console.log('Configuración guardada:', this.portfolioData.configuracion);
+        
         this.savePortfolioData();
+        this.showToast('Configuración guardada exitosamente', 'success');
         
         if (window.playSound) {
             window.playSound('success');
@@ -332,27 +351,36 @@ class PortfolioManager {
     
     saveItem(type) {
         const form = document.getElementById(`form${type.charAt(0).toUpperCase() + type.slice(1)}`);
-        const formData = new FormData(form);
         const item = {};
         
-        for (let [key, value] of formData.entries()) {
-            const fieldName = key.replace(`input${type.charAt(0).toUpperCase() + type.slice(1)}`, '');
-            const camelCaseName = fieldName.charAt(0).toLowerCase() + fieldName.slice(1);
-            item[camelCaseName] = value;
-        }
+        // Capturar TODOS los inputs del formulario por ID
+        const prefix = `input${type.charAt(0).toUpperCase() + type.slice(1)}`;
         
-        // Handle checkboxes
-        form.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-            const fieldName = checkbox.id.replace(`input${type.charAt(0).toUpperCase() + type.slice(1)}`, '');
-            const camelCaseName = fieldName.charAt(0).toLowerCase() + fieldName.slice(1);
-            item[camelCaseName] = checkbox.checked;
+        form.querySelectorAll('input, textarea, select').forEach(element => {
+            if (element.id && element.id.startsWith(prefix)) {
+                // Extraer el nombre del campo desde el ID
+                const fieldName = element.id.replace(prefix, '');
+                const camelCaseName = fieldName.charAt(0).toLowerCase() + fieldName.slice(1);
+                
+                // Capturar el valor según el tipo
+                if (element.type === 'checkbox') {
+                    item[camelCaseName] = element.checked;
+                } else if (element.type === 'number') {
+                    item[camelCaseName] = parseInt(element.value) || 0;
+                } else {
+                    item[camelCaseName] = element.value || '';
+                }
+            }
         });
+        
+        console.log(`Guardando ${type}:`, item);
         
         if (this.currentEditingItem) {
             // Edit existing item
+            item.id = this.currentEditingItem.id;
             const index = this.portfolioData[type + 's'].findIndex(i => i.id === this.currentEditingItem.id);
             if (index !== -1) {
-                this.portfolioData[type + 's'][index] = { ...this.currentEditingItem, ...item };
+                this.portfolioData[type + 's'][index] = item;
             }
         } else {
             // Add new item
@@ -364,6 +392,7 @@ class PortfolioManager {
         this.renderSection(type + 's');
         this.updateProgress();
         this.closeModal();
+        this.showToast(`${type.charAt(0).toUpperCase() + type.slice(1)} guardado exitosamente`, 'success');
         
         if (window.playSound) {
             window.playSound('success');
@@ -613,34 +642,85 @@ class PortfolioManager {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
             
-            // Add title
-            doc.setFontSize(20);
-            doc.text('Curriculum Vitae', 20, 30);
-            
-            // Add profile info
-            doc.setFontSize(16);
-            doc.text('Información Personal', 20, 50);
-            
-            doc.setFontSize(12);
             const perfil = this.portfolioData.perfil;
-            let y = 60;
+            const config = this.portfolioData.configuracion;
             
-            if (perfil.nombre) {
-                doc.text(`Nombre: ${perfil.nombre}`, 20, y);
+            let y = 30;
+            
+            // Título principal - Nombre
+            doc.setFontSize(24);
+            doc.setFont(undefined, 'bold');
+            doc.text(perfil.nombre || 'Curriculum Vitae', 20, y);
+            y += 10;
+            
+            // Título profesional
+            if (config.tituloProfesional || perfil.tituloProfesional) {
+                doc.setFontSize(16);
+                doc.setFont(undefined, 'normal');
+                doc.setTextColor(100);
+                doc.text(config.tituloProfesional || perfil.tituloProfesional, 20, y);
                 y += 10;
             }
+            
+            // Línea separadora
+            doc.setLineWidth(0.5);
+            doc.line(20, y, 190, y);
+            y += 10;
+            
+            // Resumen profesional
+            if (config.resumenProfesional || perfil.resumenProfesional) {
+                doc.setFontSize(12);
+                doc.setFont(undefined, 'bold');
+                doc.setTextColor(0);
+                doc.text('Resumen Profesional', 20, y);
+                y += 8;
+                
+                doc.setFont(undefined, 'normal');
+                const resumen = config.resumenProfesional || perfil.resumenProfesional;
+                const lineasResumen = doc.splitTextToSize(resumen, 170);
+                doc.text(lineasResumen, 20, y);
+                y += (lineasResumen.length * 6) + 10;
+            }
+            
+            // Información de contacto
+            doc.setFontSize(14);
+            doc.setFont(undefined, 'bold');
+            doc.text('Información de Contacto', 20, y);
+            y += 8;
+            
+            doc.setFontSize(11);
+            doc.setFont(undefined, 'normal');
+            
             if (perfil.email) {
                 doc.text(`Email: ${perfil.email}`, 20, y);
-                y += 10;
-            }
-            if (perfil.carrera) {
-                doc.text(`Carrera: ${perfil.carrera}`, 20, y);
-                y += 10;
+                y += 6;
             }
             if (perfil.telefono) {
                 doc.text(`Teléfono: ${perfil.telefono}`, 20, y);
-                y += 10;
+                y += 6;
             }
+            if (perfil.carrera) {
+                doc.text(`Carrera: ${perfil.carrera}`, 20, y);
+                y += 6;
+            }
+            if (perfil.campus) {
+                doc.text(`Campus: ${perfil.campus}`, 20, y);
+                y += 6;
+            }
+            if (perfil.linkedin) {
+                doc.text(`LinkedIn: ${perfil.linkedin}`, 20, y);
+                y += 6;
+            }
+            if (perfil.github) {
+                doc.text(`GitHub: ${perfil.github}`, 20, y);
+                y += 6;
+            }
+            if (perfil.sitioWeb) {
+                doc.text(`Sitio Web: ${perfil.sitioWeb}`, 20, y);
+                y += 6;
+            }
+            
+            y += 5;
             
             // Add sections
             y = this.addSectionToPDF(doc, 'Logros y Certificaciones', this.portfolioData.logros, y + 20);
