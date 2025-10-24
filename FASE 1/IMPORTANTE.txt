@@ -1,0 +1,31 @@
+IMPORTANTE - NO MOVER ESTA CARPETA
+===================================
+
+La carpeta FASE 1 (y FASE 2, FASE 3) deben permanecer en la RAIZ del proyecto.
+
+RAZON:
+El sistema de revision academica utiliza scripts automatizados que buscan
+las carpetas de fases en ubicaciones especificas.
+
+UBICACION REQUERIDA:
+students-point/FASE 1/
+students-point/FASE 2/
+students-point/FASE 3/
+
+NO MOVER A:
+- Documentacion/
+- proyecto/
+- Cualquier otra carpeta
+
+ESTRUCTURA REQUERIDA:
+FASE X/
+  ├── Evidencias grupales/
+  └── Evidencias individuales/
+
+Esta estructura es verificada por scripts automatizados de la institucion.
+
+---
+
+Equipo StudentsPoint
+Duoc UC - Ingenieria en Informatica
+

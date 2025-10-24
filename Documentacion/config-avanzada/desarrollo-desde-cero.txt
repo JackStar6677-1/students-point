@@ -1,0 +1,74 @@
+DESARROLLO DESDE CERO - StudentPoint
+==================================
+
+DESARROLLO COMPLETAMENTE DESDE CERO:
+El proyecto StudentPoint fue desarrollado completamente desde cero, sin usar plantillas o frameworks preconstruidos. Todo el código fue escrito específicamente para este proyecto.
+
+FRONTEND DESARROLLADO DESDE CERO:
+- HTML5 semántico y accesible
+- CSS3 personalizado con variables CSS y animaciones
+- JavaScript ES6+ vanilla (sin frameworks como React/Vue)
+- Sistema de sonidos con Web Audio API
+- PWA con Service Worker personalizado
+- Diseño responsive con CSS Grid y Flexbox
+- Tema personalizado con colores oficiales de Duoc UC
+
+BACKEND DESARROLLADO DESDE CERO:
+- Django 5.2.6 configurado desde cero
+- API REST con Django REST Framework
+- Sistema de autenticación JWT personalizado
+- Modelos de base de datos diseñados específicamente
+- Endpoints API creados para cada módulo
+- Sistema de notificaciones push implementado
+- Configuración de seguridad personalizada
+
+MÓDULOS DESARROLLADOS DESDE CERO:
+1. Sistema de Foros - Completamente personalizado
+2. Mercado Estudiantil - Plataforma de comercio propia
+3. Portafolio Profesional - Sistema de gestión de perfiles
+4. Navegación Virtual - Sistema de recorrido del campus
+5. Bienestar Estudiantil - Módulo de salud y bienestar
+6. Sistema de Reportes - Plataforma de tickets
+7. Cursos OTEC - Sistema de gestión de cursos
+8. Encuestas - Plataforma de votación
+9. Horarios - Sistema de gestión de horarios
+10. Notificaciones - Sistema de alertas
+
+DISEÑO DESARROLLADO DESDE CERO:
+- Identidad visual personalizada para Duoc UC
+- Paleta de colores oficial de la institución
+- Iconografía y elementos visuales únicos
+- Animaciones CSS personalizadas
+- Layout responsive diseñado específicamente
+- Experiencia de usuario optimizada
+
+ARQUITECTURA DESARROLLADA DESDE CERO:
+- Estructura de carpetas organizada
+- Patrones de código consistentes
+- Configuración de desarrollo y producción
+- Sistema de cache personalizado
+- Configuración PWA optimizada
+- Scripts de automatización personalizados
+
+FUNCIONALIDADES ÚNICAS:
+- Sistema de sonidos interactivos
+- Navegación virtual del campus
+- PWA con funcionamiento offline
+- Sistema de notificaciones push
+- Integración completa entre módulos
+- Experiencia de usuario cohesiva
+
+NO SE USARON:
+- Plantillas HTML preconstruidas
+- Frameworks CSS como Tailwind
+- Frameworks JavaScript como React/Vue
+- Plantillas de Django
+- Generadores de código
+- Herramientas de scaffolding
+
+TODO FUE DESARROLLADO:
+- Código fuente completamente original
+- Diseño visual único
+- Funcionalidades específicas para Duoc UC
+- Integración personalizada entre componentes
+- Optimizaciones específicas del proyecto

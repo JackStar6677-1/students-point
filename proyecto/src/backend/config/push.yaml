@@ -1,0 +1,4 @@
+# Configuración de Web Push Notifications 
+vapid_public: "BEl62iUYgUivxIkv69yViEuiBIa40HI8l8V6V1V8H3BZ7pRJvnSW4UPHW3v3T1td1K3_fSqiNI2j_lLQ6Ypy1XM" 
+vapid_private: "3K1XdXz0L8Fz0aJSOdwuSeiJfZ5JWY7BdI3R2kS2aJ8" 
+subject: "mailto:admin@duocuc.cl" 

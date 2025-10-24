@@ -1,0 +1,46 @@
+## 2. Sistema de Registro, Login y Personalización de Perfil
+
+Esta sección define cómo se gestionará el registro, autenticación y personalización de los usuarios. El sistema debe ser seguro, intuitivo y flexible, permitiendo que los estudiantes modifiquen su área de estudio y otros aspectos de su cuenta de forma controlada.
+
+---
+
+**Objetivo:**
+Implementar un sistema robusto de registro y autenticación que permita crear perfiles personalizados y gestionar credenciales de manera segura. Además, debe ofrecer opciones de personalización, incluyendo el cambio de área de estudio o carrera una vez por semestre.
+
+### Funcionalidades
+
+1. **Registro de Usuario**
+
+   * Los usuarios deben registrarse con un correo electrónico y contraseña, confirmando su identidad mediante un correo de verificación.
+   * Se recomienda agregar una capa anti-bots (captcha o código de confirmación).
+   * El registro será manual (sin OAuth), garantizando control total sobre las credenciales.
+
+2. **Login**
+
+   * La autenticación se basará en las credenciales creadas durante el registro.
+   * Las contraseñas deben almacenarse de forma segura utilizando **hashing** y políticas de seguridad estándar.
+
+3. **Cambio de Contraseña**
+
+   * Los usuarios podrán restablecer o cambiar su contraseña a través de un proceso de verificación por correo electrónico.
+
+4. **Personalización de Perfil**
+
+   * El perfil debe incluir foto, nombre, apellidos, semestre y área de estudio actual.
+   * Los usuarios podrán modificar su área de estudio cada semestre, reflejándose automáticamente en sus permisos dentro de los foros correspondientes.
+
+5. **Áreas de Estudio y Flexibilidad**
+
+   * Deben existir múltiples carreras (Informática, Leyes, Medicina, Ingeniería, Arquitectura, Psicología, etc.).
+   * Se debe incluir un perfil de **“Estudiante Genérico”** para quienes no encajen en áreas predefinidas o estén en programas mixtos.
+   * El cambio de carrera actualizará automáticamente los foros y permisos asociados al usuario.
+
+6. **Gestión de Perfiles y Privilegios**
+
+   * Los estudiantes tendrán acceso limitado según su área y rol.
+   * Administradores y moderadores podrán modificar perfiles, asignar roles y supervisar publicaciones.
+
+7. **Verificación de Correo (Anti-Bots)**
+
+   * Para validar la autenticidad de las cuentas, se enviará un código de confirmación al correo del usuario.
+   * La cuenta solo se activará tras completar este paso, evitando registros duplicados o automáticos.

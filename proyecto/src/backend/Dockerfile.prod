@@ -1,0 +1,70 @@
+FROM python:3.12-slim as builder
+
+# Instalar dependencias del sistema para compilación
+RUN apt-get update && apt-get install -y \
+    gcc \
+    g++ \
+    libpq-dev \
+    libjpeg-dev \
+    libpng-dev \
+    libfreetype6-dev \
+    liblcms2-dev \
+    libwebp-dev \
+    libharfbuzz-dev \
+    libfribidi-dev \
+    libxcb1-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Crear directorio de trabajo
+WORKDIR /app
+
+# Copiar requirements y instalar dependencias Python
+COPY requirements.txt /app/
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
+
+# Etapa de producción
+FROM python:3.12-slim
+
+# Instalar dependencias del sistema para runtime
+RUN apt-get update && apt-get install -y \
+    libpq5 \
+    libjpeg62-turbo \
+    libpng16-16 \
+    libfreetype6 \
+    liblcms2-2 \
+    libwebp7 \
+    libharfbuzz0b \
+    libfribidi0 \
+    libxcb1 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Crear usuario no-root
+RUN useradd --create-home --shell /bin/bash app
+
+# Establecer directorio de trabajo
+WORKDIR /app
+
+# Copiar dependencias Python desde builder
+COPY --from=builder /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
+COPY --from=builder /usr/local/bin /usr/local/bin
+
+# Copiar código de la aplicación
+COPY . /app/
+
+# Crear directorios necesarios
+RUN mkdir -p /app/static /app/media /app/logs && \
+    chown -R app:app /app
+
+# Cambiar a usuario no-root
+USER app
+
+# Exponer puerto
+EXPOSE 8000
+
+# Variables de entorno
+ENV PYTHONPATH=/app
+ENV DJANGO_SETTINGS_MODULE=studentspoint.settings.prod
+
+# Comando por defecto para producción
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "3", "--timeout", "120", "studentspoint.wsgi:application"]
