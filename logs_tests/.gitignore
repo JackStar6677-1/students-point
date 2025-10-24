@@ -1,7 +1,0 @@
-# Ignorar todos los archivos de log
-*.log
-
-# Mantener estructura
-!.gitkeep
-!README.md
-
