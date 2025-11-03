@@ -67,29 +67,9 @@ class ForumManager {
                 return;
             }
 
-            const response = await fetch('/api/auth/me/', {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            });
-
-            if (response.ok) {
-                const contentType = response.headers.get('content-type');
-                if (contentType && contentType.includes('application/json')) {
-                    this.currentUser = await response.json();
-                    this.updateUserInterface();
-                } else {
-                    const text = await response.text();
-                    console.error('Respuesta no es JSON:', text);
-                    throw new Error('Respuesta inválida del servidor');
-                }
-            } else {
-                const errorText = await response.text();
-                console.error('Error de autenticación:', errorText);
-                localStorage.removeItem('access_token');
-                localStorage.removeItem('refresh_token');
-                window.location.href = '../index.html';
+            this.currentUser = await window.forumAPI.getCurrentUser();
+            if (this.currentUser) {
+                this.updateUserInterface();
             }
         } catch (error) {
             console.error('Error loading user:', error);
@@ -101,36 +81,7 @@ class ForumManager {
 
     async loadForums() {
         try {
-            const token = localStorage.getItem('access_token');
-            if (!token) {
-                console.log('No hay token de autenticación');
-                this.forums = this.getSampleForums();
-                this.populateForumSelects();
-                return;
-            }
-
-            const response = await fetch('/api/forum/foros/', {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            });
-            
-            if (response.ok) {
-                const contentType = response.headers.get('content-type');
-                if (contentType && contentType.includes('application/json')) {
-                    const data = await response.json();
-                    this.forums = Array.isArray(data) ? data : data.results || [];
-                } else {
-                    // Si no es JSON, probablemente redirigió a login
-                    console.log('Respuesta no es JSON, probablemente no autenticado');
-                    this.forums = this.getSampleForums();
-                }
-            } else {
-                // Si falla la API, usar datos de ejemplo
-                console.log('Error en API de foros:', response.status);
-                this.forums = this.getSampleForums();
-            }
+            this.forums = await window.forumAPI.getForums();
             this.populateForumSelects();
         } catch (error) {
             console.error('Error loading forums:', error);
@@ -144,42 +95,22 @@ class ForumManager {
         try {
             this.showLoading(true);
             
-            const params = new URLSearchParams();
             const forumFilterElement = document.getElementById('forumFilter');
             const sortFilterElement = document.getElementById('sortFilter');
             const statusFilterElement = document.getElementById('statusFilter');
             
-            const forumFilter = forumFilterElement ? forumFilterElement.value : '';
-            const sortFilter = sortFilterElement ? sortFilterElement.value : '';
-            const statusFilter = statusFilterElement ? statusFilterElement.value : '';
-
-            if (forumFilter) params.append('foro_id', forumFilter);
-            if (sortFilter) params.append('orden', sortFilter);
-            if (statusFilter) params.append('estado', statusFilter);
-
-            const token = localStorage.getItem('access_token');
-            const headers = {};
-            if (token) {
-                headers['Authorization'] = `Bearer ${token}`;
-                headers['Content-Type'] = 'application/json';
+            const filters = {};
+            if (forumFilterElement && forumFilterElement.value) {
+                filters.foro_id = forumFilterElement.value;
+            }
+            if (sortFilterElement && sortFilterElement.value) {
+                filters.orden = sortFilterElement.value;
+            }
+            if (statusFilterElement && statusFilterElement.value) {
+                filters.estado = statusFilterElement.value;
             }
 
-            const response = await fetch(`/api/forum/posts/?${params}`, { headers });
-            if (response.ok) {
-                const contentType = response.headers.get('content-type');
-                if (contentType && contentType.includes('application/json')) {
-                    const data = await response.json();
-                    this.posts = Array.isArray(data) ? data : data.results || [];
-                } else {
-                    // Si no es JSON, probablemente redirigió a login
-                    console.log('Respuesta no es JSON, probablemente no autenticado');
-                    this.posts = this.getSamplePosts();
-                }
-            } else {
-                // Si falla la API, usar datos de ejemplo
-                console.log('Error en API de posts:', response.status);
-                this.posts = this.getSamplePosts();
-            }
+            this.posts = await window.forumAPI.getPosts(filters);
             this.renderPosts();
         } catch (error) {
             console.error('Error loading posts:', error);
@@ -329,26 +260,14 @@ class ForumManager {
 
     async votePost(postId, value) {
         try {
-            const token = localStorage.getItem('access_token');
-            const response = await fetch(`/api/forum/posts/${postId}/votar/`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ valor: value })
-            });
-
-            if (response.ok) {
-                const result = await response.json();
+            const result = await window.forumAPI.votePost(postId, value);
+            if (result && result.score !== undefined) {
                 this.updatePostScore(postId, result.score);
                 this.showAlert('Voto registrado correctamente', 'success');
-            } else {
-                this.showAlert('Error al registrar el voto', 'danger');
             }
         } catch (error) {
             console.error('Error voting:', error);
-            this.showAlert('Error al registrar el voto', 'danger');
+            this.showAlert(error.message || 'Error al registrar el voto', 'danger');
         }
     }
 
@@ -368,12 +287,9 @@ class ForumManager {
         
         if (commentsContainer.style.display === 'none') {
             try {
-                const response = await fetch(`/api/forum/posts/${postId}/comentarios/`);
-                if (response.ok) {
-                    const comments = await response.json();
-                    commentsContainer.innerHTML = this.renderComments(comments);
-                    commentsContainer.style.display = 'block';
-                }
+                const comments = await window.forumAPI.getComments(postId);
+                commentsContainer.innerHTML = this.renderComments(comments);
+                commentsContainer.style.display = 'block';
             } catch (error) {
                 console.error('Error loading comments:', error);
             }
@@ -406,7 +322,6 @@ class ForumManager {
 
     async submitReport() {
         try {
-            const token = localStorage.getItem('access_token');
             const reportTypeElement = document.getElementById('reportType');
             const reportDescriptionElement = document.getElementById('reportDescription');
             const reportType = reportTypeElement ? reportTypeElement.value : '';
@@ -417,28 +332,17 @@ class ForumManager {
                 return;
             }
 
-            const response = await fetch(`/api/forum/posts/${this.currentPostId}/reportar/`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    tipo: reportType,
-                    descripcion: reportDescription
-                })
+            await window.forumAPI.reportPost(this.currentPostId, {
+                tipo: reportType,
+                descripcion: reportDescription
             });
 
-            if (response.ok) {
-                this.showAlert('Reporte enviado correctamente', 'success');
-                bootstrap.Modal.getInstance(document.getElementById('reportModal')).hide();
-                this.loadPosts(); // Reload to show updated report count
-            } else {
-                this.showAlert('Error al enviar el reporte', 'danger');
-            }
+            this.showAlert('Reporte enviado correctamente', 'success');
+            bootstrap.Modal.getInstance(document.getElementById('reportModal')).hide();
+            this.loadPosts(); // Reload to show updated report count
         } catch (error) {
             console.error('Error submitting report:', error);
-            this.showAlert('Error al enviar el reporte', 'danger');
+            this.showAlert(error.message || 'Error al enviar el reporte', 'danger');
         }
     }
 
@@ -450,7 +354,6 @@ class ForumManager {
 
     async submitModeration() {
         try {
-            const token = localStorage.getItem('access_token');
             const actionElement = document.getElementById('moderationAction');
             const reasonElement = document.getElementById('moderationReason');
             const action = actionElement ? actionElement.value : '';
@@ -461,86 +364,63 @@ class ForumManager {
                 return;
             }
 
-            const response = await fetch(`/api/forum/posts/${this.currentPostId}/moderar/`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    accion: action,
-                    razon: reason
-                })
+            await window.forumAPI.moderatePost(this.currentPostId, {
+                accion: action,
+                razon: reason
             });
 
-            if (response.ok) {
-                this.showAlert(`Post ${action}do exitosamente`, 'success');
-                bootstrap.Modal.getInstance(document.getElementById('moderationModal')).hide();
-                this.loadPosts(); // Reload to show updated status
-            } else {
-                this.showAlert('Error al moderar el post', 'danger');
-            }
+            this.showAlert(`Post ${action}do exitosamente`, 'success');
+            bootstrap.Modal.getInstance(document.getElementById('moderationModal')).hide();
+            this.loadPosts(); // Reload to show updated status
         } catch (error) {
             console.error('Error moderating post:', error);
-            this.showAlert('Error al moderar el post', 'danger');
+            this.showAlert(error.message || 'Error al moderar el post', 'danger');
         }
     }
 
     async createPost() {
         try {
-            const token = localStorage.getItem('access_token');
-            const forumIdElement = document.getElementById('postForo'); // Corregido: postForo en vez de postForum
+            const forumIdElement = document.getElementById('postForo');
             const titleElement = document.getElementById('postTitle');
             const contentElement = document.getElementById('postContent');
             const anonymousElement = document.getElementById('postAnonymous');
             const imageElement = document.getElementById('postImage');
+            const tipoElement = document.getElementById('postTipo');
             
             const forumId = forumIdElement ? forumIdElement.value : '';
             const title = titleElement ? titleElement.value.trim() : '';
             const content = contentElement ? contentElement.value.trim() : '';
             const anonymous = anonymousElement ? anonymousElement.checked : false;
-
-            console.log('Create Post - Forum ID:', forumId, 'Title:', title, 'Content:', content);
+            const tipo = tipoElement ? tipoElement.value : 'comentario';
 
             if (!forumId || !title || !content) {
                 this.showAlert('Por favor completa todos los campos requeridos', 'warning');
-                console.error('Missing fields:', {forumId, title, content});
                 return;
             }
 
-            // Usar FormData para soportar subida de imágenes
-            const formData = new FormData();
-            formData.append('foro', forumId);
-            formData.append('titulo', title);
-            formData.append('cuerpo', content);
-            formData.append('anonimo', anonymous);
-            
+            const postData = {
+                foro: forumId,
+                titulo: title,
+                cuerpo: content,
+                tipo: tipo,
+                anonimo: anonymous
+            };
+
             // Agregar imagen si existe
             if (imageElement && imageElement.files.length > 0) {
-                formData.append('imagen', imageElement.files[0]);
+                postData.imagen = imageElement.files[0];
             }
 
-            const response = await fetch('/api/forum/posts/', {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    // NO incluir Content-Type para que el navegador lo configure con boundary
-                },
-                body: formData
-            });
+            await window.forumAPI.createPost(postData);
 
-            if (response.ok) {
-                this.showAlert('Post creado correctamente', 'success');
-                bootstrap.Modal.getInstance(document.getElementById('newPostModal')).hide();
-                document.getElementById('newPostForm').reset();
-                this.loadPosts();
-            } else {
-                const error = await response.json();
-                this.showAlert(error.detail || 'Error al crear el post', 'danger');
-            }
+            this.showAlert('Post creado correctamente', 'success');
+            bootstrap.Modal.getInstance(document.getElementById('newPostModal')).hide();
+            const form = document.getElementById('newPostForm');
+            if (form) form.reset();
+            this.loadPosts();
         } catch (error) {
             console.error('Error creating post:', error);
-            this.showAlert('Error al crear el post', 'danger');
+            this.showAlert(error.message || 'Error al crear el post', 'danger');
         }
     }
 

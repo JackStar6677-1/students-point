@@ -2,52 +2,9 @@
 
 from django.conf import settings
 from django.db import models
-import re
 
-
-# Palabras que no se permiten en títulos o cuerpos de posts. Si una
-# aparece, el post queda en estado de "revisión". Ajusta esta lista para
-# modificar las reglas de moderación.
-BANNED_WORDS = {
-    "malo", "ofensivo", "odio", "violencia", "drogas", "alcohol", 
-    "sexo", "pornografia", "spam", "estafa", "fraude", "hack",
-    "virus", "malware", "phishing", "scam", "fake", "mentira"
-}
-
-# Palabras que requieren moderación manual
-MODERATION_WORDS = {
-    "política", "religión", "discriminación", "racismo", "sexismo",
-    "homofobia", "transfobia", "bullying", "acoso", "amenaza"
-}
-
-# Palabras ofensivas que deben ser censuradas parcialmente
-OFFENSIVE_WORDS = {
-    "mierda", "puta", "pendejo", "idiota", "estupido", "imbecil",
-    "carajo", "maldito", "joder", "coño", "cabron", "gilipollas",
-    "huevon", "weón", "weon", "ctm", "conchetumare", "culiao"
-}
-
-
-def censurar_texto(texto):
-    """Censura parcialmente palabras ofensivas en el texto.
-    
-    Ejemplo: 'mierda' se convierte en 'm#####'
-    """
-    texto_censurado = texto
-    for palabra in OFFENSIVE_WORDS:
-        # Buscar la palabra completa (case insensitive)
-        patron = re.compile(r'\b' + re.escape(palabra) + r'\b', re.IGNORECASE)
-        
-        def reemplazar(match):
-            palabra_encontrada = match.group(0)
-            # Mantener primera letra y reemplazar resto con #
-            if len(palabra_encontrada) > 1:
-                return palabra_encontrada[0] + '#' * (len(palabra_encontrada) - 1)
-            return '#'
-        
-        texto_censurado = patron.sub(reemplazar, texto_censurado)
-    
-    return texto_censurado
+from .utils import censurar_texto
+from .services import ForumPermissionService, PostValidationService
 
 
 class Foro(models.Model):
@@ -77,19 +34,24 @@ class Foro(models.Model):
     def puede_postear(self, usuario):
         """Verifica si un usuario puede crear posts en este foro.
         
-        Solo pueden postear usuarios cuya carrera coincida con la del foro.
+        Args:
+            usuario: Instancia de usuario de Django
+            
+        Returns:
+            bool: True si el usuario puede postear en este foro
         """
-        return usuario.career == self.carrera
+        return ForumPermissionService.puede_postear_en_foro(usuario, self)
     
     def puede_ver(self, usuario):
         """Verifica si un usuario puede ver este foro.
         
-        Foros públicos: todos pueden ver
-        Foros privados: solo estudiantes de la carrera
+        Args:
+            usuario: Instancia de usuario de Django (puede ser None para anónimos)
+            
+        Returns:
+            bool: True si el usuario puede ver el foro
         """
-        if not self.es_privado:
-            return True
-        return usuario.career == self.carrera
+        return ForumPermissionService.puede_ver_foro(usuario, self)
 
 
 class Post(models.Model):
@@ -184,18 +146,17 @@ class Post(models.Model):
         super().save(*args, **kwargs)
     
     def verificar_contenido(self):
-        """Verifica el contenido del post y determina el estado apropiado."""
-        texto = f"{self.titulo} {self.cuerpo}".lower()
+        """Verifica el contenido del post y determina el estado apropiado.
         
-        # Verificar palabras prohibidas
-        if any(bad in texto for bad in BANNED_WORDS):
-            return Post.Estado.REVISION
-        
-        # Verificar palabras que requieren moderación
-        if any(mod in texto for mod in MODERATION_WORDS):
-            return Post.Estado.REVISION
-            
-        return Post.Estado.PUBLICADO
+        Returns:
+            str: Estado del post según su contenido
+        """
+        return PostValidationService.determinar_estado_post(
+            titulo=self.titulo,
+            cuerpo=self.cuerpo,
+            tiene_imagen=bool(self.imagen),
+            imagen_aprobada=self.imagen_aprobada
+        )
     
     def moderar(self, moderador, accion, razon=""):
         """Aplica una acción de moderación al post."""

@@ -14,7 +14,8 @@ from drf_spectacular.utils import extend_schema
 
 from studentspoint.apps.accounts.permissions import IsModerator
 
-from .models import BANNED_WORDS, MODERATION_WORDS, Comentario, Foro, Post, PostReporte, VotoPost
+from .models import Comentario, Foro, Post, PostReporte, VotoPost
+from .services import ForumPermissionService
 from .serializers import (
     ComentarioSerializer,
     OpcionEncuestaSerializer,
@@ -85,20 +86,10 @@ class ForoListView(generics.ListAPIView):
             'descripcion', 'created_at'
         ).order_by('carrera', 'titulo')
         
-        # Filtrar foros según permisos del usuario
-        if self.request.user.is_authenticated:
-            # Si es admin o moderador, puede ver todos
-            if self.request.user.is_staff or self.request.user.role in ['moderator', 'admin_global']:
-                pass
-            else:
-                # Mostrar foros públicos + foros privados de su carrera
-                queryset = queryset.filter(
-                    Q(es_privado=False) | 
-                    Q(es_privado=True, carrera=self.request.user.career)
-                )
-        else:
-            # Usuarios no autenticados: permitir ver foros públicos
-            queryset = queryset.filter(es_privado=False)
+        # Filtrar foros según permisos del usuario usando el servicio
+        queryset = ForumPermissionService.filtrar_foros_visibles(
+            self.request.user, queryset
+        )
         
         # Filtros adicionales
         sede = self.request.query_params.get("sede")
@@ -191,10 +182,11 @@ class PostListCreateView(generics.ListCreateAPIView):
         estado = self.request.query_params.get("estado")
         if estado:
             queryset = queryset.filter(estado=estado)
-        # Restringir visibilidad según foro privado
+        # Restringir visibilidad según foro privado usando el servicio
+        # Para posts necesitamos filtrar por foro, así que usamos una consulta diferente
         user = self.request.user
         if user.is_authenticated:
-            if not (user.is_staff or user.role in ['moderator', 'admin_global']):
+            if not ForumPermissionService.puede_moderar(user):
                 queryset = queryset.filter(
                     Q(foro__es_privado=False) | Q(foro__es_privado=True, foro__carrera=user.career)
                 )
@@ -216,13 +208,11 @@ class PostListCreateView(generics.ListCreateAPIView):
         
         # REGLA: Solo se puede postear en el foro de la propia carrera
         # Excepto si es admin o moderador
-        if not (self.request.user.is_staff or 
-                self.request.user.role in ['moderator', 'admin_global']):
-            if not foro.puede_postear(self.request.user):
-                raise PermissionDenied(
-                    f"Solo puedes crear publicaciones en el foro de tu carrera ({self.request.user.career}). "
-                    f"Este foro es para {foro.carrera}. Puedes comentar en posts de otros foros."
-                )
+        if not ForumPermissionService.puede_postear_en_foro(self.request.user, foro):
+            raise PermissionDenied(
+                f"Solo puedes crear publicaciones en el foro de tu carrera ({self.request.user.career}). "
+                f"Este foro es para {foro.carrera}. Puedes comentar en posts de otros foros."
+            )
         
         # Rate limiting: máximo 5 posts por hora por usuario (anti-spam)
         limite_hora = timezone.now() - timedelta(hours=1)

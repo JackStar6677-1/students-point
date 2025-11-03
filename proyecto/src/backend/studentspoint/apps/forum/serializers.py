@@ -3,6 +3,7 @@
 from rest_framework import serializers
 
 from .models import Comentario, Foro, Post, PostReporte, OpcionEncuesta, VotoEncuesta
+from .services import ForumPermissionService
 
 
 class ForoSerializer(serializers.ModelSerializer):
@@ -17,20 +18,19 @@ class ForoSerializer(serializers.ModelSerializer):
         read_only_fields = ["created_at", "sede_nombre"]
     
     def get_puede_postear(self, obj):
-        """Indica si el usuario actual puede postear en este foro."""
+        """Indica si el usuario actual puede postear en este foro.
+        
+        Args:
+            obj: Instancia del modelo Foro
+            
+        Returns:
+            bool: True si el usuario puede postear en este foro
+        """
         request = self.context.get('request')
         if not request or not request.user.is_authenticated:
             return False
         
-        user = request.user
-        
-        # Optimización: calcular directamente sin llamar al modelo
-        # Admin o moderador puede postear en todos
-        if user.is_staff or user.role in ['moderator', 'admin_global']:
-            return True
-        
-        # Usuario normal solo en su carrera
-        return obj.carrera == user.career
+        return ForumPermissionService.puede_postear_en_foro(request.user, obj)
 
 
 class OpcionEncuestaSerializer(serializers.ModelSerializer):
