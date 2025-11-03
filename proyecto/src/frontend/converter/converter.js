@@ -55,12 +55,30 @@ function setupDragZone(zone, inputId, handler) {
     });
 }
 
+// Constantes de validación
+const MAX_FILE_SIZE_MB = 50;
+const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
+
 // Manejar archivo Word
 function handleWordFile(file) {
     if (!file) return;
     
+    // Validar extensión
     if (!file.name.match(/\.(doc|docx)$/i)) {
         showAlert('Por favor selecciona un archivo Word (.doc o .docx)', 'danger');
+        return;
+    }
+    
+    // Validar tamaño
+    if (file.size > MAX_FILE_SIZE_BYTES) {
+        const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+        showAlert(`El archivo es demasiado grande (${sizeMB} MB). Tamaño máximo: ${MAX_FILE_SIZE_MB} MB`, 'danger');
+        return;
+    }
+    
+    // Validar que no esté vacío
+    if (file.size === 0) {
+        showAlert('El archivo está vacío', 'danger');
         return;
     }
     
@@ -75,8 +93,22 @@ function handleWordFile(file) {
 function handlePdfFile(file) {
     if (!file) return;
     
+    // Validar extensión
     if (!file.name.match(/\.pdf$/i)) {
         showAlert('Por favor selecciona un archivo PDF', 'danger');
+        return;
+    }
+    
+    // Validar tamaño
+    if (file.size > MAX_FILE_SIZE_BYTES) {
+        const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+        showAlert(`El archivo es demasiado grande (${sizeMB} MB). Tamaño máximo: ${MAX_FILE_SIZE_MB} MB`, 'danger');
+        return;
+    }
+    
+    // Validar que no esté vacío
+    if (file.size === 0) {
+        showAlert('El archivo está vacío', 'danger');
         return;
     }
     
@@ -128,26 +160,48 @@ async function convertWordToPdf() {
         updateProgress(20, 'Subiendo archivo...');
         
         console.log('Enviando archivo al servidor...');
+        
+        // Crear AbortController para timeout
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 300000); // 5 minutos timeout
+        
         const response = await fetch('/api/converter/', {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`
             },
-            body: formData
+            body: formData,
+            signal: controller.signal
         });
+        
+        clearTimeout(timeoutId);
         
         console.log('Respuesta del servidor:', response.status, response.statusText);
         
         updateProgress(50, 'Procesando documento...');
         
         if (!response.ok) {
-            const errorText = await response.text();
-            console.error('Error del servidor:', errorText);
-            throw new Error(`Error del servidor: ${response.status} - ${response.statusText}`);
+            let errorMsg = `Error del servidor (${response.status})`;
+            try {
+                const errorData = await response.json();
+                errorMsg = errorData.archivo_original?.[0] || errorData.detail || errorData.error || errorMsg;
+            } catch {
+                try {
+                    const errorText = await response.text();
+                    errorMsg = errorText || errorMsg;
+                } catch {
+                    // Usar mensaje por defecto
+                }
+            }
+            throw new Error(errorMsg);
         }
         
         const data = await response.json();
         console.log('Datos recibidos:', data);
+        
+        if (!data || !data.id) {
+            throw new Error('Respuesta inválida del servidor');
+        }
         
         updateProgress(80, 'Generando PDF...');
         
@@ -163,7 +217,17 @@ async function convertWordToPdf() {
         
     } catch (error) {
         console.error('Error completo:', error);
-        showAlert(`Error al convertir el archivo: ${error.message}`, 'danger');
+        
+        let errorMessage = 'Error al convertir el archivo';
+        if (error.name === 'AbortError') {
+            errorMessage = 'Tiempo de espera agotado. Por favor, intenta con un archivo más pequeño.';
+        } else if (error.message) {
+            errorMessage = error.message;
+        } else if (error instanceof TypeError && error.message.includes('fetch')) {
+            errorMessage = 'Error de conexión. Por favor, verifica tu conexión a internet e intenta de nuevo.';
+        }
+        
+        showAlert(errorMessage, 'danger');
         resetConverter();
     }
 }
@@ -196,26 +260,48 @@ async function convertPdfToWord() {
         updateProgress(20, 'Subiendo archivo...');
         
         console.log('Enviando archivo al servidor...');
+        
+        // Crear AbortController para timeout
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 300000); // 5 minutos timeout
+        
         const response = await fetch('/api/converter/', {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`
             },
-            body: formData
+            body: formData,
+            signal: controller.signal
         });
+        
+        clearTimeout(timeoutId);
         
         console.log('Respuesta del servidor:', response.status, response.statusText);
         
         updateProgress(50, useOcr ? 'Aplicando OCR...' : 'Extrayendo texto...');
         
         if (!response.ok) {
-            const errorText = await response.text();
-            console.error('Error del servidor:', errorText);
-            throw new Error(`Error del servidor: ${response.status} - ${response.statusText}`);
+            let errorMsg = `Error del servidor (${response.status})`;
+            try {
+                const errorData = await response.json();
+                errorMsg = errorData.archivo_original?.[0] || errorData.detail || errorData.error || errorMsg;
+            } catch {
+                try {
+                    const errorText = await response.text();
+                    errorMsg = errorText || errorMsg;
+                } catch {
+                    // Usar mensaje por defecto
+                }
+            }
+            throw new Error(errorMsg);
         }
         
         const data = await response.json();
         console.log('Datos recibidos:', data);
+        
+        if (!data || !data.id) {
+            throw new Error('Respuesta inválida del servidor');
+        }
         
         updateProgress(80, 'Generando Word...');
         
@@ -231,7 +317,17 @@ async function convertPdfToWord() {
         
     } catch (error) {
         console.error('Error completo:', error);
-        showAlert(`Error al convertir el archivo: ${error.message}`, 'danger');
+        
+        let errorMessage = 'Error al convertir el archivo';
+        if (error.name === 'AbortError') {
+            errorMessage = 'Tiempo de espera agotado. Por favor, intenta con un archivo más pequeño.';
+        } else if (error.message) {
+            errorMessage = error.message;
+        } else if (error instanceof TypeError && error.message.includes('fetch')) {
+            errorMessage = 'Error de conexión. Por favor, verifica tu conexión a internet e intenta de nuevo.';
+        }
+        
+        showAlert(errorMessage, 'danger');
         resetConverter();
     }
 }
@@ -240,19 +336,29 @@ async function convertPdfToWord() {
 async function waitForCompletion(jobId) {
     const token = localStorage.getItem('access_token');
     let attempts = 0;
-    const maxAttempts = 30;
+    const maxAttempts = 60; // Aumentado a 60 intentos (60 segundos)
     
     console.log(`Esperando completar conversión ${jobId}...`);
     
     while (attempts < maxAttempts) {
         try {
+            // Crear timeout para cada request
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 5000);
+            
             const response = await fetch(`/api/converter/${jobId}/`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
-                }
+                },
+                signal: controller.signal
             });
             
+            clearTimeout(timeoutId);
+            
             if (!response.ok) {
+                if (response.status === 404) {
+                    throw new Error('El trabajo de conversión no se encontró');
+                }
                 throw new Error(`Error verificando estado: ${response.status}`);
             }
             
@@ -263,11 +369,12 @@ async function waitForCompletion(jobId) {
                 console.log('Conversión completada exitosamente');
                 return data;
             } else if (data.estado === 'error') {
-                throw new Error(data.error_mensaje || 'Error en la conversion');
+                const errorMsg = data.error_mensaje || 'Error en la conversión';
+                throw new Error(errorMsg);
             }
             
             // Actualizar progreso basado en intentos
-            const progress = Math.min(80 + (attempts * 2), 95);
+            const progress = Math.min(80 + (attempts * 0.33), 95);
             updateProgress(progress, `Procesando... (${attempts + 1}/${maxAttempts})`);
             
             await new Promise(resolve => setTimeout(resolve, 1000));
@@ -275,12 +382,23 @@ async function waitForCompletion(jobId) {
             
         } catch (error) {
             console.error(`Error verificando estado (intento ${attempts + 1}):`, error);
+            
+            // Si es un error de conexión, esperar un poco más antes de reintentar
+            if (error.name === 'TimeoutError' || error.message.includes('fetch')) {
+                await new Promise(resolve => setTimeout(resolve, 2000));
+            } else {
+                // Para otros errores, lanzar inmediatamente
+                if (error.message.includes('Error en la conversión') || error.message.includes('no se encontró')) {
+                    throw error;
+                }
+                await new Promise(resolve => setTimeout(resolve, 1000));
+            }
+            
             attempts++;
-            await new Promise(resolve => setTimeout(resolve, 1000));
         }
     }
     
-    throw new Error('Tiempo de espera agotado. La conversión está tomando más tiempo del esperado.');
+    throw new Error('Tiempo de espera agotado. La conversión está tomando más tiempo del esperado. Por favor, intenta con un archivo más pequeño.');
 }
 
 // Cargar historial

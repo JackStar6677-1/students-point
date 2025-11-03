@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from pathlib import Path
 from .models import ConversionJob
 
 
@@ -36,7 +37,64 @@ class ConversionJobSerializer(serializers.ModelSerializer):
 
 
 class ConversionCreateSerializer(serializers.ModelSerializer):
+    """Serializer para crear trabajos de conversión con validaciones."""
+    
     class Meta:
         model = ConversionJob
         fields = ['tipo_conversion', 'archivo_original', 'usar_ocr']
+    
+    def validate_archivo_original(self, value):
+        """Valida el archivo original según el tipo de conversión."""
+        from .utils import DocumentValidator
+        
+        if not value:
+            raise serializers.ValidationError("Debe proporcionar un archivo")
+        
+        # Obtener tipo de conversión del contexto o datos
+        tipo_conversion = None
+        if hasattr(self, 'initial_data'):
+            tipo_conversion = self.initial_data.get('tipo_conversion')
+        
+        # Si no hay tipo de conversión aún, validar genéricamente
+        if not tipo_conversion:
+            # Validar que sea Word o PDF
+            file_ext = Path(value.name).suffix.lower()
+            from .utils import ALLOWED_WORD_EXTENSIONS, ALLOWED_PDF_EXTENSIONS
+            
+            if file_ext not in ALLOWED_WORD_EXTENSIONS + ALLOWED_PDF_EXTENSIONS:
+                raise serializers.ValidationError(
+                    f"Tipo de archivo no permitido: {file_ext}. "
+                    f"Permitidos: {', '.join(ALLOWED_WORD_EXTENSIONS + ALLOWED_PDF_EXTENSIONS)}"
+                )
+        else:
+            # Validar específicamente según tipo de conversión
+            is_valid, error_msg = DocumentValidator.validate_file_for_conversion(
+                value, 
+                tipo_conversion
+            )
+            if not is_valid:
+                raise serializers.ValidationError(error_msg)
+        
+        return value
+    
+    def validate(self, data):
+        """Valida que el tipo de conversión coincida con el tipo de archivo."""
+        archivo = data.get('archivo_original')
+        tipo_conversion = data.get('tipo_conversion')
+        
+        if archivo and tipo_conversion:
+            file_ext = Path(archivo.name).suffix.lower()
+            from .utils import ALLOWED_WORD_EXTENSIONS, ALLOWED_PDF_EXTENSIONS
+            
+            if tipo_conversion == 'word_to_pdf' and file_ext not in ALLOWED_WORD_EXTENSIONS:
+                raise serializers.ValidationError({
+                    'archivo_original': f'Para convertir Word a PDF, debe subir un archivo Word (.doc o .docx), no {file_ext}'
+                })
+            
+            if tipo_conversion == 'pdf_to_word' and file_ext not in ALLOWED_PDF_EXTENSIONS:
+                raise serializers.ValidationError({
+                    'archivo_original': f'Para convertir PDF a Word, debe subir un archivo PDF, no {file_ext}'
+                })
+        
+        return data
 
