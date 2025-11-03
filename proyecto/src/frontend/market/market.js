@@ -33,12 +33,8 @@ class MarketApp {
         }
         
         try {
-            const response = await fetch(`${this.apiBaseUrl}/auth/me/`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            
-            if (response.ok) {
-                this.currentUser = await response.json();
+            this.currentUser = await window.marketAPI.getCurrentUser();
+            if (this.currentUser) {
                 this.updateUIForUser();
             } else {
                 this.redirectToLogin();
@@ -99,11 +95,8 @@ class MarketApp {
     // === CARGA DE DATOS ===
     async loadCategorias() {
         try {
-            const response = await fetch(`${this.apiBaseUrl}/market/categorias/`);
-            if (response.ok) {
-                this.categorias = await response.json();
-                this.populateCategorias();
-            }
+            this.categorias = await window.marketAPI.getCategorias();
+            this.populateCategorias();
         } catch (error) {
             console.error('Error cargando categorías:', error);
         }
@@ -125,18 +118,11 @@ class MarketApp {
         this.showLoading(true);
         
         try {
-            const params = new URLSearchParams(this.filtros);
-            const response = await fetch(`${this.apiBaseUrl}/market/productos/?${params}`);
-            
-            if (response.ok) {
-                this.productos = await response.json();
-                this.renderProductos();
-            } else {
-                this.showError('Error cargando productos');
-            }
+            this.productos = await window.marketAPI.getProductos(this.filtros);
+            this.renderProductos();
         } catch (error) {
             console.error('Error cargando productos:', error);
-            this.showError('Error de conexión');
+            this.showError(error.message || 'Error cargando productos');
         } finally {
             this.showLoading(false);
         }
@@ -277,27 +263,35 @@ class MarketApp {
         document.getElementById('modalCrearProducto').style.display = 'block';
     }
     
-    showMisProductos() {
-        this.filtros = { mis_productos: true };
-        this.loadProductos();
+    async showMisProductos() {
+        try {
+            this.productos = await window.marketAPI.getMisProductos();
+            this.renderProductos();
+        } catch (error) {
+            console.error('Error cargando mis productos:', error);
+            this.showError(error.message || 'Error cargando productos');
+        }
     }
     
-    showFavoritos() {
-        this.filtros = { favoritos: true };
-        this.loadProductos();
+    async showFavoritos() {
+        try {
+            const favoritos = await window.marketAPI.getMisFavoritos();
+            this.productos = favoritos.map(f => f.producto);
+            this.renderProductos();
+        } catch (error) {
+            console.error('Error cargando favoritos:', error);
+            this.showError(error.message || 'Error cargando favoritos');
+        }
     }
     
     async verProducto(id) {
         try {
-            const response = await fetch(`${this.apiBaseUrl}/market/productos/${id}/`);
-            if (response.ok) {
-                this.productoActual = await response.json();
-                this.renderProductoModal();
-                document.getElementById('modalVerProducto').style.display = 'block';
-            }
+            this.productoActual = await window.marketAPI.getProducto(id);
+            this.renderProductoModal();
+            document.getElementById('modalVerProducto').style.display = 'block';
         } catch (error) {
             console.error('Error cargando producto:', error);
-            this.showError('Error cargando producto');
+            this.showError(error.message || 'Error cargando producto');
         }
     }
     
@@ -421,57 +415,32 @@ class MarketApp {
         }
         
         try {
-            const token = localStorage.getItem('access_token');
-            const response = await fetch(`${this.apiBaseUrl}/market/productos/`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify(formData)
-            });
-            
-            if (response.ok) {
-                this.showSuccess('Producto publicado exitosamente');
-                this.closeModal();
-                document.getElementById('formCrearProducto').reset();
-                this.loadProductos();
-            } else {
-                const error = await response.json();
-                this.showError(error.detail || 'Error publicando producto');
-            }
+            await window.marketAPI.createProducto(formData);
+            this.showSuccess('Producto publicado exitosamente. Los metadatos de la URL se están extrayendo automáticamente...');
+            this.closeModal();
+            document.getElementById('formCrearProducto').reset();
+            // Recargar después de un breve delay para que se procesen los metadatos
+            setTimeout(() => this.loadProductos(), 2000);
         } catch (error) {
             console.error('Error creando producto:', error);
-            this.showError('Error de conexión');
+            this.showError(error.message || 'Error publicando producto');
         }
     }
     
     async toggleFavorito(id) {
         try {
-            const token = localStorage.getItem('access_token');
-            const response = await fetch(`${this.apiBaseUrl}/market/productos/${id}/toggle_favorito/`, {
-                method: 'POST',
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            
-            if (response.ok) {
-                const data = await response.json();
-                this.showSuccess(data.es_favorito ? 'Agregado a favoritos' : 'Removido de favoritos');
-                this.loadProductos(); // Recargar para actualizar UI
-            }
+            const data = await window.marketAPI.toggleFavorito(id);
+            this.showSuccess(data.es_favorito ? 'Agregado a favoritos' : 'Removido de favoritos');
+            this.loadProductos(); // Recargar para actualizar UI
         } catch (error) {
             console.error('Error toggle favorito:', error);
-            this.showError('Error actualizando favoritos');
+            this.showError(error.message || 'Error actualizando favoritos');
         }
     }
     
     async registrarClick(id) {
         try {
-            const token = localStorage.getItem('access_token');
-            await fetch(`${this.apiBaseUrl}/market/productos/${id}/registrar_click/`, {
-                method: 'POST',
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
+            await window.marketAPI.registrarClick(id);
         } catch (error) {
             console.error('Error registrando click:', error);
         }
@@ -487,27 +456,13 @@ class MarketApp {
         };
         
         try {
-            const token = localStorage.getItem('access_token');
-            const response = await fetch(`${this.apiBaseUrl}/market/reportes/`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify(formData)
-            });
-            
-            if (response.ok) {
-                this.showSuccess('Reporte enviado exitosamente');
-                this.closeModal();
-                document.getElementById('formReportar').reset();
-            } else {
-                const error = await response.json();
-                this.showError(error.detail || 'Error enviando reporte');
-            }
+            await window.marketAPI.reportarProducto(formData);
+            this.showSuccess('Reporte enviado exitosamente');
+            this.closeModal();
+            document.getElementById('formReportar').reset();
         } catch (error) {
             console.error('Error reportando producto:', error);
-            this.showError('Error de conexión');
+            this.showError(error.message || 'Error enviando reporte');
         }
     }
     

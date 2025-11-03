@@ -1,13 +1,11 @@
 """Views para el sistema de compra/venta."""
 
-import requests
 from django.db.models import Q, Count
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, status, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from drf_spectacular.utils import extend_schema, OpenApiParameter
-from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema
 
 from .models import (
     CategoriaProducto, Producto, ProductoFavorito, 
@@ -277,51 +275,3 @@ class ProductoAnalyticsViewSet(viewsets.ReadOnlyModelViewSet):
         
         return queryset
 
-
-# Funciones auxiliares para OpenGraph
-def obtener_metadatos_opengraph(url):
-    """Obtiene metadatos OpenGraph de una URL."""
-    try:
-        response = requests.get(url, timeout=10, headers={
-            'User-Agent': 'Mozilla/5.0 (compatible; StudentsPoint/1.0)'
-        })
-        response.raise_for_status()
-        
-        from bs4 import BeautifulSoup
-        soup = BeautifulSoup(response.content, 'html.parser')
-        
-        metadatos = {}
-        
-        # Obtener metadatos OpenGraph
-        og_title = soup.find('meta', property='og:title')
-        if og_title:
-            metadatos['og_title'] = og_title.get('content', '')[:200]
-        
-        og_description = soup.find('meta', property='og:description')
-        if og_description:
-            metadatos['og_description'] = og_description.get('content', '')[:500]
-        
-        og_image = soup.find('meta', property='og:image')
-        if og_image:
-            metadatos['og_image'] = og_image.get('content', '')
-        
-        og_site_name = soup.find('meta', property='og:site_name')
-        if og_site_name:
-            metadatos['og_site_name'] = og_site_name.get('content', '')[:100]
-        
-        # Fallback a metadatos HTML estándar
-        if not metadatos.get('og_title'):
-            title = soup.find('title')
-            if title:
-                metadatos['og_title'] = title.get_text()[:200]
-        
-        if not metadatos.get('og_description'):
-            description = soup.find('meta', attrs={'name': 'description'})
-            if description:
-                metadatos['og_description'] = description.get('content', '')[:500]
-        
-        return metadatos
-        
-    except Exception as e:
-        print(f"Error obteniendo metadatos de {url}: {e}")
-        return {}

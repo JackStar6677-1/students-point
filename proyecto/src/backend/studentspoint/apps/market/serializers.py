@@ -5,6 +5,8 @@ from .models import (
     CategoriaProducto, Producto, ProductoFavorito, 
     ProductoReporte, ProductoAnalytics
 )
+from .services import OpenGraphService, ProductoValidationService
+from .utils import humanizar_tiempo
 
 
 class CategoriaProductoSerializer(serializers.ModelSerializer):
@@ -50,28 +52,11 @@ class ProductoSerializer(serializers.ModelSerializer):
     
     def get_tiempo_publicado_humanizado(self, obj):
         """Tiempo transcurrido desde la publicación en formato legible."""
-        if obj.publicado_at:
-            from django.utils import timezone
-            from datetime import timedelta
-            
-            ahora = timezone.now()
-            diferencia = ahora - obj.publicado_at
-            
-            if diferencia.days > 0:
-                return f"hace {diferencia.days} día{'s' if diferencia.days > 1 else ''}"
-            elif diferencia.seconds > 3600:
-                horas = diferencia.seconds // 3600
-                return f"hace {horas} hora{'s' if horas > 1 else ''}"
-            elif diferencia.seconds > 60:
-                minutos = diferencia.seconds // 60
-                return f"hace {minutos} minuto{'s' if minutos > 1 else ''}"
-            else:
-                return "hace unos segundos"
-        return None
+        return humanizar_tiempo(obj.publicado_at)
 
 
 class ProductoCreateSerializer(serializers.ModelSerializer):
-    """Serializer para crear productos."""
+    """Serializer para crear productos con extracción automática de OpenGraph."""
     
     class Meta:
         model = Producto
@@ -80,12 +65,28 @@ class ProductoCreateSerializer(serializers.ModelSerializer):
             'tipo_enlace', 'urls_adicionales', 'precio', 'moneda'
         ]
     
+    def validate_url_principal(self, value):
+        """Valida que la URL sea válida."""
+        if not ProductoValidationService.validar_url(value):
+            raise serializers.ValidationError("URL inválida")
+        return value
+    
     def create(self, validated_data):
-        """Crea un nuevo producto."""
+        """Crea un nuevo producto y obtiene metadatos OpenGraph automáticamente."""
         request = self.context.get('request')
         validated_data['vendedor'] = request.user
         validated_data['campus'] = request.user.campus
         validated_data['carrera'] = request.user.career
+        
+        # Detectar tipo de enlace automáticamente si no se especificó
+        url_principal = validated_data.get('url_principal')
+        if url_principal and not validated_data.get('tipo_enlace'):
+            validated_data['tipo_enlace'] = ProductoValidationService.detectar_tipo_enlace(url_principal)
+        
+        # Obtener metadatos OpenGraph de la URL principal
+        if url_principal:
+            metadatos = OpenGraphService.obtener_metadatos_opengraph(url_principal)
+            validated_data.update(metadatos)
         
         producto = super().create(validated_data)
         
@@ -93,6 +94,21 @@ class ProductoCreateSerializer(serializers.ModelSerializer):
         ProductoAnalytics.objects.create(producto=producto)
         
         return producto
+    
+    def update(self, instance, validated_data):
+        """Actualiza un producto y actualiza metadatos OpenGraph si cambió la URL."""
+        url_principal = validated_data.get('url_principal', instance.url_principal)
+        
+        # Si cambió la URL, obtener nuevos metadatos
+        if url_principal != instance.url_principal:
+            metadatos = OpenGraphService.obtener_metadatos_opengraph(url_principal)
+            validated_data.update(metadatos)
+            
+            # Actualizar tipo de enlace si no se especificó
+            if not validated_data.get('tipo_enlace'):
+                validated_data['tipo_enlace'] = ProductoValidationService.detectar_tipo_enlace(url_principal)
+        
+        return super().update(instance, validated_data)
 
 
 class ProductoFavoritoSerializer(serializers.ModelSerializer):
