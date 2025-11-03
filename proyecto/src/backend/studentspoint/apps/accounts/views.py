@@ -1,17 +1,14 @@
 """Views para autenticación y gestión de usuarios."""
 
-import json
-from django.conf import settings
-from django.contrib.auth import get_user_model, authenticate
-from django.http import JsonResponse
+import logging
+from django.contrib.auth import get_user_model
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status, permissions
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
-from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from drf_spectacular.utils import extend_schema
-from .models import User
+from .models import User, CARRERAS_DISPONIBLES
 from .serializers import (
     UserDetailSerializer, LoginSerializer, RegisterSerializer, 
     TokenPairSerializer, UserUpdateSerializer, EmailCheckSerializer,
@@ -19,11 +16,15 @@ from .serializers import (
     SolicitarRecuperacionSerializer, VerificarCodigoRecuperacionSerializer,
     ResetearPasswordSerializer, CambiarCarreraSerializer, CarrerasDisponiblesSerializer
 )
-from .models import CARRERAS_DISPONIBLES
-from studentspoint.apps.campuses.models import Sede
+from .services import (
+    AuthService, TokenService, EmailValidationService, 
+    PasswordValidationService, RegistrationDataMapper
+)
+from .utils import normalizar_carrera, formatear_respuesta_exito, formatear_respuesta_error
 from studentspoint.utils import verify_recaptcha
 
 User = get_user_model()
+logger = logging.getLogger(__name__)
 
 
 @extend_schema(
@@ -81,26 +82,10 @@ def check_email(request):
     if not serializer.is_valid():
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-    email = serializer.validated_data['email'].lower()
+    email = EmailValidationService.normalizar_email(serializer.validated_data['email'])
+    resultado = EmailValidationService.validar_tipo_email(email)
     
-    if email.endswith('@duocuc.cl'):
-        return Response({
-            'status': 'success',
-            'message': 'Email institucional válido',
-            'type': 'duoc'
-        })
-    elif email.endswith('@gmail.com'):
-        return Response({
-            'status': 'success',
-            'message': 'Email Gmail válido para estudiantes',
-            'type': 'gmail'
-        })
-    else:
-        return Response({
-            'status': 'error',
-            'message': 'Solo se permiten correos @duocuc.cl o @gmail.com',
-            'type': 'not_allowed'
-        })
+    return Response(resultado)
 
 
 @extend_schema(
@@ -115,11 +100,11 @@ def login(request):
     try:
         # Obtener datos del request
         if hasattr(request, 'data'):
-            email = request.data.get('email', '').lower()
+            email = EmailValidationService.normalizar_email(request.data.get('email', ''))
             password = request.data.get('password', '')
         else:
             # Fallback para request.POST
-            email = request.POST.get('email', '').lower()
+            email = EmailValidationService.normalizar_email(request.POST.get('email', ''))
             password = request.POST.get('password', '')
         
         if not email or not password:
@@ -127,62 +112,34 @@ def login(request):
                 {'detail': 'Email y contraseña son requeridos'}, 
                 status=status.HTTP_400_BAD_REQUEST
             )
+        
         # Verificación reCAPTCHA (no estricta)
         captcha_token = request.data.get('captcha_token')
         _ok, _score = verify_recaptcha(captcha_token, request.META.get('REMOTE_ADDR'))
         
-        # Buscar usuario por email
-        import logging
-        logger = logging.getLogger(__name__)
+        # Autenticar usuario usando el servicio
+        user, error_msg = AuthService.autenticar_usuario(email, password)
         
-        try:
-            user = User.objects.get(email=email)
-            logger.info(f"Login attempt for user: {email}")
-            logger.info(f"User email verified: {user.is_email_verified}")
-        except User.DoesNotExist:
-            logger.warning(f"Login failed: User {email} not found")
+        if not user:
+            status_code = status.HTTP_401_UNAUTHORIZED if 'Credenciales' in error_msg else status.HTTP_400_BAD_REQUEST
             return Response(
-                {'detail': 'Credenciales inválidas'}, 
-                status=status.HTTP_401_UNAUTHORIZED
+                {'detail': error_msg if 'Credenciales' in error_msg else error_msg, 
+                 'error': error_msg if 'Credenciales' not in error_msg else None}, 
+                status=status_code
             )
         
-        # Requerir email verificado salvo dominios institucionales permitidos
-        if not user.is_email_verified:
-            email_l = (user.email or '').lower()
-            dominios_laxos = ('@duocuc.cl', '@studentspoint.app')
-            if not any(email_l.endswith(d) for d in dominios_laxos):
-                logger.warning(f"Login failed: Email {email} not verified")
-                return Response(
-                    {'error': 'Debes verificar tu email antes de iniciar sesión. Revisa tu bandeja e ingresa el código de verificación.'},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
-
-        # Verificar contraseña
-        if user.check_password(password):
-            logger.info(f"Login successful for user: {email}")
-            # Generar tokens JWT
-            refresh = RefreshToken.for_user(user)
-            
-            return Response({
-                'access': str(refresh.access_token),
-                'refresh': str(refresh),
-                'user': {
-                    'id': user.id,
-                    'email': user.email,
-                    'name': user.name,
-                    'role': user.role,
-                    'campus': user.campus.nombre if user.campus else None,
-                    'career': user.career
-                }
-            })
-        else:
-            logger.warning(f"Login failed: Invalid password for user {email}")
-            return Response(
-                {'detail': 'Credenciales inválidas'}, 
-                status=status.HTTP_401_UNAUTHORIZED
-            )
+        # Generar tokens usando el servicio
+        tokens = TokenService.generar_tokens_usuario(user)
+        user_data = TokenService.obtener_datos_usuario(user)
+        
+        return Response({
+            'access': tokens['access'],
+            'refresh': tokens['refresh'],
+            'user': user_data
+        })
             
     except Exception as e:
+        logger.error(f"Error en login: {e}", exc_info=True)
         return Response(
             {'detail': f'Error en el servidor: {str(e)}'}, 
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -202,99 +159,57 @@ def register(request):
     Acepta tanto el payload usado por el frontend (first_name, last_name, carrera, sede)
     como el payload directo del backend (name, career, campus).
     """
-    email = (request.data.get('email') or '').lower()
     # Verificación reCAPTCHA (no estricta)
     captcha_token = request.data.get('captcha_token')
     _ok, _score = verify_recaptcha(captcha_token, request.META.get('REMOTE_ADDR'))
-    password = request.data.get('password', '')
-
-    # Mapear nombre completo
-    provided_name = request.data.get('name')
-    if provided_name:
-        name = provided_name
-    else:
-        first_name = request.data.get('first_name', '').strip()
-        last_name = request.data.get('last_name', '').strip()
-        name = (first_name + ' ' + last_name).strip()
-
-    role = request.data.get('role', 'student')
-
-    # Mapear carrera
-    career = request.data.get('career') or request.data.get('carrera', '')
-
-    # Resolver campus: aceptar id en "campus" o nombre en "sede"
-    campus = None
-    campus_id = request.data.get('campus')
-    sede_name = request.data.get('sede')
-    if campus_id:
-        try:
-            campus_id = int(campus_id)
-            campus = Sede.objects.filter(id=campus_id).first()
-        except (TypeError, ValueError):
-            campus = None
-    elif sede_name:
-        campus = Sede.objects.filter(nombre__iexact=sede_name.strip()).first()
     
-    # Validaciones
-    if not all([email, password, name, career]):
-        return Response(
-            {'detail': 'Todos los campos son requeridos'}, 
-            status=status.HTTP_400_BAD_REQUEST
-        )
+    # Extraer y normalizar datos usando el mapper
+    datos = RegistrationDataMapper.extraer_datos_registro(request.data)
     
-    if len(password) < 8:
+    # Validar contraseña
+    if not PasswordValidationService.validar_longitud(datos['password']):
         return Response(
             {'detail': 'La contraseña debe tener al menos 8 caracteres'}, 
             status=status.HTTP_400_BAD_REQUEST
         )
     
-    # Verificar si el email ya existe
-    if User.objects.filter(email=email).exists():
+    # Crear usuario usando el servicio
+    user, error_msg = AuthService.crear_usuario(
+        email=datos['email'],
+        password=datos['password'],
+        name=datos['name'],
+        career=datos['career'],
+        role=datos['role'],
+        campus_id=datos.get('campus_id'),
+        sede_nombre=datos.get('sede_nombre')
+    )
+    
+    if not user:
         return Response(
-            {'detail': 'Este email ya está registrado'}, 
+            {'detail': error_msg}, 
             status=status.HTTP_400_BAD_REQUEST
         )
     
     try:
-        # Crear usuario (campus es opcional)
-        user_kwargs = {
-            'email': email,
-            'password': password,
-            'name': name,
-            'role': role,
-            'career': career,
-            'is_email_verified': False,  # Requiere verificación
-        }
-        if campus is not None:
-            user_kwargs['campus'] = campus
-
-        user = User.objects.create_user(**user_kwargs)
-        
         # Enviar código de verificación por email
         exito, mensaje = user.enviar_codigo_verificacion()
         
-        # Generar tokens JWT (usuario puede usar la app pero con limitaciones)
-        refresh = RefreshToken.for_user(user)
+        # Generar tokens JWT usando el servicio
+        tokens = TokenService.generar_tokens_usuario(user)
+        user_data = TokenService.obtener_datos_usuario(user)
         
         return Response({
-            'access': str(refresh.access_token),
-            'refresh': str(refresh),
-            'user': {
-                'id': user.id,
-                'email': user.email,
-                'name': user.name,
-                'role': user.role,
-                'campus': user.campus.nombre if user.campus else None,
-                'career': user.career,
-                'is_email_verified': user.is_email_verified
-            },
+            'access': tokens['access'],
+            'refresh': tokens['refresh'],
+            'user': user_data,
             'verification_email_sent': exito,
             'message': 'Usuario registrado. Por favor verifica tu email con el código enviado.'
         }, status=status.HTTP_201_CREATED)
         
     except Exception as e:
+        logger.error(f"Error después de crear usuario {datos['email']}: {e}", exc_info=True)
         return Response(
-            {'detail': f'Error creando usuario: {str(e)}'}, 
+            {'detail': f'Error enviando código de verificación: {str(e)}'}, 
             status=status.HTTP_400_BAD_REQUEST
         )
 
@@ -330,27 +245,20 @@ def verificar_email(request):
     exito, mensaje = user.verificar_codigo_email(codigo)
     
     if exito:
-        # Generar tokens JWT para iniciar sesión automáticamente
-        refresh = RefreshToken.for_user(user)
+        # Generar tokens JWT para iniciar sesión automáticamente usando el servicio
+        tokens = TokenService.generar_tokens_usuario(user)
+        user_data = TokenService.obtener_datos_usuario(user)
         
         return Response({
             'status': 'success',
             'message': mensaje,
-            'access': str(refresh.access_token),
-            'refresh': str(refresh),
-            'user': {
-                'id': user.id,
-                'email': user.email,
-                'name': user.name,
-                'role': user.role,
-                'campus': user.campus.nombre if user.campus else None,
-                'career': user.career,
-                'is_email_verified': user.is_email_verified
-            }
+            'access': tokens['access'],
+            'refresh': tokens['refresh'],
+            'user': user_data
         })
     else:
         return Response(
-            {'status': 'error', 'message': mensaje}, 
+            formatear_respuesta_error(mensaje), 
             status=status.HTTP_400_BAD_REQUEST
         )
 
@@ -379,21 +287,15 @@ def reenviar_codigo_verificacion(request):
         )
     
     if user.is_email_verified:
-        return Response({
-            'status': 'info',
-            'message': 'El email ya está verificado'
-        })
+        return Response(formatear_respuesta_exito('El email ya está verificado', {'status': 'info'}))
     
     exito, mensaje = user.enviar_codigo_verificacion()
     
     if exito:
-        return Response({
-            'status': 'success',
-            'message': 'Código reenviado al email'
-        })
+        return Response(formatear_respuesta_exito('Código reenviado al email'))
     else:
         return Response(
-            {'status': 'error', 'message': mensaje}, 
+            formatear_respuesta_error(mensaje), 
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
@@ -529,15 +431,15 @@ def cambiar_password(request):
             status=status.HTTP_400_BAD_REQUEST
         )
     
-    if nueva_password != confirmar_password:
+    if not PasswordValidationService.validar_coincidencia(nueva_password, confirmar_password):
         return Response(
-            {'status': 'error', 'message': 'Las contraseñas no coinciden'}, 
+            formatear_respuesta_error('Las contraseñas no coinciden'), 
             status=status.HTTP_400_BAD_REQUEST
         )
     
-    if len(nueva_password) < 8:
+    if not PasswordValidationService.validar_longitud(nueva_password):
         return Response(
-            {'status': 'error', 'message': 'La contraseña debe tener al menos 8 caracteres'}, 
+            formatear_respuesta_error('La contraseña debe tener al menos 8 caracteres'), 
             status=status.HTTP_400_BAD_REQUEST
         )
     
@@ -574,25 +476,18 @@ def cambiar_carrera_usuario(request):
     nueva_carrera = serializer.validated_data['nueva_carrera']
     razon = serializer.validated_data.get('razon', 'Cambio de carrera')
     
-    # Validar que la carrera esté en la lista de disponibles
-    # Normalizar para comparar con acentos: comparar en minúsculas sin tildes
-    import unicodedata
-    def norm(s):
-        return ''.join(c for c in unicodedata.normalize('NFKD', s) if not unicodedata.combining(c)).lower()
-    disponibles_norm = [norm(c) for c in CARRERAS_DISPONIBLES]
-    if norm(nueva_carrera) not in disponibles_norm:
+    # Validar que la carrera esté en la lista de disponibles usando utilidad
+    nueva_carrera_normalizada = normalizar_carrera(nueva_carrera, CARRERAS_DISPONIBLES)
+    
+    if not nueva_carrera_normalizada:
         return Response(
-            {'status': 'error', 'message': f'Carrera no disponible. Opciones: {", ".join(CARRERAS_DISPONIBLES)}'}, 
+            formatear_respuesta_error(
+                f'Carrera no disponible. Opciones: {", ".join(CARRERAS_DISPONIBLES)}'
+            ), 
             status=status.HTTP_400_BAD_REQUEST
         )
     
     # Cambiar carrera
-    # Usar la forma original con acentos de la carrera elegida si hay match
-    try:
-        idx = disponibles_norm.index(norm(nueva_carrera))
-        nueva_carrera_normalizada = CARRERAS_DISPONIBLES[idx]
-    except ValueError:
-        nueva_carrera_normalizada = nueva_carrera
     resultado = request.user.cambiar_carrera(nueva_carrera_normalizada, razon)
     
     # Retornar perfil actualizado
