@@ -615,15 +615,15 @@ async function initAuth() {
             user = await response.json();
         }
         
-        if (response.ok) {
-            const user = await response.json();
-            document.querySelector('.user-name').textContent = user.name;
-            document.querySelector('.user-menu').style.display = 'flex';
-            document.querySelector('.auth-buttons').style.display = 'none';
-        } else {
-            localStorage.removeItem('access_token');
-            localStorage.removeItem('refresh_token');
-        }
+        document.querySelector('.user-name').textContent = user.name;
+        document.querySelector('.user-menu').style.display = 'flex';
+        document.querySelector('.auth-buttons').style.display = 'none';
+    } catch (error) {
+        console.error('Error loading user:', error);
+        document.querySelector('.user-menu').style.display = 'none';
+        document.querySelector('.auth-buttons').style.display = 'block';
+    }
+}
     } catch (error) {
         console.error('Error verificando auth:', error);
     }
