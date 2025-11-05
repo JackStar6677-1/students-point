@@ -50,25 +50,24 @@ class PortfolioManager {
     // === AUTENTICACIÓN ===
     async loadUser() {
         try {
-            const token = localStorage.getItem('access_token');
-            if (!token) {
+            if (!window.authAPI) {
+                throw new Error('Servicio de autenticación no disponible');
+            }
+            
+            if (!window.authAPI.isAuthenticated()) {
                 window.location.href = '/login.html';
                 return;
             }
             
-            const response = await fetch('/api/auth/me/', {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            
-            if (response.ok) {
-                this.currentUser = await response.json();
-                this.populateUserData();
-            } else {
-                window.location.href = '/login.html';
-            }
+            this.currentUser = await window.authAPI.getCurrentUser();
+            this.populateUserData();
         } catch (error) {
             console.error('Error loading user:', error);
-            window.location.href = '/login.html';
+            if (error.message.includes('401') || error.message.includes('autenticado')) {
+                window.location.href = '/login.html';
+            } else {
+                this.showToast('Error al cargar el usuario', 'error');
+            }
         }
     }
     
@@ -89,38 +88,33 @@ class PortfolioManager {
     // === CARGA DE DATOS ===
     async loadPortfolioData() {
         try {
-            const token = localStorage.getItem('access_token');
-            const response = await fetch('/api/portfolio/completo/', {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
+            if (!window.portfolioAPI) {
+                throw new Error('Servicio API de portafolio no disponible');
+            }
             
-            if (response.ok) {
-                const data = await response.json();
+            const data = await window.portfolioAPI.getPortfolioCompleto();
+            if (data) {
                 this.portfolioData = { ...this.portfolioData, ...data };
             }
         } catch (error) {
             console.error('Error loading portfolio data:', error);
+            const errorMsg = error.message || 'Error al cargar los datos del portafolio';
+            this.showToast(errorMsg, 'error');
         }
     }
     
     async savePortfolioData() {
         try {
-            const token = localStorage.getItem('access_token');
-            const response = await fetch('/api/portfolio/completo/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify(this.portfolioData)
-            });
-            
-            if (response.ok) {
-                this.showToast('Portafolio guardado exitosamente', 'success');
+            if (!window.portfolioAPI) {
+                throw new Error('Servicio API de portafolio no disponible');
             }
+            
+            await window.portfolioAPI.savePortfolioCompleto(this.portfolioData);
+            this.showToast('Portafolio guardado exitosamente', 'success');
         } catch (error) {
             console.error('Error saving portfolio data:', error);
-            this.showToast('Error al guardar el portafolio', 'error');
+            const errorMsg = error.message || 'Error al guardar el portafolio';
+            this.showToast(errorMsg, 'error');
         }
     }
     

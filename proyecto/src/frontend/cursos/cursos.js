@@ -20,30 +20,23 @@ function configurarEventos() {
 // Cargar cursos
 async function cargarCursos() {
     try {
-        const token = localStorage.getItem('access_token');
-        if (!token) {
+        if (!window.authAPI || !window.authAPI.isAuthenticated()) {
             mostrarError('Debes iniciar sesión para ver los cursos');
+            window.location.href = '/login.html';
             return;
         }
 
-        const response = await fetch('/api/otec/cursos', {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
-        });
-
-        if (!response.ok) {
-            throw new Error('Error al cargar cursos');
+        if (!window.coursesAPI) {
+            throw new Error('Servicio API de cursos no disponible');
         }
 
-        const data = await response.json();
-        cursos = data.results || data;
+        cursos = await window.coursesAPI.getCourses();
         cursosFiltrados = [...cursos];
         mostrarCursos();
     } catch (error) {
         console.error('Error:', error);
-        mostrarError('Error al cargar los cursos');
+        const errorMsg = error.message || 'Error al cargar los cursos';
+        mostrarError(errorMsg);
     }
 }
 
@@ -186,10 +179,14 @@ function mostrarNuevoCurso() {
 // Enviar nuevo curso
 async function enviarCurso() {
     try {
-        const token = localStorage.getItem('access_token');
-        if (!token) {
+        if (!window.authAPI || !window.authAPI.isAuthenticated()) {
             mostrarError('Debes iniciar sesión para publicar cursos');
+            window.location.href = '/login.html';
             return;
+        }
+
+        if (!window.coursesAPI) {
+            throw new Error('Servicio API de cursos no disponible');
         }
 
         const cursoData = {
@@ -202,18 +199,7 @@ async function enviarCurso() {
             visible: true
         };
 
-        const response = await fetch('/api/otec/cursos', {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(cursoData)
-        });
-
-        if (!response.ok) {
-            throw new Error('Error al publicar el curso');
-        }
+        await window.coursesAPI.createCourse(cursoData);
 
         // Cerrar modal y recargar cursos
         const modal = bootstrap.Modal.getInstance(document.getElementById('nuevoCursoModal'));
@@ -229,26 +215,19 @@ async function enviarCurso() {
         mostrarExito('Curso publicado exitosamente');
     } catch (error) {
         console.error('Error:', error);
-        mostrarError('Error al publicar el curso');
+        const errorMsg = error.message || 'Error al publicar el curso';
+        mostrarError(errorMsg);
     }
 }
 
 // Ver curso completo
 async function verCurso(id) {
     try {
-        const token = localStorage.getItem('access_token');
-        const response = await fetch(`/api/otec/cursos/${id}`, {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
-        });
-
-        if (!response.ok) {
-            throw new Error('Error al cargar el curso');
+        if (!window.coursesAPI) {
+            throw new Error('Servicio API de cursos no disponible');
         }
 
-        const curso = await response.json();
+        const curso = await window.coursesAPI.getCourse(id);
         const vigencia = obtenerVigencia(curso);
         const etiquetas = curso.etiquetas.split(',').map(tag => tag.trim()).filter(tag => tag);
         
@@ -298,7 +277,8 @@ async function verCurso(id) {
         modal.show();
     } catch (error) {
         console.error('Error:', error);
-        mostrarError('Error al cargar el curso');
+        const errorMsg = error.message || 'Error al cargar el curso';
+        mostrarError(errorMsg);
     }
 }
 

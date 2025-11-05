@@ -18,30 +18,23 @@ function configurarEventos() {
 // Cargar contenido de bienestar
 async function cargarContenidoBienestar() {
     try {
-        const token = localStorage.getItem('access_token');
-        if (!token) {
+        if (!window.authAPI || !window.authAPI.isAuthenticated()) {
             mostrarError('Debes iniciar sesión para acceder al contenido de bienestar');
+            window.location.href = '/login.html';
             return;
         }
 
-        const response = await fetch('/api/bienestar/bienestar', {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
-        });
-
-        if (!response.ok) {
-            throw new Error('Error al cargar contenido de bienestar');
+        if (!window.wellbeingAPI) {
+            throw new Error('Servicio API de bienestar no disponible');
         }
 
-        const data = await response.json();
-        contenidoBienestar = data.results || data;
+        contenidoBienestar = await window.wellbeingAPI.getWellbeingContent();
         contenidoFiltrado = [...contenidoBienestar];
         mostrarContenido();
     } catch (error) {
         console.error('Error:', error);
-        mostrarError('Error al cargar el contenido de bienestar');
+        const errorMsg = error.message || 'Error al cargar el contenido de bienestar';
+        mostrarError(errorMsg);
     }
 }
 
@@ -103,19 +96,11 @@ function mostrarContenido() {
 // Ver contenido completo
 async function verContenido(id) {
     try {
-        const token = localStorage.getItem('access_token');
-        const response = await fetch(`/api/bienestar/bienestar/${id}`, {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
-        });
-
-        if (!response.ok) {
-            throw new Error('Error al cargar el contenido');
+        if (!window.wellbeingAPI) {
+            throw new Error('Servicio API de bienestar no disponible');
         }
 
-        const item = await response.json();
+        const item = await window.wellbeingAPI.getWellbeingContentItem(id);
         
         // Mostrar en modal
         document.getElementById('modalTitulo').textContent = item.titulo;
@@ -145,7 +130,8 @@ async function verContenido(id) {
         modal.show();
     } catch (error) {
         console.error('Error:', error);
-        mostrarError('Error al cargar el contenido');
+        const errorMsg = error.message || 'Error al cargar el contenido';
+        mostrarError(errorMsg);
     }
 }
 

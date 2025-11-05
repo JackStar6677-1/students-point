@@ -26,24 +26,23 @@ class EncuestasManager {
     // === AUTENTICACIÓN ===
     async loadUser() {
         try {
-            const token = localStorage.getItem('access_token');
-            if (!token) {
+            if (!window.authAPI) {
+                throw new Error('Servicio de autenticación no disponible');
+            }
+            
+            if (!window.authAPI.isAuthenticated()) {
                 window.location.href = '/login.html';
                 return;
             }
             
-            const response = await fetch('/api/auth/me/', {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            
-            if (response.ok) {
-                this.currentUser = await response.json();
-            } else {
-                window.location.href = '/login.html';
-            }
+            this.currentUser = await window.authAPI.getCurrentUser();
         } catch (error) {
             console.error('Error loading user:', error);
-            window.location.href = '/login.html';
+            if (error.message.includes('401') || error.message.includes('autenticado')) {
+                window.location.href = '/login.html';
+            } else {
+                this.showError('Error al cargar el usuario');
+            }
         }
     }
     
@@ -108,22 +107,17 @@ class EncuestasManager {
         try {
             this.showLoading(true);
             
-            const token = localStorage.getItem('access_token');
-            const params = new URLSearchParams(this.filtros);
-            
-            const response = await fetch(`/api/polls/?${params}`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            
-            if (response.ok) {
-                this.encuestas = await response.json();
-                this.renderEncuestas();
-            } else {
-                this.showError('Error cargando encuestas');
+            if (!window.pollsAPI) {
+                throw new Error('Servicio API de encuestas no disponible');
             }
+            
+            this.encuestas = await window.pollsAPI.getPolls(this.filtros);
+            this.renderEncuestas();
+            this.updateStats();
         } catch (error) {
             console.error('Error loading encuestas:', error);
-            this.showError('Error de conexión');
+            const errorMsg = error.message || 'Error al cargar las encuestas';
+            this.showError(errorMsg);
         } finally {
             this.showLoading(false);
         }
@@ -131,18 +125,15 @@ class EncuestasManager {
     
     async loadRespuestas(encuestaId) {
         try {
-            const token = localStorage.getItem('access_token');
-            const response = await fetch(`/api/polls/${encuestaId}/respuestas/`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            
-            if (response.ok) {
-                return await response.json();
+            if (!window.pollsAPI) {
+                return [];
             }
+            
+            return await window.pollsAPI.getPollResponses(encuestaId);
         } catch (error) {
             console.error('Error loading respuestas:', error);
+            return [];
         }
-        return [];
     }
     
     // === RENDERIZADO ===
@@ -298,6 +289,10 @@ class EncuestasManager {
     // === ENCUESTAS ===
     async crearEncuesta() {
         try {
+            if (!window.pollsAPI) {
+                throw new Error('Servicio API de encuestas no disponible');
+            }
+            
             const formData = {
                 titulo: document.getElementById('inputTitulo').value,
                 descripcion: document.getElementById('inputDescripcion').value,
@@ -310,28 +305,15 @@ class EncuestasManager {
                 obligatoria: document.getElementById('inputObligatoria').checked
             };
             
-            const token = localStorage.getItem('access_token');
-            const response = await fetch('/api/polls/encuestas/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify(formData)
-            });
-            
-            if (response.ok) {
-                this.showSuccess('Encuesta creada exitosamente');
-                this.closeModal();
-                document.getElementById('formCrearEncuesta').reset();
-                this.loadEncuestas();
-            } else {
-                const error = await response.json();
-                this.showError(error.detail || 'Error creando encuesta');
-            }
+            await window.pollsAPI.createPoll(formData);
+            this.showSuccess('Encuesta creada exitosamente');
+            this.closeModal();
+            document.getElementById('formCrearEncuesta').reset();
+            await this.loadEncuestas();
         } catch (error) {
             console.error('Error creating encuesta:', error);
-            this.showError('Error de conexión');
+            const errorMsg = error.message || 'Error al crear la encuesta';
+            this.showError(errorMsg);
         }
     }
     
@@ -381,6 +363,10 @@ class EncuestasManager {
     
     async enviarRespuestas() {
         try {
+            if (!window.pollsAPI) {
+                throw new Error('Servicio API de encuestas no disponible');
+            }
+            
             const formData = new FormData(document.getElementById('formResponderEncuesta'));
             const respuestas = [];
             
@@ -394,27 +380,14 @@ class EncuestasManager {
                 }
             }
             
-            const token = localStorage.getItem('access_token');
-            const response = await fetch(`/api/polls/${this.encuestaActual.id}/votar/`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({ respuestas })
-            });
-            
-            if (response.ok) {
-                this.showSuccess('Respuestas enviadas exitosamente');
-                this.closeModal();
-                this.loadEncuestas();
-            } else {
-                const error = await response.json();
-                this.showError(error.detail || 'Error enviando respuestas');
-            }
+            await window.pollsAPI.votePoll(this.encuestaActual.id, respuestas);
+            this.showSuccess('Respuestas enviadas exitosamente');
+            this.closeModal();
+            await this.loadEncuestas();
         } catch (error) {
             console.error('Error sending respuestas:', error);
-            this.showError('Error de conexión');
+            const errorMsg = error.message || 'Error al enviar las respuestas';
+            this.showError(errorMsg);
         }
     }
     
