@@ -117,8 +117,8 @@ def login(request):
         captcha_token = request.data.get('captcha_token')
         _ok, _score = verify_recaptcha(captcha_token, request.META.get('REMOTE_ADDR'))
         
-        # Autenticar usuario usando el servicio
-        user, error_msg = AuthService.autenticar_usuario(email, password)
+        # Autenticar usuario usando el servicio (pasar request para auditoría)
+        user, error_msg = AuthService.autenticar_usuario(email, password, request=request)
         
         if not user:
             status_code = status.HTTP_401_UNAUTHORIZED if 'Credenciales' in error_msg else status.HTTP_400_BAD_REQUEST
@@ -173,7 +173,7 @@ def register(request):
             status=status.HTTP_400_BAD_REQUEST
         )
     
-    # Crear usuario usando el servicio
+    # Crear usuario usando el servicio (pasar request para auditoría)
     user, error_msg = AuthService.crear_usuario(
         email=datos['email'],
         password=datos['password'],
@@ -181,7 +181,8 @@ def register(request):
         career=datos['career'],
         role=datos['role'],
         campus_id=datos.get('campus_id'),
-        sede_nombre=datos.get('sede_nombre')
+        sede_nombre=datos.get('sede_nombre'),
+        request=request
     )
     
     if not user:

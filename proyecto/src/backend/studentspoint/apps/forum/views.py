@@ -242,6 +242,26 @@ class PostListCreateView(generics.ListCreateAPIView):
         estado = post.verificar_contenido()
         post.estado = estado
         post.save(update_fields=["estado"])
+        
+        # Registrar actividad del usuario
+        try:
+            from studentspoint.apps.accounts.models_audit import UserActivityLog
+            ip_address = self.request.META.get('REMOTE_ADDR')
+            user_agent = self.request.META.get('HTTP_USER_AGENT', '')[:500]
+            UserActivityLog.objects.create(
+                usuario=self.request.user,
+                tipo=UserActivityLog.TipoActividad.CREACION_POST,
+                descripcion=f'Post creado: {post.titulo[:50]}...',
+                ip_address=ip_address,
+                user_agent=user_agent,
+                datos_adicionales={
+                    'post_id': post.id,
+                    'foro': post.foro.titulo,
+                    'tipo': post.tipo
+                }
+            )
+        except Exception:
+            pass  # No fallar si no hay modelo de auditoría
 
 
 class CommentCreateView(generics.ListCreateAPIView):
@@ -256,7 +276,26 @@ class CommentCreateView(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         post = get_object_or_404(Post, pk=self.kwargs["pk"])
-        serializer.save(post=post, usuario=self.request.user)
+        comentario = serializer.save(post=post, usuario=self.request.user)
+        
+        # Registrar actividad del usuario
+        try:
+            from studentspoint.apps.accounts.models_audit import UserActivityLog
+            ip_address = self.request.META.get('REMOTE_ADDR')
+            user_agent = self.request.META.get('HTTP_USER_AGENT', '')[:500]
+            UserActivityLog.objects.create(
+                usuario=self.request.user,
+                tipo=UserActivityLog.TipoActividad.CREACION_COMENTARIO,
+                descripcion=f'Comentario creado en post: {post.titulo[:50]}...',
+                ip_address=ip_address,
+                user_agent=user_agent,
+                datos_adicionales={
+                    'comentario_id': comentario.id,
+                    'post_id': post.id
+                }
+            )
+        except Exception:
+            pass  # No fallar si no hay modelo de auditoría
 
 
 class PostVoteView(APIView):

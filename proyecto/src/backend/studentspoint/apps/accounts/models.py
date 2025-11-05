@@ -405,3 +405,6 @@ class CambioCarrera(models.Model):
     def __str__(self):
         return f"{self.usuario.name}: {self.carrera_anterior} → {self.carrera_nueva}"
 
+
+# Importar modelos de auditoría al final para evitar imports circulares
+from .models_audit import LoginLog, RegistrationLog, UserActivityLog

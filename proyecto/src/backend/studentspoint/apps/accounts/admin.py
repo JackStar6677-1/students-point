@@ -3,6 +3,7 @@
 from django.contrib import admin
 from django.contrib.auth import get_user_model
 from .models import CambioCarrera
+from .models_audit import LoginLog, RegistrationLog, UserActivityLog
 
 
 class CambioCarreraInline(admin.TabularInline):
@@ -62,4 +63,40 @@ class CambioCarreraAdmin(admin.ModelAdmin):
     
     def has_add_permission(self, request):
         # Los cambios de carrera se crean mediante el método del modelo
+        return False
+
+
+@admin.register(LoginLog)
+class LoginLogAdmin(admin.ModelAdmin):
+    list_display = ('email_intentado', 'usuario', 'estado', 'ip_address', 'created_at')
+    list_filter = ('estado', 'created_at')
+    search_fields = ('email_intentado', 'usuario__email', 'ip_address', 'razon_fallo')
+    readonly_fields = ('usuario', 'email_intentado', 'estado', 'ip_address', 'user_agent', 'razon_fallo', 'created_at')
+    date_hierarchy = 'created_at'
+    
+    def has_add_permission(self, request):
+        return False
+
+
+@admin.register(RegistrationLog)
+class RegistrationLogAdmin(admin.ModelAdmin):
+    list_display = ('email', 'usuario', 'estado', 'career_intentada', 'ip_address', 'created_at')
+    list_filter = ('estado', 'created_at', 'career_intentada')
+    search_fields = ('email', 'usuario__email', 'name_intentado', 'career_intentada', 'ip_address')
+    readonly_fields = ('usuario', 'email', 'name_intentado', 'career_intentada', 'estado', 'ip_address', 'user_agent', 'razon_fallo', 'created_at')
+    date_hierarchy = 'created_at'
+    
+    def has_add_permission(self, request):
+        return False
+
+
+@admin.register(UserActivityLog)
+class UserActivityLogAdmin(admin.ModelAdmin):
+    list_display = ('usuario', 'tipo', 'ip_address', 'created_at')
+    list_filter = ('tipo', 'created_at')
+    search_fields = ('usuario__email', 'usuario__name', 'descripcion', 'ip_address')
+    readonly_fields = ('usuario', 'tipo', 'descripcion', 'datos_adicionales', 'ip_address', 'user_agent', 'created_at')
+    date_hierarchy = 'created_at'
+    
+    def has_add_permission(self, request):
         return False

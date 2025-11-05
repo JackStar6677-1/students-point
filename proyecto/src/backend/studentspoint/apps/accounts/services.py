@@ -11,6 +11,15 @@ logger = logging.getLogger(__name__)
 
 User = get_user_model()
 
+# Importar modelos de auditoría
+try:
+    from .models_audit import LoginLog, RegistrationLog, UserActivityLog
+except ImportError:
+    # Si no existen aún, definir None para evitar errores
+    LoginLog = None
+    RegistrationLog = None
+    UserActivityLog = None
+
 
 class TokenService:
     """Servicio para generar y manejar tokens JWT."""
@@ -58,36 +67,104 @@ class AuthService:
     DOMINIOS_LAXOS = ('@duocuc.cl', '@studentspoint.app')
     
     @classmethod
-    def autenticar_usuario(cls, email: str, password: str) -> Tuple[Optional[User], Optional[str]]:
+    def autenticar_usuario(cls, email: str, password: str, request=None) -> Tuple[Optional[User], Optional[str]]:
         """Autentica un usuario con email y contraseña.
         
         Args:
             email: Email del usuario
             password: Contraseña del usuario
+            request: Request HTTP (opcional, para registrar IP y user agent)
             
         Returns:
             tuple: (usuario, mensaje_error) - Si hay error, usuario es None
         """
         email = email.lower()
         
+        # Extraer información de la solicitud
+        ip_address = None
+        user_agent = ''
+        if request:
+            ip_address = cls._obtener_ip_address(request)
+            user_agent = request.META.get('HTTP_USER_AGENT', '')[:500]
+        
         try:
             user = User.objects.get(email=email)
             logger.info(f"Login attempt for user: {email}")
         except User.DoesNotExist:
             logger.warning(f"Login failed: User {email} not found")
+            # Registrar login fallido
+            if LoginLog:
+                LoginLog.objects.create(
+                    usuario=None,
+                    email_intentado=email,
+                    estado=LoginLog.Estado.FALLIDO,
+                    ip_address=ip_address,
+                    user_agent=user_agent,
+                    razon_fallo='Usuario no encontrado'
+                )
             return None, 'Credenciales inválidas'
         
         # Verificar email verificado
         if not cls._puede_iniciar_sesion(user):
+            razon = 'Email no verificado'
+            if LoginLog:
+                LoginLog.objects.create(
+                    usuario=user,
+                    email_intentado=email,
+                    estado=LoginLog.Estado.FALLIDO,
+                    ip_address=ip_address,
+                    user_agent=user_agent,
+                    razon_fallo=razon
+                )
             return None, 'Debes verificar tu email antes de iniciar sesión. Revisa tu bandeja e ingresa el código de verificación.'
         
         # Verificar contraseña
         if not user.check_password(password):
             logger.warning(f"Login failed: Invalid password for user {email}")
+            # Registrar login fallido
+            if LoginLog:
+                LoginLog.objects.create(
+                    usuario=user,
+                    email_intentado=email,
+                    estado=LoginLog.Estado.FALLIDO,
+                    ip_address=ip_address,
+                    user_agent=user_agent,
+                    razon_fallo='Contraseña incorrecta'
+                )
             return None, 'Credenciales inválidas'
+        
+        # Registrar login exitoso
+        if LoginLog:
+            LoginLog.objects.create(
+                usuario=user,
+                email_intentado=email,
+                estado=LoginLog.Estado.EXITOSO,
+                ip_address=ip_address,
+                user_agent=user_agent
+            )
+        
+        # Registrar actividad
+        if UserActivityLog:
+            UserActivityLog.objects.create(
+                usuario=user,
+                tipo=UserActivityLog.TipoActividad.LOGIN,
+                descripcion=f'Login exitoso desde {ip_address or "IP desconocida"}',
+                ip_address=ip_address,
+                user_agent=user_agent
+            )
         
         logger.info(f"Login successful for user: {email}")
         return user, None
+    
+    @staticmethod
+    def _obtener_ip_address(request):
+        """Obtiene la IP real del cliente desde el request."""
+        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+        if x_forwarded_for:
+            ip = x_forwarded_for.split(',')[0]
+        else:
+            ip = request.META.get('REMOTE_ADDR')
+        return ip
     
     @classmethod
     def _puede_iniciar_sesion(cls, usuario) -> bool:
@@ -112,8 +189,8 @@ class AuthService:
     
     @classmethod
     def crear_usuario(cls, email: str, password: str, name: str, career: str, 
-                      role: str = 'student', campus_id: Optional[int] = None,
-                      sede_nombre: Optional[str] = None) -> Tuple[Optional[User], Optional[str]]:
+                     role: str = 'student', campus_id: Optional[int] = None,
+                     sede_nombre: Optional[str] = None, request=None) -> Tuple[Optional[User], Optional[str]]:
         """Crea un nuevo usuario.
         
         Args:
@@ -151,6 +228,13 @@ class AuthService:
         elif sede_nombre:
             campus = Sede.objects.filter(nombre__iexact=sede_nombre.strip()).first()
         
+        # Extraer información de la solicitud para auditoría
+        ip_address = None
+        user_agent = ''
+        if request:
+            ip_address = cls._obtener_ip_address(request)
+            user_agent = request.META.get('HTTP_USER_AGENT', '')[:500]
+        
         try:
             user_kwargs = {
                 'email': email,
@@ -165,10 +249,48 @@ class AuthService:
             
             usuario = User.objects.create_user(**user_kwargs)
             logger.info(f"Usuario creado: {email}")
+            
+            # Registrar registro exitoso
+            if RegistrationLog:
+                RegistrationLog.objects.create(
+                    usuario=usuario,
+                    email=email,
+                    name_intentado=name,
+                    career_intentada=career,
+                    estado=RegistrationLog.Estado.PENDIENTE_VERIFICACION,
+                    ip_address=ip_address,
+                    user_agent=user_agent
+                )
+            
+            # Registrar actividad
+            if UserActivityLog:
+                UserActivityLog.objects.create(
+                    usuario=usuario,
+                    tipo=UserActivityLog.TipoActividad.REGISTRO,
+                    descripcion=f'Usuario registrado desde {ip_address or "IP desconocida"}',
+                    ip_address=ip_address,
+                    user_agent=user_agent,
+                    datos_adicionales={'career': career, 'campus': campus.nombre if campus else None}
+                )
+            
             return usuario, None
             
         except Exception as e:
             logger.error(f"Error creando usuario {email}: {e}", exc_info=True)
+            
+            # Registrar registro fallido
+            if RegistrationLog:
+                RegistrationLog.objects.create(
+                    usuario=None,
+                    email=email,
+                    name_intentado=name,
+                    career_intentada=career,
+                    estado=RegistrationLog.Estado.FALLIDO,
+                    ip_address=ip_address,
+                    user_agent=user_agent,
+                    razon_fallo=str(e)
+                )
+            
             return None, f'Error creando usuario: {str(e)}'
 
 
