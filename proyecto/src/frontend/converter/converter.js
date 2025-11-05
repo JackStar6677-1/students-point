@@ -624,10 +624,6 @@ async function initAuth() {
         document.querySelector('.auth-buttons').style.display = 'block';
     }
 }
-    } catch (error) {
-        console.error('Error verificando auth:', error);
-    }
-}
 
 // Logout
 document.addEventListener('DOMContentLoaded', () => {
