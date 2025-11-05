@@ -7,7 +7,6 @@ from django.contrib.auth import get_user_model
 from rest_framework.test import APIClient
 from rest_framework import status
 from studentspoint.apps.forum.models import Foro, Post, Comentario
-from studentspoint.apps.accounts.models import User
 from studentspoint.apps.campuses.models import Sede
 
 User = get_user_model()

@@ -3,9 +3,11 @@ Pruebas unitarias para la API de perfil de usuario
 """
 import pytest
 from django.test import TestCase
+from django.contrib.auth import get_user_model
 from rest_framework.test import APIClient
 from rest_framework import status
-from studentspoint.apps.accounts.models import User
+
+User = get_user_model()
 
 class ProfileAPITestCase(TestCase):
     def setUp(self):
