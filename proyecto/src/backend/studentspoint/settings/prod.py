@@ -2,7 +2,7 @@
 Configuración de producción para StudentsPoint
 """
 from .base import *
-import os
+# os ya está importado en base.py, no es necesario reimportarlo
 
 DEBUG = False
 
