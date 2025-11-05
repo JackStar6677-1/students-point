@@ -141,12 +141,13 @@ async function convertWordToPdf() {
         return;
     }
     
-    const token = localStorage.getItem('access_token');
-    if (!token) {
+    if (!checkAuth()) {
         showAlert('Debes iniciar sesión para usar el conversor', 'warning');
         window.location.href = '/login.html';
         return;
     }
+    
+    const token = getAuthToken();
     
     console.log('Iniciando conversión Word a PDF...');
     showProgress();
@@ -239,12 +240,13 @@ async function convertPdfToWord() {
         return;
     }
     
-    const token = localStorage.getItem('access_token');
-    if (!token) {
+    if (!checkAuth()) {
         showAlert('Debes iniciar sesión para usar el conversor', 'warning');
         window.location.href = '/login.html';
         return;
     }
+    
+    const token = getAuthToken();
     
     console.log('Iniciando conversión PDF a Word...');
     showProgress();
@@ -571,21 +573,47 @@ function showAlert(message, type) {
 }
 
 // Autenticación
+// Helper para obtener token de autenticación
+function getAuthToken() {
+    if (window.authAPI) {
+        return window.authAPI.getAuthToken();
+    }
+    return localStorage.getItem('access_token');
+}
+
+// Helper para verificar autenticación
+function checkAuth() {
+    if (window.authAPI) {
+        return window.authAPI.isAuthenticated();
+    }
+    return !!localStorage.getItem('access_token');
+}
+
 async function initAuth() {
-    const token = localStorage.getItem('access_token');
-    
-    if (!token) {
+    if (!checkAuth()) {
         document.querySelector('.user-menu').style.display = 'none';
         document.querySelector('.auth-buttons').style.display = 'block';
         return;
     }
     
     try {
-        const response = await fetch('/api/auth/me/', {
-            headers: {
-                'Authorization': `Bearer ${token}`
+        const token = getAuthToken();
+        let user;
+        
+        if (window.authAPI) {
+            user = await window.authAPI.getCurrentUser();
+        } else {
+            const response = await fetch('/api/auth/me/', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            
+            if (!response.ok) {
+                throw new Error('Error obteniendo usuario');
             }
-        });
+            user = await response.json();
+        }
         
         if (response.ok) {
             const user = await response.json();

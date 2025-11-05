@@ -1,19 +1,20 @@
 // Verificar autenticación y redirigir si es necesario
 function checkAuthentication() {
-    const token = localStorage.getItem('access_token');
+    // Usar window.authAPI si está disponible, sino fallback a localStorage
+    const isAuth = window.authAPI ? window.authAPI.isAuthenticated() : !!localStorage.getItem('access_token');
     
     // Solo redirigir al login si estamos en una página protegida específica
     const protectedPaths = ['/forum/', '/market/', '/portfolio/', '/account.html'];
     const currentPath = window.location.pathname;
     const isProtectedPath = protectedPaths.some(path => currentPath.includes(path));
     
-    if (!token && isProtectedPath) {
+    if (!isAuth && isProtectedPath) {
         window.location.href = '/login.html';
         return;
     }
     
     // Si hay token y estamos en login/register, redirigir al inicio
-    if (token && (window.location.pathname.includes('login.html') || window.location.pathname.includes('register.html'))) {
+    if (isAuth && (window.location.pathname.includes('login.html') || window.location.pathname.includes('register.html'))) {
         window.location.href = '/';
     }
 }
@@ -37,17 +38,26 @@ function clearSessionAndRedirect() {
 
 // Función global para hacer logout
 window.logout = function() {
-    clearSessionAndRedirect();
+    if (window.authAPI) {
+        window.authAPI.logout();
+    } else {
+        clearSessionAndRedirect();
+    }
 };
 
 // Función para verificar si el usuario está autenticado
 window.isAuthenticated = function() {
-    const token = localStorage.getItem('access_token');
-    return !!token;
+    if (window.authAPI) {
+        return window.authAPI.isAuthenticated();
+    }
+    return !!localStorage.getItem('access_token');
 };
 
 // Función para obtener el token de acceso
 window.getAccessToken = function() {
+    if (window.authAPI) {
+        return window.authAPI.getAuthToken();
+    }
     return localStorage.getItem('access_token');
 };
 
@@ -109,8 +119,11 @@ if (installBtn) {
 
 // Service Worker Registration - Manejado por pwa.js
 
-// Authentication helpers
+// Authentication helpers (usar window.authAPI cuando esté disponible)
 function getAuthToken() {
+  if (window.authAPI) {
+    return window.authAPI.getAuthToken();
+  }
   return localStorage.getItem('access_token');
 }
 
@@ -119,18 +132,29 @@ function setAuthToken(token) {
 }
 
 function removeAuthToken() {
-  localStorage.removeItem('access_token');
-  localStorage.removeItem('refresh_token');
-  localStorage.removeItem('user_email');
+  if (window.authAPI) {
+    window.authAPI.logout();
+  } else {
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+    localStorage.removeItem('user_email');
+  }
 }
 
 function isAuthenticated() {
+  if (window.authAPI) {
+    return window.authAPI.isAuthenticated();
+  }
   return !!getAuthToken();
 }
 
 function logout() {
-  removeAuthToken();
-  window.location.href = '/login.html';
+  if (window.authAPI) {
+    window.authAPI.logout();
+  } else {
+    removeAuthToken();
+    window.location.href = '/login.html';
+  }
 }
 
 // API helper

@@ -298,30 +298,40 @@
         
         async function loadUserData() {
             try {
-                const token = localStorage.getItem('access_token');
-                if (!token) {
+                if (!window.authAPI) {
+                    console.warn('authAPI no disponible, usando fallback');
+                    const token = localStorage.getItem('access_token');
+                    if (!token) {
+                        window.location.href = '/login.html';
+                        return;
+                    }
+                    const response = await fetch('/api/auth/me/', {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    if (response.ok) {
+                        currentUser = await response.json();
+                        updateUserInterface();
+                    } else {
+                        window.location.href = '/login.html';
+                    }
+                    return;
+                }
+                
+                if (!window.authAPI.isAuthenticated()) {
                     window.location.href = '/login.html';
                     return;
                 }
                 
-                const response = await fetch('/api/auth/me/', {
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }
-                });
-                
-                if (response.ok) {
-                    currentUser = await response.json();
-                    updateUserInterface();
-                } else {
-                    localStorage.removeItem('access_token');
-                    localStorage.removeItem('refresh_token');
-                    window.location.href = '/login.html';
-                }
+                currentUser = await window.authAPI.getCurrentUser();
+                updateUserInterface();
             } catch (error) {
                 console.error('Error loading user:', error);
-                window.location.href = '/login.html';
+                if (error.message.includes('401') || error.message.includes('autenticado')) {
+                    window.location.href = '/login.html';
+                }
             }
         }
         
@@ -386,19 +396,17 @@
         
         async function loadRecentPosts() {
             try {
-                const token = localStorage.getItem('access_token');
-                const response = await fetch('/api/forum/posts/?limit=3', {
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }
-                });
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    const posts = Array.isArray(data) ? data : data.results || [];
-                    updatePostsPreview(posts);
+                if (!window.authAPI || !window.authAPI.isAuthenticated()) {
+                    return;
                 }
+                
+                if (!window.forumAPI) {
+                    console.warn('forumAPI no disponible');
+                    return;
+                }
+                
+                const posts = await window.forumAPI.getPosts({ limit: 3 });
+                updatePostsPreview(posts);
             } catch (error) {
                 console.error('Error loading recent posts:', error);
             }

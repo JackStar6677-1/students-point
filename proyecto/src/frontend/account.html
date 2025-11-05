@@ -256,18 +256,25 @@
 
         async function loadUserData() {
             try {
-                const response = await fetch('/api/auth/me/', {
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+                if (!window.authAPI) {
+                    console.warn('authAPI no disponible, usando fallback');
+                    const response = await fetch('/api/auth/me/', {
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+                        }
+                    });
+                    if (!response.ok) {
+                        window.location.href = '/login.html';
+                        return;
                     }
-                });
-
-                if (!response.ok) {
-                    window.location.href = '/login.html';
-                    return;
+                    currentUser = await response.json();
+                } else {
+                    if (!window.authAPI.isAuthenticated()) {
+                        window.location.href = '/login.html';
+                        return;
+                    }
+                    currentUser = await window.authAPI.getCurrentUser();
                 }
-
-                currentUser = await response.json();
                 
                 // Update sidebar
                 document.getElementById('sidebarUserName').textContent = currentUser.name || 'Usuario';
@@ -300,11 +307,18 @@
 
         async function loadCareerList() {
             try {
-                const response = await fetch('/api/auth/carreras/');
-                const data = await response.json();
+                let carreras = [];
+                if (window.authAPI) {
+                    carreras = await window.authAPI.getCarreras();
+                } else {
+                    const response = await fetch('/api/carreras/');
+                    const data = await response.json();
+                    carreras = data.carreras || [];
+                }
+                
                 const select = document.getElementById('editUserCareer');
                 select.innerHTML = '<option value="">Selecciona una carrera</option>';
-                data.carreras.forEach(career => {
+                carreras.forEach(career => {
                     select.innerHTML += `<option value="${career}">${career}</option>`;
                 });
             } catch (error) {
