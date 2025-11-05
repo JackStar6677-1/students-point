@@ -1,13 +1,15 @@
 """
 Pruebas unitarias para la API del foro
 """
+# pyright: reportMissingImports=false
+# Los imports de studentspoint se resuelven en runtime gracias a conftest.py
 import pytest
 from django.test import TestCase, Client
 from django.contrib.auth import get_user_model
 from rest_framework.test import APIClient
 from rest_framework import status
-from studentspoint.apps.forum.models import Foro, Post, Comentario
-from studentspoint.apps.campuses.models import Sede
+from studentspoint.apps.forum.models import Foro, Post, Comentario  # type: ignore
+from studentspoint.apps.campuses.models import Sede  # type: ignore
 
 User = get_user_model()
 

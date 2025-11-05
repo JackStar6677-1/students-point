@@ -1,0 +1,38 @@
+{
+  "include": [
+    "proyecto/src/backend",
+    "pruebas_unitarias"
+  ],
+  "exclude": [
+    "**/__pycache__",
+    "**/node_modules",
+    "**/venv",
+    "**/.venv",
+    "**/migrations",
+    "**/staticfiles"
+  ],
+  "executionEnvironments": [
+    {
+      "root": "proyecto/src/backend",
+      "pythonVersion": "3.11",
+      "pythonPlatform": "All",
+      "extraPaths": [
+        "proyecto/src/backend"
+      ]
+    },
+    {
+      "root": "pruebas_unitarias",
+      "pythonVersion": "3.11",
+      "pythonPlatform": "All",
+      "extraPaths": [
+        "proyecto/src/backend"
+      ]
+    }
+  ],
+  "typeCheckingMode": "basic",
+  "reportMissingImports": "none",
+  "reportMissingTypeStubs": false,
+  "reportAttributeAccessIssue": "none",
+  "reportGeneralTypeIssues": "none"
+}
+
