@@ -199,20 +199,40 @@ def register(request):
         tokens = TokenService.generar_tokens_usuario(user)
         user_data = TokenService.obtener_datos_usuario(user)
         
+        # Mensaje según si el email se envió correctamente
+        from django.conf import settings
+        if exito:
+            mensaje_respuesta = 'Usuario registrado exitosamente. Por favor verifica tu email con el código enviado.'
+        else:
+            # En desarrollo, informar que el código está en los logs
+            if settings.DEBUG:
+                logger.warning(f"Email no enviado en modo DEBUG. Revisa los logs para ver el código.")
+                mensaje_respuesta = f'Usuario registrado. {mensaje} (Modo DEBUG: Revisa los logs del servidor para el código)'
+            else:
+                mensaje_respuesta = f'Usuario registrado, pero hubo un problema al enviar el email: {mensaje}. Por favor solicita un nuevo código.'
+        
         return Response({
             'access': tokens['access'],
             'refresh': tokens['refresh'],
             'user': user_data,
             'verification_email_sent': exito,
-            'message': 'Usuario registrado. Por favor verifica tu email con el código enviado.'
+            'message': mensaje_respuesta
         }, status=status.HTTP_201_CREATED)
         
     except Exception as e:
         logger.error(f"Error después de crear usuario {datos['email']}: {e}", exc_info=True)
-        return Response(
-            {'detail': f'Error enviando código de verificación: {str(e)}'}, 
-            status=status.HTTP_400_BAD_REQUEST
-        )
+        # Aún así, devolver los tokens porque el usuario ya fue creado
+        tokens = TokenService.generar_tokens_usuario(user)
+        user_data = TokenService.obtener_datos_usuario(user)
+        
+        return Response({
+            'access': tokens['access'],
+            'refresh': tokens['refresh'],
+            'user': user_data,
+            'verification_email_sent': False,
+            'message': f'Usuario registrado, pero hubo un error al enviar el código de verificación: {str(e)}. Por favor solicita un nuevo código desde la página de verificación.',
+            'error': str(e)
+        }, status=status.HTTP_201_CREATED)
 
 
 @extend_schema(
