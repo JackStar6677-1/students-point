@@ -38,6 +38,9 @@ db.sqlite3-journal
 .env.local
 config_local.env
 *.env
+# PERO permitir archivos de ejemplo (deben estar en Git)
+!*.env.example
+!*.example
 
 # IDE
 .vscode/
