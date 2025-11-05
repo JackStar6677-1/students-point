@@ -4,9 +4,11 @@ Pruebas unitarias para verificación de email
 import pytest
 from django.test import TestCase
 from django.core import mail
+from django.contrib.auth import get_user_model
 from rest_framework.test import APIClient
 from rest_framework import status
-from studentspoint.apps.accounts.models import User
+
+User = get_user_model()
 
 class EmailVerificationTestCase(TestCase):
     def setUp(self):
