@@ -1,6 +1,6 @@
 # StudentsPoint - Plataforma Integral Estudiantil
 
-![Version](https://img.shields.io/badge/version-2.0.0--production--ready-blue)
+![Version](https://img.shields.io/badge/version-5.0.0--production--ready-blue)
 ![Python](https://img.shields.io/badge/python-3.11+-green)
 ![Django](https://img.shields.io/badge/django-5.2-green)
 ![License](https://img.shields.io/badge/license-Open%20Source-blue)
@@ -48,24 +48,41 @@ chmod +x iniciar_desarrollo.sh
 - Revision manual de imagenes por administradores
 - Foros publicos y privados
 - Sistema de moderacion automatica y manual
+- Optimizacion de consultas N+1
+- Abstraccion de codigo con servicios y utilidades
 
 ### Autenticacion y Usuarios
 - Registro con email y contraseña (verificacion por correo)
 - Login seguro con JWT y hashing de contraseñas
 - Google OAuth 2.0 como alternativa
 - Recuperacion de contraseña por email
+- Verificacion de email con codigos HTML profesionales
+- Sistema de auditoria completo (LoginLog, RegistrationLog, UserActivityLog)
 - Perfil personalizable (foto, datos academicos)
 - Cambio de carrera cada semestre con historial
 - Sistema de roles: admin, moderador, director de carrera, estudiante
 - Multiples areas de estudio disponibles
+- Scripts de prueba interactivos para verificacion de email
 
 ### Marketplace Estudiantil
 - Productos con enlaces externos (Facebook, Yapo, MercadoLibre)
-- OpenGraph metadata scraping
+- OpenGraph metadata scraping automatico
+- Vista previa de productos externos
 - Sistema de favoritos
 - Reportes de productos inapropiados
 - Analytics detallados por producto
 - Filtrado por campus y carrera
+- Abstraccion de servicios para extraccion de metadatos
+
+### Conversor de Documentos
+- Conversion Word a PDF con preservacion de formato
+- Conversion PDF a Word editable
+- OCR para PDFs escaneados (pytesseract)
+- Validacion de archivos (tamaño, tipo, contenido vacio)
+- Manejo robusto de errores
+- Procesamiento asincrono
+- Historial de conversiones
+- Limpieza automatica de archivos temporales
 
 ### Otras Funcionalidades
 - Portafolio profesional con generacion de PDF
@@ -76,14 +93,17 @@ chmod +x iniciar_desarrollo.sh
 - Sistema de encuestas
 - Notificaciones push
 - Sistema de reportes de infraestructura
+- PWA (Progressive Web App) completamente funcional
 
-###  Sistema de Monitoreo (NUEVO)
+### Sistema de Monitoreo y Auditoria
 - **Logging completo**: 4 archivos de log separados (general, errors, api, auth)
-- **Monitor en tiempo real**: Actualización automática cada 30-60s
-- **Sistema de alertas**: Detección automática de problemas críticos
-- **Análisis avanzado**: Reportes con estadísticas y recomendaciones
-- **Optimización de queries**: Detección automática de N+1
-- **Performance monitoring**: Métricas de frontend en tiempo real
+- **Monitor en tiempo real**: Actualizacion automatica cada 30-60s
+- **Sistema de alertas**: Deteccion automatica de problemas criticos
+- **Analisis avanzado**: Reportes con estadisticas y recomendaciones
+- **Optimizacion de queries**: Deteccion automatica de N+1
+- **Performance monitoring**: Metricas de frontend en tiempo real
+- **Auditoria de usuarios**: Registro completo de logins, registros y actividad
+- **Trazabilidad**: IP, user agent y timestamps para cada accion importante
 
 ## Testing
 
@@ -118,12 +138,18 @@ Para mas detalles, ver [Documentacion/TESTING.md](Documentacion/TESTING.md)
 - **Redis** - Cache y broker de mensajes
 - **Celery** - Tareas asincronas
 - **JWT** - Autenticacion con tokens
+- **python-docx, reportlab** - Procesamiento de documentos
+- **PyPDF2, pytesseract** - Conversion PDF y OCR
+- **beautifulsoup4, requests** - Web scraping y OpenGraph
+- **google-auth** - OAuth 2.0 con Google
 
 ### Frontend
 - **HTML5, CSS3, JavaScript ES6+** - Tecnologias base
 - **Bootstrap 5** - Framework CSS
 - **PWA** - Service Worker para funcionalidad offline
 - **Font Awesome** - Iconos
+- **API Services centralizados** - Abstraccion de llamadas HTTP
+- **Autenticacion centralizada** - Servicios reutilizables
 
 ## Instalacion
 
@@ -184,15 +210,33 @@ students-point/
         backend/         # Backend Django
            studentspoint/
                apps/    # Aplicaciones Django
-                   accounts/      # Autenticacion y usuarios
+                   accounts/      # Autenticacion, usuarios y auditoria
                    forum/         # Sistema de foros
                    market/        # Marketplace
-                   portfolio/     # Portafolios
-                   campuses/      # Recorridos campus
-                   ...
+                   portfolio/     # Portafolios profesionales
+                   campuses/      # Recorridos virtuales campus
+                   document_converter/  # Conversor de documentos
+                   notifications/ # Sistema de notificaciones
+                   polls/         # Sistema de encuestas
+                   otec/          # Cursos OTEC
+                   reports/       # Reportes de infraestructura
+                   wellbeing/     # Bienestar estudiantil
+                   health/        # Health checks
         frontend/        # Frontend (HTML/CSS/JS)
+           static/       # Archivos estaticos (CSS, JS, imagenes)
+           forum/        # Interfaz de foros
+           market/       # Interfaz de marketplace
+           portfolio/    # Interfaz de portafolios
+           converter/    # Interfaz de conversor
+           cursos/       # Interfaz de cursos
+           encuestas/    # Interfaz de encuestas
+           bienestar/    # Interfaz de bienestar
+           reportes/     # Interfaz de reportes
+           streetview/   # Recorridos virtuales
  pruebas_unitarias/       # Tests unitarios con pytest
  pruebas_automatizadas/   # Tests E2E
+ iniciar_desarrollo.bat   # Script de inicio Windows
+ iniciar_desarrollo.sh   # Script de inicio Linux/Mac
 ```
 
 ## Uso del Sistema de Foros
@@ -361,19 +405,28 @@ Este proyecto es de codigo abierto, desarrollado como proyecto academico.
 
 ## Estado del Proyecto
 
-- **Version Actual**: v2.1.0 (Release)
+- **Version Actual**: v5.0.0 (Release 5)
 - **Fecha de Inicio**: Agosto 2025
-- **Fecha Actual**: 9 de Octubre 2025
-- **Estado**: Sistema de Foros y Autenticacion Completos
+- **Fecha Actual**: Noviembre 2025
+- **Estado**: Production-Ready - Sistema Completo con Auditoria
 
-### Hitos Completados (v2.1.0)
+### Hitos Completados (v5.0.0 - 5 de Noviembre 2025)
 - Sistema de foros avanzado personalizado por carrera
-- Sistema de autenticacion completo con verificacion de email
+- Sistema de autenticacion completo con verificacion de email HTML
+- Sistema de auditoria completo (LoginLog, RegistrationLog, UserActivityLog)
 - Email SMTP real configurado y funcional
 - Google OAuth 2.0 configurado y funcional
+- Conversor de documentos Word/PDF con OCR
+- Marketplace con extraccion automatica de OpenGraph
+- Abstraccion de codigo mejorada (services, utils, API services)
+- PWA completamente funcional con instalacion
+- Scripts de inicio automatizados (Windows y Linux)
+- Scripts de prueba interactivos para verificacion de email
 - Base de datos completamente migrada
-- Tests unitarios 6/6 pasando
+- Tests unitarios completos y corregidos
 - Documentacion completa y organizada
+- Eliminacion de codigo duplicado y redundante
+- Configuracion de linters (Pyright) para imports dinamicos
 
 ## Releases
 
