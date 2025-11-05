@@ -116,8 +116,8 @@ self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
   
-  // Solo interceptar requests del mismo origen
-  if (url.origin !== location.origin) {
+  // Solo interceptar requests del mismo origen o HTTPS
+  if (url.origin !== location.origin && !url.protocol.startsWith('https')) {
     return;
   }
   

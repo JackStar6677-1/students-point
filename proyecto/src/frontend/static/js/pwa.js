@@ -42,7 +42,7 @@ class StudentsPointPWA {
       console.log('PWA: Protocol:', window.location.protocol);
       
       try {
-        const registration = await navigator.serviceWorker.register('/sw.js', {
+        const registration = await navigator.serviceWorker.register('/static/sw.js', {
           scope: '/'
         });
         console.log('PWA: Service Worker registrado exitosamente:', registration);
@@ -92,11 +92,34 @@ class StudentsPointPWA {
   showInstallButton() {
     const installButton = document.getElementById('install-button');
     if (installButton) {
-      installButton.style.display = 'block';
-      installButton.addEventListener('click', () => {
+      installButton.style.display = 'inline-block';
+      installButton.onclick = () => {
         this.installApp();
-      });
+      };
+    } else {
+      // Si no existe el botón, crear uno flotante
+      this.createFloatingInstallButton();
     }
+  }
+  
+  /**
+   * Crear botón de instalación flotante
+   */
+  createFloatingInstallButton() {
+    if (document.getElementById('floating-install-button')) {
+      return; // Ya existe
+    }
+    
+    const installButton = document.createElement('button');
+    installButton.id = 'floating-install-button';
+    installButton.className = 'btn btn-primary position-fixed';
+    installButton.style.cssText = 'bottom: 20px; right: 20px; z-index: 9999; box-shadow: 0 4px 6px rgba(0,0,0,0.3);';
+    installButton.innerHTML = '<i class="fas fa-download me-2"></i>Instalar StudentsPoint';
+    installButton.onclick = () => {
+      this.installApp();
+    };
+    
+    document.body.appendChild(installButton);
   }
   
   /**
@@ -106,6 +129,11 @@ class StudentsPointPWA {
     const installButton = document.getElementById('install-button');
     if (installButton) {
       installButton.style.display = 'none';
+    }
+    
+    const floatingButton = document.getElementById('floating-install-button');
+    if (floatingButton) {
+      floatingButton.remove();
     }
   }
   
@@ -252,7 +280,7 @@ class StudentsPointPWA {
         };
         
         navigator.serviceWorker.controller.postMessage(
-          { type: 'CLEAN_CACHE' },
+          { type: 'CLEAR_CACHE' },
           [messageChannel.port2]
         );
       } catch (error) {
