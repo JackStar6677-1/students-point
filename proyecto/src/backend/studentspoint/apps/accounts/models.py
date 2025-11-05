@@ -261,25 +261,123 @@ class User(AbstractBaseUser, PermissionsMixin):
     
     def enviar_codigo_verificacion(self):
         """Envía el código de verificación por email."""
-        from django.core.mail import send_mail
+        from django.core.mail import send_mail, EmailMultiAlternatives
         from django.conf import settings
+        from django.template.loader import render_to_string
         import logging
         
         logger = logging.getLogger(__name__)
         codigo = self.generar_codigo_verificacion()
         
         asunto = 'Verificación de email - StudentsPoint'
-        mensaje = f'''
+        
+        # Mensaje en texto plano
+        mensaje_texto = f'''
 Hola {self.name},
+
+¡Bienvenido a StudentsPoint!
 
 Tu código de verificación es: {codigo}
 
 Este código expirará en 15 minutos.
 
+Ingresa este código en la página de verificación para activar tu cuenta.
+
 Si no solicitaste este código, puedes ignorar este email.
 
 Saludos,
 Equipo StudentsPoint
+        '''
+        
+        # Mensaje HTML (más profesional)
+        mensaje_html = f'''
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {{
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }}
+        .container {{
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            padding: 30px;
+            border: 1px solid #e0e0e0;
+        }}
+        .header {{
+            text-align: center;
+            margin-bottom: 30px;
+        }}
+        .logo {{
+            color: #6b46c1;
+            font-size: 24px;
+            font-weight: bold;
+        }}
+        .code-box {{
+            background-color: #6b46c1;
+            color: white;
+            font-size: 32px;
+            font-weight: bold;
+            text-align: center;
+            padding: 20px;
+            border-radius: 8px;
+            letter-spacing: 5px;
+            margin: 30px 0;
+        }}
+        .footer {{
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+            font-size: 12px;
+            color: #666;
+            text-align: center;
+        }}
+        .warning {{
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">StudentsPoint</div>
+        </div>
+        
+        <h2>¡Bienvenido, {self.name}!</h2>
+        
+        <p>Gracias por registrarte en StudentsPoint. Para completar tu registro y activar tu cuenta, necesitas verificar tu dirección de correo electrónico.</p>
+        
+        <p>Tu código de verificación es:</p>
+        
+        <div class="code-box">
+            {codigo}
+        </div>
+        
+        <div class="warning">
+            <strong>⚠️ Importante:</strong> Este código expirará en 15 minutos. Si no lo usas a tiempo, deberás solicitar uno nuevo.
+        </div>
+        
+        <p>Ingresa este código en la página de verificación para activar tu cuenta.</p>
+        
+        <p>Si no solicitaste este código, puedes ignorar este email de forma segura.</p>
+        
+        <div class="footer">
+            <p>Este es un email automático, por favor no respondas.</p>
+            <p>&copy; 2024 StudentsPoint. Todos los derechos reservados.</p>
+        </div>
+    </div>
+</body>
+</html>
         '''
         
         logger.info(f"========================================")
@@ -288,17 +386,33 @@ Equipo StudentsPoint
         logger.info(f"========================================")
         
         try:
-            send_mail(
-                asunto,
-                mensaje,
-                settings.DEFAULT_FROM_EMAIL,
-                [self.email],
-                fail_silently=False,
-            )
+            # Intentar enviar con HTML
+            try:
+                email = EmailMultiAlternatives(
+                    asunto,
+                    mensaje_texto,
+                    settings.DEFAULT_FROM_EMAIL,
+                    [self.email]
+                )
+                email.attach_alternative(mensaje_html, "text/html")
+                email.send(fail_silently=False)
+            except:
+                # Fallback a send_mail si EmailMultiAlternatives falla
+                send_mail(
+                    asunto,
+                    mensaje_texto,
+                    settings.DEFAULT_FROM_EMAIL,
+                    [self.email],
+                    fail_silently=False,
+                )
+            
             logger.info(f"Email de verificación enviado exitosamente a {self.email}")
-            return True, "Código enviado"
+            return True, "Código enviado exitosamente"
         except Exception as e:
-            logger.error(f"Error enviando email a {self.email}: {str(e)}")
+            logger.error(f"Error enviando email a {self.email}: {str(e)}", exc_info=True)
+            # En desarrollo, si falla el email pero tenemos el código, lo logueamos
+            if settings.DEBUG:
+                logger.warning(f"En modo DEBUG: El código es {codigo} (el email podría no haberse enviado)")
             return False, f"Error enviando email: {str(e)}"
     
     def enviar_codigo_recuperacion(self):
