@@ -62,14 +62,39 @@ class ProductoCreateSerializer(serializers.ModelSerializer):
         model = Producto
         fields = [
             'titulo', 'descripcion', 'categoria', 'url_principal', 
-            'tipo_enlace', 'urls_adicionales', 'precio', 'moneda'
+            'tipo_enlace', 'urls_adicionales', 'precio', 'moneda',
+            'acepta_terminos', 'acepta_responsabilidad'
         ]
     
     def validate_url_principal(self, value):
-        """Valida que la URL sea válida."""
+        """Valida que la URL sea válida y obligatoria."""
+        if not value:
+            raise serializers.ValidationError(
+                "El enlace principal es OBLIGATORIO. StudentsPoint solo actúa como medio de difusión."
+            )
         if not ProductoValidationService.validar_url(value):
             raise serializers.ValidationError("URL inválida")
         return value
+    
+    def validate(self, data):
+        """Valida que se hayan aceptado los términos y condiciones."""
+        if not data.get('acepta_terminos'):
+            raise serializers.ValidationError({
+                'acepta_terminos': 'Debes aceptar los términos y condiciones para publicar en el Marketplace.'
+            })
+        
+        if not data.get('acepta_responsabilidad'):
+            raise serializers.ValidationError({
+                'acepta_responsabilidad': 'Debes aceptar la responsabilidad legal para publicar en el Marketplace.'
+            })
+        
+        # Validar que el URL principal no esté vacío
+        if not data.get('url_principal'):
+            raise serializers.ValidationError({
+                'url_principal': 'El enlace principal es OBLIGATORIO. No se puede publicar sin un enlace externo.'
+            })
+        
+        return data
     
     def create(self, validated_data):
         """Crea un nuevo producto y obtiene metadatos OpenGraph automáticamente."""
@@ -77,6 +102,13 @@ class ProductoCreateSerializer(serializers.ModelSerializer):
         validated_data['vendedor'] = request.user
         validated_data['campus'] = request.user.campus
         validated_data['carrera'] = request.user.career
+        
+        # Capturar IP del usuario para fines legales
+        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+        if x_forwarded_for:
+            validated_data['ip_aceptacion'] = x_forwarded_for.split(',')[0]
+        else:
+            validated_data['ip_aceptacion'] = request.META.get('REMOTE_ADDR')
         
         # Detectar tipo de enlace automáticamente si no se especificó
         url_principal = validated_data.get('url_principal')

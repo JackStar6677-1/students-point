@@ -282,6 +282,20 @@ class MarketApp {
     // === MODALES ===
     showCrearProducto() {
         document.getElementById('modalCrearProducto').style.display = 'block';
+        this.cargarPerfilVendedor();
+    }
+    
+    cargarPerfilVendedor() {
+        // Cargar el perfil del usuario actual en el formulario
+        if (this.currentUser) {
+            document.getElementById('vendedorNombre').textContent = this.currentUser.name || this.currentUser.email || 'No especificado';
+            document.getElementById('vendedorCarrera').textContent = this.currentUser.career || 'No especificada';
+            document.getElementById('vendedorCampus').textContent = this.currentUser.campus_nombre || this.currentUser.campus || 'No especificado';
+        } else {
+            document.getElementById('vendedorNombre').textContent = 'Error al cargar';
+            document.getElementById('vendedorCarrera').textContent = 'Error al cargar';
+            document.getElementById('vendedorCampus').textContent = 'Error al cargar';
+        }
     }
     
     async showMisProductos() {
@@ -415,14 +429,40 @@ class MarketApp {
     async crearProducto(e) {
         e.preventDefault();
         
+        // Validar checkboxes de términos OBLIGATORIOS
+        const checkTerminos = document.getElementById('checkTerminos');
+        const checkResponsabilidad = document.getElementById('checkResponsabilidad');
+        
+        if (!checkTerminos.checked) {
+            this.showError('Debes aceptar los Términos y Condiciones para publicar.');
+            checkTerminos.focus();
+            return;
+        }
+        
+        if (!checkResponsabilidad.checked) {
+            this.showError('Debes aceptar la responsabilidad legal para publicar.');
+            checkResponsabilidad.focus();
+            return;
+        }
+        
+        // Validar URL principal (OBLIGATORIO)
+        const urlPrincipal = document.getElementById('inputUrlPrincipal').value;
+        if (!urlPrincipal || urlPrincipal.trim() === '') {
+            this.showError('El enlace principal es OBLIGATORIO. StudentsPoint solo actúa como medio de difusión.');
+            document.getElementById('inputUrlPrincipal').focus();
+            return;
+        }
+        
         const formData = {
             titulo: document.getElementById('inputTitulo').value,
             descripcion: document.getElementById('inputDescripcion').value,
             categoria: document.getElementById('inputCategoria').value,
             tipo_enlace: document.getElementById('inputTipoEnlace').value,
-            url_principal: document.getElementById('inputUrlPrincipal').value,
+            url_principal: urlPrincipal,
             precio: document.getElementById('inputPrecio').value || null,
-            moneda: document.getElementById('inputMoneda').value
+            moneda: document.getElementById('inputMoneda').value,
+            acepta_terminos: checkTerminos.checked,
+            acepta_responsabilidad: checkResponsabilidad.checked
         };
         
         // Procesar URLs adicionales
@@ -436,15 +476,31 @@ class MarketApp {
         }
         
         try {
+            // Deshabilitar botón de submit para evitar doble click
+            const btnSubmit = document.getElementById('btnSubmitProducto');
+            const originalText = btnSubmit.innerHTML;
+            btnSubmit.disabled = true;
+            btnSubmit.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Publicando...';
+            
             await window.marketAPI.createProducto(formData);
             this.showSuccess('Producto publicado exitosamente. Los metadatos de la URL se están extrayendo automáticamente...');
             this.closeModal();
             document.getElementById('formCrearProducto').reset();
+            
+            // Reestablecer botón
+            btnSubmit.disabled = false;
+            btnSubmit.innerHTML = originalText;
+            
             // Recargar después de un breve delay para que se procesen los metadatos
             setTimeout(() => this.loadProductos(), 2000);
         } catch (error) {
             console.error('Error creando producto:', error);
-            this.showError(error.message || 'Error publicando producto');
+            this.showError(error.message || 'Error publicando producto. Verifica que hayas aceptado los términos y que el enlace sea válido.');
+            
+            // Reestablecer botón en caso de error
+            const btnSubmit = document.getElementById('btnSubmitProducto');
+            btnSubmit.disabled = false;
+            btnSubmit.innerHTML = '<i class="fas fa-paper-plane me-2"></i>Publicar';
         }
     }
     

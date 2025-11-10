@@ -163,9 +163,9 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="inputUrlPrincipal">Enlace principal</label>
+                            <label for="inputUrlPrincipal">Enlace principal <span class="text-danger">*</span></label>
                             <input type="url" id="inputUrlPrincipal" required placeholder="https://...">
-                            <small>Se extraerán automáticamente los metadatos para mostrar una vista previa.</small>
+                            <small class="text-muted">OBLIGATORIO: Link a Facebook Marketplace, MercadoLibre, Yapo.cl u otra plataforma externa.</small>
                         </div>
 
                         <div class="form-group">
@@ -173,9 +173,48 @@
                             <textarea id="inputUrlsAdicionales" rows="3" placeholder="https://link1.com&#10;https://link2.com"></textarea>
                         </div>
 
-                        <div class="d-flex justify-content-end gap-2">
+                        <!-- Sección de perfil del vendedor -->
+                        <div class="alert alert-info mt-3">
+                            <h6 class="alert-heading"><i class="fas fa-user-circle me-2"></i>Tu perfil de vendedor</h6>
+                            <p class="mb-1"><strong>Nombre:</strong> <span id="vendedorNombre">Cargando...</span></p>
+                            <p class="mb-1"><strong>Carrera:</strong> <span id="vendedorCarrera">Cargando...</span></p>
+                            <p class="mb-0"><strong>Campus:</strong> <span id="vendedorCampus">Cargando...</span></p>
+                            <small class="text-muted">Esta información se mostrará en tu publicación.</small>
+                        </div>
+
+                        <!-- Términos y condiciones -->
+                        <div class="border border-warning rounded p-3 mt-3 bg-light">
+                            <h6 class="text-warning mb-3">
+                                <i class="fas fa-exclamation-triangle me-2"></i>Términos y Condiciones OBLIGATORIOS
+                            </h6>
+                            
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="checkTerminos" required>
+                                <label class="form-check-label" for="checkTerminos">
+                                    He leído y acepto los <a href="/docs/TERMINOS-MARKETPLACE.md" target="_blank" class="text-primary">Términos y Condiciones</a> del Marketplace
+                                </label>
+                            </div>
+                            
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="checkResponsabilidad" required>
+                                <label class="form-check-label" for="checkResponsabilidad">
+                                    <strong>Acepto la responsabilidad legal</strong> por esta publicación y <strong>descargo de toda responsabilidad a StudentsPoint</strong>
+                                </label>
+                            </div>
+
+                            <div class="alert alert-warning mb-0" role="alert">
+                                <small>
+                                    <strong>IMPORTANTE:</strong> StudentsPoint actúa ÚNICAMENTE como medio de difusión. 
+                                    La gestión de la venta, pagos y entregas debe realizarse a través de la plataforma externa vinculada. 
+                                    StudentsPoint NO es intermediario en transacciones y NO se hace responsable por disputas, 
+                                    productos defectuosos o transacciones fallidas.
+                                </small>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2 mt-3">
                             <button type="button" class="btn btn-outline-secondary modal-close">Cancelar</button>
-                            <button type="submit" class="btn btn-primary">
+                            <button type="submit" class="btn btn-primary" id="btnSubmitProducto">
                                 <i class="fas fa-paper-plane me-2"></i>Publicar
                             </button>
                         </div>

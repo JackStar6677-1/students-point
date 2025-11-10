@@ -49,14 +49,29 @@ class Producto(models.Model):
     descripcion = models.TextField()
     categoria = models.ForeignKey(CategoriaProducto, on_delete=models.PROTECT, related_name="productos")
     
-    # Enlaces externos
-    url_principal = models.URLField(validators=[URLValidator()], help_text="Enlace principal de venta")
+    # Enlaces externos (OBLIGATORIO para evitar responsabilidades legales)
+    url_principal = models.URLField(
+        validators=[URLValidator()], 
+        help_text="Enlace principal de venta (OBLIGATORIO - Facebook Marketplace, Mercado Libre, etc.)"
+    )
     tipo_enlace = models.CharField(max_length=20, choices=TiposEnlace.choices, default=TiposEnlace.OTRO)
     urls_adicionales = models.JSONField(
         default=list, 
         blank=True, 
         help_text="Lista de URLs adicionales (ej: fotos, videos)"
     )
+    
+    # Aceptación de términos y condiciones (OBLIGATORIO)
+    acepta_terminos = models.BooleanField(
+        default=False,
+        help_text="El vendedor acepta los términos y condiciones del Marketplace"
+    )
+    acepta_responsabilidad = models.BooleanField(
+        default=False,
+        help_text="El vendedor acepta la responsabilidad legal y descarga a StudentsPoint"
+    )
+    fecha_aceptacion_terminos = models.DateTimeField(null=True, blank=True)
+    ip_aceptacion = models.GenericIPAddressField(null=True, blank=True)
     
     # Metadatos de OpenGraph (se llenan automáticamente)
     og_title = models.CharField(max_length=200, blank=True)
@@ -110,6 +125,10 @@ class Producto(models.Model):
         # Marcar como vendido si cambia a vendido
         if self.estado == self.Estados.VENDIDO and not self.vendido_at:
             self.vendido_at = timezone.now()
+        
+        # Registrar fecha de aceptación de términos
+        if self.acepta_terminos and self.acepta_responsabilidad and not self.fecha_aceptacion_terminos:
+            self.fecha_aceptacion_terminos = timezone.now()
             
         super().save(*args, **kwargs)
     
