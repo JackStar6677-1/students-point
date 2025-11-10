@@ -162,9 +162,9 @@ async function convertWordToPdf() {
         
         console.log('Enviando archivo al servidor...');
         
-        // Crear AbortController para timeout
+        // Crear AbortController para timeout - reducido a 60 segundos para subida
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 300000); // 5 minutos timeout
+        const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 segundos timeout
         
         const response = await fetch('/api/converter/', {
             method: 'POST',
@@ -263,9 +263,9 @@ async function convertPdfToWord() {
         
         console.log('Enviando archivo al servidor...');
         
-        // Crear AbortController para timeout
+        // Crear AbortController para timeout - reducido a 60 segundos para subida
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 300000); // 5 minutos timeout
+        const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 segundos timeout
         
         const response = await fetch('/api/converter/', {
             method: 'POST',
@@ -338,15 +338,15 @@ async function convertPdfToWord() {
 async function waitForCompletion(jobId) {
     const token = localStorage.getItem('access_token');
     let attempts = 0;
-    const maxAttempts = 60; // Aumentado a 60 intentos (60 segundos)
+    const maxAttempts = 30; // 30 intentos (30 segundos)
     
     console.log(`Esperando completar conversión ${jobId}...`);
     
     while (attempts < maxAttempts) {
         try {
-            // Crear timeout para cada request
+            // Crear timeout para cada request - 10 segundos
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 5000);
+            const timeoutId = setTimeout(() => controller.abort(), 10000);
             
             const response = await fetch(`/api/converter/${jobId}/`, {
                 headers: {
@@ -376,7 +376,7 @@ async function waitForCompletion(jobId) {
             }
             
             // Actualizar progreso basado en intentos
-            const progress = Math.min(80 + (attempts * 0.33), 95);
+            const progress = Math.min(50 + (attempts * 1.5), 95);
             updateProgress(progress, `Procesando... (${attempts + 1}/${maxAttempts})`);
             
             await new Promise(resolve => setTimeout(resolve, 1000));
@@ -385,11 +385,12 @@ async function waitForCompletion(jobId) {
         } catch (error) {
             console.error(`Error verificando estado (intento ${attempts + 1}):`, error);
             
-            // Si es un error de conexión, esperar un poco más antes de reintentar
-            if (error.name === 'TimeoutError' || error.message.includes('fetch')) {
-                await new Promise(resolve => setTimeout(resolve, 2000));
+            // Si es un error de timeout o conexión, esperar antes de reintentar
+            if (error.name === 'AbortError' || error.message.includes('fetch')) {
+                console.log('Timeout en polling, reintentando...');
+                await new Promise(resolve => setTimeout(resolve, 1500));
             } else {
-                // Para otros errores, lanzar inmediatamente
+                // Para otros errores (error en conversión, no encontrado), lanzar inmediatamente
                 if (error.message.includes('Error en la conversión') || error.message.includes('no se encontró')) {
                     throw error;
                 }
@@ -400,7 +401,7 @@ async function waitForCompletion(jobId) {
         }
     }
     
-    throw new Error('Tiempo de espera agotado. La conversión está tomando más tiempo del esperado. Por favor, intenta con un archivo más pequeño.');
+    throw new Error('Tiempo de espera agotado. Por favor, intenta con un archivo más pequeño o verifica el historial en unos momentos.');
 }
 
 // Cargar historial

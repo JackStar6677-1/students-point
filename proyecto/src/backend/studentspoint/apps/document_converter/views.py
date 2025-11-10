@@ -1,4 +1,5 @@
 import logging
+import threading
 from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -25,14 +26,27 @@ class ConversionListCreateView(generics.ListCreateAPIView):
     def get_queryset(self):
         return ConversionJob.objects.filter(usuario=self.request.user).order_by('-created_at')
     
-    def perform_create(self, serializer):
-        job = serializer.save(usuario=self.request.user)
+    def create(self, request, *args, **kwargs):
+        """Crea un trabajo de conversión y lo procesa en background"""
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
         
-        # Ejecutar conversión en background (o sincrono para desarrollo)
-        logger.info(f"Iniciando conversion {job.id} para usuario {self.request.user.email}")
-        convert_document(job)
+        # Guardar el job
+        job = serializer.save(usuario=request.user)
         
-        return job
+        # Ejecutar conversión en background usando threading
+        logger.info(f"Iniciando conversion {job.id} para usuario {request.user.email}")
+        conversion_thread = threading.Thread(
+            target=convert_document,
+            args=(job,),
+            daemon=True
+        )
+        conversion_thread.start()
+        
+        # Devolver respuesta con el serializer completo
+        response_serializer = ConversionJobSerializer(job, context={'request': request})
+        headers = self.get_success_headers(response_serializer.data)
+        return Response(response_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 
 class ConversionDetailView(generics.RetrieveAPIView):

@@ -112,6 +112,8 @@ urlpatterns = [
     re_path(r'^images/(?P<path>.*)$', serve, {'document_root': Path(settings.STATIC_ROOT) / "images"}),
     # Servir imágenes desde la carpeta imagenes (legacy)
     re_path(r'^imagenes/(?P<path>.*)$', serve, {'document_root': Path(settings.BASE_DIR).parent.parent / "imagenes"}),
+    # Servir archivos media (archivos subidos por usuarios: conversiones, fotos de perfil, etc.)
+    re_path(r'^media/(?P<path>.*)$', serve, {'document_root': Path(settings.MEDIA_ROOT)}),
     # Catch-all al final
     re_path(r'^(?P<path>.*)$', spa_serve),
 ]
