@@ -148,17 +148,28 @@ await manager.unsubscribe();
 - **Toasts**: Feedback visual
 - **Session storage**: Evita molestar al usuario
 
-## Archivos Modificados
+## Archivos Modificados (Sesion 10/11/2025)
 
-### Nuevos Archivos
+### Nuevos Archivos - PWA y Notificaciones
 1. `static/js/notifications.js` (700+ lineas)
 2. `docs/REVISION-PWA-NOTIFICACIONES.md` (este archivo)
 
-### Archivos Modificados
+### Archivos Modificados - PWA
 1. `index.html` - Agregado script de notificaciones
 
-### Archivos Eliminados
+### Archivos Eliminados - PWA
 1. `static/js/sw.js` - Service worker duplicado
+
+### Nuevos Archivos - Marketplace Legal
+2. `docs/TERMINOS-MARKETPLACE.md` (500+ lineas)
+3. `docs/MEJORAS-MARKETPLACE-LEGAL.md` (documentacion completa)
+4. `proyecto/src/backend/studentspoint/apps/market/migrations/0002_agregar_terminos_condiciones.py`
+
+### Archivos Modificados - Marketplace
+5. `proyecto/src/backend/studentspoint/apps/market/models.py` - Campos de terminos
+6. `proyecto/src/backend/studentspoint/apps/market/serializers.py` - Validaciones
+7. `proyecto/src/frontend/market/mercado.html` - Checkboxes y descargo
+8. `proyecto/src/frontend/static/js/market.js` - Validaciones frontend
 
 ## Pruebas y Validacion
 
