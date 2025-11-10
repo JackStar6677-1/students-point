@@ -13,6 +13,9 @@ class MarketAPI {
      * @returns {string|null} Token de acceso o null si no existe
      */
     getAuthToken() {
+        if (window.authAPI && typeof window.authAPI.getAuthToken === 'function') {
+            return window.authAPI.getAuthToken();
+        }
         return localStorage.getItem('access_token');
     }
 
@@ -46,9 +49,12 @@ class MarketAPI {
      */
     async handleResponse(response) {
         if (response.status === 401) {
-            // Token expirado, redirigir al login
-            localStorage.removeItem('access_token');
-            localStorage.removeItem('refresh_token');
+            if (window.authAPI && typeof window.authAPI.logout === 'function') {
+                window.authAPI.logout();
+            } else {
+                localStorage.removeItem('access_token');
+                localStorage.removeItem('refresh_token');
+            }
             window.location.href = '/login.html';
             return null;
         }

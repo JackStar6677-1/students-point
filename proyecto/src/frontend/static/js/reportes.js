@@ -64,5 +64,8 @@ class ReportesManager {
 // Initialize
 let reportesManager;
 document.addEventListener('DOMContentLoaded', () => {
+    if (window) {
+        window.dispatchEvent(new Event('authChange'));
+    }
     reportesManager = new ReportesManager();
 });

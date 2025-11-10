@@ -82,7 +82,7 @@ class ForumAPI {
 
             const url = `${this.baseURL}/foros/${params.toString() ? '?' + params : ''}`;
             const response = await fetch(url, {
-                headers: this.getHeaders(false) // Los foros pueden ser públicos
+                headers: this.getHeaders(!!this.getAuthToken())
             });
 
             const data = await this.handleResponse(response);
@@ -96,9 +96,10 @@ class ForumAPI {
     /**
      * Lista posts según filtros.
      * @param {Object} filters - Filtros (foro_id, orden, estado, limit)
+     * @param {Object} options - Opciones adicionales (includeAuth)
      * @returns {Promise<Array>} Lista de posts
      */
-    async getPosts(filters = {}) {
+    async getPosts(filters = {}, options = {}) {
         try {
             const params = new URLSearchParams();
             if (filters.foro_id) params.append('foro_id', filters.foro_id);
@@ -107,8 +108,9 @@ class ForumAPI {
             if (filters.limit) params.append('limit', filters.limit);
 
             const url = `${this.baseURL}/posts/${params.toString() ? '?' + params : ''}`;
+            const includeAuth = options.includeAuth ?? !!this.getAuthToken();
             const response = await fetch(url, {
-                headers: this.getHeaders(false) // Los posts pueden ser públicos
+                headers: this.getHeaders(includeAuth)
             });
 
             const data = await this.handleResponse(response);
@@ -240,6 +242,30 @@ class ForumAPI {
     }
 
     /**
+     * Obtiene los reportes asociados a un post (solo moderadores).
+     * @param {number} postId - ID del post
+     * @param {Object} filters - Filtros opcionales (estado, etc.)
+     * @returns {Promise<Array>} Lista de reportes
+     */
+    async getPostReports(postId, filters = {}) {
+        try {
+            const params = new URLSearchParams();
+            if (filters.estado) params.append('estado', filters.estado);
+
+            const url = `${this.baseURL}/posts/${postId}/reportes/${params.toString() ? '?' + params : ''}`;
+            const response = await fetch(url, {
+                headers: this.getHeaders(true)
+            });
+
+            const data = await this.handleResponse(response);
+            return Array.isArray(data) ? data : (data?.results || []);
+        } catch (error) {
+            console.error('Error obteniendo reportes del post:', error);
+            throw error;
+        }
+    }
+
+    /**
      * Obtiene las opciones de una encuesta.
      * @param {number} postId - ID del post (debe ser tipo encuesta)
      * @returns {Promise<Array>} Lista de opciones de encuesta
@@ -313,7 +339,7 @@ class ForumAPI {
             if (filters.foro_id) params.append('foro_id', filters.foro_id);
             if (filters.usuario_id) params.append('usuario_id', filters.usuario_id);
 
-            const url = `${this.baseURL}/moderacion${params.toString() ? '?' + params : ''}`;
+            const url = `${this.baseURL}/moderacion/${params.toString() ? '?' + params : ''}`;
             const response = await fetch(url, {
                 headers: this.getHeaders(true)
             });
@@ -346,4 +372,5 @@ class ForumAPI {
 
 // Exportar instancia global del servicio API
 window.forumAPI = new ForumAPI();
+
 

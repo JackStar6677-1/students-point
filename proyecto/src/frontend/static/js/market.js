@@ -26,19 +26,22 @@ class MarketApp {
     
     // === AUTENTICACIÓN ===
     async checkAuth() {
-        const token = localStorage.getItem('access_token');
-        if (!token) {
-            this.redirectToLogin();
-            return;
-        }
-        
         try {
-            this.currentUser = await window.marketAPI.getCurrentUser();
-            if (this.currentUser) {
-                this.updateUIForUser();
-            } else {
+            if (!window.authAPI || !window.authAPI.isAuthenticated()) {
                 this.redirectToLogin();
+                return;
             }
+
+            this.currentUser = await window.authAPI.getCurrentUser();
+            if (!this.currentUser) {
+                this.redirectToLogin();
+                return;
+            }
+
+            if (window) {
+                window.dispatchEvent(new Event('authChange'));
+            }
+            this.updateUIForUser();
         } catch (error) {
             console.error('Error verificando autenticación:', error);
             this.redirectToLogin();
@@ -46,14 +49,25 @@ class MarketApp {
     }
     
     redirectToLogin() {
+        if (window.authAPI && typeof window.authAPI.logout === 'function') {
+            window.authAPI.logout();
+        }
         window.location.href = '/login.html';
     }
     
     updateUIForUser() {
-        // Mostrar/ocultar botones según el usuario
         const btnCrear = document.getElementById('btnCrearProducto');
         if (btnCrear) {
             btnCrear.style.display = this.currentUser ? 'block' : 'none';
+        }
+
+        const sidebarName = document.getElementById('sidebarUserName');
+        const sidebarRole = document.getElementById('sidebarUserRole');
+        if (sidebarName && this.currentUser) {
+            sidebarName.textContent = this.currentUser.name || this.currentUser.email;
+        }
+        if (sidebarRole && this.currentUser) {
+            sidebarRole.textContent = this.currentUser.career || 'Estudiante';
         }
     }
     
@@ -104,7 +118,14 @@ class MarketApp {
     
     async loadCampus() {
         try {
-            const response = await fetch(`${this.apiBaseUrl}/sedes/`);
+            const headers = {};
+            if (window.authAPI && window.authAPI.getAuthToken) {
+                const token = window.authAPI.getAuthToken();
+                if (token) {
+                    headers['Authorization'] = `Bearer ${token}`;
+                }
+            }
+            const response = await fetch(`${this.apiBaseUrl}/sedes/`, { headers });
             if (response.ok) {
                 this.campus = await response.json();
                 this.populateCampus();

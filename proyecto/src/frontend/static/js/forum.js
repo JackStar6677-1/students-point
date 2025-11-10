@@ -52,35 +52,44 @@ class ForumManager {
     }
 
     async init() {
-        await this.loadUser();
-        await this.loadForums();
-        await this.loadPosts();
-        this.setupEventListeners();
-        this.checkModeratorPermissions();
+        try {
+            await this.loadUser();
+            await this.loadForums();
+            await this.loadPosts();
+            this.setupEventListeners();
+            this.checkModeratorPermissions();
+        } catch (error) {
+            console.error('Error inicializando foro:', error);
+        }
     }
 
     async loadUser() {
         try {
-            const token = localStorage.getItem('access_token');
-            if (!token) {
-                window.location.href = '../index.html';
-                return;
+            if (!window.authAPI || !window.authAPI.isAuthenticated()) {
+                window.location.href = '/login.html';
+                throw new Error('Usuario no autenticado');
             }
 
-            this.currentUser = await window.forumAPI.getCurrentUser();
-            if (this.currentUser) {
-                this.updateUserInterface();
-            }
+            this.currentUser = await window.authAPI.getCurrentUser();
+            this.updateUserInterface();
         } catch (error) {
-            console.error('Error loading user:', error);
-            localStorage.removeItem('access_token');
-            localStorage.removeItem('refresh_token');
-            window.location.href = '../index.html';
+            console.error('Error cargando usuario:', error);
+            if (window.authAPI) {
+                window.authAPI.logout();
+            } else {
+                localStorage.removeItem('access_token');
+                localStorage.removeItem('refresh_token');
+            }
+            window.location.href = '/login.html';
+            throw error;
         }
     }
 
     async loadForums() {
         try {
+            if (!window.forumAPI) {
+                throw new Error('Servicio de foros no disponible');
+            }
             this.forums = await window.forumAPI.getForums();
             this.populateForumSelects();
         } catch (error) {
@@ -94,6 +103,10 @@ class ForumManager {
     async loadPosts() {
         try {
             this.showLoading(true);
+
+            if (!window.forumAPI) {
+                throw new Error('Servicio de foros no disponible');
+            }
             
             const forumFilterElement = document.getElementById('forumFilter');
             const sortFilterElement = document.getElementById('sortFilter');
@@ -110,7 +123,7 @@ class ForumManager {
                 filters.estado = statusFilterElement.value;
             }
 
-            this.posts = await window.forumAPI.getPosts(filters);
+            this.posts = await window.forumAPI.getPosts(filters, { includeAuth: true });
             this.renderPosts();
         } catch (error) {
             console.error('Error loading posts:', error);
@@ -274,10 +287,10 @@ class ForumManager {
     updatePostScore(postId, newScore) {
         const postCard = document.querySelector(`[data-post-id="${postId}"]`);
         if (postCard) {
-            const scoreDisplay = postCard.querySelector('.score-display span');
+            const scoreDisplay = postCard.querySelector('.vote-count');
             if (scoreDisplay) {
                 scoreDisplay.textContent = newScore;
-                scoreDisplay.parentElement.className = `score-display ${this.getScoreClass(newScore)}`;
+                scoreDisplay.className = `vote-count ${this.getScoreClass(newScore)}`;
             }
         }
     }
@@ -480,7 +493,9 @@ class ForumManager {
     }
 
     updateUserInterface() {
-        // Update user display in navbar
+        if (window) {
+            window.dispatchEvent(new Event('authChange'));
+        }
         const userDropdown = document.querySelector('.navbar-nav .dropdown-toggle');
         if (userDropdown && this.currentUser) {
             userDropdown.innerHTML = `<i class="fas fa-user me-1"></i>${this.currentUser.name}`;
@@ -571,9 +586,13 @@ function submitModeration() {
 }
 
 function logout() {
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('refresh_token');
-    window.location.href = '../index.html';
+    if (window.authAPI) {
+        window.authAPI.logout();
+    } else {
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+    }
+    window.location.href = '/login.html';
 }
 
 // Image upload handling functions

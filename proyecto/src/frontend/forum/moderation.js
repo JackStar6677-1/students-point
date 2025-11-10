@@ -15,39 +15,38 @@ class ModerationManager {
     }
 
     async init() {
-        await this.loadUser();
-        await this.verifyModeratorPermissions();
-        await this.loadForums();
-        await this.loadPosts();
-        this.setupEventListeners();
+        try {
+            await this.loadUser();
+            await this.verifyModeratorPermissions();
+            await this.loadForums();
+            await this.loadPosts();
+            this.setupEventListeners();
+        } catch (error) {
+            console.error('Error inicializando panel de moderación:', error);
+        }
     }
 
     async loadUser() {
         try {
-            const token = localStorage.getItem('token');
-            if (!token) {
-                window.location.href = '../index.html';
-                return;
+            if (!window.authAPI || !window.authAPI.isAuthenticated()) {
+                window.location.href = '/login.html';
+                throw new Error('Usuario no autenticado');
             }
 
-            const response = await fetch('/api/accounts/me/', {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            });
-
-            if (response.ok) {
-                this.currentUser = await response.json();
+            this.currentUser = await window.authAPI.getCurrentUser();
+            if (this.currentUser) {
                 this.updateUserInterface();
-            } else {
-                localStorage.removeItem('token');
-                window.location.href = '../index.html';
             }
         } catch (error) {
-            console.error('Error loading user:', error);
-            localStorage.removeItem('token');
-            window.location.href = '../index.html';
+            console.error('Error cargando usuario:', error);
+            if (window.authAPI) {
+                window.authAPI.logout();
+            } else {
+                localStorage.removeItem('access_token');
+                localStorage.removeItem('refresh_token');
+            }
+            window.location.href = '/login.html';
+            throw error;
         }
     }
 
@@ -55,61 +54,87 @@ class ModerationManager {
         if (!this.currentUser || !this.canModerate()) {
             this.showAlert('No tienes permisos para acceder a esta página', 'danger');
             setTimeout(() => {
-                window.location.href = 'index.html';
+                window.location.href = '/index.html';
             }, 2000);
-            return;
+            throw new Error('Permisos insuficientes');
         }
     }
 
     async loadForums() {
         try {
-            const response = await fetch('/api/forum/foros/');
-            if (response.ok) {
-                this.forums = await response.json();
-                this.populateForumSelect();
+            if (!window.forumAPI) {
+                throw new Error('Servicio de foros no disponible');
             }
+            this.forums = await window.forumAPI.getForums();
+            this.populateForumSelect();
         } catch (error) {
             console.error('Error loading forums:', error);
+            if (!this.forums.length) {
+                this.forums = this.getSampleForums();
+                this.populateForumSelect();
+            }
         }
     }
 
     async loadPosts() {
         try {
             this.showLoading(true);
-            
-            const params = new URLSearchParams();
-            const forumFilter = document.getElementById('forumFilter').value;
-            const statusFilter = document.getElementById('statusFilter').value;
-            const reportsFilter = document.getElementById('reportsFilter').value;
-            const dateFilter = document.getElementById('dateFilter').value;
 
-            if (forumFilter) params.append('foro_id', forumFilter);
-            if (statusFilter) params.append('estado', statusFilter);
-            if (reportsFilter === 'reported') params.append('con_reportes', 'true');
-            if (reportsFilter === 'no-reports') params.append('sin_reportes', 'true');
-            if (dateFilter) params.append('fecha', dateFilter);
-
-            const response = await fetch(`/api/forum/posts/?${params}`);
-            if (response.ok) {
-                this.posts = await response.json();
-                this.calculateStats();
-                this.renderPosts();
-                this.updateStatsDisplay();
+            if (!window.forumAPI) {
+                throw new Error('Servicio de foros no disponible');
             }
+
+            const forumFilterElement = document.getElementById('forumFilter');
+            const statusFilterElement = document.getElementById('statusFilter');
+            const reportsFilterElement = document.getElementById('reportsFilter');
+            const dateFilterElement = document.getElementById('dateFilter');
+
+            const filters = {};
+            if (forumFilterElement && forumFilterElement.value) {
+                filters.foro_id = forumFilterElement.value;
+            }
+            if (statusFilterElement && statusFilterElement.value) {
+                filters.estado = statusFilterElement.value;
+            }
+
+            const allPosts = await window.forumAPI.getPosts(filters, { includeAuth: true });
+            let filteredPosts = [...allPosts];
+
+            if (reportsFilterElement && reportsFilterElement.value) {
+                if (reportsFilterElement.value === 'reported') {
+                    filteredPosts = filteredPosts.filter(post => (post.total_reportes || 0) > 0);
+                } else if (reportsFilterElement.value === 'no-reports') {
+                    filteredPosts = filteredPosts.filter(post => (post.total_reportes || 0) === 0);
+                }
+            }
+
+            if (dateFilterElement && dateFilterElement.value) {
+                const selectedDate = new Date(dateFilterElement.value);
+                filteredPosts = filteredPosts.filter(post => {
+                    const postDate = new Date(post.created_at);
+                    return postDate.toDateString() === selectedDate.toDateString();
+                });
+            }
+
+            this.calculateStats(allPosts);
+            this.posts = filteredPosts;
+            this.renderPosts();
+            this.updateStatsDisplay();
         } catch (error) {
             console.error('Error loading posts:', error);
-            this.showAlert('Error al cargar los posts', 'danger');
+            this.showAlert(error.message || 'Error al cargar los posts', 'danger');
         } finally {
             this.showLoading(false);
         }
     }
 
-    calculateStats() {
+    calculateStats(sourcePosts = null) {
+        const posts = Array.isArray(sourcePosts) ? sourcePosts : this.posts;
         this.stats = {
-            revision: this.posts.filter(p => p.estado === 'revision').length,
-            reported: this.posts.filter(p => p.total_reportes > 0).length,
-            hidden: this.posts.filter(p => p.estado === 'oculto').length,
-            approved: this.posts.filter(p => p.estado === 'publicado' && this.isToday(p.created_at)).length
+            revision: posts.filter(p => p.estado === 'revision').length,
+            reported: posts.filter(p => (p.total_reportes || 0) > 0).length,
+            hidden: posts.filter(p => p.estado === 'oculto').length,
+            approved: posts.filter(p => p.estado === 'publicado' && this.isToday(p.created_at)).length
         };
     }
 
@@ -244,32 +269,20 @@ class ModerationManager {
 
     async moderatePost(postId, action) {
         try {
-            const token = localStorage.getItem('token');
             const reason = prompt(`Razón para ${action} el post:`);
             
             if (reason === null) return; // User cancelled
 
-            const response = await fetch(`/api/forum/posts/${postId}/moderar/`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    accion: action,
-                    razon: reason || ''
-                })
+            await window.forumAPI.moderatePost(postId, {
+                accion: action,
+                razon: reason || ''
             });
 
-            if (response.ok) {
-                this.showAlert(`Post ${action}do exitosamente`, 'success');
-                this.loadPosts(); // Reload to show updated status
-            } else {
-                this.showAlert('Error al moderar el post', 'danger');
-            }
+            this.showAlert(`Post ${action}do exitosamente`, 'success');
+            await this.loadPosts(); // Reload to show updated status
         } catch (error) {
             console.error('Error moderating post:', error);
-            this.showAlert('Error al moderar el post', 'danger');
+            this.showAlert(error.message || 'Error al moderar el post', 'danger');
         }
     }
 
@@ -314,19 +327,20 @@ class ModerationManager {
         this.currentPostId = postId;
         
         try {
-            const response = await fetch(`/api/forum/posts/${postId}/reportes/`);
-            if (response.ok) {
-                const reports = await response.json();
-                const reportsList = document.getElementById('reportsList');
-                if (reportsList) {
-                    reportsList.innerHTML = this.renderReports(reports);
-                }
+            if (!window.forumAPI) {
+                throw new Error('Servicio de foros no disponible');
+            }
+
+            const reports = await window.forumAPI.getPostReports(postId);
+            const reportsList = document.getElementById('reportsList');
+            if (reportsList) {
+                reportsList.innerHTML = this.renderReports(reports);
             }
         } catch (error) {
             console.error('Error loading reports:', error);
             const reportsList = document.getElementById('reportsList');
             if (reportsList) {
-                reportsList.innerHTML = '<p class="text-muted">Error al cargar los reportes</p>';
+                reportsList.innerHTML = `<p class="text-muted">Error al cargar los reportes: ${error.message || ''}</p>`;
             }
         }
         
@@ -359,7 +373,6 @@ class ModerationManager {
 
     async submitModeration() {
         try {
-            const token = localStorage.getItem('token');
             const action = document.getElementById('moderationAction').value;
             const reason = document.getElementById('moderationReason').value;
 
@@ -368,28 +381,17 @@ class ModerationManager {
                 return;
             }
 
-            const response = await fetch(`/api/forum/posts/${this.currentPostId}/moderar/`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    accion: action,
-                    razon: reason
-                })
+            await window.forumAPI.moderatePost(this.currentPostId, {
+                accion: action,
+                razon: reason
             });
 
-            if (response.ok) {
-                this.showAlert(`Post ${action}do exitosamente`, 'success');
-                bootstrap.Modal.getInstance(document.getElementById('moderationModal')).hide();
-                this.loadPosts(); // Reload to show updated status
-            } else {
-                this.showAlert('Error al moderar el post', 'danger');
-            }
+            this.showAlert(`Post ${action}do exitosamente`, 'success');
+            bootstrap.Modal.getInstance(document.getElementById('moderationModal')).hide();
+            await this.loadPosts(); // Reload to show updated status
         } catch (error) {
             console.error('Error moderating post:', error);
-            this.showAlert('Error al moderar el post', 'danger');
+            this.showAlert(error.message || 'Error al moderar el post', 'danger');
         }
     }
 
@@ -411,7 +413,9 @@ class ModerationManager {
     }
 
     updateUserInterface() {
-        // Update user display in navbar
+        if (window) {
+            window.dispatchEvent(new Event('authChange'));
+        }
         const userDropdown = document.querySelector('.navbar-nav .dropdown-toggle');
         if (userDropdown && this.currentUser) {
             userDropdown.innerHTML = `<i class="fas fa-user me-1"></i>${this.currentUser.name}`;
@@ -512,8 +516,13 @@ function submitModeration() {
 }
 
 function logout() {
-    localStorage.removeItem('token');
-    window.location.href = '../index.html';
+    if (window.authAPI) {
+        window.authAPI.logout();
+    } else {
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+    }
+    window.location.href = '/login.html';
 }
 
 // Initialize moderation manager
