@@ -6,9 +6,9 @@
 ![License](https://img.shields.io/badge/license-Open%20Source-blue)
 ![Status](https://img.shields.io/badge/status-production--ready-success)
 
->  **NUEVO USUARIO:** Lee [`Documentacion/GUIA-COMPLETA.md`](Documentacion/GUIA-COMPLETA.md) para inicio super rapido.
+>  **NUEVO USUARIO:** Lee [`docs/GUIA-COMPLETA.md`](docs/GUIA-COMPLETA.md) para inicio super rapido.
 
->  **TODA LA DOCUMENTACION:** Ver [`Documentacion/INDICE-MAESTRO.md`](Documentacion/INDICE-MAESTRO.md) para indice completo.
+>  **TODA LA DOCUMENTACION:** Ver carpeta [`docs/`](docs/) para documentacion completa.
 
 ## Descripcion
 
@@ -33,9 +33,20 @@ chmod +x iniciar_desarrollo.sh
 
 **¡Eso es todo!** El servidor y el monitor de logs se inician automáticamente.
 
->  **Documentacion completa**: Ver [`Documentacion/INDICE-MAESTRO.md`](Documentacion/INDICE-MAESTRO.md) para guia completa de toda la documentacion disponible.
+### Scripts Adicionales
 
->  **Sistema de Logs**: Ver [`Documentacion/INICIO-RAPIDO-LOGS.md`](Documentacion/INICIO-RAPIDO-LOGS.md) para guia de monitoreo y logs.
+Ver carpeta `scripts/` para scripts de utilidades:
+- `iniciar_produccion.bat/.sh` - Iniciar en modo producción
+- `ver_logs.bat/.sh` - Ver logs en tiempo real
+- `ver_logs_tests.bat/.sh` - Ver logs de pruebas
+- `deploy_linux.sh` - Despliegue en Linux
+- `instalar_postgresql.bat` - Instalador de PostgreSQL
+- `detener_servicios.sh` - Detener servicios en Linux
+- `detener_monitor.bat` - Detener monitor en Windows
+
+>  **Documentacion completa**: Ver carpeta [`docs/`](docs/) para toda la documentacion disponible.
+
+>  **Sistema de Logs**: Ver [`docs/guias/SISTEMA-LOGGING.md`](docs/guias/SISTEMA-LOGGING.md) para guia de monitoreo y logs.
 
 ## Caracteristicas Principales
 
@@ -126,7 +137,7 @@ ejecutar_tests_dev.bat
 python tests/test_suite_completo.py --verbose --coverage
 ```
 
-Para mas detalles, ver [Documentacion/TESTING.md](Documentacion/TESTING.md)
+Para mas detalles, ver la documentacion en `docs/`
 
 ## Stack Tecnologico
 
@@ -199,45 +210,7 @@ python manage.py runserver
 - **Panel Admin**: http://127.0.0.1:8000/admin/
 - **API Docs**: http://127.0.0.1:8000/api/docs/
 
-## Estructura del Proyecto
 
-```
-students-point/
- Documentacion/           # Documentacion completa del proyecto
-    config-avanzada/     # Documentacion tecnica detallada
- proyecto/
-    src/
-        backend/         # Backend Django
-           studentspoint/
-               apps/    # Aplicaciones Django
-                   accounts/      # Autenticacion, usuarios y auditoria
-                   forum/         # Sistema de foros
-                   market/        # Marketplace
-                   portfolio/     # Portafolios profesionales
-                   campuses/      # Recorridos virtuales campus
-                   document_converter/  # Conversor de documentos
-                   notifications/ # Sistema de notificaciones
-                   polls/         # Sistema de encuestas
-                   otec/          # Cursos OTEC
-                   reports/       # Reportes de infraestructura
-                   wellbeing/     # Bienestar estudiantil
-                   health/        # Health checks
-        frontend/        # Frontend (HTML/CSS/JS)
-           static/       # Archivos estaticos (CSS, JS, imagenes)
-           forum/        # Interfaz de foros
-           market/       # Interfaz de marketplace
-           portfolio/    # Interfaz de portafolios
-           converter/    # Interfaz de conversor
-           cursos/       # Interfaz de cursos
-           encuestas/    # Interfaz de encuestas
-           bienestar/    # Interfaz de bienestar
-           reportes/     # Interfaz de reportes
-           streetview/   # Recorridos virtuales
- pruebas_unitarias/       # Tests unitarios con pytest
- pruebas_automatizadas/   # Tests E2E
- iniciar_desarrollo.bat   # Script de inicio Windows
- iniciar_desarrollo.sh   # Script de inicio Linux/Mac
-```
 
 ## Uso del Sistema de Foros
 
@@ -269,51 +242,89 @@ students-point/
 
 ## Configuracion de Produccion
 
-Ver [Documentacion/DEPLOYMENT.md](Documentacion/DEPLOYMENT.md) para instrucciones detalladas de despliegue en produccion.
+Ver [`docs/guias/DEPLOYMENT-PRODUCTION.md`](docs/guias/DEPLOYMENT-PRODUCTION.md) para instrucciones detalladas de despliegue en produccion.
+
+## Estructura del Proyecto
+
+```
+students-point/
+├── docs/                       # Documentacion completa
+│   ├── academico/             # Documentos academicos del Capstone
+│   ├── config-avanzada/       # Configuracion tecnica detallada
+│   ├── especificaciones/      # Especificaciones de requisitos
+│   ├── guias/                 # Guias de configuracion y despliegue
+│   └── historico/             # Resumenes y estados previos
+│
+├── scripts/                    # Scripts de utilidades
+│   ├── iniciar_produccion.*   # Scripts de produccion
+│   ├── ver_logs.*             # Scripts de visualizacion de logs
+│   ├── deploy_linux.sh        # Despliegue en Linux
+│   └── ...                    # Otros scripts de utilidad
+│
+├── FASE 1/                     # Evidencias academicas Fase 1
+├── FASE 2/                     # Evidencias academicas Fase 2
+├── FASE 3/                     # Evidencias academicas Fase 3
+│
+├── proyecto/                   # Codigo fuente principal
+│   └── src/
+│       ├── backend/           # Backend Django
+│       │   ├── studentspoint/ # Proyecto Django principal
+│       │   │   ├── apps/      # Aplicaciones Django
+│       │   │   └── settings/  # Configuraciones (dev, prod, test)
+│       │   └── manage.py
+│       └── frontend/          # Frontend (HTML, CSS, JS)
+│           ├── static/        # Archivos estaticos centralizados
+│           │   ├── js/        # JavaScript centralizado
+│           │   └── css/       # CSS centralizado
+│           └── *.html         # Paginas HTML
+│
+├── pruebas_unitarias/          # Tests unitarios (pytest)
+├── pruebas_automatizadas/      # Tests E2E
+├── tests/                      # Suite de tests completa
+│
+├── config/                     # Configuraciones del sistema
+│   └── systemd/               # Servicios systemd para Linux
+│
+├── iniciar_desarrollo.*        # Scripts de inicio (raiz)
+├── README.md                   # Este archivo
+├── pyrightconfig.json          # Configuracion de linter
+└── .gitignore                  # Archivos ignorados por Git
+```
 
 ## Documentacion
 
 La documentacion esta organizada en carpetas tematicas. Ver:
-- **[Documentacion/GUIA-COMPLETA.md](Documentacion/GUIA-COMPLETA.md)** - Guia de inicio completa
-- **[Documentacion/INDICE-MAESTRO.md](Documentacion/INDICE-MAESTRO.md)** - Indice general de toda la documentacion
-- **[Documentacion/ESTRUCTURA-DOCUMENTACION.md](Documentacion/ESTRUCTURA-DOCUMENTACION.md)** - Como esta organizada la documentacion
-- **[Documentacion/INDICE-DOCUMENTACION.md](Documentacion/INDICE-DOCUMENTACION.md)** - Indice de Documentacion/ completo
+- **[docs/GUIA-COMPLETA.md](docs/GUIA-COMPLETA.md)** - Guia de inicio completa
+- **Carpeta [`docs/`](docs/)** - Toda la documentacion del proyecto
 
 ### Documentacion Tecnica
- `Documentacion/config-avanzada/`
+ `docs/config-avanzada/`
 - `descripcion-proyecto.txt` - Descripcion completa
 - `estructura-proyecto.txt` - Estructura detallada
 - `herramientas-utilizadas.txt` - Stack tecnologico
 - `desarrollo-desde-cero.txt` - Desarrollo original
-- `instrucciones-ia.txt` - Guia para herramientas automatizadas
-
-### Implementaciones Completas
- `Documentacion/implementaciones/`
-- `autenticacion-implementacion-completa.txt` - Sistema de autenticacion
-- `foro-implementacion-completa.txt` - Sistema de foros
 
 ### Especificaciones de Requisitos
- `Documentacion/especificaciones/`
+ `docs/especificaciones/`
 - `foro detallado.txt` - Requisitos del sistema de foros
 - `login-profile-register detallado.txt` - Requisitos de autenticacion
 
 ### Guias de Configuracion y Uso
- `Documentacion/guias/`
+ `docs/guias/`
 - `CONFIGURACION-GOOGLE-EMAIL.md` - OAuth y Email SMTP
-- `PRUEBAS-Y-ESTADO-PROYECTO.md` - Estado actual y tests
-- `config_email_desarrollo.txt` - Configuracion de email
+- `DEPLOYMENT-PRODUCTION.md` - Despliegue en produccion
+- `SISTEMA-LOGGING.md` - Sistema de logs y monitoreo
 - `Recorridos_Virtuales.md` - Sistema de recorridos
 
-### Documentos Academicos
- `Documentacion/academico/`
-- `FASE 1/` - Evidencias de Fase 1
-- Cronogramas, presentaciones, instructivos
+### Documentos Academicos (Fases del Proyecto)
+ `FASE 1/`, `FASE 2/`, `FASE 3/` - Evidencias academicas del Capstone
+ `docs/academico/` - Cronogramas, presentaciones, instructivos
 
-### Informes y Estados
- `Documentacion/`
-- `INDICE-DOCUMENTACION.md` - Indice completo organizado
-- `INFORME-TESTS.md` - Estado y resultados de testing
-- `README.md` - Guia de la documentacion
+### Historico y Resumenes
+ `docs/historico/`
+- Resumenes de sesiones de trabajo
+- Historiales de implementacion
+- Estados previos del proyecto
 
 ## Testing
 
@@ -430,11 +441,11 @@ Este proyecto es de codigo abierto, desarrollado como proyecto academico.
 
 ## Releases
 
-Ver [Documentacion/RELEASES.md](Documentacion/RELEASES.md) para ver todas las versiones.
+Ver la carpeta `docs/` para ver todas las versiones y cambios detallados del proyecto.
 
 ## Changelog
 
-Ver [Documentacion/CHANGELOG.md](Documentacion/CHANGELOG.md) para ver el historial de cambios detallado.
+Ver `docs/historico/` para ver el historial de cambios detallado.
 
 ## Contacto
 
