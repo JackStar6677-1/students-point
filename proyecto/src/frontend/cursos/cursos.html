@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mis Cursos - StudentsPoint</title>
+    <title>Cursos - StudentsPoint</title>
     
     <!-- Bootstrap 5.3.2 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -94,7 +94,7 @@
                 </a>
                 <a href="#" class="menu-item" onclick="logout(); return false;">
                     <i class="fas fa-sign-out-alt"></i>
-                    <span>Cerrar Sesión</span>
+                    <span>Cerrar Sesion</span>
                 </a>
             </div>
         </aside>
@@ -102,502 +102,279 @@
         <!-- Main Content -->
         <main class="main-content">
             <header class="top-header">
-                <h1 class="header-title">Mis Cursos</h1>
+                <h1 class="header-title">Cursos y Clases</h1>
                 <div class="header-actions">
-                    <div class="auth-buttons me-2">
-                        <!-- Se actualiza dinámicamente con auth-header.js -->
-                    </div>
                     <button class="btn-icon" id="notificationsBtn" title="Notificaciones">
                         <i class="fas fa-bell"></i>
                     </button>
-                    <button class="btn-icon" id="settingsBtn" title="Configuración">
+                    <button class="btn-icon" id="settingsBtn" title="Configuracion">
                         <i class="fas fa-cog"></i>
                     </button>
                 </div>
             </header>
 
             <div class="content-wrapper fade-in">
-<!-- Fondo de partículas -->
-  <div class="particles-bg"></div>
+                <!-- Header con botones de accion -->
+                <div class="glass mb-4 p-4">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h1 class="text-gradient-gold mb-2">
+                                <i class="fas fa-graduation-cap"></i> Cursos y Clases
+                            </h1>
+                            <p class="text-muted mb-0">Encuentra cursos externos o publica anuncios de tus clases particulares</p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <button class="btn btn-gradient-purple" data-bs-toggle="modal" data-bs-target="#nuevoCursoModal">
+                                <i class="fas fa-plus"></i> Publicar Curso/Clase
+                            </button>
+                        </div>
+                    </div>
+                </div>
 
-  <!-- Header compacto -->
-  <header class="students-header text-white">
-    <div class="container">
-      <div class="row align-items-center">
-        <div class="col-md-8">
-          <div class="students-logo">
-            <div class="logo-placeholder">
-              <i class="fas fa-graduation-cap fa-2x"></i>
-            </div>
-            <div>
-              <h1>Cursos StudentsPoint</h1>
-              <p>Amplía tus conocimientos y habilidades</p>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4 text-end">
-          <div class="auth-buttons">
-            <!-- Se actualiza dinámicamente con auth-header.js -->
-          </div>
-        </div>
-      </div>
-    </div>
-  </header>
+                <!-- Filtros y busqueda -->
+                <div class="glass mb-4 p-4">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                <input type="text" class="form-control" id="searchInput" placeholder="Buscar cursos..." onkeyup="filtrarCursos()">
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <select class="form-select" id="filtroTipo" onchange="filtrarCursos()">
+                                <option value="">Todos los tipos</option>
+                                <option value="personal">Clases Privadas</option>
+                                <option value="externo">Cursos Externos</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <select class="form-select" id="filtroModalidad" onchange="filtrarCursos()">
+                                <option value="">Todas las modalidades</option>
+                                <option value="presencial">Presencial</option>
+                                <option value="online">Online</option>
+                                <option value="hibrido">Hibrido</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <select class="form-select" id="filtroNivel" onchange="filtrarCursos()">
+                                <option value="">Todos los niveles</option>
+                                <option value="principiante">Principiante</option>
+                                <option value="intermedio">Intermedio</option>
+                                <option value="avanzado">Avanzado</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <select class="form-select" id="filtroOrden" onchange="filtrarCursos()">
+                                <option value="-created_at">Mas recientes</option>
+                                <option value="created_at">Mas antiguos</option>
+                                <option value="precio">Precio: Menor a mayor</option>
+                                <option value="-precio">Precio: Mayor a menor</option>
+                                <option value="-visualizaciones">Mas vistos</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
 
-  <!-- Navegación compacta -->
-  
+                <!-- Estadisticas -->
+                <div class="row mb-4" id="estadisticas">
+                    <div class="col-md-3">
+                        <div class="glass p-3 text-center">
+                            <i class="fas fa-book fa-2x text-purple mb-2"></i>
+                            <h3 class="mb-0" id="totalCursos">0</h3>
+                            <p class="text-muted small mb-0">Total Cursos</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="glass p-3 text-center">
+                            <i class="fas fa-chalkboard-teacher fa-2x text-gold mb-2"></i>
+                            <h3 class="mb-0" id="cursosPersonales">0</h3>
+                            <p class="text-muted small mb-0">Clases Privadas</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="glass p-3 text-center">
+                            <i class="fas fa-link fa-2x text-blue mb-2"></i>
+                            <h3 class="mb-0" id="cursosExternos">0</h3>
+                            <p class="text-muted small mb-0">Cursos Externos</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="glass p-3 text-center">
+                            <i class="fas fa-gift fa-2x text-success mb-2"></i>
+                            <h3 class="mb-0" id="cursosGratuitos">0</h3>
+                            <p class="text-muted small mb-0">Gratuitos</p>
+                        </div>
+                    </div>
+                </div>
 
-  <!-- Contenido principal -->
-  <main class="main-content" style="position: relative; z-index: 2;">
-    <div class="container mt-3">
-      <!-- Filtros y búsqueda -->
-      <div class="row mb-3">
-        <div class="col-md-6">
-          <div class="input-group">
-            <input type="text" class="form-control" id="searchInput" placeholder="Buscar cursos...">
-            <button class="btn btn-primary" type="button" onclick="searchCourses()">
-              <i class="fas fa-search"></i>
-            </button>
-          </div>
-        </div>
-        <div class="col-md-6 text-end">
-          <button class="btn btn-primary" onclick="showMyCourses()">
-            <i class="fas fa-user-graduate"></i> Mis Cursos
-          </button>
-        </div>
-      </div>
-
-      <!-- Categorías -->
-      <div class="row mb-3">
-        <div class="col-12">
-          <div class="btn-group" role="group">
-            <button type="button" class="btn btn-outline-primary active" onclick="filterByType('all')">
-              Todos
-            </button>
-            <button type="button" class="btn btn-outline-primary" onclick="filterByType('otec')">
-              OTEC
-            </button>
-            <button type="button" class="btn btn-outline-primary" onclick="filterByType('externos')">
-              Externos
-            </button>
-            <button type="button" class="btn btn-outline-primary" onclick="filterByType('gratuitos')">
-              Gratuitos
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Lista de cursos -->
-      <div class="row">
-        <div class="col-12">
-          <div id="coursesContainer">
-            <!-- Los cursos se cargarán aquí dinámicamente -->
-            <div class="text-center py-4">
-              <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Cargando...</span>
-              </div>
-              <p class="mt-2 text-muted">Cargando cursos...</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </main>
-
-  <!-- Footer compacto -->
-  <footer class="students-footer">
-    <div class="container">
-      <div class="row align-items-center">
-        <div class="col-md-6">
-          <h5 class="gradient-text">Cursos StudentsPoint</h5>
-          <p>Amplía tus conocimientos y habilidades.</p>
-        </div>
-        <div class="col-md-6 text-end">
-          <p class="mb-0">
-            <i class="fas fa-graduation-cap"></i> Aprende y crece profesionalmente
-          </p>
-        </div>
-      </div>
-    </div>
-  </footer>
-
-  <!-- Herramientas de desarrollo -->
-  <div class="dev-tools" style="display: none;">
-    <button onclick="window.StudentsPointPWA?.clearCache()" title="Limpiar Cache">
-      <i class="fas fa-sync-alt"></i>
-    </button>
-    <button onclick="window.StudentsPointPWA?.getVersion()" title="Versión">
-      <i class="fas fa-info-circle"></i>
-    </button>
-    <button onclick="window.open('/admin/', '_blank')" title="Administración">
-      <i class="fas fa-cog"></i>
-    </button>
-    <button onclick="window.open('/api/', '_blank')" title="API">
-      <i class="fas fa-code"></i>
-    </button>
-  </div>
-
-  <!-- Modal para detalles del curso -->
-  <div class="modal fade" id="courseModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="courseModalTitle">Curso</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body" id="courseModalBody">
-          <!-- Contenido del curso se cargará aquí -->
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-          <button type="button" class="btn btn-primary" id="enrollBtn">Inscribirse</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Scripts -->
+                <!-- Lista de cursos -->
+                <div class="row" id="cursosContainer">
+                    <div class="col-12 text-center py-5">
+                        <div class="spinner-border text-purple" role="status">
+                            <span class="visually-hidden">Cargando...</span>
+                        </div>
+                        <p class="text-muted mt-3">Cargando cursos...</p>
+                    </div>
+                </div>
             </div>
         </main>
     </div>
 
-    <!-- Scripts -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="/static/js/auth-api.js"></script>
-<script src="/static/js/auth-header.js"></script>
-<script src="/static/js/courses-api.js"></script>
-<script src="/static/js/sounds.js"></script>
-<script src="/static/js/pwa.js"></script>
-<script src="/static/pwa-config.js"></script>
-<script src="/static/js/main.js"></script>
-<script src="/static/cursos/cursos.js"></script>
-<script>
-    // Mostrar herramientas de desarrollo solo en localhost
-    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-      document.querySelector('.dev-tools').style.display = 'flex';
-    }
-
-    // Variables globales
-    let currentType = 'all';
-    let courses = [];
-
-    // Cargar cursos al iniciar
-    document.addEventListener('DOMContentLoaded', function() {
-      loadCourses();
-      
-      // Sonido de carga de página
-      setTimeout(() => {
-        if (window.playSound) {
-          window.playSound('pageLoad');
-        }
-      }, 500);
-    });
-
-    // Cargar cursos desde la API
-    async function loadCourses() {
-      try {
-        const response = await fetch('/api/otec/cursos/');
-        if (response.ok) {
-          courses = await response.json();
-          displayCourses(courses);
-        } else {
-          // Datos de ejemplo si la API no está disponible
-          courses = getSampleCourses();
-          displayCourses(courses);
-        }
-      } catch (error) {
-        console.error('Error:', error);
-        courses = getSampleCourses();
-        displayCourses(courses);
-      }
-    }
-
-    // Obtener cursos de ejemplo
-    function getSampleCourses() {
-      return [
-        {
-          id: 1,
-          nombre: 'Desarrollo Web con React',
-          descripcion: 'Aprende a crear aplicaciones web modernas con React y JavaScript.',
-          tipo: 'otec',
-          duracion: '40 horas',
-          precio: '$150.000',
-          instructor: 'Juan Pérez',
-          fecha_inicio: '2024-02-15',
-          cupos: 25,
-          inscritos: 18,
-          nivel: 'Intermedio'
-        },
-        {
-          id: 2,
-          nombre: 'Python para Data Science',
-          descripcion: 'Introducción al análisis de datos con Python y pandas.',
-          tipo: 'externos',
-          duracion: '60 horas',
-          precio: '$200.000',
-          instructor: 'María González',
-          fecha_inicio: '2024-03-01',
-          cupos: 20,
-          inscritos: 15,
-          nivel: 'Principiante'
-        },
-        {
-          id: 3,
-          nombre: 'Marketing Digital',
-          descripcion: 'Estrategias de marketing digital y redes sociales.',
-          tipo: 'gratuitos',
-          duracion: '30 horas',
-          precio: 'Gratuito',
-          instructor: 'Carlos López',
-          fecha_inicio: '2024-02-20',
-          cupos: 50,
-          inscritos: 35,
-          nivel: 'Principiante'
-        },
-        {
-          id: 4,
-          nombre: 'Diseño UX/UI',
-          descripcion: 'Principios de diseño de experiencia de usuario.',
-          tipo: 'otec',
-          duracion: '45 horas',
-          precio: '$180.000',
-          instructor: 'Ana Rodríguez',
-          fecha_inicio: '2024-03-10',
-          cupos: 15,
-          inscritos: 12,
-          nivel: 'Intermedio'
-        }
-      ];
-    }
-
-    // Mostrar cursos
-    function displayCourses(coursesToShow) {
-      const container = document.getElementById('coursesContainer');
-      
-      if (coursesToShow.length === 0) {
-        container.innerHTML = `
-          <div class="text-center py-4">
-            <i class="fas fa-graduation-cap fa-3x text-muted mb-3"></i>
-            <h5 class="text-muted">No hay cursos disponibles</h5>
-            <p class="text-muted">Pronto tendremos más cursos para ti</p>
-          </div>
-        `;
-        return;
-      }
-
-      const coursesHTML = coursesToShow.map(course => `
-        <div class="card mb-3 course-card" onclick="openCourse(${course.id})">
-          <div class="card-body">
-            <div class="row">
-              <div class="col-md-8">
-                <h5 class="card-title">${course.nombre}</h5>
-                <p class="card-text text-muted">${course.descripcion}</p>
-                <div class="d-flex gap-3 flex-wrap">
-                  <span class="badge bg-primary">${course.tipo.toUpperCase()}</span>
-                  <span class="badge bg-secondary">${course.nivel}</span>
-                  <small class="text-muted">
-                    <i class="fas fa-clock"></i> ${course.duracion}
-                  </small>
-                  <small class="text-muted">
-                    <i class="fas fa-user"></i> ${course.instructor}
-                  </small>
-                  <small class="text-muted">
-                    <i class="fas fa-calendar"></i> ${new Date(course.fecha_inicio).toLocaleDateString()}
-                  </small>
+    <!-- Modal para nuevo curso/clase -->
+    <div class="modal fade" id="nuevoCursoModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Publicar Curso o Clase</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-              </div>
-              <div class="col-md-4 text-end">
-                <div class="d-flex flex-column gap-2">
-                  <h4 class="text-success mb-0">${course.precio}</h4>
-                  <div class="progress mb-2" style="height: 8px;">
-                    <div class="progress-bar" style="width: ${(course.inscritos / course.cupos) * 100}%"></div>
-                  </div>
-                  <small class="text-muted">${course.inscritos}/${course.cupos} cupos</small>
-                  <button class="btn btn-primary btn-sm" onclick="event.stopPropagation(); enrollCourse(${course.id})">
-                    <i class="fas fa-user-plus"></i> Inscribirse
-                  </button>
+                <div class="modal-body">
+                    <form id="formNuevoCurso">
+                        <!-- Tipo de publicacion -->
+                        <div class="mb-3">
+                            <label class="form-label">Tipo de publicacion</label>
+                            <select class="form-select" id="tipoCurso" required onchange="toggleCamposTipo()">
+                                <option value="externo">Curso Externo (compartir enlace)</option>
+                                <option value="personal">Clases Privadas / Tutorias (mis clases)</option>
+                            </select>
+                        </div>
+
+                        <!-- Informacion basica -->
+                        <div class="mb-3">
+                            <label class="form-label">Titulo</label>
+                            <input type="text" class="form-control" id="tituloCurso" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Descripcion</label>
+                            <textarea class="form-control" id="descripcionCurso" rows="3" required></textarea>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Categoria</label>
+                                <input type="text" class="form-control" id="categoriaCurso" placeholder="Ej: Programacion, Matematicas..." required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Etiquetas (separadas por comas)</label>
+                                <input type="text" class="form-control" id="etiquetasCurso" placeholder="python, data, science">
+                            </div>
+                        </div>
+
+                        <!-- Detalles -->
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Modalidad</label>
+                                <select class="form-select" id="modalidadCurso" required>
+                                    <option value="online">Online</option>
+                                    <option value="presencial">Presencial</option>
+                                    <option value="hibrido">Hibrido</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Nivel</label>
+                                <select class="form-select" id="nivelCurso" required>
+                                    <option value="todos">Todos los niveles</option>
+                                    <option value="principiante">Principiante</option>
+                                    <option value="intermedio">Intermedio</option>
+                                    <option value="avanzado">Avanzado</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Duracion</label>
+                                <input type="text" class="form-control" id="duracionCurso" placeholder="Ej: 40 horas">
+                            </div>
+                        </div>
+
+                        <!-- Precio -->
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="esGratuito" onchange="togglePrecio()">
+                                <label class="form-check-label" for="esGratuito">
+                                    Curso gratuito
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="mb-3" id="campoPrecio">
+                            <label class="form-label">Precio (CLP)</label>
+                            <input type="number" class="form-control" id="precioCurso" min="0" placeholder="0">
+                        </div>
+
+                        <!-- Campos especificos para curso externo -->
+                        <div id="camposExterno">
+                            <div class="mb-3">
+                                <label class="form-label">URL del curso</label>
+                                <input type="url" class="form-control" id="urlCurso" placeholder="https://...">
+                            </div>
+                        </div>
+
+                        <!-- Campos especificos para clase personal -->
+                        <div id="camposPersonal" style="display: none;">
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle"></i> Proporciona al menos un medio de contacto
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Email de contacto</label>
+                                <input type="email" class="form-control" id="emailContacto" placeholder="tu@email.com">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Telefono de contacto</label>
+                                <input type="tel" class="form-control" id="telefonoContacto" placeholder="+56 9 1234 5678">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">URL de contacto (opcional)</label>
+                                <input type="url" class="form-control" id="urlContacto" placeholder="WhatsApp, Telegram, etc.">
+                            </div>
+                        </div>
+
+                        <!-- Imagen -->
+                        <div class="mb-3">
+                            <label class="form-label">URL de imagen (opcional)</label>
+                            <input type="url" class="form-control" id="imagenCurso" placeholder="https://...">
+                        </div>
+
+                        <!-- Fechas -->
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Fecha de inicio</label>
+                                <input type="date" class="form-control" id="fechaInicioCurso" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Fecha de fin (opcional)</label>
+                                <input type="date" class="form-control" id="fechaFinCurso">
+                            </div>
+                        </div>
+                    </form>
                 </div>
-              </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-gradient-gold" onclick="publicarCurso()">
+                        <i class="fas fa-paper-plane"></i> Publicar
+                    </button>
+                </div>
             </div>
-          </div>
         </div>
-      `).join('');
+    </div>
 
-      container.innerHTML = coursesHTML;
-
-      // Agregar efectos hover con sonido
-      const courseCards = document.querySelectorAll('.course-card');
-      courseCards.forEach(card => {
-        card.addEventListener('mouseenter', () => {
-          if (window.playSound) {
-            window.playSound('hover');
-          }
-        });
-      });
-    }
-
-    // Filtrar por tipo
-    function filterByType(type) {
-      currentType = type;
-      
-      // Actualizar botones activos
-      document.querySelectorAll('.btn-group .btn').forEach(btn => {
-        btn.classList.remove('active');
-      });
-      event.target.classList.add('active');
-      
-      // Filtrar cursos
-      let filteredCourses = courses;
-      if (type !== 'all') {
-        filteredCourses = courses.filter(course => course.tipo === type);
-      }
-      
-      displayCourses(filteredCourses);
-      
-      if (window.playSound) {
-        window.playSound('click');
-      }
-    }
-
-    // Buscar cursos
-    function searchCourses() {
-      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-      
-      if (searchTerm === '') {
-        displayCourses(courses);
-        return;
-      }
-      
-      const filteredCourses = courses.filter(course => 
-        course.nombre.toLowerCase().includes(searchTerm) ||
-        course.descripcion.toLowerCase().includes(searchTerm) ||
-        course.instructor.toLowerCase().includes(searchTerm)
-      );
-      
-      displayCourses(filteredCourses);
-      
-      if (window.playSound) {
-        window.playSound('search');
-      }
-    }
-
-    // Abrir curso
-    function openCourse(courseId) {
-      const course = courses.find(c => c.id === courseId);
-      if (course) {
-        document.getElementById('courseModalTitle').textContent = course.nombre;
-        document.getElementById('courseModalBody').innerHTML = `
-          <div class="row">
-            <div class="col-md-6">
-              <h6>Descripción</h6>
-              <p>${course.descripcion}</p>
-              
-              <h6>Detalles</h6>
-              <ul class="list-unstyled">
-                <li><strong>Duración:</strong> ${course.duracion}</li>
-                <li><strong>Nivel:</strong> ${course.nivel}</li>
-                <li><strong>Instructor:</strong> ${course.instructor}</li>
-                <li><strong>Fecha de inicio:</strong> ${new Date(course.fecha_inicio).toLocaleDateString()}</li>
-                <li><strong>Cupos disponibles:</strong> ${course.cupos - course.inscritos}</li>
-              </ul>
+    <!-- Modal para ver detalle del curso -->
+    <div class="modal fade" id="detalleCursoModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="detalletitulo">Curso</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="detalleBody">
+                    <!-- Se carga dinamicamente -->
+                </div>
             </div>
-            <div class="col-md-6">
-              <h6>Precio</h6>
-              <h3 class="text-success">${course.precio}</h3>
-              
-              <h6>Progreso de inscripciones</h6>
-              <div class="progress mb-3">
-                <div class="progress-bar" style="width: ${(course.inscritos / course.cupos) * 100}%"></div>
-              </div>
-              <p class="text-muted">${course.inscritos} de ${course.cupos} cupos ocupados</p>
-            </div>
-          </div>
-        `;
-        
-        const modal = new bootstrap.Modal(document.getElementById('courseModal'));
-        modal.show();
-        
-        if (window.playSound) {
-          window.playSound('click');
-        }
-      }
-    }
+        </div>
+    </div>
 
-    // Inscribirse en curso
-    function enrollCourse(courseId) {
-      const course = courses.find(c => c.id === courseId);
-      if (course) {
-        if (course.inscritos >= course.cupos) {
-          showError('No hay cupos disponibles para este curso');
-          return;
-        }
-        
-        showSuccess(`Te has inscrito exitosamente en "${course.nombre}"`);
-        
-        if (window.playSound) {
-          window.playSound('success');
-        }
-      }
-    }
-
-    // Mostrar mis cursos
-    function showMyCourses() {
-      showSuccess('Función de "Mis Cursos" en desarrollo');
-      
-      if (window.playSound) {
-        window.playSound('click');
-      }
-    }
-
-    // Mostrar error
-    function showError(message) {
-      const alertDiv = document.createElement('div');
-      alertDiv.className = 'alert alert-danger alert-dismissible fade show';
-      alertDiv.innerHTML = `
-        ${message}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-      `;
-      
-      const container = document.querySelector('.container');
-      container.insertBefore(alertDiv, container.firstChild);
-      
-      setTimeout(() => {
-        if (alertDiv.parentNode) {
-          alertDiv.remove();
-        }
-      }, 5000);
-    }
-
-    // Mostrar éxito
-    function showSuccess(message) {
-      const alertDiv = document.createElement('div');
-      alertDiv.className = 'alert alert-success alert-dismissible fade show';
-      alertDiv.innerHTML = `
-        ${message}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-      `;
-      
-      const container = document.querySelector('.container');
-      container.insertBefore(alertDiv, container.firstChild);
-      
-      setTimeout(() => {
-        if (alertDiv.parentNode) {
-          alertDiv.remove();
-        }
-      }, 3000);
-    }
-
-    // Búsqueda con Enter
-    document.getElementById('searchInput').addEventListener('keypress', function(e) {
-      if (e.key === 'Enter') {
-        searchCourses();
-      }
-    });
-  </script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="/static/js/sounds.js"></script>
-<script src="/static/js/pwa.js"></script>
-<script src="/static/pwa-config.js"></script>
-<script src="/static/js/main.js"></script>
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/js/auth.js"></script>
+    <script src="/static/cursos/cursos.js"></script>
 </body>
 </html>
