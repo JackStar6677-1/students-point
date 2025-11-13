@@ -49,7 +49,10 @@ class ProductoViewSet(viewsets.ModelViewSet):
         
         campus = self.request.query_params.get('campus')
         if campus:
-            queryset = queryset.filter(campus_id=campus)
+            try:
+                queryset = queryset.filter(campus_id=int(campus))
+            except (TypeError, ValueError):
+                queryset = queryset.filter(campus__slug=campus)
         
         carrera = self.request.query_params.get('carrera')
         if carrera:

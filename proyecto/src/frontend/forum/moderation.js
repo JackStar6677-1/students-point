@@ -97,8 +97,13 @@ class ModerationManager {
                 filters.estado = statusFilterElement.value;
             }
 
-            const allPosts = await window.forumAPI.getPosts(filters, { includeAuth: true });
-            let filteredPosts = [...allPosts];
+            let queue = await window.forumAPI.getModerationQueue(filters);
+
+            if (!Array.isArray(queue)) {
+                queue = queue?.results || [];
+            }
+
+            let filteredPosts = [...queue];
 
             if (reportsFilterElement && reportsFilterElement.value) {
                 if (reportsFilterElement.value === 'reported') {
@@ -116,13 +121,13 @@ class ModerationManager {
                 });
             }
 
-            this.calculateStats(allPosts);
+            this.calculateStats(queue);
             this.posts = filteredPosts;
             this.renderPosts();
             this.updateStatsDisplay();
         } catch (error) {
             console.error('Error loading posts:', error);
-            this.showAlert(error.message || 'Error al cargar los posts', 'danger');
+            this.showAlert(error.message || 'Error al cargar los posts en moderación', 'danger');
         } finally {
             this.showLoading(false);
         }
@@ -409,7 +414,16 @@ class ModerationManager {
     }
 
     canModerate() {
-        return this.currentUser && ['moderator', 'director_carrera', 'admin_global'].includes(this.currentUser.role);
+        if (!this.currentUser) {
+            return false;
+        }
+
+        const role = this.currentUser.role;
+        return Boolean(
+            this.currentUser.is_staff ||
+            this.currentUser.is_superuser ||
+            ['moderator', 'director_carrera', 'admin_global'].includes(role)
+        );
     }
 
     updateUserInterface() {
