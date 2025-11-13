@@ -77,7 +77,8 @@ class TestMarketplaceAPI:
         client.force_authenticate(user=user)
         response = client.get('/api/marketplace/categories/')
         assert response.status_code == status.HTTP_200_OK
-        assert len(response.data) == 2
+        assert response.data['count'] == 2
+        assert len(response.data['results']) == 2
     
     def test_list_categorias_unauthenticated(self, client):
         """Prueba listar categorías sin autenticación"""
@@ -148,7 +149,8 @@ class TestMarketplaceAPI:
         client.force_authenticate(user=user)
         response = client.get('/api/marketplace/products/')
         assert response.status_code == status.HTTP_200_OK
-        assert len(response.data) == 2
+        assert response.data['count'] == 2
+        assert len(response.data['results']) == 2
     
     def test_list_productos_unauthenticated(self, client):
         """Prueba listar productos sin autenticación"""
@@ -263,14 +265,16 @@ class TestMarketplaceAPI:
         # Filtrar por estado publicado
         response = client.get('/api/marketplace/products/?estado=publicado')
         assert response.status_code == status.HTTP_200_OK
-        assert len(response.data) == 1
-        assert response.data[0]['titulo'] == 'Producto Publicado'
+        assert response.data['count'] == 1
+        assert len(response.data['results']) == 1
+        assert response.data['results'][0]['titulo'] == 'Producto Publicado'
         
         # Filtrar por estado vendido
         response = client.get('/api/marketplace/products/?estado=vendido')
         assert response.status_code == status.HTTP_200_OK
-        assert len(response.data) == 1
-        assert response.data[0]['titulo'] == 'Producto Vendido'
+        assert response.data['count'] == 1
+        assert len(response.data['results']) == 1
+        assert response.data['results'][0]['titulo'] == 'Producto Vendido'
     
     def test_producto_categoria_filter(self, client, user, categoria):
         """Prueba filtrado por categoría de producto"""
@@ -301,8 +305,9 @@ class TestMarketplaceAPI:
         client.force_authenticate(user=user)
         response = client.get(f'/api/marketplace/products/?categoria={categoria.id}')
         assert response.status_code == status.HTTP_200_OK
-        assert len(response.data) == 1
-        assert response.data[0]['titulo'] == 'Laptop'
+        assert response.data['count'] == 1
+        assert len(response.data['results']) == 1
+        assert response.data['results'][0]['titulo'] == 'Laptop'
     
     def test_producto_urls_adicionales(self, client, user, categoria):
         """Prueba crear producto con URLs adicionales"""
@@ -318,9 +323,11 @@ class TestMarketplaceAPI:
                 'https://img2.com/foto2.jpg',
                 'https://video.com/demo.mp4'
             ],
-            'estado': 'publicado'
+            'estado': 'publicado',
+            'acepta_terminos': True,
+            'acepta_responsabilidad': True
         }
-        response = client.post('/api/marketplace/products/', data)
+        response = client.post('/api/marketplace/products/', data, format='json')
         assert response.status_code == status.HTTP_201_CREATED
         
         producto = Producto.objects.first()

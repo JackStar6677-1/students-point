@@ -2,6 +2,7 @@
 
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
+from django.db import connection
 from django.db.models import Count, Q, Prefetch
 from django.utils import timezone
 from rest_framework import generics, permissions, status, filters
@@ -11,7 +12,7 @@ from rest_framework.decorators import action
 from drf_spectacular.utils import extend_schema, extend_schema_view
 
 from studentspoint.apps.accounts.permissions import IsModeratorOrDirector
-from .models import Poll, PollAnalytics
+from .models import Poll, PollAnalytics, PollOpcion
 from .serializers import (
     PollListSerializer,
     PollDetailSerializer,
@@ -73,9 +74,17 @@ class PollListCreateView(generics.ListCreateAPIView):
         
         # Filtrar por carrera del usuario
         if user.career:
-            queryset = queryset.filter(
-                Q(carreras=[]) | Q(carreras__contains=[user.career])
-            )
+            if connection.features.supports_json_field_contains:
+                queryset = queryset.filter(
+                    Q(carreras=[]) | Q(carreras__contains=[user.career])
+                )
+            else:
+                allowed_ids = [
+                    poll.pk
+                    for poll in queryset
+                    if not poll.carreras or user.career in poll.carreras
+                ]
+                queryset = queryset.filter(pk__in=allowed_ids) if allowed_ids else queryset.none()
         
         # Filtrar por fechas
         fecha_desde = self.request.query_params.get("fecha_desde")
@@ -90,11 +99,6 @@ class PollListCreateView(generics.ListCreateAPIView):
         creador = self.request.query_params.get("creador")
         if creador:
             queryset = queryset.filter(creador_id=creador)
-        
-        # Anotar con total de votos
-        queryset = queryset.annotate(
-            total_votos=Count("votos__usuario", distinct=True)
-        )
         
         return queryset
 
@@ -118,7 +122,7 @@ class PollDetailView(generics.RetrieveUpdateDestroyAPIView):
     
     queryset = Poll.objects.select_related("creador").prefetch_related(
         "sedes", 
-        Prefetch("opciones", queryset=Poll.objects.none()),
+        Prefetch("opciones", queryset=PollOpcion.objects.order_by("orden", "id")),
         "analytics"
     )
     permission_classes = [permissions.IsAuthenticated]

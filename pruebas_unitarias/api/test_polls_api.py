@@ -5,8 +5,6 @@ import pytest
 from rest_framework.test import APIClient
 from rest_framework import status
 from django.contrib.auth import get_user_model
-from django.db import connection
-
 from studentspoint.apps.polls.models import Poll, PollOpcion, PollVoto
 
 BASE_URL = '/api/polls/'
@@ -20,12 +18,7 @@ def polls_vote(poll_id: int) -> str:
     return f'{BASE_URL}{poll_id}/votar/'
 
 User = get_user_model()
-pytestmark = [pytest.mark.django_db]
-
-if not connection.features.supports_json_field_contains:
-    pytestmark.append(
-        pytest.mark.skip("El backend SQLite de pruebas no soporta filtros JSON; se omiten pruebas de encuestas.")
-    )
+pytestmark = pytest.mark.django_db
 
 
 @pytest.fixture
@@ -102,8 +95,8 @@ class TestPollsAPI:
         client.force_authenticate(user=user)
         response = client.get(BASE_URL)
         assert response.status_code == status.HTTP_200_OK
-        assert isinstance(response.data, list)
-        assert len(response.data) == 2
+        assert response.data['count'] == 2
+        assert len(response.data['results']) == 2
     
     def test_list_polls_unauthenticated(self, client):
         """Prueba listar encuestas sin autenticación"""
@@ -320,7 +313,7 @@ class TestPollsAPI:
             'opciones': [opcion.id],
             'justificacion': 'Elegí esta carrera porque me apasiona la programación'
         }
-        response = client.post(f'/api/polls/polls/{poll.id}/votar/', vote_data, format='json')
+        response = client.post(polls_vote(poll.id), vote_data, format='json')
         assert response.status_code == status.HTTP_200_OK
     
     def test_poll_career_filtering(self, client, user):
@@ -348,5 +341,5 @@ class TestPollsAPI:
         assert response.status_code == status.HTTP_200_OK
         
         # Debe mostrar ambas encuestas para un estudiante de ingeniería
-        assert isinstance(response.data, list)
-        assert len(response.data) == 2
+        assert response.data['count'] == 2
+        assert len(response.data['results']) == 2

@@ -135,6 +135,7 @@ class PollDetailSerializer(serializers.ModelSerializer):
 class PollCreateSerializer(serializers.ModelSerializer):
     """Serializa creación de encuestas con opciones."""
     
+    id = serializers.IntegerField(read_only=True)
     opciones = PollOpcionCreateSerializer(many=True, write_only=True)
     sedes_ids = serializers.ListField(
         child=serializers.IntegerField(), required=False, write_only=True
@@ -143,7 +144,7 @@ class PollCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Poll
         fields = [
-            "titulo", "descripcion", "multi", "anonima", "requiere_justificacion",
+            "id", "titulo", "descripcion", "multi", "anonima", "requiere_justificacion",
             "mostrar_resultados", "inicia_at", "cierra_at", "carreras", 
             "sedes_ids", "opciones"
         ]
