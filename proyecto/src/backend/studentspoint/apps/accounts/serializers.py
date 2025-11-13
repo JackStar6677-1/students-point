@@ -26,9 +26,9 @@ class UserDetailSerializer(serializers.ModelSerializer):
             "id", "email", "name", "campus", "campus_nombre", "career", "semestre",
             "role", "role_display", "es_duoc", "es_gmail", "es_estudiante_gmail", 
             "telefono", "linkedin_url", "github_url", "picture_file", "picture_url",
-            "is_email_verified", "date_joined"
+            "is_email_verified", "date_joined", "is_staff", "is_superuser"
         ]
-        read_only_fields = ["id", "date_joined", "is_email_verified", "picture_url"]
+        read_only_fields = ["id", "date_joined", "is_email_verified", "picture_url", "is_staff", "is_superuser"]
     
     def get_picture_url(self, obj):
         """Retorna la URL de la foto de perfil."""

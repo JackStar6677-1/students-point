@@ -57,7 +57,9 @@ class TokenService:
             'role': usuario.role,
             'campus': usuario.campus.nombre if usuario.campus else None,
             'career': usuario.career,
-            'is_email_verified': usuario.is_email_verified
+            'is_email_verified': usuario.is_email_verified,
+            'is_staff': usuario.is_staff,
+            'is_superuser': getattr(usuario, "is_superuser", False),
         }
 
 

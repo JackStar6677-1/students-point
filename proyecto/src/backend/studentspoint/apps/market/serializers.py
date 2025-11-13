@@ -33,7 +33,7 @@ class ProductoSerializer(serializers.ModelSerializer):
             'id', 'titulo', 'descripcion', 'categoria', 'categoria_nombre', 'categoria_icono',
             'vendedor', 'vendedor_nombre', 'url_principal', 'tipo_enlace', 'urls_adicionales',
             'og_title', 'og_description', 'og_image', 'og_site_name',
-            'estado', 'precio', 'moneda', 'campus', 'campus_nombre', 'carrera',
+            'estado', 'precio', 'precio_student_point', 'moneda', 'campus', 'campus_nombre', 'carrera',
             'created_at', 'updated_at', 'publicado_at', 'vendido_at',
             'visualizaciones', 'clicks_enlace', 'es_favorito', 'tiempo_publicado_humanizado'
         ]
@@ -62,7 +62,7 @@ class ProductoCreateSerializer(serializers.ModelSerializer):
         model = Producto
         fields = [
             'titulo', 'descripcion', 'categoria', 'url_principal', 
-            'tipo_enlace', 'urls_adicionales', 'precio', 'moneda',
+            'tipo_enlace', 'urls_adicionales', 'precio', 'precio_student_point', 'moneda',
             'acepta_terminos', 'acepta_responsabilidad'
         ]
     
@@ -200,7 +200,7 @@ class ProductoListSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'titulo', 'descripcion', 'categoria_nombre', 'categoria_icono',
             'vendedor_nombre', 'url_principal', 'tipo_enlace', 'og_image',
-            'estado', 'precio', 'moneda', 'campus_nombre', 'carrera',
+            'estado', 'precio', 'precio_student_point', 'moneda', 'campus_nombre', 'carrera',
             'created_at', 'visualizaciones', 'es_favorito'
         ]
     

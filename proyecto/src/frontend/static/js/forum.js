@@ -232,7 +232,7 @@ class ForumManager {
                     ` : ''}
                     
                     <div class="post-footer">
-                        <button class="post-action" onclick="forumManager.showComments(${post.id})">
+                        <button class="post-action" data-comment-button="${post.id}" onclick="forumManager.showComments(${post.id})">
                             <i class="fas fa-comment"></i>
                             ${post.total_comentarios || 0} Comentarios
                         </button>
@@ -295,36 +295,174 @@ class ForumManager {
         }
     }
 
-    async showComments(postId) {
+    async showComments(postId, forceRefresh = false) {
         const commentsContainer = document.getElementById(`comments-${postId}`);
-        
-        if (commentsContainer.style.display === 'none') {
+        if (!commentsContainer) {
+            return;
+        }
+
+        const shouldLoad =
+            forceRefresh || commentsContainer.style.display === 'none' || !commentsContainer.innerHTML;
+
+        if (shouldLoad) {
             try {
                 const comments = await window.forumAPI.getComments(postId);
-                commentsContainer.innerHTML = this.renderComments(comments);
+                commentsContainer.innerHTML = this.renderComments(postId, comments);
+                this.setupCommentForm(postId, commentsContainer);
                 commentsContainer.style.display = 'block';
             } catch (error) {
                 console.error('Error loading comments:', error);
+                commentsContainer.innerHTML = `
+                    <p class="text-danger text-center mb-2">
+                        No se pudieron cargar los comentarios. Intenta nuevamente más tarde.
+                    </p>
+                    ${this.renderCommentForm(postId)}
+                `;
+                this.setupCommentForm(postId, commentsContainer);
+                commentsContainer.style.display = 'block';
             }
         } else {
             commentsContainer.style.display = 'none';
         }
     }
 
-    renderComments(comments) {
-        if (comments.length === 0) {
-            return '<p class="text-muted text-center">No hay comentarios aún</p>';
-        }
-
-        return comments.map(comment => `
+    renderComments(postId, comments) {
+        const commentsMarkup = comments.length === 0
+            ? '<p class="text-muted text-center mb-3">Sé el primero en comentar este post.</p>'
+            : comments.map(comment => `
             <div class="comment-item">
                 <div class="comment-meta">
                     <strong>${comment.anonimo ? 'Usuario Anónimo' : (comment.usuario_name || 'Usuario')}</strong>
                     • ${this.formatDate(comment.created_at)}
+                    <span class="comment-score ${this.getScoreClass(comment.score)}">
+                        <i class="fas fa-arrow-up"></i> ${comment.score ?? 0}
+                    </span>
                 </div>
                 <div>${this.escapeHtml(comment.cuerpo).replace(/\n/g, '<br>')}</div>
             </div>
         `).join('');
+
+        return `
+            <div class="comments-list">
+                ${commentsMarkup}
+            </div>
+            ${this.renderCommentForm(postId)}
+        `;
+    }
+
+    renderCommentForm(postId) {
+        return `
+            <div class="comment-form mt-3">
+                <label class="form-label" for="comment-input-${postId}">Agregar comentario</label>
+                <textarea class="form-control" id="comment-input-${postId}" rows="3"
+                    placeholder="Comparte tu opinión con el curso..."
+                ></textarea>
+                <div class="d-flex justify-content-between align-items-center mt-2 flex-wrap gap-2">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="comment-anon-${postId}">
+                        <label class="form-check-label" for="comment-anon-${postId}">
+                            Publicar como anónimo
+                        </label>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-primary" data-submit-comment="${postId}">
+                        <i class="fas fa-paper-plane me-1"></i> Enviar comentario
+                    </button>
+                </div>
+                <div class="comment-feedback mt-2" id="comment-feedback-${postId}" style="display:none;"></div>
+            </div>
+        `;
+    }
+
+    setupCommentForm(postId, container) {
+        const submitBtn = container.querySelector(`[data-submit-comment="${postId}"]`);
+        if (!submitBtn) {
+            return;
+        }
+
+        submitBtn.addEventListener('click', () => this.submitComment(postId, container));
+
+        const textarea = container.querySelector(`#comment-input-${postId}`);
+        if (textarea) {
+            textarea.addEventListener('keydown', (event) => {
+                if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
+                    event.preventDefault();
+                    this.submitComment(postId, container);
+                }
+            });
+        }
+    }
+
+    async submitComment(postId, container) {
+        const textarea = container.querySelector(`#comment-input-${postId}`);
+        const anonymousCheckbox = container.querySelector(`#comment-anon-${postId}`);
+        const feedback = container.querySelector(`#comment-feedback-${postId}`);
+        const submitBtn = container.querySelector(`[data-submit-comment="${postId}"]`);
+
+        if (!textarea || !submitBtn) {
+            return;
+        }
+
+        const comentario = (textarea.value || '').trim();
+        if (!comentario) {
+            if (feedback) {
+                feedback.textContent = 'El comentario no puede estar vacío.';
+                feedback.className = 'comment-feedback text-danger';
+                feedback.style.display = 'block';
+            }
+            return;
+        }
+
+        submitBtn.disabled = true;
+        if (feedback) {
+            feedback.style.display = 'none';
+        }
+
+        try {
+            await window.forumAPI.createComment(postId, {
+                cuerpo: comentario,
+                anonimo: anonymousCheckbox ? anonymousCheckbox.checked : false,
+            });
+
+            textarea.value = '';
+            if (anonymousCheckbox) {
+                anonymousCheckbox.checked = false;
+            }
+
+            if (feedback) {
+                feedback.textContent = 'Comentario publicado correctamente.';
+                feedback.className = 'comment-feedback text-success';
+                feedback.style.display = 'block';
+            }
+
+            const post = this.posts.find(p => p.id === postId);
+            if (post) {
+                post.total_comentarios = (post.total_comentarios || 0) + 1;
+                this.updateCommentCounter(postId, post.total_comentarios);
+            }
+
+            await this.showComments(postId, true);
+        } catch (error) {
+            console.error('Error creando comentario:', error);
+            if (feedback) {
+                feedback.textContent = error.message || 'No se pudo publicar el comentario.';
+                feedback.className = 'comment-feedback text-danger';
+                feedback.style.display = 'block';
+            } else {
+                this.showAlert(error.message || 'No se pudo publicar el comentario.', 'danger');
+            }
+        } finally {
+            submitBtn.disabled = false;
+        }
+    }
+
+    updateCommentCounter(postId, totalComentarios) {
+        const commentButton = document.querySelector(`[data-comment-button="${postId}"]`);
+        if (commentButton) {
+            commentButton.innerHTML = `
+                <i class="fas fa-comment"></i>
+                ${totalComentarios || 0} Comentarios
+            `;
+        }
     }
 
     reportPost(postId) {
@@ -489,7 +627,16 @@ class ForumManager {
     }
 
     canModerate() {
-        return this.currentUser && ['moderator', 'director_carrera', 'admin_global'].includes(this.currentUser.role);
+        if (!this.currentUser) {
+            return false;
+        }
+
+        const role = this.currentUser.role;
+        return Boolean(
+            this.currentUser.is_staff ||
+            this.currentUser.is_superuser ||
+            ['moderator', 'director_carrera', 'admin_global'].includes(role)
+        );
     }
 
     updateUserInterface() {

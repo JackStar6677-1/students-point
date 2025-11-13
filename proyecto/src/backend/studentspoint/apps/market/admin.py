@@ -11,7 +11,16 @@ class CategoriaProductoAdmin(admin.ModelAdmin):
 
 @admin.register(Producto)
 class ProductoAdmin(admin.ModelAdmin):
-    list_display = ['titulo', 'vendedor', 'categoria', 'precio', 'estado', 'visualizaciones', 'created_at']
+    list_display = [
+        'titulo',
+        'vendedor',
+        'categoria',
+        'precio',
+        'precio_student_point',
+        'estado',
+        'visualizaciones',
+        'created_at',
+    ]
     list_filter = ['estado', 'categoria', 'campus', 'tipo_enlace']
     search_fields = ['titulo', 'descripcion', 'vendedor__email']
     readonly_fields = ['visualizaciones', 'clicks_enlace', 'created_at', 'updated_at', 'publicado_at', 'vendido_at']

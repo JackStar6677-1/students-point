@@ -13,12 +13,14 @@ class ReporteMediaSerializer(serializers.ModelSerializer):
 
 class ReporteSerializer(serializers.ModelSerializer):
     media = ReporteMediaSerializer(many=True, required=False)
+    sede_nombre = serializers.CharField(source="sede.nombre", read_only=True)
 
     class Meta:
         model = Reporte
         fields = [
             "id",
             "sede",
+            "sede_nombre",
             "categoria",
             "descripcion",
             "estado",
@@ -28,7 +30,7 @@ class ReporteSerializer(serializers.ModelSerializer):
             "creado_at",
             "media",
         ]
-        read_only_fields = ["prioridad", "creado_at"]
+        read_only_fields = ["prioridad", "creado_at", "sede_nombre"]
 
     def create(self, validated_data):
         media_data = validated_data.pop("media", [])

@@ -62,21 +62,15 @@
                         <input type="date" id="filtroFechaFin" class="form-control">
                     </div>
                     <div class="col-md-3">
-                        <label for="filtroTipo" class="form-label">Tipo de reporte</label>
+                        <label for="filtroTipo" class="form-label">Categoría</label>
                         <select id="filtroTipo" class="form-select">
-                            <option value="">Todos</option>
-                            <option value="actividad">Actividad de usuarios</option>
-                            <option value="plataforma">Uso de la plataforma</option>
-                            <option value="infraestructura">Reportes de infraestructura</option>
+                            <option value="">Todas las categorías</option>
                         </select>
                     </div>
                     <div class="col-md-3">
                         <label for="filtroCampus" class="form-label">Campus</label>
                         <select id="filtroCampus" class="form-select">
-                            <option value="">Todos</option>
-                            <option value="santiago">Santiago</option>
-                            <option value="valparaiso">Valparaíso</option>
-                            <option value="concepcion">Concepción</option>
+                            <option value="">Todas las sedes</option>
                         </select>
                     </div>
                 </div>
@@ -94,30 +88,30 @@
                 <div class="row g-3">
                     <div class="col-md-3">
                         <div class="kpi-card shadow-sm">
-                            <h3 id="totalUsuarios" class="kpi-value">0</h3>
-                            <p class="kpi-label">Usuarios activos</p>
-                            <span class="kpi-trend text-success"><i class="fas fa-arrow-up"></i> 8% vs mes anterior</span>
+                            <h3 id="totalReportes" class="kpi-value">0</h3>
+                            <p class="kpi-label">Reportes totales</p>
+                            <span class="kpi-trend text-primary" id="totalReportesTrend"><i class="fas fa-sync-alt"></i> Actualizado</span>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="kpi-card shadow-sm">
-                            <h3 id="actividadDiaria" class="kpi-value">0</h3>
-                            <p class="kpi-label">Acciones diarias</p>
-                            <span class="kpi-trend text-success"><i class="fas fa-arrow-up"></i> 12% esta semana</span>
+                            <h3 id="reportesRevision" class="kpi-value">0</h3>
+                            <p class="kpi-label">En revisión</p>
+                            <span class="kpi-trend text-warning" id="reportesRevisionTrend"><i class="fas fa-hourglass-half"></i> Sin cambios</span>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="kpi-card shadow-sm">
-                            <h3 id="satisfaccionPromedio" class="kpi-value">0</h3>
-                            <p class="kpi-label">Satisfacción promedio</p>
-                            <span class="kpi-trend text-warning"><i class="fas fa-minus"></i> Sin cambios</span>
+                            <h3 id="reportesResueltos" class="kpi-value">0</h3>
+                            <p class="kpi-label">Resueltos</p>
+                            <span class="kpi-trend text-success" id="reportesResueltosTrend"><i class="fas fa-check"></i> Buen trabajo</span>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="kpi-card shadow-sm">
-                            <h3 id="tiempoPromedio" class="kpi-value">0</h3>
-                            <p class="kpi-label">Tiempo promedio en plataforma</p>
-                            <span class="kpi-trend text-success"><i class="fas fa-arrow-up"></i> +3 min</span>
+                            <h3 id="reportesPendientes" class="kpi-value">0</h3>
+                            <p class="kpi-label">Pendientes</p>
+                            <span class="kpi-trend text-muted" id="reportesPendientesTrend"><i class="fas fa-clock"></i> Actualizar filtros</span>
                         </div>
                     </div>
                 </div>
@@ -162,6 +156,21 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </section>
+
+            <section class="mb-5">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2 class="h5 mb-0"><i class="fas fa-list-ul me-2 text-primary"></i>Reportes encontrados</h2>
+                    <span class="text-muted" id="reportesResultadoResumen"></span>
+                </div>
+                <div id="reportesLoading" class="reportes-loading text-center py-4" style="display: none;">
+                    <div class="spinner-border text-primary" role="status"></div>
+                    <p class="text-muted mt-3 mb-0">Cargando reportes...</p>
+                </div>
+                <div id="reportesLista" class="reports-grid"></div>
+                <div id="reportesVacio" class="alert alert-light text-center" style="display: none;">
+                    <i class="fas fa-info-circle me-2"></i>No se encontraron reportes para los filtros seleccionados.
                 </div>
             </section>
         </div>

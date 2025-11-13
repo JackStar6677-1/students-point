@@ -26,10 +26,19 @@ class ReporteViewSet(viewsets.ModelViewSet):
         qs = super().get_queryset()
         sede = self.request.query_params.get("sede")
         estado = self.request.query_params.get("estado")
+        categoria = self.request.query_params.get("categoria")
+        fecha_inicio = self.request.query_params.get("fecha_inicio")
+        fecha_fin = self.request.query_params.get("fecha_fin")
         if sede:
             qs = qs.filter(sede__slug=sede)
         if estado:
             qs = qs.filter(estado=estado)
+        if categoria:
+            qs = qs.filter(categoria__iexact=categoria)
+        if fecha_inicio:
+            qs = qs.filter(creado_at__date__gte=fecha_inicio)
+        if fecha_fin:
+            qs = qs.filter(creado_at__date__lte=fecha_fin)
         return qs
 
     def perform_create(self, serializer):

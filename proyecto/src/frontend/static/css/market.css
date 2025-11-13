@@ -173,10 +173,58 @@
     border-top: 1px solid #e9ecef;
 }
 
+.producto-precios {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
 .producto-precio {
     font-weight: 600;
     color: #28a745;
     font-size: 1.1rem;
+}
+
+.producto-precio-placeholder {
+    color: #6c757d;
+    font-size: 0.95rem;
+}
+
+.producto-precio-sp {
+    font-weight: 700;
+    color: #512da8;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.producto-precio-chip {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(81, 45, 168, 0.12);
+    color: #512da8;
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.producto-precio-original {
+    color: #6c757d;
+    font-size: 0.9rem;
+    text-decoration: line-through;
+}
+
+.precio-etiqueta {
+    display: block;
+    font-size: 0.7rem;
+    color: #adb5bd;
+    text-transform: uppercase;
+    margin-top: 0.1rem;
+    letter-spacing: 0.08em;
 }
 
 /* === MODAL PRODUCTO === */
@@ -234,12 +282,6 @@
     color: #495057;
 }
 
-.precio {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #28a745;
-}
-
 .enlace-principal {
     display: inline-flex;
     align-items: center;
@@ -290,6 +332,47 @@
     margin-top: 1.5rem;
     padding-top: 1.5rem;
     border-top: 1px solid #e9ecef;
+}
+
+.precio-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 0.5rem 0;
+    border-bottom: 1px dashed #e9ecef;
+}
+
+.precio-line:last-child {
+    border-bottom: none;
+}
+
+.precio-line-sp .precio-valor {
+    color: #512da8;
+}
+
+.precio-line-original .precio-valor {
+    color: #6c757d;
+}
+
+.precio-line-standard .precio-valor {
+    color: #28a745;
+}
+
+.precio-label {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #6c757d;
+}
+
+.precio-valor {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.precio-valor-tachado {
+    text-decoration: line-through;
+    color: #adb5bd;
 }
 
 /* === FORMULARIOS === */

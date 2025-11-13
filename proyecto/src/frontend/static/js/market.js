@@ -222,10 +222,9 @@ class MarketApp {
                     </div>
                     
                     <div class="producto-footer">
-                        ${producto.precio ? 
-                            `<span class="producto-precio">$${this.formatPrice(producto.precio)} ${producto.moneda}</span>` :
-                            '<span class="producto-precio">Precio a consultar</span>'
-                        }
+                        <div class="producto-precios">
+                            ${this.renderCardPrice(producto)}
+                        </div>
                         <button class="btn btn-sm btn-outline ver-producto" data-id="${producto.id}">
                             Ver Detalles
                         </button>
@@ -365,12 +364,10 @@ class MarketApp {
                     <p>${producto.descripcion}</p>
                 </div>
                 
-                ${producto.precio ? `
-                    <div class="producto-precio-modal">
-                        <h4>Precio</h4>
-                        <span class="precio">$${this.formatPrice(producto.precio)} ${producto.moneda}</span>
-                    </div>
-                ` : ''}
+                <div class="producto-precio-modal">
+                    <h4>Precio</h4>
+                    ${this.renderModalPrice(producto)}
+                </div>
                 
                 <div class="producto-enlaces">
                     <h4>Enlaces</h4>
@@ -460,6 +457,7 @@ class MarketApp {
             tipo_enlace: document.getElementById('inputTipoEnlace').value,
             url_principal: urlPrincipal,
             precio: document.getElementById('inputPrecio').value || null,
+            precio_student_point: document.getElementById('inputPrecioStudentPoint').value || null,
             moneda: document.getElementById('inputMoneda').value,
             acepta_terminos: checkTerminos.checked,
             acepta_responsabilidad: checkResponsabilidad.checked
@@ -550,7 +548,86 @@ class MarketApp {
     }
     
     formatPrice(price) {
-        return new Intl.NumberFormat('es-CL').format(price);
+        const value = Number(price);
+        if (Number.isNaN(value)) {
+            return price ?? '';
+        }
+        return new Intl.NumberFormat('es-CL').format(value);
+    }
+    
+    normalizePrice(value) {
+        if (value === null || value === undefined || value === '') {
+            return null;
+        }
+        const number = Number(value);
+        return Number.isNaN(number) ? null : number;
+    }
+    
+    getPriceInfo(producto) {
+        const moneda = producto.moneda || 'CLP';
+        const studentValue = this.normalizePrice(producto.precio_student_point);
+        const originalValue = this.normalizePrice(producto.precio);
+        const format = (value) => `$${this.formatPrice(value)} ${moneda}`;
+        
+        return {
+            student: studentValue !== null ? { value: studentValue, formatted: format(studentValue) } : null,
+            original: originalValue !== null ? { value: originalValue, formatted: format(originalValue) } : null,
+            moneda
+        };
+    }
+    
+    renderCardPrice(producto) {
+        const info = this.getPriceInfo(producto);
+        const parts = [];
+        
+        if (info.student) {
+            parts.push(
+                `<span class="producto-precio-sp">${info.student.formatted}<span class="producto-precio-chip">StudentsPoint</span></span>`
+            );
+        }
+        
+        if (info.original) {
+            const className = info.student ? 'producto-precio-original' : 'producto-precio';
+            const extraLabel = info.student ? ' <small class="precio-etiqueta">Precio externo</small>' : '';
+            parts.push(
+                `<span class="${className}">${info.original.formatted}${extraLabel}</span>`
+            );
+        }
+        
+        if (!parts.length) {
+            parts.push('<span class="producto-precio producto-precio-placeholder">Precio a consultar</span>');
+        }
+        
+        return parts.join('');
+    }
+    
+    renderModalPrice(producto) {
+        const info = this.getPriceInfo(producto);
+        if (!info.student && !info.original) {
+            return '<p class="text-muted mb-0">Coordina el precio directamente con el vendedor.</p>';
+        }
+        
+        const sections = [];
+        
+        if (info.student) {
+            sections.push(
+                `<div class="precio-line precio-line-sp">
+                    <span class="precio-label">Precio StudentsPoint</span>
+                    <span class="precio-valor">${info.student.formatted}</span>
+                </div>`
+            );
+        }
+        
+        if (info.original) {
+            sections.push(
+                `<div class="precio-line ${info.student ? 'precio-line-original' : 'precio-line-standard'}">
+                    <span class="precio-label">${info.student ? 'Precio externo' : 'Precio'}</span>
+                    <span class="precio-valor ${info.student ? 'precio-valor-tachado' : ''}">${info.original.formatted}</span>
+                </div>`
+            );
+        }
+        
+        return sections.join('');
     }
     
     showLoading(show) {

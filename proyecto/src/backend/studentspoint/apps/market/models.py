@@ -82,6 +82,13 @@ class Producto(models.Model):
     # Estado y fechas
     estado = models.CharField(max_length=20, choices=Estados.choices, default=Estados.BORRADOR)
     precio = models.DecimalField(max_digits=10, decimal_places=0, null=True, blank=True, help_text="Precio en CLP")
+    precio_student_point = models.DecimalField(
+        max_digits=10,
+        decimal_places=0,
+        null=True,
+        blank=True,
+        help_text="Precio preferente ofrecido dentro de StudentsPoint (CLP)",
+    )
     moneda = models.CharField(max_length=3, default="CLP")
     
     # Metadatos
