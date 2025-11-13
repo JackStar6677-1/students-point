@@ -25,6 +25,16 @@ StudentsPoint es una plataforma web progresiva (PWA) de codigo abierto diseñada
 iniciar_desarrollo.bat
 ```
 
+#### Script completo recomendado
+
+Para un arranque totalmente reproducible (entorno virtual, `.env`, migraciones, datos demo y servicios auxiliares), utiliza:
+
+```batch
+iniciar_desarrollo_full.bat
+```
+
+Este script crea `.venv`, copia `env.development.example` si falta, ejecuta `migrate`, `collectstatic`, crea usuarios demo e intenta levantar Redis, Celery y Django en ventanas separadas.
+
 ### Linux/Mac
 ```bash
 chmod +x iniciar_desarrollo.sh
@@ -43,6 +53,15 @@ Ver carpeta `scripts/` para scripts de utilidades:
 - `instalar_postgresql.bat` - Instalador de PostgreSQL
 - `detener_servicios.sh` - Detener servicios en Linux
 - `detener_monitor.bat` - Detener monitor en Windows
+ - `iniciar_desarrollo_full.bat` - Nuevo inicio integral de desarrollo en Windows
+
+### Cobertura de módulos recientes
+
+- **Foros**: comentarios, reportes y moderación ahora operan con permisos y auditoría reforzada.
+- **Marketplace**: visualización del `precio_student_point`, validaciones de términos y analytics automáticos.
+- **Reportes**: frontend reescrito con filtros dinámicos, KPIs y exportaciones CSV/PDF contra la API real.
+- **Encuestas**: integración completa con roles (`moderator`, `director_carrera`), votación, resultados y creación avanzada.
+- **Entorno de pruebas**: suites de API actualizadas y migraciones aplicadas para evitar discrepancias de base de datos.
 
 >  **Documentacion completa**: Ver carpeta [`docs/`](docs/) para toda la documentacion disponible.
 
