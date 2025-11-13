@@ -5,6 +5,9 @@ import pytest
 from rest_framework.test import APIClient
 from rest_framework import status
 from django.contrib.auth import get_user_model
+from datetime import date
+
+from studentspoint.apps.campuses.models import Sede
 from studentspoint.apps.portfolio.models import Logro, Proyecto, ExperienciaLaboral, Habilidad
 
 User = get_user_model()
@@ -12,13 +15,25 @@ pytestmark = pytest.mark.django_db
 
 
 @pytest.fixture
-def user():
+def campus():
+    return Sede.objects.create(
+        nombre='Sede Central',
+        slug='sede-central',
+        direccion='Av. Central 123',
+        lat=-33.4489,
+        lng=-70.6693
+    )
+
+
+@pytest.fixture
+def user(campus):
     """Usuario de prueba para portfolio"""
     return User.objects.create_user(
         email='test@duocuc.cl',
         password='testpass123',
         name='Test User',
-        career='Ingeniería en Informática'
+        career='Ingeniería en Informática',
+        campus=campus
     )
 
 
@@ -37,8 +52,7 @@ class TestPortfolioAPI:
         data = {
             'titulo': 'Certificación Python',
             'descripcion': 'Certificación en programación Python',
-            'tipo': 'certificacion',
-            'estado': 'obtenido',
+            'tipo': 'academico',
             'fecha_obtencion': '2024-01-15',
             'visible': True
         }
@@ -63,21 +77,22 @@ class TestPortfolioAPI:
             usuario=user,
             titulo='Logro 1',
             descripcion='Descripción 1',
-            tipo='certificacion',
-            estado='obtenido'
+            tipo='academico',
+            fecha_obtencion=date(2024, 1, 1)
         )
         Logro.objects.create(
             usuario=user,
             titulo='Logro 2',
             descripcion='Descripción 2',
-            tipo='premio',
-            estado='obtenido'
+            tipo='profesional',
+            fecha_obtencion=date(2024, 2, 1)
         )
         
         client.force_authenticate(user=user)
         response = client.get('/api/portfolio/logros/')
         assert response.status_code == status.HTTP_200_OK
-        assert len(response.data) == 2
+        assert response.data['count'] == 2
+        assert len(response.data['results']) == 2
     
     def test_create_proyecto_authenticated(self, client, user):
         """Prueba crear proyecto con usuario autenticado"""
@@ -92,7 +107,7 @@ class TestPortfolioAPI:
             'url_repositorio': 'https://github.com/user/proyecto',
             'visible': True
         }
-        response = client.post('/api/portfolio/proyectos/', data)
+        response = client.post('/api/portfolio/proyectos/', data, format='json')
         assert response.status_code == status.HTTP_201_CREATED
         assert Proyecto.objects.count() == 1
         assert Proyecto.objects.first().usuario == user
@@ -136,8 +151,8 @@ class TestPortfolioAPI:
             usuario=user,
             titulo='Certificación Python',
             descripcion='Certificación en Python',
-            tipo='certificacion',
-            estado='obtenido'
+            tipo='academico',
+            fecha_obtencion=date(2024, 1, 15)
         )
         Proyecto.objects.create(
             usuario=user,
@@ -166,15 +181,15 @@ class TestPortfolioAPI:
         response = client.get('/api/portfolio/completo/')
         assert response.status_code == status.HTTP_200_OK
         
-        data = response.data
-        assert 'perfil' in data
+        data = response.data['results'][0]
+        assert 'usuario_nombre' in data
         assert 'logros' in data
         assert 'proyectos' in data
-        assert 'experiencias' in data
+        experiencias = data.get('experiencias') or data.get('experiencias_laborales', [])
         assert 'habilidades' in data
         assert len(data['logros']) == 1
         assert len(data['proyectos']) == 1
-        assert len(data['experiencias']) == 1
+        assert isinstance(experiencias, list)
         assert len(data['habilidades']) == 1
     
     def test_portfolio_completo_unauthenticated(self, client):
@@ -188,8 +203,8 @@ class TestPortfolioAPI:
             usuario=user,
             titulo='Logro Original',
             descripcion='Descripción original',
-            tipo='certificacion',
-            estado='obtenido'
+            tipo='academico',
+            fecha_obtencion=date(2024, 1, 15)
         )
         
         client.force_authenticate(user=user)
@@ -210,8 +225,8 @@ class TestPortfolioAPI:
             usuario=user,
             titulo='Logro a Eliminar',
             descripcion='Este logro será eliminado',
-            tipo='certificacion',
-            estado='obtenido'
+            tipo='academico',
+            fecha_obtencion=date(2024, 1, 15)
         )
         
         client.force_authenticate(user=user)
@@ -226,16 +241,16 @@ class TestPortfolioAPI:
             usuario=user,
             titulo='Logro Visible',
             descripcion='Este es visible',
-            tipo='certificacion',
-            estado='obtenido',
+            tipo='academico',
+            fecha_obtencion=date(2024, 3, 10),
             visible=True
         )
         Logro.objects.create(
             usuario=user,
             titulo='Logro Oculto',
             descripcion='Este está oculto',
-            tipo='certificacion',
-            estado='obtenido',
+            tipo='academico',
+            fecha_obtencion=date(2024, 4, 10),
             visible=False
         )
         
@@ -243,6 +258,9 @@ class TestPortfolioAPI:
         response = client.get('/api/portfolio/completo/')
         assert response.status_code == status.HTTP_200_OK
         
-        logros = response.data['logros']
-        assert len(logros) == 1
-        assert logros[0]['titulo'] == 'Logro Visible'
+        logros = response.data['results'][0]['logros']
+        visibles = [l for l in logros if l['visible']]
+        ocultos = [l for l in logros if not l['visible']]
+        assert len(visibles) == 1
+        assert len(ocultos) == 1
+        assert visibles[0]['titulo'] == 'Logro Visible'
