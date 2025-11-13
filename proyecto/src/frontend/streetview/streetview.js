@@ -23,8 +23,44 @@ const recorridosData = {
                 titulo: 'Biblioteca',
                 descripcion: 'Explora nuestra biblioteca con recursos académicos',
                 icono: 'fa-book',
-                disponible: false,
-                imagenes: []
+                disponible: true,
+                imagenes: [
+                    {
+                        url: '/imagenes/mapa/biblioteca/img1biblioteca.jpeg',
+                        titulo: 'Entrada a la Biblioteca',
+                        descripcion: 'Vista principal de la entrada a la biblioteca DuocUC'
+                    },
+                    {
+                        url: '/imagenes/mapa/biblioteca/img2biblioteca.jpeg',
+                        titulo: 'Zona de Recepción',
+                        descripcion: 'Área de recepción y atención al usuario'
+                    },
+                    {
+                        url: '/imagenes/mapa/biblioteca/img3biblioteca.jpeg',
+                        titulo: 'Sala de Lectura',
+                        descripcion: 'Amplio espacio de estudio y lectura silenciosa'
+                    },
+                    {
+                        url: '/imagenes/mapa/biblioteca/img4biblioteca.jpeg',
+                        titulo: 'Estantería de Libros',
+                        descripcion: 'Colección de libros y material bibliográfico'
+                    },
+                    {
+                        url: '/imagenes/mapa/biblioteca/img5biblioteca.jpeg',
+                        titulo: 'Zona de Computadores',
+                        descripcion: 'Área equipada con computadores para investigación'
+                    },
+                    {
+                        url: '/imagenes/mapa/biblioteca/img6biblioteca.jpeg',
+                        titulo: 'Salas de Estudio Grupal',
+                        descripcion: 'Espacios para trabajo colaborativo y en equipo'
+                    },
+                    {
+                        url: '/imagenes/mapa/biblioteca/img7biblioteca.jpeg',
+                        titulo: 'Vista General',
+                        descripcion: 'Vista panorámica de la biblioteca completa'
+                    }
+                ]
             },
             {
                 id: 'casino',
@@ -114,8 +150,29 @@ const recorridosData = {
                 titulo: 'Punto Estudiantil',
                 descripcion: 'Centro de atención y servicios estudiantiles',
                 icono: 'fa-info-circle',
-                disponible: false,
-                imagenes: []
+                disponible: true,
+                imagenes: [
+                    {
+                        url: '/imagenes/mapa/puntoestudiantil/img1puntoestudiantil.jpeg',
+                        titulo: 'Entrada al Punto Estudiantil',
+                        descripcion: 'Vista principal del acceso al centro de atención estudiantil'
+                    },
+                    {
+                        url: '/imagenes/mapa/puntoestudiantil/img2puntoestudiantil.jpeg',
+                        titulo: 'Área de Atención',
+                        descripcion: 'Zona de recepción y atención personalizada para estudiantes'
+                    },
+                    {
+                        url: '/imagenes/mapa/puntoestudiantil/img3puntoestudiantil.jpeg',
+                        titulo: 'Servicios Estudiantiles',
+                        descripcion: 'Espacio de servicios y asesoría para la comunidad estudiantil'
+                    },
+                    {
+                        url: '/imagenes/mapa/puntoestudiantil/img4puntoestudiantil.jpeg',
+                        titulo: 'Vista General',
+                        descripcion: 'Vista panorámica del punto de servicios estudiantiles'
+                    }
+                ]
             },
             {
                 id: 'salas',
