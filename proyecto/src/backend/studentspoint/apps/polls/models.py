@@ -246,3 +246,7 @@ class PollAnalytics(models.Model):
     
     def __str__(self):
         return f"Analytics: {self.poll.titulo}"
+
+# Compatibilidad para tests legacy que esperan el nombre PollOption
+PollOption = PollOpcion
+PollVote = PollVoto
