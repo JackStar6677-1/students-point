@@ -8,7 +8,7 @@
 - Backend: `django.core.mail.backends.smtp.EmailBackend`
 - Servidor: smtp.gmail.com
 - Email: pablo.elias.miranda.292003@gmail.com
-- App Password: jiyn qwpy soku ghfd
+- App Password: dpak rpok esau zxdl
 - **Los emails se envian REALMENTE a los usuarios**
 - NO se necesita configuracion adicional
 - Funciona inmediatamente al ejecutar el servidor
@@ -43,7 +43,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'pablo.elias.miranda.292003@gmail.com'
-EMAIL_HOST_PASSWORD = 'jiyn qwpy soku ghfd'  # App Password
+EMAIL_HOST_PASSWORD = 'dpak rpok esau zxdl'  # App Password
 DEFAULT_FROM_EMAIL = 'StudentsPoint <pablo.elias.miranda.292003@gmail.com>'
 ```
 

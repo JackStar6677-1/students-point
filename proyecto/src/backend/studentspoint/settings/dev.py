@@ -56,7 +56,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'pablo.elias.miranda.292003@gmail.com'
-EMAIL_HOST_PASSWORD = 'jiyn qwpy soku ghfd'  # App Password de Gmail
+EMAIL_HOST_PASSWORD = 'dpak rpok esau zxdl'  # App Password de Gmail
 DEFAULT_FROM_EMAIL = 'StudentsPoint <pablo.elias.miranda.292003@gmail.com>'
 
 # Google OAuth - Credenciales de desarrollo
