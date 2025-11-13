@@ -7,7 +7,6 @@
     
     <!-- Bootstrap 5.3.2 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     
     <!-- Font Awesome 6.5.1 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -16,13 +15,11 @@
     <link rel="stylesheet" href="/static/css/theme-dark.css">
     <link rel="stylesheet" href="/static/css/base-layout.css">
     <link rel="stylesheet" href="/static/css/animations.css">
-    <link rel="stylesheet" href="/static/bienestar/bienestar.css">
     
     <!-- PWA -->
     <link rel="manifest" href="/static/manifest.json">
     <meta name="theme-color" content="#1a1a1b">
     <link rel="icon" href="/static/favicon.ico">
-    <link rel="apple-touch-icon" href="/static/images/icons/icon-192x192.png">
 </head>
 <body>
     <div class="app-container">
@@ -104,9 +101,6 @@
             <header class="top-header">
                 <h1 class="header-title">Bienestar Estudiantil</h1>
                 <div class="header-actions">
-                    <div class="auth-buttons me-2">
-                        <!-- Se actualiza dinámicamente con auth-header.js -->
-                    </div>
                     <button class="btn-icon" id="notificationsBtn" title="Notificaciones">
                         <i class="fas fa-bell"></i>
                     </button>
@@ -117,548 +111,404 @@
             </header>
 
             <div class="content-wrapper fade-in">
-<!-- Fondo de partículas -->
-  <div class="particles-bg"></div>
-
-  <!-- Header compacto -->
-  <header class="students-header text-white">
-    <div class="container">
-      <div class="row align-items-center">
-        <div class="col-md-8">
-          <div class="students-logo">
-            <div class="logo-placeholder">
-              <i class="fas fa-graduation-cap fa-2x"></i>
-            </div>
-            <div>
-              <h1>Bienestar StudentsPoint</h1>
-              <p>Cuida tu salud física y mental</p>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4 text-end">
-          <div class="auth-buttons">
-            <!-- Se actualiza dinámicamente con auth-header.js -->
-          </div>
-        </div>
-      </div>
-    </div>
-  </header>
-
-  <!-- Navegación compacta -->
-  
-
-  <!-- Contenido principal -->
-  <main class="main-content" style="position: relative; z-index: 2;">
-    <div class="container mt-3">
-      <!-- Secciones de bienestar -->
-      <div class="row mb-4">
-        <div class="col-12">
-          <div class="btn-group" role="group">
-            <button type="button" class="btn btn-outline-primary active" onclick="showSection('all')">
-              Todos
-            </button>
-            <button type="button" class="btn btn-outline-primary" onclick="showSection('kinesiologia')">
-              Kinesiología
-            </button>
-            <button type="button" class="btn btn-outline-primary" onclick="showSection('psicologia')">
-              Psicología
-            </button>
-            <button type="button" class="btn btn-outline-primary" onclick="showSection('nutricion')">
-              Nutrición
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Contenido dinámico -->
-      <div id="bienestarContent">
-        <!-- Kinesiología -->
-        <div class="row mb-4" id="kinesiologiaSection">
-          <div class="col-12">
-            <div class="card">
-              <div class="card-header">
-                <h5 class="mb-0"><i class="fas fa-dumbbell me-2"></i>Rutinas de Kinesiología</h5>
-              </div>
-              <div class="card-body">
-                <div class="row">
-                  <div class="col-md-4 mb-3">
-                    <div class="card h-100">
-                      <div class="card-body text-center">
-                        <i class="fas fa-running fa-2x text-primary mb-3"></i>
-                        <h6>Ejercicios de Espalda</h6>
-                        <p class="text-muted small">Rutina para aliviar tensiones</p>
-                        <button class="btn btn-primary btn-sm" onclick="startExercise('espalda')">
-                          <i class="fas fa-play"></i> Iniciar
-                        </button>
-                      </div>
+                <!-- Selector de Carrera -->
+                <div class="container mt-4" id="carrera-selector">
+                    <div class="text-center mb-5">
+                        <i class="fas fa-heart-pulse fa-4x mb-3 text-danger"></i>
+                        <h2 class="mb-3">Bienestar Estudiantil Personalizado</h2>
+                        <p class="text-muted">Consejos de salud física y mental adaptados a tu carrera</p>
                     </div>
-                  </div>
-                  <div class="col-md-4 mb-3">
-                    <div class="card h-100">
-                      <div class="card-body text-center">
-                        <i class="fas fa-eye fa-2x text-primary mb-3"></i>
-                        <h6>Ejercicios Visuales</h6>
-                        <p class="text-muted small">Para estudiantes que pasan mucho tiempo en pantallas</p>
-                        <button class="btn btn-primary btn-sm" onclick="startExercise('visual')">
-                          <i class="fas fa-play"></i> Iniciar
-                        </button>
-                      </div>
+                    
+                    <div class="row justify-content-center">
+                        <div class="col-md-8 col-lg-6">
+                            <div class="glass p-4">
+                                <h4 class="text-center mb-4">Selecciona tu Carrera</h4>
+                                <select class="form-select form-select-lg mb-4" id="carrera-select">
+                                    <option value="">Elige tu carrera...</option>
+                                    <option value="informatica">Ingeniería en Informática</option>
+                                    <option value="construccion" disabled>Ingeniería en Construcción (Próximamente)</option>
+                                    <option value="administracion" disabled>Administración de Empresas (Próximamente)</option>
+                                    <option value="diseno" disabled>Diseño Gráfico (Próximamente)</option>
+                                    <option value="electronica" disabled>Ingeniería en Electrónica (Próximamente)</option>
+                                </select>
+                                <button class="btn btn-gradient-purple btn-lg w-100" onclick="loadConsejos()" id="load-btn" disabled>
+                                    <i class="fas fa-heart"></i> Ver Consejos de Bienestar
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                  </div>
-                  <div class="col-md-4 mb-3">
-                    <div class="card h-100">
-                      <div class="card-body text-center">
-                        <i class="fas fa-heart fa-2x text-primary mb-3"></i>
-                        <h6>Cardio Suave</h6>
-                        <p class="text-muted small">Ejercicios cardiovasculares ligeros</p>
-                        <button class="btn btn-primary btn-sm" onclick="startExercise('cardio')">
-                          <i class="fas fa-play"></i> Iniciar
-                        </button>
-                      </div>
-                    </div>
-                  </div>
                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
 
-        <!-- Psicología -->
-        <div class="row mb-4" id="psicologiaSection">
-          <div class="col-12">
-            <div class="card">
-              <div class="card-header">
-                <h5 class="mb-0"><i class="fas fa-brain me-2"></i>Recursos de Salud Mental</h5>
-              </div>
-              <div class="card-body">
-                <div class="row">
-                  <div class="col-md-6 mb-3">
-                    <div class="card h-100">
-                      <div class="card-body">
-                        <h6><i class="fas fa-calendar-check me-2"></i>Agendar Cita Psicológica</h6>
-                        <p class="text-muted small">Sesiones de apoyo psicológico disponibles</p>
-                        <button class="btn btn-primary btn-sm" onclick="scheduleAppointment('psicologia')">
-                          <i class="fas fa-calendar-plus"></i> Agendar
+                <!-- Consejos de Bienestar -->
+                <div class="container mt-4" id="consejos-container" style="display: none;">
+                    <div class="text-center mb-4">
+                        <button class="btn btn-outline-secondary" onclick="backToSelector()">
+                            <i class="fas fa-arrow-left"></i> Cambiar Carrera
                         </button>
-                      </div>
                     </div>
-                  </div>
-                  <div class="col-md-6 mb-3">
-                    <div class="card h-100">
-                      <div class="card-body">
-                        <h6><i class="fas fa-book-open me-2"></i>Recursos de Autoayuda</h6>
-                        <p class="text-muted small">Técnicas de relajación y manejo del estrés</p>
-                        <button class="btn btn-primary btn-sm" onclick="showResources('autoayuda')">
-                          <i class="fas fa-book"></i> Ver Recursos
-                        </button>
-                      </div>
+
+                    <h3 class="mb-4" id="carrera-titulo"></h3>
+
+                    <!-- Tabs de categorías -->
+                    <ul class="nav nav-pills mb-4 justify-content-center" id="bienestar-tabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="fisico-tab" data-bs-toggle="pill" data-bs-target="#fisico" type="button" role="tab">
+                                <i class="fas fa-dumbbell"></i> Bienestar Físico
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="mental-tab" data-bs-toggle="pill" data-bs-target="#mental" type="button" role="tab">
+                                <i class="fas fa-brain"></i> Bienestar Mental
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="nutricional-tab" data-bs-toggle="pill" data-bs-target="#nutricional" type="button" role="tab">
+                                <i class="fas fa-apple-alt"></i> Nutrición
+                            </button>
+                        </li>
+                    </ul>
+
+                    <!-- Tab content -->
+                    <div class="tab-content" id="bienestar-content">
+                        <div class="tab-pane fade show active" id="fisico" role="tabpanel">
+                            <div class="row" id="fisico-content"></div>
+                        </div>
+                        <div class="tab-pane fade" id="mental" role="tabpanel">
+                            <div class="row" id="mental-content"></div>
+                        </div>
+                        <div class="tab-pane fade" id="nutricional" role="tabpanel">
+                            <div class="row" id="nutricional-content"></div>
+                        </div>
                     </div>
-                  </div>
                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Nutrición -->
-        <div class="row mb-4" id="nutricionSection">
-          <div class="col-12">
-            <div class="card">
-              <div class="card-header">
-                <h5 class="mb-0"><i class="fas fa-apple-alt me-2"></i>Consejos de Nutrición</h5>
-              </div>
-              <div class="card-body">
-                <div class="row">
-                  <div class="col-md-4 mb-3">
-                    <div class="card h-100">
-                      <div class="card-body text-center">
-                        <i class="fas fa-utensils fa-2x text-primary mb-3"></i>
-                        <h6>Plan de Comidas</h6>
-                        <p class="text-muted small">Menús saludables para estudiantes</p>
-                        <button class="btn btn-primary btn-sm" onclick="showMealPlan()">
-                          <i class="fas fa-utensils"></i> Ver Plan
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-md-4 mb-3">
-                    <div class="card h-100">
-                      <div class="card-body text-center">
-                        <i class="fas fa-calculator fa-2x text-primary mb-3"></i>
-                        <h6>Calculadora IMC</h6>
-                        <p class="text-muted small">Calcula tu índice de masa corporal</p>
-                        <button class="btn btn-primary btn-sm" onclick="openBMICalculator()">
-                          <i class="fas fa-calculator"></i> Calcular
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-md-4 mb-3">
-                    <div class="card h-100">
-                      <div class="card-body text-center">
-                        <i class="fas fa-user-md fa-2x text-primary mb-3"></i>
-                        <h6>Consulta Nutricional</h6>
-                        <p class="text-muted small">Agenda una consulta con nutricionista</p>
-                        <button class="btn btn-primary btn-sm" onclick="scheduleAppointment('nutricion')">
-                          <i class="fas fa-calendar-plus"></i> Agendar
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </main>
-
-  <!-- Footer compacto -->
-  <footer class="students-footer">
-    <div class="container">
-      <div class="row align-items-center">
-        <div class="col-md-6">
-          <h5 class="gradient-text">Bienestar StudentsPoint</h5>
-          <p>Cuida tu salud física y mental.</p>
-        </div>
-        <div class="col-md-6 text-end">
-          <p class="mb-0">
-            <i class="fas fa-heart-pulse"></i> Tu bienestar es nuestra prioridad
-          </p>
-        </div>
-      </div>
-    </div>
-  </footer>
-
-  <!-- Herramientas de desarrollo -->
-  <div class="dev-tools" style="display: none;">
-    <button onclick="window.StudentsPointPWA?.clearCache()" title="Limpiar Cache">
-      <i class="fas fa-sync-alt"></i>
-    </button>
-    <button onclick="window.StudentsPointPWA?.getVersion()" title="Versión">
-      <i class="fas fa-info-circle"></i>
-    </button>
-    <button onclick="window.open('/admin/', '_blank')" title="Administración">
-      <i class="fas fa-cog"></i>
-    </button>
-    <button onclick="window.open('/api/', '_blank')" title="API">
-      <i class="fas fa-code"></i>
-    </button>
-  </div>
-
-  <!-- Modal para ejercicios -->
-  <div class="modal fade" id="exerciseModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exerciseModalTitle">Ejercicio</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body" id="exerciseModalBody">
-          <!-- Contenido del ejercicio se cargará aquí -->
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-          <button type="button" class="btn btn-primary" id="startExerciseBtn">Iniciar</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal para calculadora IMC -->
-  <div class="modal fade" id="bmiModal" tabindex="-1">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Calculadora IMC</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          <form id="bmiForm">
-            <div class="mb-3">
-              <label for="height" class="form-label">Altura (cm)</label>
-              <input type="number" class="form-control" id="height" min="100" max="250" required>
-            </div>
-            <div class="mb-3">
-              <label for="weight" class="form-label">Peso (kg)</label>
-              <input type="number" class="form-control" id="weight" min="30" max="200" step="0.1" required>
-            </div>
-            <div class="mb-3">
-              <label for="age" class="form-label">Edad</label>
-              <input type="number" class="form-control" id="age" min="15" max="100" required>
-            </div>
-          </form>
-          <div id="bmiResult" class="mt-3" style="display: none;">
-            <div class="alert alert-info">
-              <h6>Resultado:</h6>
-              <p id="bmiValue"></p>
-              <p id="bmiCategory"></p>
-            </div>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-          <button type="button" class="btn btn-primary" onclick="calculateBMI()">Calcular</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Scripts -->
             </div>
         </main>
     </div>
 
     <!-- Scripts -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="/static/js/auth-api.js"></script>
-<script src="/static/js/auth-header.js"></script>
-<script src="/static/js/wellbeing-api.js"></script>
-<script src="/static/js/sounds.js"></script>
-<script src="/static/js/pwa.js"></script>
-<script src="/static/pwa-config.js"></script>
-<script src="/static/js/main.js"></script>
-<script src="/static/bienestar/bienestar.js"></script>
-<script>
-    // Mostrar herramientas de desarrollo solo en localhost
-    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-      document.querySelector('.dev-tools').style.display = 'flex';
-    }
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/js/mobile-menu.js"></script>
+    <script src="/static/js/auth-api.js"></script>
+    <script src="/static/js/main.js"></script>
+    
+    <script>
+        // Datos hardcodeados de ejemplo para Informática
+        const consejosInformatica = {
+            fisico: [
+                {
+                    titulo: "Ergonomía para Programadores",
+                    descripcion: "Aprende la postura correcta para largas jornadas frente al computador",
+                    contenido: `
+                        <h5>Postura Correcta</h5>
+                        <ul>
+                            <li>Monitor a la altura de los ojos</li>
+                            <li>Espalda recta, apoyada en el respaldo</li>
+                            <li>Pies completamente en el suelo</li>
+                            <li>Brazos en ángulo de 90 grados</li>
+                        </ul>
+                        <h5>Regla 20-20-20</h5>
+                        <p>Cada 20 minutos, mira algo a 20 pies (6 metros) por 20 segundos.</p>
+                    `,
+                    duracion: "5 min"
+                },
+                {
+                    titulo: "Ejercicios para Cuidar tu Vista",
+                    descripcion: "Reduce la fatiga visual por uso prolongado de pantallas",
+                    contenido: `
+                        <h5>Ejercicios Simples</h5>
+                        <ol>
+                            <li><strong>Parpadeo:</strong> 10 veces lentamente cada 20 min</li>
+                            <li><strong>Palming:</strong> Frota tus manos y colócalas sobre tus ojos cerrados por 30 seg</li>
+                            <li><strong>Enfoque:</strong> Alterna entre mirar algo cercano (30cm) y lejano (6m)</li>
+                        </ol>
+                        <p><strong>Tip:</strong> Usa filtros de luz azul o modo nocturno después de las 6 PM</p>
+                    `,
+                    duracion: "3 min"
+                },
+                {
+                    titulo: "Estiramientos Anti-Dolor",
+                    descripcion: "Rutina rápida para aliviar tensión de cuello y hombros",
+                    contenido: `
+                        <h5>Rutina de 5 Minutos</h5>
+                        <ol>
+                            <li><strong>Cuello:</strong> Inclina la cabeza a cada lado (10 seg cada uno)</li>
+                            <li><strong>Hombros:</strong> Encoge y suelta 10 veces</li>
+                            <li><strong>Muñecas:</strong> Círculos 10 veces en cada dirección</li>
+                            <li><strong>Espalda:</strong> Gira el torso sentado (15 seg cada lado)</li>
+                        </ol>
+                        <p><strong>Frecuencia:</strong> Cada 1-2 horas de coding</p>
+                    `,
+                    duracion: "5 min"
+                }
+            ],
+            mental: [
+                {
+                    titulo: "Manejo del Estrés en Exámenes",
+                    descripcion: "Técnicas para mantener la calma en períodos intensos",
+                    contenido: `
+                        <h5>Técnica de Respiración 4-7-8</h5>
+                        <ol>
+                            <li>Inhala por la nariz contando hasta 4</li>
+                            <li>Mantén el aire contando hasta 7</li>
+                            <li>Exhala por la boca contando hasta 8</li>
+                            <li>Repite 4 veces</li>
+                        </ol>
+                        <h5>Técnica Pomodoro</h5>
+                        <ul>
+                            <li>25 min de estudio concentrado</li>
+                            <li>5 min de descanso</li>
+                            <li>Después de 4 ciclos: 15-30 min de descanso largo</li>
+                        </ul>
+                    `,
+                    duracion: "10 min"
+                },
+                {
+                    titulo: "Síndrome del Impostor",
+                    descripcion: "Cómo lidiar con la sensación de no ser suficientemente bueno",
+                    contenido: `
+                        <h5>Eres Normal</h5>
+                        <p>El 70% de los programadores experimentan síndrome del impostor.</p>
+                        <h5>Estrategias</h5>
+                        <ul>
+                            <li>Documenta tus logros en un archivo "wins.md"</li>
+                            <li>Comparte tus dudas (descubrirás que muchos sienten lo mismo)</li>
+                            <li>Recuerda: nadie sabe TODO sobre programación</li>
+                            <li>Hacer preguntas es señal de inteligencia</li>
+                        </ul>
+                        <p><strong>Mantra:</strong> "Estoy exactamente donde debo estar"</p>
+                    `,
+                    duracion: "8 min"
+                },
+                {
+                    titulo: "Deep Work: Concentración Profunda",
+                    descripcion: "Técnicas para entrar en estado de flow",
+                    contenido: `
+                        <h5>Preparación del Entorno</h5>
+                        <ul>
+                            <li>Escritorio limpio, solo lo esencial</li>
+                            <li>Modo Focus: Bloquea todas las notificaciones</li>
+                            <li>VS Code Modo Zen: Ctrl/Cmd + K → Z</li>
+                        </ul>
+                        <h5>Time Blocking</h5>
+                        <ul>
+                            <li>09:00-11:00: Deep Work (tareas difíciles)</li>
+                            <li>11:00-11:30: Break</li>
+                            <li>11:30-13:00: Deep Work</li>
+                        </ul>
+                        <p><strong>Regla de Oro:</strong> Una ventana = Un proyecto</p>
+                    `,
+                    duracion: "12 min"
+                }
+            ],
+            nutricional: [
+                {
+                    titulo: "Alimentación para el Cerebro",
+                    descripcion: "Qué comer para maximizar rendimiento mental",
+                    contenido: `
+                        <h5>Top 5 Alimentos Brain-Boost</h5>
+                        <ol>
+                            <li><strong>Arándanos:</strong> Antioxidantes para memoria</li>
+                            <li><strong>Nueces:</strong> Omega-3 y vitamina E</li>
+                            <li><strong>Huevos:</strong> Colina para neurotransmisores</li>
+                            <li><strong>Aguacate:</strong> Grasas saludables</li>
+                            <li><strong>Chocolate negro (85%+):</strong> Flavonoides</li>
+                        </ol>
+                        <h5>Desayuno Power</h5>
+                        <p>2 huevos + avena con arándanos + té verde</p>
+                    `,
+                    duracion: "15 min"
+                },
+                {
+                    titulo: "Hidratación Óptima",
+                    descripcion: "Mantén tu cerebro hidratado para máximo rendimiento",
+                    contenido: `
+                        <h5>¿Cuánta Agua?</h5>
+                        <p><strong>Fórmula:</strong> 33ml x tu peso en kg</p>
+                        <p>Ejemplo: 70kg → 2.3 litros al día</p>
+                        <h5>Regla del Pomodoro Hidratante</h5>
+                        <p>Cada Pomodoro (25 min), toma un vaso de agua (200ml)</p>
+                        <p>8 Pomodoros = 1.6L de agua ✅</p>
+                        <h5>Señales de Deshidratación</h5>
+                        <ul>
+                            <li>Dolor de cabeza</li>
+                            <li>Dificultad para concentrarse</li>
+                            <li>Orina oscura</li>
+                        </ul>
+                    `,
+                    duracion: "5 min"
+                },
+                {
+                    titulo: "Cafeína: Guía de Uso",
+                    descripcion: "Cómo usar el café inteligentemente",
+                    contenido: `
+                        <h5>Límite Seguro</h5>
+                        <p><strong>Máximo:</strong> 400mg al día (4 tazas de café)</p>
+                        <h5>Timing Óptimo</h5>
+                        <ul>
+                            <li>Primera taza: 90-120 min después de despertar</li>
+                            <li>Segunda: 10:30-11:30 AM</li>
+                            <li>Última: Antes de las 14:00</li>
+                        </ul>
+                        <h5>Alternativas</h5>
+                        <p><strong>Té verde:</strong> Cafeína + L-teanina = Concentración sin nerviosismo</p>
+                        <p><strong>Nap Coffee:</strong> Toma café → Siesta 20 min → Energía máxima</p>
+                    `,
+                    duracion: "7 min"
+                }
+            ]
+        };
 
-    // Variables globales
-    let currentSection = 'all';
+        let carreraActual = '';
 
-    // Cargar contenido al iniciar
-    document.addEventListener('DOMContentLoaded', function() {
-      // Sonido de carga de página
-      setTimeout(() => {
-        if (window.playSound) {
-          window.playSound('pageLoad');
-        }
-      }, 500);
-
-      // Agregar efectos hover con sonido
-      const cards = document.querySelectorAll('.card');
-      cards.forEach(card => {
-        card.addEventListener('mouseenter', () => {
-          if (window.playSound) {
-            window.playSound('hover');
-          }
+        // Habilitar botón cuando se selecciona carrera
+        document.getElementById('carrera-select').addEventListener('change', function() {
+            const loadBtn = document.getElementById('load-btn');
+            loadBtn.disabled = !this.value;
         });
-      });
-    });
 
-    // Mostrar sección específica
-    function showSection(section) {
-      currentSection = section;
-      
-      // Actualizar botones activos
-      document.querySelectorAll('.btn-group .btn').forEach(btn => {
-        btn.classList.remove('active');
-      });
-      event.target.classList.add('active');
-      
-      // Mostrar/ocultar secciones
-      const sections = ['kinesiologia', 'psicologia', 'nutricion'];
-      sections.forEach(sec => {
-        const element = document.getElementById(sec + 'Section');
-        if (section === 'all' || section === sec) {
-          element.style.display = 'block';
-        } else {
-          element.style.display = 'none';
+        function loadConsejos() {
+            const select = document.getElementById('carrera-select');
+            carreraActual = select.value;
+            
+            if (!carreraActual) return;
+            
+            // Ocultar selector, mostrar contenido
+            document.getElementById('carrera-selector').style.display = 'none';
+            document.getElementById('consejos-container').style.display = 'block';
+            
+            // Actualizar título
+            document.getElementById('carrera-titulo').textContent = select.options[select.selectedIndex].text;
+            
+            // Cargar consejos
+            if (carreraActual === 'informatica') {
+                cargarConsejosInformatica();
+            }
         }
-      });
-      
-      if (window.playSound) {
-        window.playSound('click');
-      }
-    }
 
-    // Iniciar ejercicio
-    function startExercise(type) {
-      const exercises = {
-        espalda: {
-          title: 'Ejercicios de Espalda',
-          content: `
-            <div class="text-center">
-              <h6>Rutina de 10 minutos</h6>
-              <ol class="text-start">
-                <li>Estiramiento de cuello (2 min)</li>
-                <li>Rotaciones de hombros (2 min)</li>
-                <li>Estiramiento de espalda baja (3 min)</li>
-                <li>Ejercicios de postura (3 min)</li>
-              </ol>
-              <div class="alert alert-info">
-                <i class="fas fa-info-circle"></i> Realiza cada ejercicio de forma suave y controlada.
-              </div>
-            </div>
-          `
-        },
-        visual: {
-          title: 'Ejercicios Visuales',
-          content: `
-            <div class="text-center">
-              <h6>Rutina de 5 minutos</h6>
-              <ol class="text-start">
-                <li>Parpadeo consciente (1 min)</li>
-                <li>Enfoque lejano-cercano (2 min)</li>
-                <li>Movimientos oculares (2 min)</li>
-              </ol>
-              <div class="alert alert-info">
-                <i class="fas fa-info-circle"></i> Haz una pausa cada 20 minutos de pantalla.
-              </div>
-            </div>
-          `
-        },
-        cardio: {
-          title: 'Cardio Suave',
-          content: `
-            <div class="text-center">
-              <h6>Rutina de 15 minutos</h6>
-              <ol class="text-start">
-                <li>Calentamiento (3 min)</li>
-                <li>Marcha en el lugar (5 min)</li>
-                <li>Ejercicios de brazos (4 min)</li>
-                <li>Enfriamiento (3 min)</li>
-              </ol>
-              <div class="alert alert-info">
-                <i class="fas fa-info-circle"></i> Mantén un ritmo cómodo y respira profundamente.
-              </div>
-            </div>
-          `
+        function cargarConsejosInformatica() {
+            // Físico
+            const fisicoContent = document.getElementById('fisico-content');
+            fisicoContent.innerHTML = consejosInformatica.fisico.map(consejo => `
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="glass h-100">
+                        <div class="p-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="fas fa-dumbbell fa-2x text-primary me-3"></i>
+                                <div>
+                                    <h5 class="mb-0">${consejo.titulo}</h5>
+                                    <small class="text-muted"><i class="fas fa-clock"></i> ${consejo.duracion}</small>
+                                </div>
+                            </div>
+                            <p class="text-muted small">${consejo.descripcion}</p>
+                            <button class="btn btn-outline-primary btn-sm w-100" onclick='mostrarDetalle(${JSON.stringify(consejo)})'>
+                                <i class="fas fa-info-circle"></i> Ver Detalles
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Mental
+            const mentalContent = document.getElementById('mental-content');
+            mentalContent.innerHTML = consejosInformatica.mental.map(consejo => `
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="glass h-100">
+                        <div class="p-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="fas fa-brain fa-2x text-info me-3"></i>
+                                <div>
+                                    <h5 class="mb-0">${consejo.titulo}</h5>
+                                    <small class="text-muted"><i class="fas fa-clock"></i> ${consejo.duracion}</small>
+                                </div>
+                            </div>
+                            <p class="text-muted small">${consejo.descripcion}</p>
+                            <button class="btn btn-outline-info btn-sm w-100" onclick='mostrarDetalle(${JSON.stringify(consejo)})'>
+                                <i class="fas fa-info-circle"></i> Ver Detalles
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Nutricional
+            const nutricionalContent = document.getElementById('nutricional-content');
+            nutricionalContent.innerHTML = consejosInformatica.nutricional.map(consejo => `
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="glass h-100">
+                        <div class="p-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="fas fa-apple-alt fa-2x text-success me-3"></i>
+                                <div>
+                                    <h5 class="mb-0">${consejo.titulo}</h5>
+                                    <small class="text-muted"><i class="fas fa-clock"></i> ${consejo.duracion}</small>
+                                </div>
+                            </div>
+                            <p class="text-muted small">${consejo.descripcion}</p>
+                            <button class="btn btn-outline-success btn-sm w-100" onclick='mostrarDetalle(${JSON.stringify(consejo)})'>
+                                <i class="fas fa-info-circle"></i> Ver Detalles
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
         }
-      };
 
-      const exercise = exercises[type];
-      if (exercise) {
-        document.getElementById('exerciseModalTitle').textContent = exercise.title;
-        document.getElementById('exerciseModalBody').innerHTML = exercise.content;
-        
-        const modal = new bootstrap.Modal(document.getElementById('exerciseModal'));
-        modal.show();
-        
-        if (window.playSound) {
-          window.playSound('click');
+        function mostrarDetalle(consejo) {
+            // Crear modal dinámicamente
+            const modalHtml = `
+                <div class="modal fade" id="detalleModal" tabindex="-1">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">${consejo.titulo}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                ${consejo.contenido}
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Eliminar modal anterior si existe
+            const oldModal = document.getElementById('detalleModal');
+            if (oldModal) oldModal.remove();
+            
+            // Agregar nuevo modal
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            
+            // Mostrar modal
+            const modal = new bootstrap.Modal(document.getElementById('detalleModal'));
+            modal.show();
+            
+            // Limpiar al cerrar
+            document.getElementById('detalleModal').addEventListener('hidden.bs.modal', function() {
+                this.remove();
+            });
         }
-      }
-    }
 
-    // Agendar cita
-    function scheduleAppointment(type) {
-      const types = {
-        psicologia: 'Psicológica',
-        nutricion: 'Nutricional'
-      };
-      
-      showSuccess(`Función de agendamiento de cita ${types[type]} en desarrollo`);
-      
-      if (window.playSound) {
-        window.playSound('click');
-      }
-    }
-
-    // Mostrar recursos
-    function showResources(type) {
-      showSuccess('Recursos de autoayuda en desarrollo');
-      
-      if (window.playSound) {
-        window.playSound('click');
-      }
-    }
-
-    // Mostrar plan de comidas
-    function showMealPlan() {
-      showSuccess('Plan de comidas en desarrollo');
-      
-      if (window.playSound) {
-        window.playSound('click');
-      }
-    }
-
-    // Abrir calculadora IMC
-    function openBMICalculator() {
-      const modal = new bootstrap.Modal(document.getElementById('bmiModal'));
-      modal.show();
-      
-      if (window.playSound) {
-        window.playSound('click');
-      }
-    }
-
-    // Calcular IMC
-    function calculateBMI() {
-      const height = parseFloat(document.getElementById('height').value) / 100; // Convertir a metros
-      const weight = parseFloat(document.getElementById('weight').value);
-      const age = parseInt(document.getElementById('age').value);
-      
-      if (!height || !weight || !age) {
-        showError('Por favor completa todos los campos');
-        return;
-      }
-      
-      const bmi = weight / (height * height);
-      const category = getBMICategory(bmi);
-      
-      document.getElementById('bmiValue').textContent = `IMC: ${bmi.toFixed(1)}`;
-      document.getElementById('bmiCategory').textContent = `Categoría: ${category}`;
-      document.getElementById('bmiResult').style.display = 'block';
-      
-      if (window.playSound) {
-        window.playSound('success');
-      }
-    }
-
-    // Obtener categoría IMC
-    function getBMICategory(bmi) {
-      if (bmi < 18.5) return 'Bajo peso';
-      if (bmi < 25) return 'Peso normal';
-      if (bmi < 30) return 'Sobrepeso';
-      return 'Obesidad';
-    }
-
-    // Mostrar error
-    function showError(message) {
-      const alertDiv = document.createElement('div');
-      alertDiv.className = 'alert alert-danger alert-dismissible fade show';
-      alertDiv.innerHTML = `
-        ${message}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-      `;
-      
-      const container = document.querySelector('.container');
-      container.insertBefore(alertDiv, container.firstChild);
-      
-      setTimeout(() => {
-        if (alertDiv.parentNode) {
-          alertDiv.remove();
+        function backToSelector() {
+            document.getElementById('carrera-selector').style.display = 'block';
+            document.getElementById('consejos-container').style.display = 'none';
         }
-      }, 5000);
-    }
 
-    // Mostrar éxito
-    function showSuccess(message) {
-      const alertDiv = document.createElement('div');
-      alertDiv.className = 'alert alert-success alert-dismissible fade show';
-      alertDiv.innerHTML = `
-        ${message}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-      `;
-      
-      const container = document.querySelector('.container');
-      container.insertBefore(alertDiv, container.firstChild);
-      
-      setTimeout(() => {
-        if (alertDiv.parentNode) {
-          alertDiv.remove();
+        function logout() {
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('refresh_token');
+            window.location.href = '/login.html';
         }
-      }, 3000);
-    }
-  </script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="/static/js/sounds.js"></script>
-<script src="/static/js/pwa.js"></script>
-<script src="/static/pwa-config.js"></script>
-<script src="/static/js/main.js"></script>
+
+        // Cargar usuario
+        document.addEventListener('DOMContentLoaded', function() {
+            const userName = localStorage.getItem('user_name') || 'Usuario';
+            const userRole = localStorage.getItem('user_career') || 'Estudiante';
+            document.getElementById('sidebarUserName').textContent = userName;
+            document.getElementById('sidebarUserRole').textContent = userRole;
+        });
+    </script>
 </body>
 </html>
