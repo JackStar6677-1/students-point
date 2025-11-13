@@ -1,154 +1,215 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-bs-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StudentsPoint | Reportes</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="/static/css/students-theme.css">
-    <link rel="stylesheet" href="/static/css/styles.css">
+    <title>Reportes - StudentsPoint</title>
+    
+    <!-- Bootstrap 5.3.2 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome 6.5.1 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="/static/css/theme-dark.css">
+    <link rel="stylesheet" href="/static/css/base-layout.css">
+    <link rel="stylesheet" href="/static/css/animations.css">
     <link rel="stylesheet" href="/static/css/reportes.css">
+    
+    <!-- PWA -->
+    <link rel="manifest" href="/static/manifest.json">
+    <meta name="theme-color" content="#1a1a1b">
+    <link rel="icon" href="/static/favicon.ico">
 </head>
-<body class="bg-light">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <div class="container">
-            <a class="navbar-brand" href="/">
-                <i class="fas fa-graduation-cap me-2"></i>StudentsPoint
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="mainNavbar">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/">Inicio</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/forum/foro.html">Foro</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/market/mercado.html">Marketplace</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="/reportes/reportes.html">Reportes</a>
-                    </li>
-                </ul>
-                <div class="d-flex auth-buttons"></div>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="brand-section">
+                    <img src="/static/images/Logo_StudentsPoint.svg.png" alt="StudentsPoint" class="brand-logo">
+                    <h1 class="brand-title">StudentsPoint</h1>
+                </div>
+                <div class="user-section">
+                    <div class="user-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="user-info">
+                        <span class="user-name" id="sidebarUserName">Cargando...</span>
+                        <span class="user-role" id="sidebarUserRole">Estudiante</span>
+                    </div>
+                </div>
             </div>
-        </div>
-    </nav>
+            
+            <div class="sidebar-menu">
+                <a href="/" class="menu-item">
+                    <i class="fas fa-home"></i>
+                    <span>Inicio</span>
+                </a>
+                <a href="/forum/" class="menu-item">
+                    <i class="fas fa-comments"></i>
+                    <span>Foro</span>
+                </a>
+                <a href="/market/" class="menu-item">
+                    <i class="fas fa-store"></i>
+                    <span>Marketplace</span>
+                </a>
+                <a href="/portfolio/" class="menu-item">
+                    <i class="fas fa-briefcase"></i>
+                    <span>Portafolio</span>
+                </a>
+                <a href="/cursos/" class="menu-item">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>Cursos</span>
+                </a>
+                <a href="/encuestas/" class="menu-item">
+                    <i class="fas fa-poll"></i>
+                    <span>Encuestas</span>
+                </a>
+                <a href="/reportes/" class="menu-item active">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Reportes</span>
+                </a>
+                <a href="/bienestar/" class="menu-item">
+                    <i class="fas fa-heart"></i>
+                    <span>Bienestar</span>
+                </a>
+                <a href="/converter/" class="menu-item">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Conversor</span>
+                </a>
+                <a href="/streetview/" class="menu-item">
+                    <i class="fas fa-map-marked-alt"></i>
+                    <span>Recorridos</span>
+                </a>
+            </div>
+            
+            <div class="sidebar-footer">
+                <a href="/account.html" class="menu-item">
+                    <i class="fas fa-user-circle"></i>
+                    <span>Mi Cuenta</span>
+                </a>
+                <a href="#" class="menu-item" onclick="logout(); return false;">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Cerrar Sesion</span>
+                </a>
+            </div>
+        </aside>
 
-    <main class="py-5">
-        <div class="container">
-            <header class="mb-4">
-                <h1 class="h3 mb-1">
-                    <i class="fas fa-chart-bar me-2 text-primary"></i>Centro de reportes y estadísticas
-                </h1>
-                <p class="text-muted mb-0">
-                    Analiza la actividad de la plataforma, descarga reportes y toma decisiones informadas para tu comunidad estudiantil.
-                </p>
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-header">
+                <h1 class="header-title">Reportes y Estadísticas</h1>
+                <div class="header-actions">
+                    <button class="btn-icon" id="notificationsBtn" title="Notificaciones">
+                        <i class="fas fa-bell"></i>
+                    </button>
+                    <button class="btn-icon" id="settingsBtn" title="Configuracion">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                </div>
             </header>
 
-            <section class="filtros-section mb-5">
-                <h2 class="h5 mb-3"><i class="fas fa-sliders-h me-2 text-primary"></i>Filtros</h2>
-                <div class="row g-3">
-                    <div class="col-md-3">
-                        <label for="filtroFechaInicio" class="form-label">Fecha inicio</label>
-                        <input type="date" id="filtroFechaInicio" class="form-control">
-                    </div>
-                    <div class="col-md-3">
-                        <label for="filtroFechaFin" class="form-label">Fecha fin</label>
-                        <input type="date" id="filtroFechaFin" class="form-control">
-                    </div>
-                    <div class="col-md-3">
-                        <label for="filtroTipo" class="form-label">Categoría</label>
-                        <select id="filtroTipo" class="form-select">
-                            <option value="">Todas las categorías</option>
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <label for="filtroCampus" class="form-label">Campus</label>
-                        <select id="filtroCampus" class="form-select">
-                            <option value="">Todas las sedes</option>
-                        </select>
-                    </div>
+            <div class="content-wrapper fade-in">
+                <div class="glass p-4 mb-4">
+                    <p class="text-muted mb-0">
+                        Analiza la actividad de la plataforma, descarga reportes y toma decisiones informadas para tu comunidad estudiantil.
+                    </p>
                 </div>
-                <div class="d-flex justify-content-end gap-2 mt-3">
-                    <button id="btnLimpiarFiltros" class="btn btn-outline-secondary">
-                        <i class="fas fa-eraser me-2"></i>Limpiar filtros
-                    </button>
-                    <button id="btnAplicarFiltros" class="btn btn-primary">
-                        <i class="fas fa-filter me-2"></i>Aplicar filtros
-                    </button>
-                </div>
-            </section>
 
-            <section class="mb-5">
-                <div class="row g-3">
-                    <div class="col-md-3">
-                        <div class="kpi-card shadow-sm">
-                            <h3 id="totalReportes" class="kpi-value">0</h3>
-                            <p class="kpi-label">Reportes totales</p>
-                            <span class="kpi-trend text-primary" id="totalReportesTrend"><i class="fas fa-sync-alt"></i> Actualizado</span>
+                <div class="glass p-4 mb-4">
+                    <h2 class="h5 mb-3"><i class="fas fa-sliders-h me-2"></i>Filtros</h2>
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <label for="filtroFechaInicio" class="form-label">Fecha inicio</label>
+                            <input type="date" id="filtroFechaInicio" class="form-control">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="filtroFechaFin" class="form-label">Fecha fin</label>
+                            <input type="date" id="filtroFechaFin" class="form-control">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="filtroTipo" class="form-label">Categoría</label>
+                            <select id="filtroTipo" class="form-select">
+                                <option value="">Todas las categorías</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="filtroCampus" class="form-label">Campus</label>
+                            <select id="filtroCampus" class="form-select">
+                                <option value="">Todas las sedes</option>
+                            </select>
                         </div>
                     </div>
-                    <div class="col-md-3">
-                        <div class="kpi-card shadow-sm">
-                            <h3 id="reportesRevision" class="kpi-value">0</h3>
-                            <p class="kpi-label">En revisión</p>
-                            <span class="kpi-trend text-warning" id="reportesRevisionTrend"><i class="fas fa-hourglass-half"></i> Sin cambios</span>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="kpi-card shadow-sm">
-                            <h3 id="reportesResueltos" class="kpi-value">0</h3>
-                            <p class="kpi-label">Resueltos</p>
-                            <span class="kpi-trend text-success" id="reportesResueltosTrend"><i class="fas fa-check"></i> Buen trabajo</span>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="kpi-card shadow-sm">
-                            <h3 id="reportesPendientes" class="kpi-value">0</h3>
-                            <p class="kpi-label">Pendientes</p>
-                            <span class="kpi-trend text-muted" id="reportesPendientesTrend"><i class="fas fa-clock"></i> Actualizar filtros</span>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <section class="mb-5">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h2 class="h5 mb-0"><i class="fas fa-chart-line me-2 text-primary"></i>Visualizaciones</h2>
-                    <div class="btn-group">
-                        <button id="btnExportarExcel" class="btn btn-outline-success">
-                            <i class="fas fa-file-excel me-2"></i>Exportar Excel
+                    <div class="d-flex justify-content-end gap-2 mt-3">
+                        <button id="btnLimpiarFiltros" class="btn btn-outline-secondary">
+                            <i class="fas fa-eraser me-2"></i>Limpiar filtros
                         </button>
-                        <button id="btnExportarPDF" class="btn btn-outline-danger">
-                            <i class="fas fa-file-pdf me-2"></i>Exportar PDF
+                        <button id="btnAplicarFiltros" class="btn btn-gradient-purple">
+                            <i class="fas fa-filter me-2"></i>Aplicar filtros
                         </button>
                     </div>
                 </div>
-                <div class="row g-3">
-                    <div class="col-lg-6">
-                        <div class="card shadow-sm">
-                            <div class="card-header bg-white">
-                                <h3 class="card-title h6 mb-0"><i class="fas fa-users me-2 text-primary"></i>Actividad de usuarios</h3>
+
+                <div class="glass p-4 mb-4">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <div class="kpi-card">
+                                <h3 id="totalReportes" class="kpi-value">0</h3>
+                                <p class="kpi-label">Reportes totales</p>
+                                <span class="kpi-trend text-primary" id="totalReportesTrend"><i class="fas fa-sync-alt"></i> Actualizado</span>
                             </div>
-                            <div class="card-body">
+                        </div>
+                        <div class="col-md-3">
+                            <div class="kpi-card">
+                                <h3 id="reportesRevision" class="kpi-value">0</h3>
+                                <p class="kpi-label">En revisión</p>
+                                <span class="kpi-trend text-warning" id="reportesRevisionTrend"><i class="fas fa-hourglass-half"></i> Sin cambios</span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="kpi-card">
+                                <h3 id="reportesResueltos" class="kpi-value">0</h3>
+                                <p class="kpi-label">Resueltos</p>
+                                <span class="kpi-trend text-success" id="reportesResueltosTrend"><i class="fas fa-check"></i> Buen trabajo</span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="kpi-card">
+                                <h3 id="reportesPendientes" class="kpi-value">0</h3>
+                                <p class="kpi-label">Pendientes</p>
+                                <span class="kpi-trend text-muted" id="reportesPendientesTrend"><i class="fas fa-clock"></i> Actualizar filtros</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass p-4 mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h2 class="h5 mb-0"><i class="fas fa-chart-line me-2"></i>Visualizaciones</h2>
+                        <div class="btn-group">
+                            <button id="btnExportarExcel" class="btn btn-outline-success">
+                                <i class="fas fa-file-excel me-2"></i>Exportar Excel
+                            </button>
+                            <button id="btnExportarPDF" class="btn btn-outline-danger">
+                                <i class="fas fa-file-pdf me-2"></i>Exportar PDF
+                            </button>
+                        </div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-6">
+                            <div class="glass p-3">
+                                <h3 class="h6 mb-3"><i class="fas fa-users me-2"></i>Actividad de usuarios</h3>
                                 <div class="chart-placeholder" id="chartActividad">
                                     <i class="fas fa-chart-area"></i>
                                     <p>Próximamente: gráfico de actividad diaria.</p>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-lg-6">
-                        <div class="card shadow-sm">
-                            <div class="card-header bg-white">
-                                <h3 class="card-title h6 mb-0"><i class="fas fa-smile-beam me-2 text-primary"></i>Satisfacción de estudiantes</h3>
-                            </div>
-                            <div class="card-body">
+                        <div class="col-lg-6">
+                            <div class="glass p-3">
+                                <h3 class="h6 mb-3"><i class="fas fa-smile-beam me-2"></i>Satisfacción de estudiantes</h3>
                                 <div class="chart-placeholder" id="chartSatisfaccion">
                                     <i class="fas fa-chart-pie"></i>
                                     <p>Próximamente: distribución de niveles de satisfacción.</p>
@@ -157,26 +218,27 @@
                         </div>
                     </div>
                 </div>
-            </section>
 
-            <section class="mb-5">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h2 class="h5 mb-0"><i class="fas fa-list-ul me-2 text-primary"></i>Reportes encontrados</h2>
-                    <span class="text-muted" id="reportesResultadoResumen"></span>
+                <div class="glass p-4 mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h2 class="h5 mb-0"><i class="fas fa-list-ul me-2"></i>Reportes encontrados</h2>
+                        <span class="text-muted" id="reportesResultadoResumen"></span>
+                    </div>
+                    <div id="reportesLoading" class="reportes-loading text-center py-4" style="display: none;">
+                        <div class="spinner-border text-primary" role="status"></div>
+                        <p class="text-muted mt-3 mb-0">Cargando reportes...</p>
+                    </div>
+                    <div id="reportesLista" class="reports-grid"></div>
+                    <div id="reportesVacio" class="alert alert-light text-center" style="display: none;">
+                        <i class="fas fa-info-circle me-2"></i>No se encontraron reportes para los filtros seleccionados.
+                    </div>
                 </div>
-                <div id="reportesLoading" class="reportes-loading text-center py-4" style="display: none;">
-                    <div class="spinner-border text-primary" role="status"></div>
-                    <p class="text-muted mt-3 mb-0">Cargando reportes...</p>
-                </div>
-                <div id="reportesLista" class="reports-grid"></div>
-                <div id="reportesVacio" class="alert alert-light text-center" style="display: none;">
-                    <i class="fas fa-info-circle me-2"></i>No se encontraron reportes para los filtros seleccionados.
-                </div>
-            </section>
-        </div>
-    </main>
+            </div>
+        </main>
+    </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/js/mobile-menu.js"></script>
     <script src="/static/js/auth-api.js"></script>
     <script src="/static/js/auth-header.js"></script>
     <script src="/static/js/main.js"></script>

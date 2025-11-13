@@ -14,6 +14,7 @@
     
     <!-- Custom Styles -->
     <link rel="stylesheet" href="/static/css/theme-dark.css">
+    <link rel="stylesheet" href="/static/css/base-layout.css">
     <link rel="stylesheet" href="/static/css/animations.css">
     <link rel="stylesheet" href="/static/css/components.css">
     <link rel="stylesheet" href="/static/css/homepage.css">
@@ -28,9 +29,10 @@
     <meta name="description" content="StudentsPoint - Plataforma integral para estudiantes de Duoc UC">
     <meta name="author" content="StudentsPoint Team">
 </head>
-<body class="homepage-body">
+<body>
+    <div class="app-container">
     <!-- Sidebar Navigation -->
-    <nav class="sidebar-nav">
+    <aside class="sidebar">
         <div class="sidebar-header">
             <div class="brand-section">
                 <img src="/static/images/Logo_StudentsPoint.svg.png" alt="StudentsPoint" class="brand-logo">
@@ -88,49 +90,41 @@
                 <i class="fas fa-file-export"></i>
                 <span>Conversor</span>
             </a>
+        </div>
+        
+        <div class="sidebar-footer">
             <a href="/account.html" class="menu-item">
-                <i class="fas fa-user-cog"></i>
-                <span>Mi Perfil</span>
+                <i class="fas fa-user-circle"></i>
+                <span>Mi Cuenta</span>
             </a>
-            <a href="#" class="menu-item" onclick="logout()">
+            <a href="#" class="menu-item" onclick="logout(); return false;">
                 <i class="fas fa-sign-out-alt"></i>
                 <span>Cerrar Sesión</span>
             </a>
         </div>
-        
-        <div class="sidebar-footer">
-            <div class="footer-links">
-                <a href="#" class="footer-link">Privacidad</a>
-                <a href="#" class="footer-link">Términos</a>
-                <a href="#" class="footer-link">Ayuda</a>
-            </div>
-        </div>
-    </nav>
+    </aside>
     
     <!-- Main Content -->
     <main class="main-content">
         <!-- Top Header -->
         <header class="top-header">
-            <div class="header-left">
-                <h2 class="page-title">Inicio</h2>
-                <p class="page-subtitle">Bienvenido a StudentsPoint</p>
-            </div>
-            <div class="header-right">
-                <button class="btn btn-outline-primary btn-sm" id="install-button" style="display: none;">
-                    <i class="fas fa-download"></i> Instalar App
+            <h1 class="header-title">Inicio</h1>
+            <div class="header-actions">
+                <button class="btn btn-gradient-purple btn-sm" id="install-button" style="display: none;">
+                    <i class="fas fa-download me-1"></i> Instalar App
                 </button>
-                <button class="btn btn-outline-secondary btn-sm" id="settingsBtn">
+                <button class="btn-icon" id="notificationsBtn" title="Notificaciones">
+                    <i class="fas fa-bell"></i>
+                    <span class="badge bg-danger position-absolute top-0 start-100 translate-middle" id="notificationCount" style="font-size: 0.6rem;">3</span>
+                </button>
+                <button class="btn-icon" id="settingsBtn" title="Configuracion">
                     <i class="fas fa-cog"></i>
                 </button>
-                <div class="notification-badge">
-                    <i class="fas fa-bell"></i>
-                    <span class="badge bg-danger" id="notificationCount">3</span>
-                </div>
             </div>
         </header>
         
         <!-- Content Area -->
-        <div class="content-area">
+        <div class="content-wrapper fade-in">
             <!-- Quick Actions -->
             <div class="quick-actions">
                 <div class="action-card" onclick="window.location.href='/forum/'">
@@ -266,6 +260,7 @@
             </div>
         </div>
     </main>
+    </div>
     
     <!-- Help Button -->
     <div class="help-button">
@@ -275,6 +270,7 @@
     </div>
     
     <!-- Scripts -->
+    <script src="/static/js/mobile-menu.js"></script>
     <script src="/static/js/sounds.js"></script>
     <script src="/static/js/pwa.js"></script>
     <script src="/static/pwa-config.js"></script>

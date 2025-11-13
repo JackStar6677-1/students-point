@@ -360,3 +360,329 @@ body {
     }
 }
 
+/* ========================================
+   RESPONSIVE DESIGN - MOBILE FIRST
+   ======================================== */
+
+/* Tablet y pantallas medianas (max-width: 1024px) */
+@media (max-width: 1024px) {
+    .sidebar {
+        width: 260px;
+    }
+    
+    .main-content {
+        margin-left: 260px;
+    }
+    
+    .top-header {
+        padding: 12px 20px;
+    }
+    
+    .header-title {
+        font-size: 20px;
+    }
+    
+    .content-wrapper {
+        padding: 20px;
+    }
+}
+
+/* Mobile y tablets pequeñas (max-width: 768px) */
+@media (max-width: 768px) {
+    /* Sidebar oculto por defecto en mobile */
+    .sidebar {
+        position: fixed;
+        left: -280px;
+        width: 280px;
+        transition: left 0.3s ease;
+        z-index: 1000;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+    }
+    
+    .sidebar.active {
+        left: 0;
+    }
+    
+    /* Main content ocupa todo el ancho */
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+    }
+    
+    /* Header mobile */
+    .top-header {
+        padding: 12px 16px;
+        gap: 12px;
+    }
+    
+    .header-title {
+        font-size: 18px;
+    }
+    
+    .header-actions {
+        gap: 8px;
+    }
+    
+    .header-actions .btn {
+        padding: 6px 12px;
+        font-size: 0.875rem;
+    }
+    
+    .header-actions .btn-icon {
+        width: 36px;
+        height: 36px;
+    }
+    
+    /* Content wrapper */
+    .content-wrapper {
+        padding: 16px;
+    }
+    
+    /* Glass cards más compactos */
+    .glass {
+        padding: 16px !important;
+    }
+    
+    /* Botón hamburguesa para mobile */
+    .mobile-menu-toggle {
+        display: block;
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 999;
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+    }
+    
+    .mobile-menu-toggle:active {
+        transform: scale(0.95);
+    }
+    
+    /* Overlay para cerrar sidebar */
+    .sidebar-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+    }
+    
+    .sidebar-overlay.active {
+        display: block;
+    }
+    
+    /* User section más compacto */
+    .sidebar .user-section {
+        padding: 12px;
+    }
+    
+    .sidebar .user-avatar {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+    }
+    
+    .sidebar .user-name {
+        font-size: 14px;
+    }
+    
+    .sidebar .user-role {
+        font-size: 11px;
+    }
+    
+    /* Menu items más compactos */
+    .sidebar-menu .menu-item {
+        padding: 12px 16px;
+        font-size: 14px;
+    }
+    
+    .sidebar-menu .menu-item i {
+        font-size: 18px;
+    }
+}
+
+/* Mobile pequeño (max-width: 480px) */
+@media (max-width: 480px) {
+    .top-header {
+        padding: 10px 12px;
+        flex-wrap: wrap;
+    }
+    
+    .header-title {
+        font-size: 16px;
+        flex: 1;
+    }
+    
+    .header-actions {
+        gap: 6px;
+    }
+    
+    .header-actions .btn {
+        padding: 6px 10px;
+        font-size: 0.8rem;
+    }
+    
+    .header-actions .btn-icon {
+        width: 32px;
+        height: 32px;
+        font-size: 14px;
+    }
+    
+    /* Ocultar textos en botones si es necesario */
+    .header-actions .btn .me-1,
+    .header-actions .btn .me-2 {
+        margin: 0;
+    }
+    
+    .header-actions .btn span {
+        display: none;
+    }
+    
+    .content-wrapper {
+        padding: 12px;
+    }
+    
+    .glass {
+        padding: 12px !important;
+        margin-bottom: 12px !important;
+    }
+    
+    /* Formularios más compactos */
+    .form-control,
+    .form-select {
+        font-size: 14px;
+        padding: 8px 12px;
+    }
+    
+    .btn {
+        padding: 8px 16px;
+        font-size: 14px;
+    }
+    
+    /* Modales full screen en mobile */
+    .modal-dialog {
+        margin: 0;
+        max-width: 100%;
+        height: 100%;
+    }
+    
+    .modal-content {
+        height: 100%;
+        border-radius: 0;
+    }
+}
+
+/* Landscape mode en mobile */
+@media (max-height: 500px) and (orientation: landscape) {
+    .sidebar {
+        overflow-y: auto;
+    }
+    
+    .sidebar-header {
+        padding: 12px;
+    }
+    
+    .brand-title {
+        font-size: 18px;
+    }
+    
+    .user-section {
+        padding: 10px;
+    }
+    
+    .sidebar-menu .menu-item {
+        padding: 10px 16px;
+    }
+}
+
+/* Touch devices optimizations */
+@media (hover: none) and (pointer: coarse) {
+    /* Áreas táctiles más grandes */
+    .menu-item,
+    .btn,
+    button {
+        min-height: 44px; /* Tamaño mínimo recomendado para touch */
+    }
+    
+    .btn-icon {
+        min-width: 44px;
+        min-height: 44px;
+    }
+    
+    /* Eliminar hover effects en touch */
+    .menu-item:hover,
+    .btn:hover {
+        transform: none;
+    }
+    
+    /* Feedback visual al tocar */
+    .menu-item:active,
+    .btn:active {
+        transform: scale(0.98);
+        opacity: 0.8;
+    }
+}
+
+/* Print styles */
+@media print {
+    .sidebar,
+    .top-header,
+    .mobile-menu-toggle,
+    .sidebar-overlay {
+        display: none;
+    }
+    
+    .main-content {
+        margin-left: 0;
+    }
+    
+    .glass {
+        background: white;
+        border: 1px solid #ddd;
+    }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+    .glass {
+        border: 2px solid rgba(255, 255, 255, 0.3);
+    }
+    
+    .menu-item {
+        border: 1px solid transparent;
+    }
+    
+    .menu-item.active,
+    .menu-item:focus {
+        border-color: var(--sidebar-active);
+    }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+    
+    .sidebar {
+        transition: none;
+    }
+}
+
