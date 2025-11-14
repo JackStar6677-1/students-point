@@ -1,11 +1,11 @@
 /**
  * Service Worker para StudentsPoint
- * Versión: 1.0.0
+ * Versión: 1.2.2
  */
 
-const CACHE_NAME = 'StudentsPoint-v1.2.1';
-const STATIC_CACHE = 'StudentsPoint-static-v1.2.1';
-const DYNAMIC_CACHE = 'StudentsPoint-dynamic-v1.2.1';
+const CACHE_NAME = 'StudentsPoint-v1.2.2';
+const STATIC_CACHE = 'StudentsPoint-static-v1.2.2';
+const DYNAMIC_CACHE = 'StudentsPoint-dynamic-v1.2.2';
 
 // Archivos estáticos para cache
 const STATIC_FILES = [
@@ -69,7 +69,15 @@ self.addEventListener('install', (event) => {
     caches.open(STATIC_CACHE)
       .then((cache) => {
         console.log('SW: Cacheando archivos estáticos...');
-        return cache.addAll(STATIC_FILES);
+        // Usar addAll pero manejar errores individuales
+        return Promise.allSettled(
+          STATIC_FILES.map(url => 
+            cache.add(url).catch(err => {
+              console.warn(`SW: No se pudo cachear ${url}:`, err);
+              return null; // Continuar aunque falle un archivo
+            })
+          )
+        );
       })
       .then(() => {
         console.log('SW: Service Worker instalado correctamente');
@@ -77,6 +85,8 @@ self.addEventListener('install', (event) => {
       })
       .catch((error) => {
         console.error('SW: Error durante la instalación:', error);
+        // Continuar aunque haya errores
+        return self.skipWaiting();
       })
   );
 });
@@ -117,8 +127,30 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(request.url);
   
   // Solo interceptar requests del mismo origen o HTTPS
-  if (url.origin !== location.origin && !url.protocol.startsWith('https')) {
-    return;
+  // En Service Worker, verificar origen de forma segura
+  const isHttps = url.protocol === 'https:';
+  const isLocalhost = url.hostname === 'localhost' || 
+                      url.hostname === '127.0.0.1' || 
+                      url.hostname.startsWith('192.168.') ||
+                      url.hostname.startsWith('10.0.');
+  
+  // Obtener origen del Service Worker de forma segura
+  let swOrigin = null;
+  try {
+    if (self.location && self.location.origin) {
+      swOrigin = self.location.origin;
+    } else if (self.registration && self.registration.scope) {
+      swOrigin = new URL(self.registration.scope).origin;
+    }
+  } catch (e) {
+    // Si no se puede determinar, permitir localhost y HTTPS
+  }
+  
+  const isSameOrigin = swOrigin ? url.origin === swOrigin : false;
+  
+  // Permitir solo mismo origen, HTTPS o localhost
+  if (!isSameOrigin && !isHttps && !isLocalhost) {
+    return; // No interceptar requests de otros orígenes no seguros
   }
   
   // No cachear requests POST, PUT, DELETE, etc.

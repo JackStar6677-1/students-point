@@ -42,9 +42,21 @@ class StudentsPointPWA {
       console.log('PWA: Protocol:', window.location.protocol);
       
       try {
-        const registration = await navigator.serviceWorker.register('/static/sw.js', {
-          scope: '/'
-        });
+        // Intentar registrar desde la raíz primero (recomendado para PWA)
+        let registration;
+        try {
+          registration = await navigator.serviceWorker.register('/sw.js', {
+            scope: '/'
+          });
+          console.log('PWA: Service Worker registrado desde /sw.js');
+        } catch (rootError) {
+          // Si falla, intentar desde /static/sw.js
+          console.log('PWA: Intentando registrar desde /static/sw.js...');
+          registration = await navigator.serviceWorker.register('/static/sw.js', {
+            scope: '/'
+          });
+          console.log('PWA: Service Worker registrado desde /static/sw.js');
+        }
         console.log('PWA: Service Worker registrado exitosamente:', registration);
         
         // Verificar actualizaciones
