@@ -21,15 +21,14 @@ class PortfolioManager {
             logros: [],
             proyectos: [],
             experiencias: [],
-            habilidades: [],
             configuracion: {
+                plantilla: 'profesional',
                 temaColor: '#2e004f',
                 mostrarContacto: true,
                 mostrarRedes: true,
                 mostrarLogros: true,
                 mostrarProyectos: true,
-                mostrarExperiencia: true,
-                mostrarHabilidades: true
+                mostrarExperiencia: true
             }
         };
         
@@ -152,8 +151,11 @@ class PortfolioManager {
             this.showModal('experiencia');
         });
         
-        document.getElementById('btnAgregarHabilidad')?.addEventListener('click', () => {
-            this.showModal('habilidad');
+        // Template Selection
+        document.querySelectorAll('.template-card').forEach(card => {
+            card.addEventListener('click', () => {
+                this.selectTemplate(card.dataset.template);
+            });
         });
         
         // PDF Generation
@@ -201,10 +203,6 @@ class PortfolioManager {
             this.saveItem('experiencia');
         });
         
-        document.getElementById('formHabilidad')?.addEventListener('submit', (e) => {
-            e.preventDefault();
-            this.saveItem('habilidad');
-        });
     }
     
     // === NAVEGACIÓN ===
@@ -265,10 +263,9 @@ class PortfolioManager {
             temaColor: document.getElementById('inputTemaColor')?.value || '#2e004f',
             mostrarContacto: document.getElementById('inputMostrarContacto')?.checked ?? true,
             mostrarRedes: document.getElementById('inputMostrarRedes')?.checked ?? true,
-            mostrarLogros: document.getElementById('inputMostrarLogros')?.checked ?? true,
+                mostrarLogros: document.getElementById('inputMostrarLogros')?.checked ?? true,
             mostrarProyectos: document.getElementById('inputMostrarProyectos')?.checked ?? true,
-            mostrarExperiencia: document.getElementById('inputMostrarExperiencia')?.checked ?? true,
-            mostrarHabilidades: document.getElementById('inputMostrarHabilidades')?.checked ?? true
+            mostrarExperiencia: document.getElementById('inputMostrarExperiencia')?.checked ?? true
         };
         
         // Actualizar también el perfil con título y resumen
@@ -411,7 +408,6 @@ class PortfolioManager {
         this.renderSection('logros');
         this.renderSection('proyectos');
         this.renderSection('experiencias');
-        this.renderSection('habilidades');
     }
     
     renderSection(sectionName) {
@@ -458,8 +454,6 @@ class PortfolioManager {
                 return this.renderProyecto(item);
             case 'experiencias':
                 return this.renderExperiencia(item);
-            case 'habilidades':
-                return this.renderHabilidad(item);
             default:
                 return '';
         }
@@ -537,31 +531,10 @@ class PortfolioManager {
         `;
     }
     
-    renderHabilidad(habilidad) {
-        const nivel = habilidad.nivel || 1;
-        const stars = '★'.repeat(nivel) + '☆'.repeat(5 - nivel);
-        
-        return `
-            <div class="skill-item">
-                <div class="skill-name">${habilidad.nombre || 'Sin nombre'}</div>
-                <div class="skill-level">${stars}</div>
-                <div class="skill-category">${habilidad.categoria || 'No especificado'}</div>
-                <div class="item-actions mt-2">
-                    <button class="btn btn-sm btn-secondary-portfolio btn-edit" data-id="${habilidad.id}">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="btn btn-sm btn-danger-portfolio btn-delete" data-id="${habilidad.id}">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </div>
-            </div>
-        `;
-    }
-    
     // === PROGRESS ===
     updateProgress() {
         const totalFields = 8; // Perfil básico
-        const totalItems = 4; // Logros, proyectos, experiencias, habilidades
+        const totalItems = 3; // Logros, proyectos, experiencias
         
         let completedFields = 0;
         let completedItems = 0;
@@ -581,7 +554,6 @@ class PortfolioManager {
         if (this.portfolioData.logros.length > 0) completedItems++;
         if (this.portfolioData.proyectos.length > 0) completedItems++;
         if (this.portfolioData.experiencias.length > 0) completedItems++;
-        if (this.portfolioData.habilidades.length > 0) completedItems++;
         
         const totalProgress = ((completedFields / totalFields) * 0.6) + ((completedItems / totalItems) * 0.4);
         const percentage = Math.round(totalProgress * 100);
@@ -635,94 +607,28 @@ class PortfolioManager {
             
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
+            const plantilla = this.portfolioData.configuracion.plantilla || 'profesional';
             
-            const perfil = this.portfolioData.perfil;
-            const config = this.portfolioData.configuracion;
-            
-            let y = 30;
-            
-            // Título principal - Nombre
-            doc.setFontSize(24);
-            doc.setFont(undefined, 'bold');
-            doc.text(perfil.nombre || 'Curriculum Vitae', 20, y);
-            y += 10;
-            
-            // Título profesional
-            if (config.tituloProfesional || perfil.tituloProfesional) {
-                doc.setFontSize(16);
-                doc.setFont(undefined, 'normal');
-                doc.setTextColor(100);
-                doc.text(config.tituloProfesional || perfil.tituloProfesional, 20, y);
-                y += 10;
+            // Generar PDF según la plantilla seleccionada
+            switch(plantilla) {
+                case 'profesional':
+                    this.generateProfesionalTemplate(doc);
+                    break;
+                case 'creativa':
+                    this.generateCreativaTemplate(doc);
+                    break;
+                case 'minimalista':
+                    this.generateMinimalistaTemplate(doc);
+                    break;
+                case 'moderna':
+                    this.generateModernaTemplate(doc);
+                    break;
+                default:
+                    this.generateProfesionalTemplate(doc);
             }
-            
-            // Línea separadora
-            doc.setLineWidth(0.5);
-            doc.line(20, y, 190, y);
-            y += 10;
-            
-            // Resumen profesional
-            if (config.resumenProfesional || perfil.resumenProfesional) {
-                doc.setFontSize(12);
-                doc.setFont(undefined, 'bold');
-                doc.setTextColor(0);
-                doc.text('Resumen Profesional', 20, y);
-                y += 8;
-                
-                doc.setFont(undefined, 'normal');
-                const resumen = config.resumenProfesional || perfil.resumenProfesional;
-                const lineasResumen = doc.splitTextToSize(resumen, 170);
-                doc.text(lineasResumen, 20, y);
-                y += (lineasResumen.length * 6) + 10;
-            }
-            
-            // Información de contacto
-            doc.setFontSize(14);
-            doc.setFont(undefined, 'bold');
-            doc.text('Información de Contacto', 20, y);
-            y += 8;
-            
-            doc.setFontSize(11);
-            doc.setFont(undefined, 'normal');
-            
-            if (perfil.email) {
-                doc.text(`Email: ${perfil.email}`, 20, y);
-                y += 6;
-            }
-            if (perfil.telefono) {
-                doc.text(`Teléfono: ${perfil.telefono}`, 20, y);
-                y += 6;
-            }
-            if (perfil.carrera) {
-                doc.text(`Carrera: ${perfil.carrera}`, 20, y);
-                y += 6;
-            }
-            if (perfil.campus) {
-                doc.text(`Campus: ${perfil.campus}`, 20, y);
-                y += 6;
-            }
-            if (perfil.linkedin) {
-                doc.text(`LinkedIn: ${perfil.linkedin}`, 20, y);
-                y += 6;
-            }
-            if (perfil.github) {
-                doc.text(`GitHub: ${perfil.github}`, 20, y);
-                y += 6;
-            }
-            if (perfil.sitioWeb) {
-                doc.text(`Sitio Web: ${perfil.sitioWeb}`, 20, y);
-                y += 6;
-            }
-            
-            y += 5;
-            
-            // Add sections
-            y = this.addSectionToPDF(doc, 'Logros y Certificaciones', this.portfolioData.logros, y + 20);
-            y = this.addSectionToPDF(doc, 'Proyectos', this.portfolioData.proyectos, y + 20);
-            y = this.addSectionToPDF(doc, 'Experiencia Laboral', this.portfolioData.experiencias, y + 20);
-            y = this.addSectionToPDF(doc, 'Habilidades', this.portfolioData.habilidades, y + 20);
             
             // Save PDF
+            const perfil = this.portfolioData.perfil;
             const fileName = `cv_${(perfil.nombre || 'usuario').replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`;
             doc.save(fileName);
             
@@ -736,6 +642,558 @@ class PortfolioManager {
             console.error('Error generating PDF:', error);
             this.showToast(`Error al generar el PDF: ${error.message}`, 'error');
         }
+    }
+    
+    // Plantilla Profesional - Elegante y corporativo
+    generateProfesionalTemplate(doc) {
+        const perfil = this.portfolioData.perfil;
+        const config = this.portfolioData.configuracion;
+        let y = 20;
+        
+        // Header con fondo azul
+        doc.setFillColor(46, 0, 79); // Morado oscuro
+        doc.rect(0, 0, 210, 40, 'F');
+        
+        // Nombre en blanco
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(26);
+        doc.setFont(undefined, 'bold');
+        doc.text(perfil.nombre || 'Nombre Completo', 20, 20);
+        
+        // Título profesional
+        doc.setFontSize(14);
+        doc.setFont(undefined, 'normal');
+        doc.text(config.tituloProfesional || perfil.tituloProfesional || 'Título Profesional', 20, 30);
+        
+        y = 50;
+        doc.setTextColor(0, 0, 0);
+        
+        // Información de contacto
+        doc.setFontSize(10);
+        doc.setFont(undefined, 'normal');
+        let contactInfo = [];
+        if (perfil.email) contactInfo.push(perfil.email);
+        if (perfil.telefono) contactInfo.push(perfil.telefono);
+        if (perfil.linkedin) contactInfo.push(perfil.linkedin);
+        doc.text(contactInfo.join(' | '), 20, y);
+        y += 10;
+        
+        // Línea separadora
+        doc.setDrawColor(200, 200, 200);
+        doc.setLineWidth(0.5);
+        doc.line(20, y, 190, y);
+        y += 10;
+        
+        // Resumen profesional
+        if (config.resumenProfesional || perfil.resumenProfesional) {
+            doc.setFontSize(14);
+            doc.setFont(undefined, 'bold');
+            doc.setTextColor(46, 0, 79);
+            doc.text('PERFIL PROFESIONAL', 20, y);
+            y += 7;
+            
+            doc.setFontSize(10);
+            doc.setFont(undefined, 'normal');
+            doc.setTextColor(0, 0, 0);
+            const resumen = config.resumenProfesional || perfil.resumenProfesional;
+            const lineasResumen = doc.splitTextToSize(resumen, 170);
+            doc.text(lineasResumen, 20, y);
+            y += (lineasResumen.length * 5) + 10;
+        }
+        
+        // Experiencia
+        if (this.portfolioData.experiencias.length > 0) {
+            y = this.addProfesionalSection(doc, 'EXPERIENCIA LABORAL', this.portfolioData.experiencias, y, 'experiencia');
+        }
+        
+        // Proyectos
+        if (this.portfolioData.proyectos.length > 0) {
+            y = this.addProfesionalSection(doc, 'PROYECTOS', this.portfolioData.proyectos, y, 'proyecto');
+        }
+        
+        // Logros
+        if (this.portfolioData.logros.length > 0) {
+            y = this.addProfesionalSection(doc, 'LOGROS Y CERTIFICACIONES', this.portfolioData.logros, y, 'logro');
+        }
+    }
+    
+    addProfesionalSection(doc, title, items, startY, type) {
+        let y = startY;
+        
+        if (y > 250) {
+            doc.addPage();
+            y = 20;
+        }
+        
+        doc.setFontSize(14);
+        doc.setFont(undefined, 'bold');
+        doc.setTextColor(46, 0, 79);
+        doc.text(title, 20, y);
+        y += 2;
+        
+        // Línea bajo el título
+        doc.setDrawColor(46, 0, 79);
+        doc.setLineWidth(1);
+        doc.line(20, y, 190, y);
+        y += 8;
+        
+        doc.setTextColor(0, 0, 0);
+        
+        items.forEach(item => {
+            if (y > 270) {
+                doc.addPage();
+                y = 20;
+            }
+            
+            doc.setFontSize(12);
+            doc.setFont(undefined, 'bold');
+            
+            if (type === 'experiencia') {
+                doc.text(`${item.cargo || ''} - ${item.empresa || ''}`, 20, y);
+                y += 6;
+                doc.setFontSize(9);
+                doc.setFont(undefined, 'italic');
+                doc.setTextColor(100, 100, 100);
+                doc.text(`${item.fechaInicio ? this.formatDate(item.fechaInicio) : ''} - ${item.fechaFin ? this.formatDate(item.fechaFin) : 'Actual'}`, 20, y);
+                y += 5;
+            } else {
+                doc.text(item.titulo || item.nombre || '', 20, y);
+                y += 6;
+                doc.setFontSize(9);
+                doc.setFont(undefined, 'italic');
+                doc.setTextColor(100, 100, 100);
+                if (item.fecha) doc.text(this.formatDate(item.fecha), 20, y);
+                if (item.fechaInicio) doc.text(this.formatDate(item.fechaInicio), 20, y);
+                y += 5;
+            }
+            
+            doc.setFontSize(10);
+            doc.setFont(undefined, 'normal');
+            doc.setTextColor(0, 0, 0);
+            if (item.descripcion) {
+                const lineas = doc.splitTextToSize(item.descripcion, 170);
+                doc.text(lineas, 20, y);
+                y += (lineas.length * 5) + 3;
+            }
+            
+            y += 5;
+        });
+        
+        return y + 5;
+    }
+    
+    // Plantilla Creativa - Moderna y colorida
+    generateCreativaTemplate(doc) {
+        const perfil = this.portfolioData.perfil;
+        const config = this.portfolioData.configuracion;
+        let y = 15;
+        
+        // Nombre con color vibrante
+        doc.setTextColor(13, 202, 240); // Cyan
+        doc.setFontSize(28);
+        doc.setFont(undefined, 'bold');
+        doc.text(perfil.nombre || 'Nombre Completo', 105, y, { align: 'center' });
+        y += 10;
+        
+        // Título profesional
+        doc.setTextColor(32, 201, 151); // Verde
+        doc.setFontSize(16);
+        doc.text(config.tituloProfesional || perfil.tituloProfesional || 'Título Profesional', 105, y, { align: 'center' });
+        y += 15;
+        
+        // Decoración colorida
+        doc.setFillColor(13, 202, 240, 0.3);
+        doc.circle(15, 15, 8, 'F');
+        doc.setFillColor(32, 201, 151, 0.3);
+        doc.circle(195, 15, 6, 'F');
+        doc.setFillColor(255, 193, 7, 0.3);
+        doc.circle(195, 280, 8, 'F');
+        
+        doc.setTextColor(0, 0, 0);
+        
+        // Información de contacto en una caja
+        doc.setFillColor(240, 240, 240);
+        doc.roundedRect(20, y, 170, 15, 3, 3, 'F');
+        
+        doc.setFontSize(9);
+        y += 10;
+        let contactInfo = [];
+        if (perfil.email) contactInfo.push(perfil.email);
+        if (perfil.telefono) contactInfo.push(perfil.telefono);
+        if (perfil.linkedin) contactInfo.push(perfil.linkedin);
+        doc.text(contactInfo.join(' • '), 105, y, { align: 'center' });
+        y += 12;
+        
+        // Resumen profesional con borde colorido
+        if (config.resumenProfesional || perfil.resumenProfesional) {
+            doc.setDrawColor(13, 202, 240);
+            doc.setLineWidth(2);
+            doc.line(20, y, 35, y);
+            
+            doc.setFontSize(14);
+            doc.setFont(undefined, 'bold');
+            doc.setTextColor(13, 202, 240);
+            doc.text('SOBRE MÍ', 40, y);
+            y += 8;
+            
+            doc.setFontSize(10);
+            doc.setFont(undefined, 'normal');
+            doc.setTextColor(0, 0, 0);
+            const resumen = config.resumenProfesional || perfil.resumenProfesional;
+            const lineasResumen = doc.splitTextToSize(resumen, 170);
+            doc.text(lineasResumen, 20, y);
+            y += (lineasResumen.length * 5) + 10;
+        }
+        
+        // Secciones con colores alternados
+        if (this.portfolioData.experiencias.length > 0) {
+            y = this.addCreativaSection(doc, 'EXPERIENCIA', this.portfolioData.experiencias, y, '#20c997', 'experiencia');
+        }
+        
+        if (this.portfolioData.proyectos.length > 0) {
+            y = this.addCreativaSection(doc, 'PROYECTOS', this.portfolioData.proyectos, y, '#ffc107', 'proyecto');
+        }
+        
+        if (this.portfolioData.logros.length > 0) {
+            y = this.addCreativaSection(doc, 'LOGROS', this.portfolioData.logros, y, '#dc3545', 'logro');
+        }
+    }
+    
+    addCreativaSection(doc, title, items, startY, color, type) {
+        let y = startY;
+        
+        if (y > 250) {
+            doc.addPage();
+            y = 20;
+        }
+        
+        // Título con línea colorida
+        const colors = {
+            '#20c997': [32, 201, 151],
+            '#ffc107': [255, 193, 7],
+            '#dc3545': [220, 53, 69]
+        };
+        
+        const rgb = colors[color] || [0, 0, 0];
+        doc.setDrawColor(...rgb);
+        doc.setLineWidth(2);
+        doc.line(20, y, 35, y);
+        
+        doc.setFontSize(14);
+        doc.setFont(undefined, 'bold');
+        doc.setTextColor(...rgb);
+        doc.text(title, 40, y);
+        y += 10;
+        
+        doc.setTextColor(0, 0, 0);
+        
+        items.forEach(item => {
+            if (y > 270) {
+                doc.addPage();
+                y = 20;
+            }
+            
+            doc.setFontSize(12);
+            doc.setFont(undefined, 'bold');
+            
+            if (type === 'experiencia') {
+                doc.text(`${item.cargo || ''} @ ${item.empresa || ''}`, 20, y);
+            } else {
+                doc.text(item.titulo || item.nombre || '', 20, y);
+            }
+            y += 5;
+            
+            doc.setFontSize(9);
+            doc.setFont(undefined, 'normal');
+            doc.setTextColor(100, 100, 100);
+            if (item.fechaInicio) {
+                doc.text(`${this.formatDate(item.fechaInicio)} - ${item.fechaFin ? this.formatDate(item.fechaFin) : 'Actual'}`, 20, y);
+            } else if (item.fecha) {
+                doc.text(this.formatDate(item.fecha), 20, y);
+            }
+            y += 5;
+            
+            doc.setFontSize(10);
+            doc.setTextColor(0, 0, 0);
+            if (item.descripcion) {
+                const lineas = doc.splitTextToSize(item.descripcion, 170);
+                doc.text(lineas, 20, y);
+                y += (lineas.length * 5);
+            }
+            
+            y += 8;
+        });
+        
+        return y;
+    }
+    
+    // Plantilla Minimalista - Limpia y simple
+    generateMinimalistaTemplate(doc) {
+        const perfil = this.portfolioData.perfil;
+        const config = this.portfolioData.configuracion;
+        let y = 30;
+        
+        // Nombre centrado
+        doc.setTextColor(0, 0, 0);
+        doc.setFontSize(24);
+        doc.setFont(undefined, 'bold');
+        doc.text(perfil.nombre || 'Nombre Completo', 105, y, { align: 'center' });
+        y += 8;
+        
+        // Título profesional
+        doc.setFontSize(12);
+        doc.setFont(undefined, 'normal');
+        doc.text(config.tituloProfesional || perfil.tituloProfesional || '', 105, y, { align: 'center' });
+        y += 6;
+        
+        // Contacto minimalista
+        doc.setFontSize(9);
+        let contactInfo = [];
+        if (perfil.email) contactInfo.push(perfil.email);
+        if (perfil.telefono) contactInfo.push(perfil.telefono);
+        doc.text(contactInfo.join('  ·  '), 105, y, { align: 'center' });
+        y += 15;
+        
+        // Línea separadora simple
+        doc.setDrawColor(0, 0, 0);
+        doc.setLineWidth(0.5);
+        doc.line(20, y, 190, y);
+        y += 10;
+        
+        // Resumen
+        if (config.resumenProfesional || perfil.resumenProfesional) {
+            doc.setFontSize(10);
+            doc.setFont(undefined, 'normal');
+            const resumen = config.resumenProfesional || perfil.resumenProfesional;
+            const lineasResumen = doc.splitTextToSize(resumen, 170);
+            doc.text(lineasResumen, 20, y);
+            y += (lineasResumen.length * 5) + 15;
+        }
+        
+        // Secciones minimalistas
+        if (this.portfolioData.experiencias.length > 0) {
+            y = this.addMinimalistaSection(doc, 'Experiencia', this.portfolioData.experiencias, y, 'experiencia');
+        }
+        
+        if (this.portfolioData.proyectos.length > 0) {
+            y = this.addMinimalistaSection(doc, 'Proyectos', this.portfolioData.proyectos, y, 'proyecto');
+        }
+        
+        if (this.portfolioData.logros.length > 0) {
+            y = this.addMinimalistaSection(doc, 'Certificaciones', this.portfolioData.logros, y, 'logro');
+        }
+    }
+    
+    addMinimalistaSection(doc, title, items, startY, type) {
+        let y = startY;
+        
+        if (y > 250) {
+            doc.addPage();
+            y = 20;
+        }
+        
+        // Título simple
+        doc.setFontSize(12);
+        doc.setFont(undefined, 'bold');
+        doc.text(title.toUpperCase(), 20, y);
+        y += 8;
+        
+        items.forEach(item => {
+            if (y > 270) {
+                doc.addPage();
+                y = 20;
+            }
+            
+            doc.setFontSize(11);
+            doc.setFont(undefined, 'bold');
+            
+            if (type === 'experiencia') {
+                doc.text(`${item.cargo || ''}`, 20, y);
+                doc.setFont(undefined, 'normal');
+                doc.text(`${item.empresa || ''}`, 100, y);
+            } else {
+                doc.text(item.titulo || item.nombre || '', 20, y);
+            }
+            y += 5;
+            
+            doc.setFontSize(9);
+            doc.setFont(undefined, 'normal');
+            doc.setTextColor(120, 120, 120);
+            if (item.fechaInicio) {
+                doc.text(`${this.formatDate(item.fechaInicio)} - ${item.fechaFin ? this.formatDate(item.fechaFin) : 'Presente'}`, 20, y);
+            } else if (item.fecha) {
+                doc.text(this.formatDate(item.fecha), 20, y);
+            }
+            y += 5;
+            
+            doc.setFontSize(9);
+            doc.setTextColor(0, 0, 0);
+            if (item.descripcion) {
+                const lineas = doc.splitTextToSize(item.descripcion, 170);
+                doc.text(lineas, 20, y);
+                y += (lineas.length * 4);
+            }
+            
+            y += 8;
+        });
+        
+        return y;
+    }
+    
+    // Plantilla Moderna - Con elementos gráficos
+    generateModernaTemplate(doc) {
+        const perfil = this.portfolioData.perfil;
+        const config = this.portfolioData.configuracion;
+        
+        // Sidebar izquierdo con info personal
+        doc.setFillColor(46, 0, 79);
+        doc.rect(0, 0, 60, 297, 'F');
+        
+        // Nombre y título en sidebar
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(18);
+        doc.setFont(undefined, 'bold');
+        const nombreLines = doc.splitTextToSize(perfil.nombre || 'Nombre', 50);
+        doc.text(nombreLines, 10, 30);
+        
+        let y = 30 + (nombreLines.length * 7) + 5;
+        doc.setFontSize(11);
+        doc.setFont(undefined, 'normal');
+        const tituloLines = doc.splitTextToSize(config.tituloProfesional || perfil.tituloProfesional || '', 50);
+        doc.text(tituloLines, 10, y);
+        
+        y += (tituloLines.length * 6) + 15;
+        
+        // Contacto en sidebar
+        doc.setFontSize(9);
+        doc.setFont(undefined, 'bold');
+        doc.text('CONTACTO', 10, y);
+        y += 6;
+        doc.setFont(undefined, 'normal');
+        
+        if (perfil.email) {
+            const emailLines = doc.splitTextToSize(perfil.email, 50);
+            doc.text(emailLines, 10, y);
+            y += emailLines.length * 5 + 4;
+        }
+        if (perfil.telefono) {
+            doc.text(perfil.telefono, 10, y);
+            y += 8;
+        }
+        if (perfil.linkedin) {
+            const linkedinLines = doc.splitTextToSize(perfil.linkedin, 50);
+            doc.text(linkedinLines, 10, y);
+            y += linkedinLines.length * 5;
+        }
+        
+        // Contenido principal
+        doc.setTextColor(0, 0, 0);
+        y = 30;
+        
+        // Resumen profesional
+        if (config.resumenProfesional || perfil.resumenProfesional) {
+            doc.setFontSize(14);
+            doc.setFont(undefined, 'bold');
+            doc.setTextColor(46, 0, 79);
+            doc.text('PERFIL', 70, y);
+            y += 8;
+            
+            doc.setFontSize(10);
+            doc.setFont(undefined, 'normal');
+            doc.setTextColor(0, 0, 0);
+            const resumen = config.resumenProfesional || perfil.resumenProfesional;
+            const lineasResumen = doc.splitTextToSize(resumen, 130);
+            doc.text(lineasResumen, 70, y);
+            y += (lineasResumen.length * 5) + 12;
+        }
+        
+        // Secciones con diseño moderno
+        if (this.portfolioData.experiencias.length > 0) {
+            y = this.addModernaSection(doc, 'EXPERIENCIA', this.portfolioData.experiencias, y, 'experiencia');
+        }
+        
+        if (this.portfolioData.proyectos.length > 0) {
+            y = this.addModernaSection(doc, 'PROYECTOS', this.portfolioData.proyectos, y, 'proyecto');
+        }
+        
+        if (this.portfolioData.logros.length > 0) {
+            y = this.addModernaSection(doc, 'LOGROS', this.portfolioData.logros, y, 'logro');
+        }
+    }
+    
+    addModernaSection(doc, title, items, startY, type) {
+        let y = startY;
+        
+        if (y > 250) {
+            doc.addPage();
+            // Mantener sidebar en nuevas páginas
+            doc.setFillColor(46, 0, 79);
+            doc.rect(0, 0, 60, 297, 'F');
+            y = 20;
+        }
+        
+        // Título de sección
+        doc.setFontSize(14);
+        doc.setFont(undefined, 'bold');
+        doc.setTextColor(46, 0, 79);
+        doc.text(title, 70, y);
+        y += 2;
+        
+        // Línea decorativa
+        doc.setDrawColor(13, 202, 240);
+        doc.setLineWidth(2);
+        doc.line(70, y, 100, y);
+        y += 10;
+        
+        doc.setTextColor(0, 0, 0);
+        
+        items.forEach(item => {
+            if (y > 270) {
+                doc.addPage();
+                doc.setFillColor(46, 0, 79);
+                doc.rect(0, 0, 60, 297, 'F');
+                y = 20;
+            }
+            
+            doc.setFontSize(11);
+            doc.setFont(undefined, 'bold');
+            
+            if (type === 'experiencia') {
+                doc.text(`${item.cargo || ''}`, 70, y);
+                y += 5;
+                doc.setFontSize(10);
+                doc.setFont(undefined, 'normal');
+                doc.setTextColor(100, 100, 100);
+                doc.text(`${item.empresa || ''}`, 70, y);
+                y += 4;
+            } else {
+                doc.text(item.titulo || item.nombre || '', 70, y);
+                y += 5;
+            }
+            
+            doc.setFontSize(9);
+            doc.setFont(undefined, 'italic');
+            doc.setTextColor(120, 120, 120);
+            if (item.fechaInicio) {
+                doc.text(`${this.formatDate(item.fechaInicio)} - ${item.fechaFin ? this.formatDate(item.fechaFin) : 'Actual'}`, 70, y);
+            } else if (item.fecha) {
+                doc.text(this.formatDate(item.fecha), 70, y);
+            }
+            y += 5;
+            
+            doc.setFontSize(9);
+            doc.setFont(undefined, 'normal');
+            doc.setTextColor(0, 0, 0);
+            if (item.descripcion) {
+                const lineas = doc.splitTextToSize(item.descripcion, 130);
+                doc.text(lineas, 70, y);
+                y += (lineas.length * 4.5);
+            }
+            
+            y += 7;
+        });
+        
+        return y;
     }
     
     addSectionToPDF(doc, title, items, startY) {
@@ -899,23 +1357,32 @@ class PortfolioManager {
                         `).join('')}
                     </div>
                 ` : ''}
-                
-                ${config.mostrarHabilidades && this.portfolioData.habilidades.length > 0 ? `
-                    <div style="margin-bottom: 30px;">
-                        <h3>Habilidades</h3>
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
-                            ${this.portfolioData.habilidades.map(habilidad => `
-                                <div style="padding: 10px; background: #f5f5f5; border-radius: 5px;">
-                                    <strong>${habilidad.nombre}</strong>
-                                    <div>${''.repeat(habilidad.nivel)}${''.repeat(5 - habilidad.nivel)}</div>
-                                    <small style="color: #666;">${habilidad.categoria}</small>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                ` : ''}
             </div>
         `;
+    }
+    
+    // === TEMPLATE SELECTION ===
+    selectTemplate(templateName) {
+        // Remove active class from all cards
+        document.querySelectorAll('.template-card').forEach(card => {
+            card.classList.remove('active');
+        });
+        
+        // Add active class to selected card
+        const selectedCard = document.querySelector(`[data-template="${templateName}"]`);
+        if (selectedCard) {
+            selectedCard.classList.add('active');
+        }
+        
+        // Save template selection
+        this.portfolioData.configuracion.plantilla = templateName;
+        this.savePortfolioData();
+        
+        this.showToast(`Plantilla "${templateName}" seleccionada`, 'success');
+        
+        if (window.playSound) {
+            window.playSound('click');
+        }
     }
     
     // === UTILIDADES ===
@@ -923,8 +1390,7 @@ class PortfolioManager {
         const icons = {
             logros: 'trophy',
             proyectos: 'code',
-            experiencias: 'briefcase',
-            habilidades: 'cogs'
+            experiencias: 'briefcase'
         };
         return icons[sectionName] || 'file';
     }
@@ -933,8 +1399,7 @@ class PortfolioManager {
         const titles = {
             logros: 'Logros',
             proyectos: 'Proyectos',
-            experiencias: 'Experiencias',
-            habilidades: 'Habilidades'
+            experiencias: 'Experiencias'
         };
         return titles[sectionName] || 'Elementos';
     }

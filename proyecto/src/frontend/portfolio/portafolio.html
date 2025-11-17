@@ -146,6 +146,64 @@
   <!-- Contenido principal -->
   <main class="main-content" style="position: relative; z-index: 2;">
     <div class="container mt-3 portfolio-container">
+      <!-- Selector de Plantillas -->
+      <section class="template-selector-section">
+        <div class="template-header">
+          <div class="template-title"><i class="fas fa-palette"></i> Elige una Plantilla</div>
+          <p class="template-subtitle">Selecciona el diseño que mejor represente tu perfil profesional</p>
+        </div>
+        <div class="templates-grid">
+          <div class="template-card active" data-template="profesional">
+            <div class="template-preview">
+              <i class="fas fa-briefcase fa-3x"></i>
+            </div>
+            <div class="template-info">
+              <h4>Profesional</h4>
+              <p>Diseño elegante y corporativo, ideal para empresas tradicionales</p>
+            </div>
+            <div class="template-check">
+              <i class="fas fa-check-circle"></i>
+            </div>
+          </div>
+          <div class="template-card" data-template="creativa">
+            <div class="template-preview">
+              <i class="fas fa-paint-brush fa-3x"></i>
+            </div>
+            <div class="template-info">
+              <h4>Creativa</h4>
+              <p>Diseño moderno y colorido, perfecto para industrias creativas</p>
+            </div>
+            <div class="template-check">
+              <i class="fas fa-check-circle"></i>
+            </div>
+          </div>
+          <div class="template-card" data-template="minimalista">
+            <div class="template-preview">
+              <i class="fas fa-file-alt fa-3x"></i>
+            </div>
+            <div class="template-info">
+              <h4>Minimalista</h4>
+              <p>Diseño limpio y simple, enfocado en contenido</p>
+            </div>
+            <div class="template-check">
+              <i class="fas fa-check-circle"></i>
+            </div>
+          </div>
+          <div class="template-card" data-template="moderna">
+            <div class="template-preview">
+              <i class="fas fa-th-large fa-3x"></i>
+            </div>
+            <div class="template-info">
+              <h4>Moderna</h4>
+              <p>Diseño actual con elementos gráficos, ideal para tech</p>
+            </div>
+            <div class="template-check">
+              <i class="fas fa-check-circle"></i>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- Progreso de completitud -->
       <section class="progress-section">
         <div class="progress-header">
@@ -170,7 +228,6 @@
           <button class="tab-btn" data-tab="logros"><i class="fas fa-trophy"></i> Logros</button>
           <button class="tab-btn" data-tab="proyectos"><i class="fas fa-code"></i> Proyectos</button>
           <button class="tab-btn" data-tab="experiencias"><i class="fas fa-briefcase"></i> Experiencia</button>
-          <button class="tab-btn" data-tab="habilidades"><i class="fas fa-cogs"></i> Habilidades</button>
         </nav>
 
         <!-- Tab: Perfil -->
@@ -247,7 +304,6 @@
                 <div class="form-check"><input type="checkbox" id="inputMostrarLogros" checked> <label for="inputMostrarLogros">Mostrar logros</label></div>
                 <div class="form-check"><input type="checkbox" id="inputMostrarProyectos" checked> <label for="inputMostrarProyectos">Mostrar proyectos</label></div>
                 <div class="form-check"><input type="checkbox" id="inputMostrarExperiencia" checked> <label for="inputMostrarExperiencia">Mostrar experiencia</label></div>
-                <div class="form-check"><input type="checkbox" id="inputMostrarHabilidades" checked> <label for="inputMostrarHabilidades">Mostrar habilidades</label></div>
               </div>
             </div>
             <div class="mt-3">
@@ -289,16 +345,6 @@
           </div>
         </div>
 
-        <!-- Tab: Habilidades -->
-        <div class="tab-content" id="tab-habilidades">
-          <div class="form-section">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-              <h3><i class="fas fa-cogs"></i> Habilidades</h3>
-              <button id="btnAgregarHabilidad" class="btn-portfolio btn-secondary-portfolio"><i class="fas fa-plus"></i> Agregar habilidad</button>
-            </div>
-            <div id="habilidadesList" class="skills-grid"></div>
-          </div>
-        </div>
       </section>
 
       <!-- Modales -->
@@ -371,29 +417,6 @@
                 <div class="form-group"><label for="inputExperienciaFechaInicio">Inicio</label><input id="inputExperienciaFechaInicio" class="form-control" type="date"></div>
                 <div class="form-group"><label for="inputExperienciaFechaFin">Término</label><input id="inputExperienciaFechaFin" class="form-control" type="date"></div>
               </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary modal-close">Cancelar</button>
-                <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Guardar</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-
-      <div class="modal" id="modalHabilidad">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h2 class="modal-title" id="modalHabilidadTitulo">Agregar</h2>
-            <button class="modal-close">&times;</button>
-          </div>
-          <div class="modal-body">
-            <form id="formHabilidad">
-              <div class="form-row">
-                <div class="form-group"><label for="inputHabilidadNombre">Nombre</label><input id="inputHabilidadNombre" class="form-control" type="text"></div>
-                <div class="form-group"><label for="inputHabilidadCategoria">Categoría</label><input id="inputHabilidadCategoria" class="form-control" type="text" placeholder="Técnica, Blanda..."></div>
-              </div>
-              <div class="form-group"><label for="inputHabilidadNivel">Nivel (1-5)</label><input id="inputHabilidadNivel" class="form-control" type="number" min="1" max="5" value="3"></div>
-              <div class="form-group"><label for="inputHabilidadDescripcion">Descripción</label><textarea id="inputHabilidadDescripcion" class="form-control" rows="3"></textarea></div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary modal-close">Cancelar</button>
                 <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Guardar</button>
