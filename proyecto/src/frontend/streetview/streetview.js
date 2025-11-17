@@ -591,6 +591,143 @@ const salasData = {
                 }
             }
         }
+    },
+    'torre3': {
+        // Torre 3 - Piso 2 - Salas 240 a 247
+        'piso2': {
+            rango: '240-247',
+            salas: {
+                '240': {
+                    disponible: true,
+                    imagenes: [
+                        { url: '/imagenes/mapa/Torre 3/Piso 2 - salas 240 a 247/torre3img1.webp', titulo: 'Entrada Sala 240', descripcion: 'Acceso principal a la sala 240' },
+                        { url: '/imagenes/mapa/Torre 3/Piso 2 - salas 240 a 247/torre3img2.webp', titulo: 'Vista Interior Sala 240', descripcion: 'Vista del interior de la sala' },
+                        { url: '/imagenes/mapa/Torre 3/Piso 2 - salas 240 a 247/torre3img3.webp', titulo: 'Área de Trabajo Sala 240', descripcion: 'Espacio de trabajo y estudio' },
+                        { url: '/imagenes/mapa/Torre 3/Piso 2 - salas 240 a 247/torre3img4.webp', titulo: 'Equipamiento Sala 240', descripcion: 'Equipamiento y recursos disponibles' },
+                        { url: '/imagenes/mapa/Torre 3/Piso 2 - salas 240 a 247/torre3img5.webp', titulo: 'Vista Panorámica Sala 240', descripcion: 'Vista completa de la sala' },
+                        { url: '/imagenes/mapa/Torre 3/Piso 2 - salas 240 a 247/torre3img6.webp', titulo: 'Detalle Sala 240', descripcion: 'Detalles adicionales de la sala' },
+                        { url: '/imagenes/mapa/Torre 3/Piso 2 - salas 240 a 247/torre3img7.webp', titulo: 'Área de Proyección Sala 240', descripcion: 'Zona de proyección y presentaciones' },
+                        { url: '/imagenes/mapa/Torre 3/Piso 2 - salas 240 a 247/torre3img8.webp', titulo: 'Vista Adicional Sala 240', descripcion: 'Vista adicional de la sala' },
+                        { url: '/imagenes/mapa/Torre 3/Piso 2 - salas 240 a 247/torre3img9.webp', titulo: 'Vista Lateral Sala 240', descripcion: 'Vista lateral de la sala' },
+                        { url: '/imagenes/mapa/Torre 3/Piso 2 - salas 240 a 247/torre3img10.webp', titulo: 'Detalle Equipamiento Sala 240', descripcion: 'Detalle del equipamiento' },
+                        { url: '/imagenes/mapa/Torre 3/Piso 2 - salas 240 a 247/torre3img11.webp', titulo: 'Vista General Sala 240', descripcion: 'Vista general completa' },
+                        { url: '/imagenes/mapa/Torre 3/Piso 2 - salas 240 a 247/torre3img12.webp', titulo: 'Vista Final Sala 240', descripcion: 'Vista final del recorrido' }
+                    ]
+                }
+            }
+        },
+        // Torre 3 - Piso 3 - Salas 340 a 349
+        'piso3': {
+            rango: '340-349',
+            salas: {
+                '340': {
+                    disponible: true,
+                    imagenes: [
+                        { url: '/imagenes/mapa/Torre 3/Piso 3 - salas 340 a 349/torre3img1.webp', titulo: 'Entrada Sala 340', descripcion: 'Acceso principal a la sala 340' },
+                        { url: '/imagenes/mapa/Torre 3/Piso 3 - salas 340 a 349/torre3img2.webp', titulo: 'Vista Interior Sala 340', descripcion: 'Vista del interior de la sala' },
+                        { url: '/imagenes/mapa/Torre 3/Piso 3 - salas 340 a 349/torre3img3.webp', titulo: 'Área de Trabajo Sala 340', descripcion: 'Espacio de trabajo y estudio' },
+                        { url: '/imagenes/mapa/Torre 3/Piso 3 - salas 340 a 349/torre3img4.webp', titulo: 'Equipamiento Sala 340', descripcion: 'Equipamiento y recursos disponibles' },
+                        { url: '/imagenes/mapa/Torre 3/Piso 3 - salas 340 a 349/torre3img5.webp', titulo: 'Vista Panorámica Sala 340', descripcion: 'Vista completa de la sala' },
+                        { url: '/imagenes/mapa/Torre 3/Piso 3 - salas 340 a 349/torre3img6.webp', titulo: 'Detalle Sala 340', descripcion: 'Detalles adicionales de la sala' },
+                        { url: '/imagenes/mapa/Torre 3/Piso 3 - salas 340 a 349/torre3img7.webp', titulo: 'Área de Proyección Sala 340', descripcion: 'Zona de proyección y presentaciones' },
+                        { url: '/imagenes/mapa/Torre 3/Piso 3 - salas 340 a 349/torre3img8.webp', titulo: 'Vista Adicional Sala 340', descripcion: 'Vista adicional de la sala' },
+                        { url: '/imagenes/mapa/Torre 3/Piso 3 - salas 340 a 349/torre3img9.webp', titulo: 'Vista Lateral Sala 340', descripcion: 'Vista lateral de la sala' },
+                        { url: '/imagenes/mapa/Torre 3/Piso 3 - salas 340 a 349/torre3img10.webp', titulo: 'Detalle Equipamiento Sala 340', descripcion: 'Detalle del equipamiento' },
+                        { url: '/imagenes/mapa/Torre 3/Piso 3 - salas 340 a 349/torre3img11.webp', titulo: 'Vista General Sala 340', descripcion: 'Vista general completa' },
+                        { url: '/imagenes/mapa/Torre 3/Piso 3 - salas 340 a 349/torre3img12.webp', titulo: 'Vista Completa Sala 340', descripcion: 'Vista completa adicional' },
+                        { url: '/imagenes/mapa/Torre 3/Piso 3 - salas 340 a 349/torre3img13.webp', titulo: 'Vista Panorámica Sala 340', descripcion: 'Vista panorámica de la sala' },
+                        { url: '/imagenes/mapa/Torre 3/Piso 3 - salas 340 a 349/torre3img14.webp', titulo: 'Detalle Final Sala 340', descripcion: 'Detalle final del recorrido' },
+                        { url: '/imagenes/mapa/Torre 3/Piso 3 - salas 340 a 349/torre3img15.webp', titulo: 'Vista Final Sala 340', descripcion: 'Vista final del recorrido' }
+                    ]
+                }
+            }
+        },
+        // Torre 3 - Piso 4 - Salas 440 a 449
+        'piso4': {
+            rango: '440-449',
+            salas: {
+                '440': {
+                    disponible: true,
+                    imagenes: [
+                        { url: '/imagenes/mapa/Torre 3/Piso 4 - salas 440 a 449/torre3img1.webp', titulo: 'Entrada Sala 440', descripcion: 'Acceso principal a la sala 440' },
+                        { url: '/imagenes/mapa/Torre 3/Piso 4 - salas 440 a 449/torre3img2.webp', titulo: 'Vista Interior Sala 440', descripcion: 'Vista del interior de la sala' },
+                        { url: '/imagenes/mapa/Torre 3/Piso 4 - salas 440 a 449/torre3img3.webp', titulo: 'Área de Trabajo Sala 440', descripcion: 'Espacio de trabajo y estudio' },
+                        { url: '/imagenes/mapa/Torre 3/Piso 4 - salas 440 a 449/torre3img4.webp', titulo: 'Equipamiento Sala 440', descripcion: 'Equipamiento y recursos disponibles' },
+                        { url: '/imagenes/mapa/Torre 3/Piso 4 - salas 440 a 449/torre3img5.webp', titulo: 'Vista Panorámica Sala 440', descripcion: 'Vista completa de la sala' },
+                        { url: '/imagenes/mapa/Torre 3/Piso 4 - salas 440 a 449/torre3img6.webp', titulo: 'Detalle Sala 440', descripcion: 'Detalles adicionales de la sala' },
+                        { url: '/imagenes/mapa/Torre 3/Piso 4 - salas 440 a 449/torre3img7.webp', titulo: 'Área de Proyección Sala 440', descripcion: 'Zona de proyección y presentaciones' },
+                        { url: '/imagenes/mapa/Torre 3/Piso 4 - salas 440 a 449/torre3img8.webp', titulo: 'Vista Adicional Sala 440', descripcion: 'Vista adicional de la sala' },
+                        { url: '/imagenes/mapa/Torre 3/Piso 4 - salas 440 a 449/torre3img9.webp', titulo: 'Vista Lateral Sala 440', descripcion: 'Vista lateral de la sala' },
+                        { url: '/imagenes/mapa/Torre 3/Piso 4 - salas 440 a 449/torre3img10.webp', titulo: 'Detalle Equipamiento Sala 440', descripcion: 'Detalle del equipamiento' },
+                        { url: '/imagenes/mapa/Torre 3/Piso 4 - salas 440 a 449/torre3img11.webp', titulo: 'Vista General Sala 440', descripcion: 'Vista general completa' },
+                        { url: '/imagenes/mapa/Torre 3/Piso 4 - salas 440 a 449/torre3img12.webp', titulo: 'Vista Completa Sala 440', descripcion: 'Vista completa adicional' },
+                        { url: '/imagenes/mapa/Torre 3/Piso 4 - salas 440 a 449/torre3img13.webp', titulo: 'Vista Panorámica Sala 440', descripcion: 'Vista panorámica de la sala' },
+                        { url: '/imagenes/mapa/Torre 3/Piso 4 - salas 440 a 449/torre3img14.webp', titulo: 'Detalle Final Sala 440', descripcion: 'Detalle final del recorrido' },
+                        { url: '/imagenes/mapa/Torre 3/Piso 4 - salas 440 a 449/torre3img15.webp', titulo: 'Vista Adicional Final Sala 440', descripcion: 'Vista adicional final' },
+                        { url: '/imagenes/mapa/Torre 3/Piso 4 - salas 440 a 449/torre3img16.webp', titulo: 'Vista Completa Final Sala 440', descripcion: 'Vista completa final' },
+                        { url: '/imagenes/mapa/Torre 3/Piso 4 - salas 440 a 449/torre3img17.webp', titulo: 'Vista Panorámica Final Sala 440', descripcion: 'Vista panorámica final' },
+                        { url: '/imagenes/mapa/Torre 3/Piso 4 - salas 440 a 449/torre3img18.webp', titulo: 'Detalle Adicional Final Sala 440', descripcion: 'Detalle adicional final' },
+                        { url: '/imagenes/mapa/Torre 3/Piso 4 - salas 440 a 449/torre3img19.webp', titulo: 'Vista Final Sala 440', descripcion: 'Vista final del recorrido' }
+                    ]
+                }
+            }
+        }
+    },
+    'torre4': {
+        // Torre 4 - Piso 2 - Salas 250 a 256
+        'piso2': {
+            rango: '250-256',
+            salas: {
+                '250': {
+                    disponible: true,
+                    imagenes: [
+                        { url: '/imagenes/mapa/Torre 4/Piso 2 - salas 250 a 256/torre4img1.webp', titulo: 'Entrada Sala 250', descripcion: 'Acceso principal a la sala 250' },
+                        { url: '/imagenes/mapa/Torre 4/Piso 2 - salas 250 a 256/torre4img2.webp', titulo: 'Vista Interior Sala 250', descripcion: 'Vista del interior de la sala' },
+                        { url: '/imagenes/mapa/Torre 4/Piso 2 - salas 250 a 256/torre4img3.webp', titulo: 'Área de Trabajo Sala 250', descripcion: 'Espacio de trabajo y estudio' },
+                        { url: '/imagenes/mapa/Torre 4/Piso 2 - salas 250 a 256/torre4img4.webp', titulo: 'Equipamiento Sala 250', descripcion: 'Equipamiento y recursos disponibles' },
+                        { url: '/imagenes/mapa/Torre 4/Piso 2 - salas 250 a 256/torre4img5.webp', titulo: 'Vista Panorámica Sala 250', descripcion: 'Vista completa de la sala' }
+                    ]
+                }
+            }
+        },
+        // Torre 4 - Piso 3 - Salas 350 a 357
+        'piso3': {
+            rango: '350-357',
+            salas: {
+                '350': {
+                    disponible: true,
+                    imagenes: [
+                        { url: '/imagenes/mapa/Torre 4/Piso 3 - salas 350 a 357/torre4img1.webp', titulo: 'Entrada Sala 350', descripcion: 'Acceso principal a la sala 350' },
+                        { url: '/imagenes/mapa/Torre 4/Piso 3 - salas 350 a 357/torre4img2.webp', titulo: 'Vista Interior Sala 350', descripcion: 'Vista del interior de la sala' },
+                        { url: '/imagenes/mapa/Torre 4/Piso 3 - salas 350 a 357/torre4img3.webp', titulo: 'Área de Trabajo Sala 350', descripcion: 'Espacio de trabajo y estudio' },
+                        { url: '/imagenes/mapa/Torre 4/Piso 3 - salas 350 a 357/torre4img4.webp', titulo: 'Equipamiento Sala 350', descripcion: 'Equipamiento y recursos disponibles' },
+                        { url: '/imagenes/mapa/Torre 4/Piso 3 - salas 350 a 357/torre4img5.webp', titulo: 'Vista Panorámica Sala 350', descripcion: 'Vista completa de la sala' },
+                        { url: '/imagenes/mapa/Torre 4/Piso 3 - salas 350 a 357/torre4img6.webp', titulo: 'Detalle Sala 350', descripcion: 'Detalles adicionales de la sala' },
+                        { url: '/imagenes/mapa/Torre 4/Piso 3 - salas 350 a 357/torre4img7.webp', titulo: 'Vista Final Sala 350', descripcion: 'Vista final del recorrido' }
+                    ]
+                }
+            }
+        },
+        // Torre 4 - Piso 4 - Salas 450 a 457
+        'piso4': {
+            rango: '450-457',
+            salas: {
+                '450': {
+                    disponible: true,
+                    imagenes: [
+                        { url: '/imagenes/mapa/Torre 4/Piso 4 - salas 450 a 457/torre4img1.webp', titulo: 'Entrada Sala 450', descripcion: 'Acceso principal a la sala 450' },
+                        { url: '/imagenes/mapa/Torre 4/Piso 4 - salas 450 a 457/torre4img2.webp', titulo: 'Vista Interior Sala 450', descripcion: 'Vista del interior de la sala' },
+                        { url: '/imagenes/mapa/Torre 4/Piso 4 - salas 450 a 457/torre4img3.webp', titulo: 'Área de Trabajo Sala 450', descripcion: 'Espacio de trabajo y estudio' },
+                        { url: '/imagenes/mapa/Torre 4/Piso 4 - salas 450 a 457/torre4img4.webp', titulo: 'Equipamiento Sala 450', descripcion: 'Equipamiento y recursos disponibles' },
+                        { url: '/imagenes/mapa/Torre 4/Piso 4 - salas 450 a 457/torre4img5.webp', titulo: 'Vista Panorámica Sala 450', descripcion: 'Vista completa de la sala' },
+                        { url: '/imagenes/mapa/Torre 4/Piso 4 - salas 450 a 457/torre4img6.webp', titulo: 'Detalle Sala 450', descripcion: 'Detalles adicionales de la sala' },
+                        { url: '/imagenes/mapa/Torre 4/Piso 4 - salas 450 a 457/torre4img7.webp', titulo: 'Área de Proyección Sala 450', descripcion: 'Zona de proyección y presentaciones' },
+                        { url: '/imagenes/mapa/Torre 4/Piso 4 - salas 450 a 457/torre4img8.webp', titulo: 'Vista Adicional Sala 450', descripcion: 'Vista adicional de la sala' },
+                        { url: '/imagenes/mapa/Torre 4/Piso 4 - salas 450 a 457/torre4img9.webp', titulo: 'Vista Final Sala 450', descripcion: 'Vista final del recorrido' }
+                    ]
+                }
+            }
+        }
     }
 };
 
@@ -638,6 +775,42 @@ function obtenerDatosSala(numeroSala) {
         piso = 'piso4';
         templateSala = '420';
     }
+    // Torre 3 - Piso 2: 240-247
+    else if (num >= 240 && num <= 247) {
+        torre = 'torre3';
+        piso = 'piso2';
+        templateSala = '240';
+    }
+    // Torre 3 - Piso 3: 340-349
+    else if (num >= 340 && num <= 349) {
+        torre = 'torre3';
+        piso = 'piso3';
+        templateSala = '340';
+    }
+    // Torre 3 - Piso 4: 440-449
+    else if (num >= 440 && num <= 449) {
+        torre = 'torre3';
+        piso = 'piso4';
+        templateSala = '440';
+    }
+    // Torre 4 - Piso 2: 250-256
+    else if (num >= 250 && num <= 256) {
+        torre = 'torre4';
+        piso = 'piso2';
+        templateSala = '250';
+    }
+    // Torre 4 - Piso 3: 350-357
+    else if (num >= 350 && num <= 357) {
+        torre = 'torre4';
+        piso = 'piso3';
+        templateSala = '350';
+    }
+    // Torre 4 - Piso 4: 450-457
+    else if (num >= 450 && num <= 457) {
+        torre = 'torre4';
+        piso = 'piso4';
+        templateSala = '450';
+    }
     else {
         return null;
     }
@@ -649,11 +822,17 @@ function obtenerDatosSala(numeroSala) {
     const pisoData = torreData[piso];
     if (!pisoData) return null;
     
+    // Determinar el número de torre
+    let torreNum = 1;
+    if (torre === 'torre2') torreNum = 2;
+    else if (torre === 'torre3') torreNum = 3;
+    else if (torre === 'torre4') torreNum = 4;
+    
     // Si la sala específica existe, usarla
     if (pisoData.salas[numeroSala]) {
         return {
             numero: numeroSala,
-            torre: torre === 'torre1' ? 1 : 2,
+            torre: torreNum,
             piso: parseInt(piso.replace('piso', '')),
             ...pisoData.salas[numeroSala]
         };
@@ -663,7 +842,7 @@ function obtenerDatosSala(numeroSala) {
     if (pisoData.salas[templateSala]) {
         return {
             numero: numeroSala,
-            torre: torre === 'torre1' ? 1 : 2,
+            torre: torreNum,
             piso: parseInt(piso.replace('piso', '')),
             disponible: true,
             imagenes: pisoData.salas[templateSala].imagenes.map(img => ({
