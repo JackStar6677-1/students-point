@@ -6,13 +6,15 @@
 ![License](https://img.shields.io/badge/license-Open%20Source-blue)
 ![Status](https://img.shields.io/badge/status-production--ready-success)
 
->  **NUEVO USUARIO:** Lee [`docs/GUIA-COMPLETA.md`](docs/GUIA-COMPLETA.md) para inicio super rápido.
+>  **⚡ INICIO RÁPIDO:** Lee [`INICIO_RAPIDO.md`](INICIO_RAPIDO.md) - Solo doble click en `iniciar_desarrollo_full.bat`
 
->  **TODA LA DOCUMENTACION:** Ver carpeta [`docs/`](docs/) para documentación completa organizada por categorías.
+>  **NUEVO USUARIO:** Lee [`docs/GUIA-COMPLETA.md`](docs/GUIA-COMPLETA.md) para guía completa de instalación.
 
->  **PWA/MÓVIL:** Ver [`docs/guias/GUIA-RAPIDA-MOVIL.md`](docs/guias/GUIA-RAPIDA-MOVIL.md) para ejecutar en celular.
+>  **📂 DOCUMENTACIÓN:** Ver carpeta [`docs/`](docs/) para documentación organizada por categorías.
 
->  **RELEASES:** Ver [`docs/releases/`](docs/releases/) para notas de versión.
+>  **📱 PWA/MÓVIL:** Ver [`docs/guias/GUIA-RAPIDA-MOVIL.md`](docs/guias/GUIA-RAPIDA-MOVIL.md) para ejecutar en celular.
+
+>  **📋 RELEASES:** Ver [`docs/releases/`](docs/releases/) para notas de versión.
 
 ## Descripcion
 
