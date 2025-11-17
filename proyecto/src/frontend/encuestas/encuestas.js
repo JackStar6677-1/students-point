@@ -17,6 +17,25 @@ class EncuestasManager {
 
     async init() {
         try {
+            // Esperar a que pollsAPI esté disponible
+            if (!window.pollsAPI) {
+                // Esperar un poco más si no está disponible
+                await new Promise(resolve => {
+                    let attempts = 0;
+                    const checkAPI = setInterval(() => {
+                        attempts++;
+                        if (window.pollsAPI || attempts > 10) {
+                            clearInterval(checkAPI);
+                            resolve();
+                        }
+                    }, 100);
+                });
+            }
+            
+            if (!window.pollsAPI) {
+                throw new Error('Servicio de encuestas no disponible. Por favor recarga la página.');
+            }
+            
             await this.ensureAuth();
             this.setupEventListeners();
             await this.loadSedes();
@@ -25,6 +44,19 @@ class EncuestasManager {
         } catch (error) {
             console.error('Error inicializando encuestas:', error);
             this.showToast(error.message || 'No fue posible cargar las encuestas', 'error');
+            // Mostrar mensaje de error en el contenedor
+            if (this.pollsContainer) {
+                this.pollsContainer.innerHTML = `
+                    <div class="col-12 text-center py-5">
+                        <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
+                        <h4 class="text-warning">Error al cargar encuestas</h4>
+                        <p class="text-muted">${this.escapeHtml(error.message || 'No fue posible cargar las encuestas')}</p>
+                        <button class="btn btn-primary mt-3" onclick="location.reload()">
+                            <i class="fas fa-redo me-2"></i>Recargar página
+                        </button>
+                    </div>
+                `;
+            }
         }
     }
 
@@ -755,16 +787,29 @@ class EncuestasManager {
 
 let encuestasManager;
 
+// Esperar a que todos los scripts estén cargados
 document.addEventListener('DOMContentLoaded', () => {
-    encuestasManager = new EncuestasManager();
+    // Asegurar que pollsAPI esté disponible
+    if (typeof PollsAPI !== 'undefined' && !window.pollsAPI) {
+        window.pollsAPI = new PollsAPI();
+    }
+    
+    // Pequeño delay para asegurar que todo esté listo
+    setTimeout(() => {
+        try {
+            encuestasManager = new EncuestasManager();
 
-    window.loadPolls = () => encuestasManager.loadPolls();
-    window.showCreatePoll = () => encuestasManager.showCreatePollModal();
-    window.addOption = () => encuestasManager.addOptionField();
-    window.removeOption = (button) => {
-        if (button?.closest('.input-group')) {
-            encuestasManager.removeOptionField(button.closest('.input-group'));
+            window.loadPolls = () => encuestasManager?.loadPolls();
+            window.showCreatePoll = () => encuestasManager?.showCreatePollModal();
+            window.addOption = () => encuestasManager?.addOptionField();
+            window.removeOption = (button) => {
+                if (button?.closest('.input-group')) {
+                    encuestasManager?.removeOptionField(button.closest('.input-group'));
+                }
+            };
+            window.createPoll = () => encuestasManager?.submitNewPoll();
+        } catch (error) {
+            console.error('Error inicializando EncuestasManager:', error);
         }
-    };
-    window.createPoll = () => encuestasManager.submitNewPoll();
+    }, 100);
 });
