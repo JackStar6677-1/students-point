@@ -13,9 +13,9 @@ const PWA_CONFIG = {
     
     // Configuración de cache
     cacheConfig: {
-        version: '1.2.0',
-        staticCache: 'StudentsPoint-static-v1.2.0',
-        dynamicCache: 'StudentsPoint-dynamic-v1.2.0',
+        version: '1.2.2',
+        staticCache: 'StudentsPoint-static-v1.2.2',
+        dynamicCache: 'StudentsPoint-dynamic-v1.2.2',
         maxAge: 86400000, // 24 horas
         maxEntries: 50
     },

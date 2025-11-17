@@ -93,8 +93,23 @@ urlpatterns = [
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='docs'),
     path('', include('studentspoint.apps.health.urls')),
-    # Servir Service Worker desde la raíz
-    re_path(r'^sw\.js$', serve, {'document_root': Path(settings.STATIC_ROOT), 'path': 'sw.js'}),
+    # Servir Service Worker desde la raíz (con MIME type correcto)
+    re_path(r'^sw\.js$', serve, {
+        'document_root': Path(settings.STATIC_ROOT), 
+        'path': 'sw.js',
+        'content_type': 'application/javascript'
+    }),
+    # Servir manifest.json desde la raíz también (para compatibilidad)
+    re_path(r'^manifest\.json$', serve, {
+        'document_root': Path(settings.STATIC_ROOT), 
+        'path': 'manifest.json',
+        'content_type': 'application/manifest+json'
+    }),
+    re_path(r'^manifest\.webmanifest$', serve, {
+        'document_root': Path(settings.STATIC_ROOT), 
+        'path': 'manifest.webmanifest',
+        'content_type': 'application/manifest+json'
+    }),
     # Servir favicon específicamente
     re_path(r'^favicon\.ico$', serve, {'document_root': Path(settings.STATIC_ROOT), 'path': 'favicon.ico'}),
     # Servir archivos estaticos ANTES del catch-all (directamente desde staticfiles/)

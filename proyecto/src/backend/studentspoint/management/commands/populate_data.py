@@ -229,18 +229,31 @@ class Command(BaseCommand):
         """Crear datos del mercado."""
         self.stdout.write('Creando datos del mercado...')
         
-        # Crear categorías
+        # Crear categorías con descripciones e iconos
         categorias_data = [
-            'Libros y Apuntes',
-            'Electrónicos',
-            'Ropa y Accesorios',
-            'Hogar y Decoración',
-            'Deportes',
-            'Otros'
+            {'nombre': 'Libros y Apuntes', 'descripcion': 'Libros de texto, apuntes, guías de estudio', 'icono': 'fas fa-book'},
+            {'nombre': 'Electrónicos', 'descripcion': 'Laptops, tablets, smartphones, calculadoras', 'icono': 'fas fa-laptop'},
+            {'nombre': 'Ropa y Accesorios', 'descripcion': 'Ropa, zapatos, mochilas, carteras', 'icono': 'fas fa-tshirt'},
+            {'nombre': 'Hogar y Decoración', 'descripcion': 'Artículos para el hogar, decoración, muebles', 'icono': 'fas fa-home'},
+            {'nombre': 'Deportes y Fitness', 'descripcion': 'Equipamiento deportivo, ropa deportiva', 'icono': 'fas fa-dumbbell'},
+            {'nombre': 'Instrumentos Musicales', 'descripcion': 'Guitarras, pianos, instrumentos de viento', 'icono': 'fas fa-music'},
+            {'nombre': 'Arte y Manualidades', 'descripcion': 'Materiales de arte, pinturas, pinceles', 'icono': 'fas fa-palette'},
+            {'nombre': 'Videojuegos y Consolas', 'descripcion': 'Consolas, videojuegos, controles', 'icono': 'fas fa-gamepad'},
+            {'nombre': 'Bicicletas y Transporte', 'descripcion': 'Bicicletas, scooters, patinetas', 'icono': 'fas fa-bicycle'},
+            {'nombre': 'Servicios', 'descripcion': 'Tutorías, clases particulares, servicios', 'icono': 'fas fa-handshake'},
+            {'nombre': 'Material de Oficina', 'descripcion': 'Cuadernos, lápices, calculadoras', 'icono': 'fas fa-briefcase'},
+            {'nombre': 'Otros', 'descripcion': 'Otros productos', 'icono': 'fas fa-tag'}
         ]
         
-        for nombre in categorias_data:
-            CategoriaProducto.objects.get_or_create(nombre=nombre)
+        for cat_data in categorias_data:
+            CategoriaProducto.objects.get_or_create(
+                nombre=cat_data['nombre'],
+                defaults={
+                    'descripcion': cat_data['descripcion'],
+                    'icono': cat_data['icono'],
+                    'activa': True
+                }
+            )
         
         # Crear productos
         usuarios = User.objects.filter(role='student')[:3]
