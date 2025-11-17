@@ -7,7 +7,6 @@ Según las especificaciones de Google, un PWA requiere:
 ### 1. HTTPS (Obligatorio)
 - ✅ La aplicación DEBE estar servida sobre HTTPS
 - ✅ Excepciones: localhost, 127.0.0.1, y redes locales (192.168.x.x)
-- ⚠️ **IMPORTANTE**: Sin HTTPS, el Service Worker NO funcionará en producción
 
 ### 2. Manifest.json
 - ✅ Ya configurado en `/static/manifest.json`
