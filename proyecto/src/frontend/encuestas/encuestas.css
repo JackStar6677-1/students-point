@@ -369,6 +369,35 @@
     color: rgba(255, 255, 255, 0.5);
 }
 
+/* Select multiple (Sedes) */
+select[multiple].form-control,
+select[multiple].form-select {
+    min-height: 120px;
+    padding: 0.5rem;
+    background: rgba(255, 255, 255, 0.15) !important;
+}
+
+select[multiple].form-control option,
+select[multiple].form-select option {
+    padding: 0.5rem;
+    background: rgba(26, 26, 43, 0.95);
+    color: white;
+    border-radius: 4px;
+    margin-bottom: 4px;
+}
+
+select[multiple].form-control option:hover,
+select[multiple].form-select option:hover {
+    background: rgba(13, 202, 240, 0.3);
+}
+
+select[multiple].form-control option:checked,
+select[multiple].form-select option:checked {
+    background: linear-gradient(135deg, var(--students-cyan), var(--students-teal));
+    color: white;
+    font-weight: 600;
+}
+
 .form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -383,15 +412,47 @@
 }
 
 .form-check input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
+    width: 20px;
+    height: 20px;
     accent-color: var(--students-cyan);
+    cursor: pointer;
+    flex-shrink: 0;
 }
 
 .form-check label {
     color: rgba(255, 255, 255, 0.9);
     margin: 0;
     cursor: pointer;
+    user-select: none;
+}
+
+/* Date inputs - mejor visibilidad */
+input[type="datetime-local"].form-control {
+    color-scheme: dark;
+    background: rgba(255, 255, 255, 0.15) !important;
+}
+
+input[type="datetime-local"].form-control::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    cursor: pointer;
+}
+
+/* Input group styles (opciones de respuesta) */
+.input-group {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.input-group .form-control {
+    flex: 1;
+}
+
+.input-group .btn {
+    flex-shrink: 0;
+}
+
+#poll-options {
+    margin-bottom: 1rem;
 }
 
 /* Question Styles */
