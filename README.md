@@ -59,7 +59,7 @@ Ver carpeta `scripts/` para scripts de utilidades:
 
 - **Foros**: comentarios, reportes y moderación ahora operan con permisos y auditoría reforzada.
 - **Marketplace**: visualización del `precio_student_point`, validaciones de términos y analytics automáticos.
-- **Reportes**: frontend reescrito con filtros dinámicos, KPIs y exportaciones CSV/PDF contra la API real.
+- **Reportes**: sistema completo para reportar incidencias en salas de clases y espacios del campus (computadores rotos, baches, infraestructura dañada, etc.) con subida de fotos, filtros dinámicos, KPIs y exportaciones CSV/PDF.
 - **Encuestas**: integración completa con roles (`moderator`, `director_carrera`), votación, resultados y creación avanzada.
 - **Entorno de pruebas**: suites de API actualizadas y migraciones aplicadas para evitar discrepancias de base de datos.
 
@@ -122,7 +122,7 @@ Ver carpeta `scripts/` para scripts de utilidades:
 - Cursos OTEC
 - Sistema de encuestas
 - Notificaciones push
-- Sistema de reportes de infraestructura
+- Sistema de reportes de incidencias en salas de clases y espacios del campus (con subida de fotos)
 - PWA (Progressive Web App) completamente funcional
 
 ### Sistema de Monitoreo y Auditoria
@@ -258,6 +258,32 @@ python manage.py runserver
 - Gestionar foros publicos y privados
 - Ver historial de cambios de carrera
 - Gestionar usuarios y roles
+
+## Sistema de Reportes de Incidencias
+
+### Como Estudiante
+
+**Crear un Reporte**
+- Reporta problemas en salas de clases y espacios del campus (computadores rotos, baches, baños dañados, etc.)
+- Adjunta fotos del problema para documentarlo visualmente
+- Selecciona la sede/campus donde ocurrió el problema
+- Indica la ubicación exacta con coordenadas (se puede usar la ubicación del dispositivo)
+- Categoriza el problema (ej: "Computador roto", "Bache", "Baño dañado")
+- Describe el problema en detalle
+
+**Visualizar Reportes**
+- Filtra reportes por fecha, categoría, campus y estado
+- Ve KPIs en tiempo real: totales, en revisión, resueltos, pendientes
+- Exporta reportes a CSV o PDF para análisis
+
+### Como Moderador/Administrador
+
+**Gestionar Reportes**
+- Cambia el estado de reportes (Abierto → En revisión → Resuelto)
+- Asigna prioridad a los reportes
+- Visualiza todas las fotos adjuntas
+- Filtra y analiza reportes por múltiples criterios
+- Exporta datos para reportes administrativos
 
 ## Configuracion de Produccion
 
