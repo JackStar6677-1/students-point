@@ -42,15 +42,29 @@ class AuthAPI {
     /**
      * Maneja errores de respuesta HTTP.
      * @param {Response} response - Respuesta de fetch
+     * @param {boolean} autoLogoutOn401 - Si debe hacer logout automático en 401 (default: false)
      * @returns {Promise} Promise que resuelve con los datos o lanza error
      */
-    async handleResponse(response) {
+    async handleResponse(response, autoLogoutOn401 = false) {
+        // Si es 401 y se solicita logout automático, cerrar sesión inmediatamente
+        if (response.status === 401 && autoLogoutOn401) {
+            console.warn('Token expirado o inválido. Cerrando sesión...');
+            this.logout(true);
+            return null; // No continuar procesando
+        }
+        
         const contentType = response.headers.get('content-type');
         
         if (contentType && contentType.includes('application/json')) {
             const data = await response.json();
             if (!response.ok) {
                 const errorMsg = data.detail || data.error || data.message || 'Error en la petición';
+                
+                // Si es 401 y no se pidió logout automático, incluir en el mensaje
+                if (response.status === 401) {
+                    throw new Error(`401: ${errorMsg}`);
+                }
+                
                 throw new Error(errorMsg);
             }
             return data;
@@ -58,6 +72,9 @@ class AuthAPI {
 
         const text = await response.text();
         if (!response.ok) {
+            if (response.status === 401) {
+                throw new Error(`401: ${text || 'No autenticado'}`);
+            }
             throw new Error(text || 'Error en la petición');
         }
         return text;
@@ -140,7 +157,13 @@ class AuthAPI {
                 headers: this.getHeaders(true)
             });
 
-            const data = await this.handleResponse(response);
+            // Pasar true para logout automático en 401
+            const data = await this.handleResponse(response, true);
+            
+            // Si data es null, ya se hizo logout
+            if (!data) {
+                return null;
+            }
             
             // Actualizar datos en localStorage
             localStorage.setItem('user_data', JSON.stringify(data));
@@ -149,9 +172,10 @@ class AuthAPI {
         } catch (error) {
             console.error('Error obteniendo usuario:', error);
             
-            // Si es 401, limpiar tokens
-            if (error.message.includes('401') || error.message.includes('autenticado')) {
-                this.logout();
+            // Si es 401, limpiar tokens y redirigir inmediatamente
+            if (error.message.includes('401') || error.message.includes('autenticado') || error.message.includes('Unauthorized')) {
+                this.logout(true);
+                return null;
             }
             
             throw error;
@@ -403,14 +427,22 @@ class AuthAPI {
     }
 
     /**
-     * Cierra sesión y limpia los tokens.
+     * Cierra sesión, limpia los tokens y redirige al login.
+     * @param {boolean} redirect - Si debe redirigir al login (default: true)
      */
-    logout() {
+    logout(redirect = true) {
+        // Limpiar todos los datos del localStorage
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');
         localStorage.removeItem('user_data');
         localStorage.removeItem('remember_me');
         localStorage.removeItem('saved_email');
+        
+        // Redirigir al login si se solicita
+        if (redirect) {
+            // Usar replace para evitar que vuelvan con el botón atrás
+            window.location.replace('/login.html');
+        }
     }
 
     /**

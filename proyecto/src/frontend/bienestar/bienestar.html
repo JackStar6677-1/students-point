@@ -500,9 +500,14 @@
         }
 
         function logout() {
-            localStorage.removeItem('access_token');
-            localStorage.removeItem('refresh_token');
-            window.location.href = '/login.html';
+            if (window.authAPI) {
+                window.authAPI.logout(true);
+            } else {
+                localStorage.removeItem('access_token');
+                localStorage.removeItem('refresh_token');
+                localStorage.removeItem('user_data');
+                window.location.replace('/login.html');
+            }
         }
 
         // Cargar usuario
