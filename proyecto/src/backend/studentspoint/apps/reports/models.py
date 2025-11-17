@@ -19,7 +19,7 @@ class Reporte(models.Model):
     lat = models.FloatField()
     lng = models.FloatField()
     estado = models.CharField(max_length=20, choices=Estados.choices, default=Estados.ABIERTO)
-    prioridad = models.IntegerField(default=0)
+    prioridad = models.IntegerField(default=0)  # type: ignore
     creado_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self) -> str:  # pragma: no cover - representación simple
