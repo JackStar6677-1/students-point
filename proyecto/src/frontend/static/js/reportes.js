@@ -56,6 +56,39 @@ class ReportesManager {
         document.getElementById('btnExportarPDF')?.addEventListener('click', () => {
             this.exportarReporte('pdf');
         });
+
+        // Modal de nuevo reporte
+        const btnNuevoReporte = document.getElementById('btnNuevoReporte');
+        const modalNuevoReporte = document.getElementById('modalNuevoReporte');
+        const btnCrearReporte = document.getElementById('btnCrearReporte');
+        const inputFotos = document.getElementById('reporteFotos');
+
+        if (btnNuevoReporte && modalNuevoReporte) {
+            const modal = new bootstrap.Modal(modalNuevoReporte);
+            btnNuevoReporte.addEventListener('click', () => {
+                this.resetFormNuevoReporte();
+                this.populateSedesInForm();
+                this.getCurrentLocation();
+                modal.show();
+            });
+
+            if (btnCrearReporte) {
+                btnCrearReporte.addEventListener('click', () => {
+                    this.crearReporte();
+                });
+            }
+
+            if (inputFotos) {
+                inputFotos.addEventListener('change', (e) => {
+                    this.previewFotos(e.target.files);
+                });
+            }
+
+            // Resetear formulario al cerrar modal
+            modalNuevoReporte.addEventListener('hidden.bs.modal', () => {
+                this.resetFormNuevoReporte();
+            });
+        }
     }
 
     resetFilters() {
@@ -272,6 +305,29 @@ class ReportesManager {
         const prioridadClass = this.getPrioridadBadgeClass(reporte.prioridad);
         const fecha = this.formatDateTime(reporte.creado_at);
 
+        // Renderizar fotos si existen
+        let fotosHtml = '';
+        if (reporte.media && Array.isArray(reporte.media) && reporte.media.length > 0) {
+            const fotos = reporte.media.map(m => m.url || m.imagen).filter(Boolean);
+            if (fotos.length > 0) {
+                fotosHtml = `
+                    <div class="mt-3">
+                        <small class="text-muted d-block mb-2"><i class="fas fa-images me-1"></i>Fotos adjuntas:</small>
+                        <div class="d-flex flex-wrap gap-2">
+                            ${fotos.map(url => `
+                                <img src="${this.escapeHtml(url)}" 
+                                     alt="Foto del reporte" 
+                                     class="img-thumbnail" 
+                                     style="max-width: 100px; max-height: 100px; cursor: pointer;"
+                                     onclick="window.open('${this.escapeHtml(url)}', '_blank')"
+                                     loading="lazy">
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
         return `
             <article class="card shadow-sm mb-3">
                 <div class="card-body">
@@ -285,6 +341,8 @@ class ReportesManager {
                             <span class="badge bg-${prioridadClass}">${prioridadLabel}</span>
                         </div>
                     </div>
+
+                    ${fotosHtml}
 
                     <div class="d-flex flex-wrap gap-3 text-muted small mt-3">
                         <span><i class="fas fa-map-marker-alt me-1"></i>${this.escapeHtml(reporte.sede_nombre || 'Sede no informada')}</span>
@@ -513,6 +571,161 @@ class ReportesManager {
                 toast.remove();
             }
         }, 3000);
+    }
+
+    // Métodos para crear nuevo reporte
+    resetFormNuevoReporte() {
+        const form = document.getElementById('formNuevoReporte');
+        if (form) form.reset();
+        const preview = document.getElementById('fotosPreview');
+        if (preview) preview.innerHTML = '';
+        const errorDiv = document.getElementById('reporteError');
+        if (errorDiv) {
+            errorDiv.classList.add('d-none');
+            errorDiv.textContent = '';
+        }
+    }
+
+    populateSedesInForm() {
+        const select = document.getElementById('reporteSede');
+        if (!select || !this.sedes.length) return;
+
+        const currentValue = select.value;
+        select.innerHTML = '<option value="">Selecciona una sede</option>';
+        this.sedes.forEach((sede) => {
+            const option = document.createElement('option');
+            option.value = sede.id || sede.slug;
+            option.textContent = sede.nombre;
+            select.appendChild(option);
+        });
+
+        if (currentValue) {
+            select.value = currentValue;
+        }
+    }
+
+    getCurrentLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const latInput = document.getElementById('reporteLat');
+                    const lngInput = document.getElementById('reporteLng');
+                    if (latInput) latInput.value = position.coords.latitude.toFixed(6);
+                    if (lngInput) lngInput.value = position.coords.longitude.toFixed(6);
+                },
+                (error) => {
+                    console.warn('No se pudo obtener la ubicación:', error);
+                }
+            );
+        }
+    }
+
+    previewFotos(files) {
+        const preview = document.getElementById('fotosPreview');
+        if (!preview) return;
+
+        preview.innerHTML = '';
+        Array.from(files).forEach((file, index) => {
+            if (!file.type.startsWith('image/')) {
+                this.showToast(`El archivo ${file.name} no es una imagen`, 'warning');
+                return;
+            }
+            if (file.size > 5 * 1024 * 1024) {
+                this.showToast(`La imagen ${file.name} es muy grande (máx 5MB)`, 'warning');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.className = 'img-thumbnail';
+                img.style.width = '100px';
+                img.style.height = '100px';
+                img.style.objectFit = 'cover';
+                img.style.margin = '4px';
+                preview.appendChild(img);
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
+    async crearReporte() {
+        const sede = document.getElementById('reporteSede')?.value;
+        const categoria = document.getElementById('reporteCategoria')?.value;
+        const descripcion = document.getElementById('reporteDescripcion')?.value;
+        const lat = document.getElementById('reporteLat')?.value;
+        const lng = document.getElementById('reporteLng')?.value;
+        const fotosInput = document.getElementById('reporteFotos');
+        const errorDiv = document.getElementById('reporteError');
+        const btnCrear = document.getElementById('btnCrearReporte');
+
+        // Validar campos requeridos
+        if (!sede || !categoria || !descripcion || !lat || !lng) {
+            if (errorDiv) {
+                errorDiv.textContent = 'Por favor completa todos los campos requeridos.';
+                errorDiv.classList.remove('d-none');
+            }
+            return;
+        }
+
+        if (errorDiv) errorDiv.classList.add('d-none');
+
+        // Crear FormData para multipart/form-data
+        const formData = new FormData();
+        formData.append('sede', sede);
+        formData.append('categoria', categoria);
+        formData.append('descripcion', descripcion);
+        formData.append('lat', parseFloat(lat));
+        formData.append('lng', parseFloat(lng));
+
+        // Agregar fotos
+        if (fotosInput && fotosInput.files.length > 0) {
+            Array.from(fotosInput.files).forEach((file, index) => {
+                if (file.type.startsWith('image/') && file.size <= 5 * 1024 * 1024) {
+                    formData.append(`imagen_${index}`, file);
+                }
+            });
+        }
+
+        if (btnCrear) btnCrear.disabled = true;
+
+        try {
+            const response = await fetch('/api/reports/', {
+                method: 'POST',
+                headers: this.getAuthHeaders(false), // No incluir Content-Type para multipart
+                body: formData,
+            });
+
+            if (response.status === 401) {
+                window.authAPI.logout();
+                window.location.href = '/login.html';
+                return;
+            }
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({ detail: 'Error al crear el reporte' }));
+                throw new Error(errorData.detail || errorData.message || 'Error al crear el reporte');
+            }
+
+            this.showToast('Reporte creado exitosamente', 'success');
+            
+            // Cerrar modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('modalNuevoReporte'));
+            if (modal) modal.hide();
+
+            // Recargar lista de reportes
+            await this.loadData();
+        } catch (error) {
+            console.error('Error creando reporte:', error);
+            if (errorDiv) {
+                errorDiv.textContent = error.message || 'Error al crear el reporte';
+                errorDiv.classList.remove('d-none');
+            }
+            this.showToast(error.message || 'Error al crear el reporte', 'error');
+        } finally {
+            if (btnCrear) btnCrear.disabled = false;
+        }
     }
 }
 
