@@ -6,15 +6,15 @@
 ![License](https://img.shields.io/badge/license-Open%20Source-blue)
 ![Status](https://img.shields.io/badge/status-production--ready-success)
 
->  **⚡ INICIO RÁPIDO:** Lee [`INICIO_RAPIDO.md`](INICIO_RAPIDO.md) - Solo doble click en `iniciar_desarrollo_full.bat`
+>  ** INICIO RÁPIDO:** Lee [`INICIO_RAPIDO.md`](INICIO_RAPIDO.md) - Solo doble click en `iniciar_desarrollo_full.bat`
 
 >  **NUEVO USUARIO:** Lee [`docs/GUIA-COMPLETA.md`](docs/GUIA-COMPLETA.md) para guía completa de instalación.
 
->  **📂 DOCUMENTACIÓN:** Ver carpeta [`docs/`](docs/) para documentación organizada por categorías.
+>  ** DOCUMENTACIÓN:** Ver carpeta [`docs/`](docs/) para documentación organizada por categorías.
 
->  **📱 PWA/MÓVIL:** Ver [`docs/guias/GUIA-RAPIDA-MOVIL.md`](docs/guias/GUIA-RAPIDA-MOVIL.md) para ejecutar en celular.
+>  ** PWA/MÓVIL:** Ver [`docs/guias/GUIA-RAPIDA-MOVIL.md`](docs/guias/GUIA-RAPIDA-MOVIL.md) para ejecutar en celular.
 
->  **📋 RELEASES:** Ver [`docs/releases/`](docs/releases/) para notas de versión.
+>  ** RELEASES:** Ver [`docs/releases/`](docs/releases/) para notas de versión.
 
 ## Descripcion
 
@@ -46,11 +46,11 @@ La diversidad de módulos en StudentsPoint responde a una estrategia de **centra
 
 **Cualquier institución educativa** puede adoptar StudentsPoint como su plataforma de centralización estudiantil. El proyecto está diseñado para ser:
 
-- ✅ **Modular**: Cada herramienta funciona de forma independiente
-- ✅ **Escalable**: Se adapta a instituciones pequeñas y grandes
-- ✅ **Personalizable**: Configurable por campus, carreras y roles
-- ✅ **Open Source**: Libre para adaptar a necesidades específicas
-- ✅ **PWA**: Funciona como aplicación nativa en móviles y escritorio
+-  **Modular**: Cada herramienta funciona de forma independiente
+-  **Escalable**: Se adapta a instituciones pequeñas y grandes
+-  **Personalizable**: Configurable por campus, carreras y roles
+-  **Open Source**: Libre para adaptar a necesidades específicas
+-  **PWA**: Funciona como aplicación nativa en móviles y escritorio
 
 Esta arquitectura permite que las instituciones **reemplacen múltiples sistemas dispersos** con una única plataforma integrada, mejorando la experiencia del estudiante y reduciendo la fragmentación de servicios.
 
