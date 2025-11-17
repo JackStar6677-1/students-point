@@ -87,11 +87,11 @@ Ver carpeta `scripts/` para scripts de utilidades:
 
 ### Cobertura de módulos recientes
 
-- **Foros**: comentarios, reportes y moderación ahora operan con permisos y auditoría reforzada.
-- **Marketplace**: visualización del `precio_student_point`, validaciones de términos y analytics automáticos.
-- **Reportes**: sistema completo para reportar incidencias en salas de clases y espacios del campus (computadores rotos, baches, infraestructura dañada, etc.) con subida de fotos, filtros dinámicos, KPIs y exportaciones CSV/PDF.
-- **Encuestas**: integración completa con roles (`moderator`, `director_carrera`), votación, resultados y creación avanzada.
-- **Entorno de pruebas**: suites de API actualizadas y migraciones aplicadas para evitar discrepancias de base de datos.
+- **Foros**: Comentarios, reportes y moderación con permisos y auditoría reforzada. Ahora solo permite mensajes de texto/imagen (las encuestas tienen su propio módulo).
+- **Marketplace**: Visualización del `precio_student_point`, validaciones de términos y analytics automáticos.
+- **Reportes**: Sistema completo para reportar incidencias en salas de clases y espacios del campus (computadores rotos, baches, infraestructura dañada, etc.) con subida de fotos, filtros dinámicos, KPIs y exportaciones CSV/PDF.
+- **Encuestas**: Módulo independiente con integración completa de roles (`moderator`, `director_carrera`), votación, resultados y creación avanzada. Frontend mejorado con mejor visibilidad del selector de sedes y controles de fecha.
+- **Entorno de pruebas**: Suites de API actualizadas y migraciones aplicadas para evitar discrepancias de base de datos.
 
 >  **Documentacion completa**: Ver carpeta [`docs/`](docs/) para toda la documentacion disponible.
 
@@ -150,7 +150,7 @@ Ver carpeta `scripts/` para scripts de utilidades:
 - Sistema de bienestar estudiantil
 - Gestion de horarios de clases
 - Cursos OTEC
-- Sistema de encuestas
+- **Sistema de encuestas** - Módulo independiente para votaciones institucionales (no confundir con el foro)
 - Notificaciones push
 - Sistema de reportes de incidencias en salas de clases y espacios del campus (con subida de fotos)
 - PWA (Progressive Web App) completamente funcional
@@ -267,9 +267,10 @@ python manage.py runserver
 
 **Crear una Publicacion**
 - Solo puedes crear posts en el foro de tu carrera
-- Tipos disponibles: comentario, encuesta, imagen, otro
+- Tipos disponibles: mensaje (texto) y mensaje con imagen
 - El sistema censura automaticamente palabras ofensivas
 - Las imagenes requieren aprobacion de administradores
+- **Nota**: Las encuestas tienen su propio módulo separado (`/encuestas/`)
 
 **Comentar en Posts**
 - Puedes comentar en posts de cualquier foro
@@ -277,8 +278,8 @@ python manage.py runserver
 
 **Votar y Participar**
 - Vota posts (upvote/downvote)
-- Participa en encuestas
 - Reporta contenido inapropiado
+- Para encuestas institucionales, usa el módulo de Encuestas (`/encuestas/`)
 
 ### Como Administrador
 
