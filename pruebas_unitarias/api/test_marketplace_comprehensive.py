@@ -30,7 +30,7 @@ class TestMarketplaceProducts:
     
     def test_create_product_success(self):
         """Verifica que un usuario autenticado puede crear productos"""
-        from studentspoint.apps.marketplace.models import Producto
+        from studentspoint.apps.market.models import Producto
         
         # Crear usuario y autenticarse
         user = User.objects.create_user(
@@ -86,7 +86,7 @@ class TestMarketplaceProducts:
     
     def test_update_own_product(self):
         """Verifica que un usuario puede actualizar sus propios productos"""
-        from studentspoint.apps.marketplace.models import Producto
+        from studentspoint.apps.market.models import Producto
         
         # Crear usuario y producto
         user = User.objects.create_user(
@@ -132,7 +132,7 @@ class TestMarketplaceProducts:
     
     def test_cannot_update_others_product(self):
         """Verifica que un usuario no puede actualizar productos de otros"""
-        from studentspoint.apps.marketplace.models import Producto
+        from studentspoint.apps.market.models import Producto
         
         # Crear dos usuarios
         owner = User.objects.create_user(
@@ -185,7 +185,7 @@ class TestMarketplaceProducts:
     
     def test_delete_own_product(self):
         """Verifica que un usuario puede eliminar sus propios productos"""
-        from studentspoint.apps.marketplace.models import Producto
+        from studentspoint.apps.market.models import Producto
         
         # Crear usuario y producto
         user = User.objects.create_user(
@@ -232,7 +232,7 @@ class TestMarketplaceCategories:
     
     def test_filter_products_by_category(self):
         """Verifica que se puede filtrar productos por categoría"""
-        from studentspoint.apps.marketplace.models import Producto
+        from studentspoint.apps.market.models import Producto
         
         # Crear usuario
         user = User.objects.create_user(
@@ -284,7 +284,7 @@ class TestMarketplaceSearch:
     
     def test_search_products_by_title(self):
         """Verifica que se puede buscar productos por título"""
-        from studentspoint.apps.marketplace.models import Producto
+        from studentspoint.apps.market.models import Producto
         
         # Crear usuario
         user = User.objects.create_user(

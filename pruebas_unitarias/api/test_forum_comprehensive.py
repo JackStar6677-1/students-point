@@ -11,18 +11,36 @@ User = get_user_model()
 pytestmark = pytest.mark.django_db
 
 
+@pytest.fixture
+def sede():
+    """Fixture para crear una sede"""
+    from studentspoint.apps.campuses.models import Sede
+    sede, _ = Sede.objects.get_or_create(
+        slug='maipu',
+        defaults={
+            'nombre': 'Sede Maipú',
+            'direccion': 'Dirección de prueba',
+            'lat': -33.4489,
+            'lng': -70.6693
+        }
+    )
+    return sede
+
+
 class TestForumPosts:
     """Pruebas para la creación y gestión de posts"""
     
-    def test_create_post_requires_authentication(self):
+    def test_create_post_requires_authentication(self, sede):
         """Verifica que crear un post requiere autenticación"""
         from studentspoint.apps.forum.models import Foro
         
         # Crear un foro
         foro = Foro.objects.create(
-            nombre='Test Forum',
+            titulo='Test Forum',
             descripcion='Test Description',
-            sede_duoc='Maipú'
+            sede=sede,
+            carrera='Ingeniería en Informática',
+            slug='test-forum-1'
         )
         
         client = APIClient()
@@ -31,12 +49,12 @@ class TestForumPosts:
         response = client.post('/api/forum/posts/', {
             'foro': foro.id,
             'titulo': 'Test Post',
-            'contenido': 'Test Content'
+            'cuerpo': 'Test Content'
         }, format='json')
         
         assert response.status_code in (401, 403)
     
-    def test_create_post_success(self):
+    def test_create_post_success(self, sede):
         """Verifica que un usuario autenticado puede crear posts"""
         from studentspoint.apps.forum.models import Foro, Post
         
@@ -61,9 +79,11 @@ class TestForumPosts:
         
         # Crear foro
         foro = Foro.objects.create(
-            nombre='Test Forum',
+            titulo='Test Forum',
             descripcion='Test Description',
-            sede_duoc='Maipú'
+            sede=sede,
+            carrera='Ingeniería en Informática',
+            slug='test-forum-2'
         )
         
         # Contar posts antes
@@ -73,7 +93,7 @@ class TestForumPosts:
         response = client.post('/api/forum/posts/', {
             'foro': foro.id,
             'titulo': 'Mi Primer Post',
-            'contenido': 'Este es el contenido de mi post de prueba'
+            'cuerpo': 'Este es el contenido de mi post de prueba'
         }, format='json')
         
         assert response.status_code in (200, 201)
@@ -84,7 +104,7 @@ class TestForumPosts:
         
         # Verificar detalles del post
         post = Post.objects.latest('created_at')
-        assert post.autor == user
+        assert post.usuario == user
         assert post.titulo == 'Mi Primer Post'
         assert post.foro == foro
     
@@ -97,7 +117,7 @@ class TestForumPosts:
         
         assert response.status_code == 200
     
-    def test_vote_post_requires_authentication(self):
+    def test_vote_post_requires_authentication(self, sede):
         """Verifica que votar un post requiere autenticación"""
         from studentspoint.apps.forum.models import Foro, Post
         
@@ -111,16 +131,18 @@ class TestForumPosts:
         )
         
         foro = Foro.objects.create(
-            nombre='Test Forum',
+            titulo='Test Forum',
             descripcion='Test',
-            sede_duoc='Maipú'
+            sede=sede,
+            carrera='Ingeniería en Informática',
+            slug='test-forum-3'
         )
         
         post = Post.objects.create(
             foro=foro,
-            autor=user,
+            usuario=user,
             titulo='Test Post',
-            contenido='Content'
+            cuerpo='Content'
         )
         
         client = APIClient()
@@ -136,7 +158,7 @@ class TestForumPosts:
 class TestForumComments:
     """Pruebas para comentarios en posts"""
     
-    def test_create_comment_requires_authentication(self):
+    def test_create_comment_requires_authentication(self, sede):
         """Verifica que crear comentarios requiere autenticación"""
         from studentspoint.apps.forum.models import Foro, Post
         
@@ -150,28 +172,30 @@ class TestForumComments:
         )
         
         foro = Foro.objects.create(
-            nombre='Test Forum',
+            titulo='Test Forum',
             descripcion='Test',
-            sede_duoc='Maipú'
+            sede=sede,
+            carrera='Ingeniería en Informática',
+            slug='test-forum-4'
         )
         
         post = Post.objects.create(
             foro=foro,
-            autor=user,
+            usuario=user,
             titulo='Test Post',
-            contenido='Content'
+            cuerpo='Content'
         )
         
         client = APIClient()
         
         # Intentar comentar sin autenticación
         response = client.post(f'/api/forum/posts/{post.id}/comments/', {
-            'contenido': 'Test Comment'
+            'cuerpo': 'Test Comment'
         }, format='json')
         
         assert response.status_code in (401, 403)
     
-    def test_create_comment_success(self):
+    def test_create_comment_success(self, sede):
         """Verifica que un usuario autenticado puede comentar"""
         from studentspoint.apps.forum.models import Foro, Post, Comentario
         
@@ -196,16 +220,18 @@ class TestForumComments:
         
         # Crear foro y post
         foro = Foro.objects.create(
-            nombre='Test Forum',
+            titulo='Test Forum',
             descripcion='Test',
-            sede_duoc='Maipú'
+            sede=sede,
+            carrera='Ingeniería en Informática',
+            slug='test-forum-5'
         )
         
         post = Post.objects.create(
             foro=foro,
-            autor=author,
+            usuario=author,
             titulo='Test Post',
-            contenido='Content'
+            cuerpo='Content'
         )
         
         # Autenticarse como comentarista
@@ -223,7 +249,7 @@ class TestForumComments:
         
         # Crear comentario
         response = client.post(f'/api/forum/posts/{post.id}/comments/', {
-            'contenido': 'Este es mi comentario de prueba'
+            'cuerpo': 'Este es mi comentario de prueba'
         }, format='json')
         
         assert response.status_code in (200, 201)
@@ -234,15 +260,15 @@ class TestForumComments:
         
         # Verificar detalles del comentario
         comment = Comentario.objects.latest('created_at')
-        assert comment.autor == commenter
+        assert comment.usuario == commenter
         assert comment.post == post
-        assert 'prueba' in comment.contenido.lower()
+        assert 'prueba' in comment.cuerpo.lower()
 
 
 class TestForumReports:
     """Pruebas para el sistema de reportes"""
     
-    def test_report_post_requires_authentication(self):
+    def test_report_post_requires_authentication(self, sede):
         """Verifica que reportar contenido requiere autenticación"""
         from studentspoint.apps.forum.models import Foro, Post
         
@@ -256,16 +282,18 @@ class TestForumReports:
         )
         
         foro = Foro.objects.create(
-            nombre='Test Forum',
+            titulo='Test Forum',
             descripcion='Test',
-            sede_duoc='Maipú'
+            sede=sede,
+            carrera='Ingeniería en Informática',
+            slug='test-forum-6'
         )
         
         post = Post.objects.create(
             foro=foro,
-            autor=user,
+            usuario=user,
             titulo='Test Post',
-            contenido='Content'
+            cuerpo='Content'
         )
         
         client = APIClient()
@@ -281,7 +309,7 @@ class TestForumReports:
 class TestForumModeration:
     """Pruebas para funcionalidades de moderación"""
     
-    def test_moderation_requires_moderator_role(self):
+    def test_moderation_requires_moderator_role(self, sede):
         """Verifica que las acciones de moderación requieren rol de moderador"""
         from studentspoint.apps.forum.models import Foro, Post
         
@@ -293,7 +321,7 @@ class TestForumModeration:
             career='Ingeniería en Informática',
             semestre=1,
             is_email_verified=True,
-            role='estudiante'
+            role='student'
         )
         
         # Crear otro usuario y su post
@@ -306,16 +334,18 @@ class TestForumModeration:
         )
         
         foro = Foro.objects.create(
-            nombre='Test Forum',
+            titulo='Test Forum',
             descripcion='Test',
-            sede_duoc='Maipú'
+            sede=sede,
+            carrera='Ingeniería en Informática',
+            slug='test-forum-7'
         )
         
         post = Post.objects.create(
             foro=foro,
-            autor=author,
+            usuario=author,
             titulo='Test Post',
-            contenido='Content'
+            cuerpo='Content'
         )
         
         # Autenticarse como usuario normal
@@ -333,4 +363,3 @@ class TestForumModeration:
         
         # Debería ser denegado (403) o el post no debería pertenecer al usuario
         assert response.status_code in (403, 404)
-
