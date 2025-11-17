@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="/static/css/theme-dark.css">
     <link rel="stylesheet" href="/static/css/base-layout.css">
     <link rel="stylesheet" href="/static/css/animations.css">
+    <link rel="stylesheet" href="/static/bienestar/bienestar.css">
     
     <!-- PWA -->
     <link rel="manifest" href="/static/manifest.json">
@@ -111,11 +112,13 @@
             </header>
 
             <div class="content-wrapper fade-in">
+                <div class="particles-bg"></div>
+                
                 <!-- Selector de Carrera -->
                 <div class="container mt-4" id="carrera-selector">
-                    <div class="text-center mb-5">
-                        <i class="fas fa-heart-pulse fa-4x mb-3 text-danger"></i>
-                        <h2 class="mb-3">Bienestar Estudiantil Personalizado</h2>
+                    <div class="text-center mb-5 animate-fade-in">
+                        <i class="fas fa-heart-pulse fa-4x mb-3" style="color: #ef4444;"></i>
+                        <h2 class="mb-3" style="background: linear-gradient(135deg, #ef4444 0%, #f59e0b 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-weight: 700;">Bienestar Estudiantil Personalizado</h2>
                         <p class="text-muted">Consejos de salud física y mental adaptados a tu carrera</p>
                     </div>
                     
@@ -141,13 +144,13 @@
 
                 <!-- Consejos de Bienestar -->
                 <div class="container mt-4" id="consejos-container" style="display: none;">
-                    <div class="text-center mb-4">
+                    <div class="text-center mb-4 animate-fade-in">
                         <button class="btn btn-outline-secondary" onclick="backToSelector()">
                             <i class="fas fa-arrow-left"></i> Cambiar Carrera
                         </button>
                     </div>
 
-                    <h3 class="mb-4" id="carrera-titulo"></h3>
+                    <h3 class="mb-4 animate-fade-in" id="carrera-titulo"></h3>
 
                     <!-- Tabs de categorías -->
                     <ul class="nav nav-pills mb-4 justify-content-center" id="bienestar-tabs" role="tablist">
