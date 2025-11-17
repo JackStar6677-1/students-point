@@ -6,13 +6,25 @@ from .models import Reporte, ReporteMedia
 
 
 class ReporteMediaSerializer(serializers.ModelSerializer):
+    url = serializers.SerializerMethodField()
+    
     class Meta:
         model = ReporteMedia
-        fields = ["url"]
+        fields = ["id", "imagen", "url"]
+        read_only_fields = ["id"]
+    
+    def get_url(self, obj):
+        """Retorna la URL de la imagen o la URL alternativa."""
+        if obj.imagen:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.imagen.url)
+            return obj.imagen.url
+        return obj.url
 
 
 class ReporteSerializer(serializers.ModelSerializer):
-    media = ReporteMediaSerializer(many=True, required=False)
+    media = ReporteMediaSerializer(many=True, required=False, read_only=True)
     sede_nombre = serializers.CharField(source="sede.nombre", read_only=True)
 
     class Meta:
@@ -31,10 +43,3 @@ class ReporteSerializer(serializers.ModelSerializer):
             "media",
         ]
         read_only_fields = ["prioridad", "creado_at", "sede_nombre"]
-
-    def create(self, validated_data):
-        media_data = validated_data.pop("media", [])
-        reporte = Reporte.objects.create(**validated_data)
-        for media in media_data:
-            ReporteMedia.objects.create(reporte=reporte, **media)
-        return reporte

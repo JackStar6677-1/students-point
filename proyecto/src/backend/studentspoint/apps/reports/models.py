@@ -30,7 +30,15 @@ class ReporteMedia(models.Model):
     """Archivos asociados a un :class:`Reporte`."""
 
     reporte = models.ForeignKey(Reporte, on_delete=models.CASCADE, related_name="media")
-    url = models.URLField()
+    imagen = models.ImageField(
+        upload_to='reports/images/',
+        null=True,
+        blank=True,
+        help_text="Imagen del problema reportado"
+    )
+    url = models.URLField(null=True, blank=True, help_text="URL alternativa si no se sube archivo")
 
     def __str__(self) -> str:  # pragma: no cover - representación simple
-        return self.url
+        if self.imagen:
+            return str(self.imagen.url)
+        return str(self.url) if self.url else "Sin media"
