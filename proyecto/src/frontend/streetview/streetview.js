@@ -429,14 +429,180 @@ const recorridosData = {
             {
                 id: 'salas',
                 titulo: 'Salas',
-                descripcion: 'Recorrido por salas de clases',
+                descripcion: 'Busca y explora las salas de clases',
                 icono: 'fa-chalkboard-teacher',
-                disponible: false,
+                disponible: true,
+                tieneBuscador: true,
                 imagenes: []
             }
         ]
     }
 };
+
+// Datos de salas disponibles organizadas por piso
+const salasData = {
+    // Piso 2 - Salas 200 a 211
+    'piso2': {
+        rango: '200-211',
+        salas: {
+            '200': {
+                disponible: true,
+                imagenes: [
+                    { url: '/imagenes/mapa/Torre 1/Piso 2 - salas 200 a 211/torre1img1.webp', titulo: 'Entrada Sala 200', descripcion: 'Acceso principal a la sala 200' },
+                    { url: '/imagenes/mapa/Torre 1/Piso 2 - salas 200 a 211/torre1img2.webp', titulo: 'Vista Interior Sala 200', descripcion: 'Vista del interior de la sala' },
+                    { url: '/imagenes/mapa/Torre 1/Piso 2 - salas 200 a 211/torre1img3.webp', titulo: 'Área de Trabajo Sala 200', descripcion: 'Espacio de trabajo y estudio' },
+                    { url: '/imagenes/mapa/Torre 1/Piso 2 - salas 200 a 211/torre1img4.webp', titulo: 'Equipamiento Sala 200', descripcion: 'Equipamiento y recursos disponibles' },
+                    { url: '/imagenes/mapa/Torre 1/Piso 2 - salas 200 a 211/torre1img5.webp', titulo: 'Vista Panorámica Sala 200', descripcion: 'Vista completa de la sala' },
+                    { url: '/imagenes/mapa/Torre 1/Piso 2 - salas 200 a 211/torre1img6.webp', titulo: 'Detalle Sala 200', descripcion: 'Detalles adicionales de la sala' },
+                    { url: '/imagenes/mapa/Torre 1/Piso 2 - salas 200 a 211/torre1img7.webp', titulo: 'Área de Proyección Sala 200', descripcion: 'Zona de proyección y presentaciones' },
+                    { url: '/imagenes/mapa/Torre 1/Piso 2 - salas 200 a 211/torre1img8.webp', titulo: 'Vista Final Sala 200', descripcion: 'Vista final del recorrido' }
+                ]
+            },
+            '201': {
+                disponible: true,
+                imagenes: [
+                    { url: '/imagenes/mapa/Torre 1/Piso 2 - salas 200 a 211/torre1img1.webp', titulo: 'Entrada Sala 201', descripcion: 'Acceso principal a la sala 201' },
+                    { url: '/imagenes/mapa/Torre 1/Piso 2 - salas 200 a 211/torre1img2.webp', titulo: 'Vista Interior Sala 201', descripcion: 'Vista del interior de la sala' },
+                    { url: '/imagenes/mapa/Torre 1/Piso 2 - salas 200 a 211/torre1img3.webp', titulo: 'Área de Trabajo Sala 201', descripcion: 'Espacio de trabajo y estudio' },
+                    { url: '/imagenes/mapa/Torre 1/Piso 2 - salas 200 a 211/torre1img4.webp', titulo: 'Equipamiento Sala 201', descripcion: 'Equipamiento y recursos disponibles' },
+                    { url: '/imagenes/mapa/Torre 1/Piso 2 - salas 200 a 211/torre1img5.webp', titulo: 'Vista Panorámica Sala 201', descripcion: 'Vista completa de la sala' },
+                    { url: '/imagenes/mapa/Torre 1/Piso 2 - salas 200 a 211/torre1img6.webp', titulo: 'Detalle Sala 201', descripcion: 'Detalles adicionales de la sala' },
+                    { url: '/imagenes/mapa/Torre 1/Piso 2 - salas 200 a 211/torre1img7.webp', titulo: 'Área de Proyección Sala 201', descripcion: 'Zona de proyección y presentaciones' },
+                    { url: '/imagenes/mapa/Torre 1/Piso 2 - salas 200 a 211/torre1img8.webp', titulo: 'Vista Final Sala 201', descripcion: 'Vista final del recorrido' }
+                ]
+            }
+            // Nota: Las salas 202-211 usarían las mismas imágenes por ahora
+            // Se pueden agregar más salas específicas cuando haya imágenes dedicadas
+        }
+    },
+    // Piso 3 - Salas 300 a 319
+    'piso3': {
+        rango: '300-319',
+        salas: {
+            '300': {
+                disponible: true,
+                imagenes: [
+                    { url: '/imagenes/mapa/Torre 1/Piso 3 - salas 300 a 319/torre1img1.webp', titulo: 'Entrada Sala 300', descripcion: 'Acceso principal a la sala 300' },
+                    { url: '/imagenes/mapa/Torre 1/Piso 3 - salas 300 a 319/torre1img2.webp', titulo: 'Vista Interior Sala 300', descripcion: 'Vista del interior de la sala' },
+                    { url: '/imagenes/mapa/Torre 1/Piso 3 - salas 300 a 319/torre1img3.webp', titulo: 'Área de Trabajo Sala 300', descripcion: 'Espacio de trabajo y estudio' },
+                    { url: '/imagenes/mapa/Torre 1/Piso 3 - salas 300 a 319/torre1img4.webp', titulo: 'Equipamiento Sala 300', descripcion: 'Equipamiento y recursos disponibles' },
+                    { url: '/imagenes/mapa/Torre 1/Piso 3 - salas 300 a 319/torre1img5.webp', titulo: 'Vista Panorámica Sala 300', descripcion: 'Vista completa de la sala' },
+                    { url: '/imagenes/mapa/Torre 1/Piso 3 - salas 300 a 319/torre1img6.webp', titulo: 'Detalle Sala 300', descripcion: 'Detalles adicionales de la sala' },
+                    { url: '/imagenes/mapa/Torre 1/Piso 3 - salas 300 a 319/torre1img7.webp', titulo: 'Área de Proyección Sala 300', descripcion: 'Zona de proyección y presentaciones' },
+                    { url: '/imagenes/mapa/Torre 1/Piso 3 - salas 300 a 319/torre1img8.webp', titulo: 'Vista Final Sala 300', descripcion: 'Vista final del recorrido' },
+                    { url: '/imagenes/mapa/Torre 1/Piso 3 - salas 300 a 319/torre1img9.webp', titulo: 'Vista Adicional Sala 300', descripcion: 'Vista adicional de la sala' },
+                    { url: '/imagenes/mapa/Torre 1/Piso 3 - salas 300 a 319/torre1img10.webp', titulo: 'Detalle Equipamiento Sala 300', descripcion: 'Detalle del equipamiento' },
+                    { url: '/imagenes/mapa/Torre 1/Piso 3 - salas 300 a 319/torre1img11.webp', titulo: 'Vista Lateral Sala 300', descripcion: 'Vista lateral de la sala' },
+                    { url: '/imagenes/mapa/Torre 1/Piso 3 - salas 300 a 319/torre1img12.webp', titulo: 'Vista General Sala 300', descripcion: 'Vista general completa' }
+                ]
+            }
+            // Nota: Las salas 301-319 usarían las mismas imágenes por ahora
+        }
+    },
+    // Piso 4 - Salas 401 a 403
+    'piso4': {
+        rango: '401-403',
+        salas: {
+            '401': {
+                disponible: true,
+                imagenes: [
+                    { url: '/imagenes/mapa/Torre 1/Piso 4 - salas 401 a 403/torre1img1.webp', titulo: 'Entrada Sala 401', descripcion: 'Acceso principal a la sala 401' },
+                    { url: '/imagenes/mapa/Torre 1/Piso 4 - salas 401 a 403/torre1img2.webp', titulo: 'Vista Interior Sala 401', descripcion: 'Vista del interior de la sala' },
+                    { url: '/imagenes/mapa/Torre 1/Piso 4 - salas 401 a 403/torre1img3.webp', titulo: 'Área de Trabajo Sala 401', descripcion: 'Espacio de trabajo y estudio' },
+                    { url: '/imagenes/mapa/Torre 1/Piso 4 - salas 401 a 403/torre1img4.webp', titulo: 'Equipamiento Sala 401', descripcion: 'Equipamiento y recursos disponibles' },
+                    { url: '/imagenes/mapa/Torre 1/Piso 4 - salas 401 a 403/torre1img5.webp', titulo: 'Vista Panorámica Sala 401', descripcion: 'Vista completa de la sala' },
+                    { url: '/imagenes/mapa/Torre 1/Piso 4 - salas 401 a 403/torre1img6.webp', titulo: 'Detalle Sala 401', descripcion: 'Detalles adicionales de la sala' },
+                    { url: '/imagenes/mapa/Torre 1/Piso 4 - salas 401 a 403/torre1img7.webp', titulo: 'Área de Proyección Sala 401', descripcion: 'Zona de proyección y presentaciones' },
+                    { url: '/imagenes/mapa/Torre 1/Piso 4 - salas 401 a 403/torre1img8.webp', titulo: 'Vista Final Sala 401', descripcion: 'Vista final del recorrido' },
+                    { url: '/imagenes/mapa/Torre 1/Piso 4 - salas 401 a 403/torre1img9.webp', titulo: 'Vista Adicional Sala 401', descripcion: 'Vista adicional de la sala' },
+                    { url: '/imagenes/mapa/Torre 1/Piso 4 - salas 401 a 403/torre1img10.webp', titulo: 'Detalle Equipamiento Sala 401', descripcion: 'Detalle del equipamiento' },
+                    { url: '/imagenes/mapa/Torre 1/Piso 4 - salas 401 a 403/torre1img11.webp', titulo: 'Vista Lateral Sala 401', descripcion: 'Vista lateral de la sala' },
+                    { url: '/imagenes/mapa/Torre 1/Piso 4 - salas 401 a 403/torre1img12.webp', titulo: 'Vista General Sala 401', descripcion: 'Vista general completa' },
+                    { url: '/imagenes/mapa/Torre 1/Piso 4 - salas 401 a 403/torre1img13.webp', titulo: 'Vista Completa Sala 401', descripcion: 'Vista completa adicional' },
+                    { url: '/imagenes/mapa/Torre 1/Piso 4 - salas 401 a 403/torre1img14.webp', titulo: 'Detalle Final Sala 401', descripcion: 'Detalle final del recorrido' },
+                    { url: '/imagenes/mapa/Torre 1/Piso 4 - salas 401 a 403/torre1img15.webp', titulo: 'Vista Panorámica Final Sala 401', descripcion: 'Vista panorámica final' }
+                ]
+            }
+            // Nota: Las salas 402-403 usarían las mismas imágenes por ahora
+        }
+    }
+};
+
+// Función auxiliar para determinar el piso y obtener datos de sala
+function obtenerDatosSala(numeroSala) {
+    const num = parseInt(numeroSala);
+    
+    if (isNaN(num)) return null;
+    
+    // Determinar piso basado en el número
+    if (num >= 200 && num <= 211) {
+        const piso = 'piso2';
+        // Si la sala específica existe, usarla; si no, usar la 200 como template
+        if (salasData[piso].salas[numeroSala]) {
+            return {
+                numero: numeroSala,
+                piso: 2,
+                ...salasData[piso].salas[numeroSala]
+            };
+        } else {
+            // Usar sala 200 como template para otras salas del piso 2
+            return {
+                numero: numeroSala,
+                piso: 2,
+                disponible: true,
+                imagenes: salasData[piso].salas['200'].imagenes.map(img => ({
+                    ...img,
+                    titulo: img.titulo.replace('200', numeroSala),
+                    descripcion: img.descripcion.replace('200', numeroSala)
+                }))
+            };
+        }
+    } else if (num >= 300 && num <= 319) {
+        const piso = 'piso3';
+        if (salasData[piso].salas[numeroSala]) {
+            return {
+                numero: numeroSala,
+                piso: 3,
+                ...salasData[piso].salas[numeroSala]
+            };
+        } else {
+            // Usar sala 300 como template
+            return {
+                numero: numeroSala,
+                piso: 3,
+                disponible: true,
+                imagenes: salasData[piso].salas['300'].imagenes.map(img => ({
+                    ...img,
+                    titulo: img.titulo.replace('300', numeroSala),
+                    descripcion: img.descripcion.replace('300', numeroSala)
+                }))
+            };
+        }
+    } else if (num >= 401 && num <= 403) {
+        const piso = 'piso4';
+        if (salasData[piso].salas[numeroSala]) {
+            return {
+                numero: numeroSala,
+                piso: 4,
+                ...salasData[piso].salas[numeroSala]
+            };
+        } else {
+            // Usar sala 401 como template
+            return {
+                numero: numeroSala,
+                piso: 4,
+                disponible: true,
+                imagenes: salasData[piso].salas['401'].imagenes.map(img => ({
+                    ...img,
+                    titulo: img.titulo.replace('401', numeroSala),
+                    descripcion: img.descripcion.replace('401', numeroSala)
+                }))
+            };
+        }
+    }
+    
+    return null;
+}
 
 // ========================================
 // INICIALIZACIÓN
@@ -515,10 +681,12 @@ function renderRecorridosCards(recorridos) {
         const card = document.createElement('div');
         card.className = `recorrido-card ${!recorrido.disponible ? 'disabled' : ''}`;
 
-        if (recorrido.disponible || recorrido.tieneSubmenu) {
+        if (recorrido.disponible || recorrido.tieneSubmenu || recorrido.tieneBuscador) {
             card.onclick = () => {
                 if (recorrido.tieneSubmenu) {
                     showBanosSubmenu(recorrido);
+                } else if (recorrido.tieneBuscador) {
+                    showSalasBuscador(recorrido);
                 } else {
                     startSlideshow(recorrido);
                 }
@@ -689,8 +857,10 @@ function backToRecorridos() {
     document.getElementById('banos-submenu').style.display = 'none';
     const opcionesContainer = document.getElementById('banos-opciones');
     const opcionesList = document.getElementById('banos-opciones-list');
+    const salasBuscador = document.getElementById('salas-buscador');
     if (opcionesContainer) opcionesContainer.style.display = 'none';
     if (opcionesList) opcionesList.innerHTML = '';
+    if (salasBuscador) salasBuscador.style.display = 'none';
     banosCurrentRecorrido = null;
     banosCurrentFloor = null;
     banosLastView = null;
@@ -698,6 +868,100 @@ function backToRecorridos() {
 
     // Reproducir sonido
     if (window.playSound) window.playSound('click');
+}
+
+// ========================================
+// BUSCADOR DE SALAS
+// ========================================
+
+function showSalasBuscador(recorrido) {
+    // Ocultar otros contenedores
+    document.getElementById('recorridos-container').style.display = 'none';
+    document.getElementById('banos-submenu').style.display = 'none';
+    document.getElementById('banos-opciones').style.display = 'none';
+    
+    // Mostrar buscador
+    document.getElementById('salas-buscador').style.display = 'block';
+    
+    // Limpiar input y mensaje
+    const input = document.getElementById('sala-search-input');
+    const mensaje = document.getElementById('sala-mensaje');
+    if (input) input.value = '';
+    if (mensaje) {
+        mensaje.style.display = 'none';
+        mensaje.className = 'alert';
+    }
+    
+    // Enfocar input
+    if (input) {
+        setTimeout(() => input.focus(), 100);
+    }
+    
+    // Reproducir sonido
+    if (window.playSound) window.playSound('click');
+}
+
+function buscarSala() {
+    const input = document.getElementById('sala-search-input');
+    const mensaje = document.getElementById('sala-mensaje');
+    
+    if (!input || !mensaje) return;
+    
+    const numeroSala = input.value.trim();
+    
+    // Validar que no esté vacío
+    if (!numeroSala) {
+        mostrarMensajeSala('Por favor ingresa un número de sala', 'warning');
+        return;
+    }
+    
+    // Obtener datos de la sala
+    const datosSala = obtenerDatosSala(numeroSala);
+    
+    if (!datosSala) {
+        mostrarMensajeSala('Esta sala aún no está disponible', 'info');
+        return;
+    }
+    
+    if (!datosSala.disponible) {
+        mostrarMensajeSala('Esta sala aún no está disponible', 'info');
+        return;
+    }
+    
+    if (!datosSala.imagenes || datosSala.imagenes.length === 0) {
+        mostrarMensajeSala('Esta sala aún no está disponible', 'info');
+        return;
+    }
+    
+    // Crear objeto recorrido para el slideshow
+    const recorridoSala = {
+        id: `sala-${datosSala.numero}`,
+        titulo: `Sala ${datosSala.numero}`,
+        descripcion: `Recorrido virtual de la Sala ${datosSala.numero} - Piso ${datosSala.piso}`,
+        icono: 'fa-chalkboard-teacher',
+        disponible: true,
+        imagenes: datosSala.imagenes
+    };
+    
+    // Ocultar buscador
+    document.getElementById('salas-buscador').style.display = 'none';
+    
+    // Iniciar slideshow
+    startSlideshow(recorridoSala);
+}
+
+function mostrarMensajeSala(texto, tipo) {
+    const mensaje = document.getElementById('sala-mensaje');
+    if (!mensaje) return;
+    
+    mensaje.textContent = texto;
+    mensaje.className = `alert alert-${tipo}`;
+    mensaje.style.display = 'block';
+    
+    // Auto-ocultar después de 4 segundos
+    setTimeout(() => {
+        mensaje.style.display = 'none';
+    }, 4000);
 }
 
 // ========================================
@@ -728,8 +992,10 @@ function startSlideshow(recorrido) {
     document.getElementById('recorridos-container').style.display = 'none';
     const banosSubmenu = document.getElementById('banos-submenu');
     const banosOpciones = document.getElementById('banos-opciones');
+    const salasBuscador = document.getElementById('salas-buscador');
     if (banosSubmenu) banosSubmenu.style.display = 'none';
     if (banosOpciones) banosOpciones.style.display = 'none';
+    if (salasBuscador) salasBuscador.style.display = 'none';
     document.getElementById('slideshow-container').style.display = 'flex';
 
     // Actualizar navegación
@@ -844,8 +1110,16 @@ function exitSlideshow() {
 
     const banosSubmenu = document.getElementById('banos-submenu');
     const banosOpciones = document.getElementById('banos-opciones');
+    const salasBuscador = document.getElementById('salas-buscador');
 
-    if (banosCurrentRecorrido) {
+    // Verificar si venimos de una sala
+    if (currentRecorrido && currentRecorrido.id && currentRecorrido.id.startsWith('sala-')) {
+        if (salasBuscador) {
+            salasBuscador.style.display = 'block';
+        } else {
+            document.getElementById('recorridos-container').style.display = 'block';
+        }
+    } else if (banosCurrentRecorrido) {
         if (banosLastView === 'options' && banosOpciones) {
             banosOpciones.style.display = 'block';
         } else if (banosSubmenu) {
@@ -973,6 +1247,7 @@ window.loadRecorridos = loadRecorridos;
 window.backToSelector = backToSelector;
 window.backToRecorridos = backToRecorridos;
 window.backToBanosFloors = backToBanosFloors;
+window.buscarSala = buscarSala;
 window.nextSlide = nextSlide;
 window.previousSlide = previousSlide;
 window.goToSlide = goToSlide;
