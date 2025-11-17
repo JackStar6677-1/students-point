@@ -1,207 +1,153 @@
-/* Encuestas Styles - StudentsPoint */
-.encuestas-container {
-    background: linear-gradient(135deg, var(--bg-start) 0%, var(--bg-end) 100%);
-    min-height: 100vh;
-    padding: 2rem 0;
+/* Encuestas Styles */
+
+/* Fondo y contenido principal */
+.main-content {
+    background: transparent !important;
+    color: #ffffff;
 }
 
-/* Filters Section */
-.filters-section {
-    margin-bottom: 2rem;
+.content-wrapper {
+    background: transparent;
+    position: relative;
+    z-index: 1;
 }
 
-.filters-section .students-card {
-    padding: 1.5rem;
+/* Variables de color */
+:root {
+    --students-cyan: #0dcaf0;
+    --students-green: #20c997;
+    --gold: #fbbf24;
+    --border-radius: 12px;
+    --transition-medium: all 0.3s ease;
+    --transition-fast: all 0.15s ease;
 }
 
-.filters-section .form-group {
-    margin-bottom: 0;
+/* Texto general */
+.container h2,
+.container h3,
+.container h4,
+.container p {
+    color: #ffffff;
 }
 
-.filters-section label {
-    color: rgba(255, 255, 255, 0.9);
-    font-weight: 500;
-    margin-bottom: 0.5rem;
-    display: block;
+.gradient-text {
+    background: linear-gradient(135deg, #0dcaf0 0%, #20c997 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
-.filters-section .form-control {
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+.text-muted {
+    color: rgba(255, 255, 255, 0.6) !important;
+}
+
+/* Imagen upload area */
+.image-upload-area {
+    position: relative;
+    width: 100%;
+    min-height: 250px;
+    border: 2px dashed rgba(255, 255, 255, 0.3);
     border-radius: var(--border-radius);
-    color: white;
+    overflow: hidden;
     transition: all var(--transition-medium);
-}
-
-.filters-section .form-control:focus {
-    outline: none;
-    border-color: var(--students-cyan);
-    box-shadow: 0 0 0 3px rgba(13, 202, 240, 0.2);
-    background: rgba(255, 255, 255, 0.15);
-}
-
-.filters-section .form-control::placeholder {
-    color: rgba(255, 255, 255, 0.5);
-}
-
-/* Stats Section */
-.stats-section {
-    margin-bottom: 2rem;
-}
-
-.stat-card {
     background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(10px);
-    border-radius: var(--border-radius);
-    padding: 1.5rem;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: all var(--transition-medium);
-    height: 100%;
 }
 
-.stat-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+.image-upload-area:hover {
     border-color: var(--students-cyan);
+    background: rgba(13, 202, 240, 0.1);
 }
 
-.stat-card .stat-icon {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--students-cyan), var(--students-teal));
+.upload-placeholder {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    margin-bottom: 1rem;
+    height: 250px;
+    cursor: pointer;
+    color: rgba(255, 255, 255, 0.7);
+    transition: all var(--transition-medium);
 }
 
-.stat-card .stat-icon i {
-    font-size: 1.5rem;
-    color: white;
+.upload-placeholder:hover {
+    color: var(--students-cyan);
 }
 
-.stat-number {
-    font-size: 2rem;
-    font-weight: bold;
-    color: var(--gold);
-    margin-bottom: 0.5rem;
+.upload-placeholder i {
+    color: var(--students-cyan);
 }
 
-.stat-label {
-    color: rgba(255, 255, 255, 0.8);
-    font-size: 0.9rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+.image-preview {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    border-radius: var(--border-radius);
 }
 
-/* Section Header */
-.section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
+.remove-image {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 10;
 }
 
-.section-header h2 {
-    color: var(--gold);
-    margin: 0;
+/* Opciones de encuesta */
+.opcion-item {
+    animation: fadeInUp 0.3s ease;
 }
 
-.view-toggle {
-    display: flex;
-    gap: 0.5rem;
+.opcion-item .input-group-text {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.7);
+    cursor: grab;
 }
 
-.view-toggle .btn {
-    padding: 0.5rem;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.opcion-item .input-group-text:active {
+    cursor: grabbing;
 }
 
-/* Encuestas List */
-.encuestas-list {
-    display: grid;
-    gap: 1.5rem;
-}
-
-.encuestas-list.grid-view {
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-}
-
+/* Tarjeta de encuesta */
 .encuesta-card {
     background: rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(10px);
-    border-radius: var(--border-radius);
-    padding: 1.5rem;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: all var(--transition-medium);
-    position: relative;
+    border-radius: var(--border-radius);
     overflow: hidden;
+    transition: all var(--transition-medium);
+    animation: fadeInUp 0.5s ease;
+    margin-bottom: 2rem;
 }
 
 .encuesta-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 10px 40px rgba(13, 202, 240, 0.3);
     border-color: var(--students-cyan);
 }
 
-.encuesta-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, var(--students-cyan), var(--students-teal));
+.encuesta-card-image {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    background: linear-gradient(135deg, rgba(13, 202, 240, 0.1), rgba(32, 201, 151, 0.1));
 }
 
-.encuesta-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
+.encuesta-card-body {
+    padding: 1.5rem;
+}
+
+.encuesta-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #fbbf24;
+    margin-bottom: 0.5rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.encuesta-description {
+    color: rgba(255, 255, 255, 0.9);
     margin-bottom: 1rem;
-}
-
-.encuesta-titulo {
-    color: var(--gold);
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin: 0;
-    flex: 1;
-}
-
-.encuesta-estado {
-    padding: 0.25rem 0.75rem;
-    border-radius: 20px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.encuesta-estado.activa {
-    background: var(--students-green);
-    color: white;
-}
-
-.encuesta-estado.cerrada {
-    background: var(--students-red);
-    color: white;
-}
-
-.encuesta-estado.programada {
-    background: var(--students-orange);
-    color: white;
-}
-
-.encuesta-descripcion {
-    color: rgba(255, 255, 255, 0.8);
     line-height: 1.6;
-    margin-bottom: 1rem;
 }
 
 .encuesta-meta {
@@ -213,480 +159,317 @@
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.encuesta-meta span {
-    color: rgba(255, 255, 255, 0.6);
-    font-size: 0.875rem;
+.encuesta-meta-item {
     display: flex;
     align-items: center;
-    gap: 0.25rem;
-}
-
-.encuesta-progress {
-    margin-bottom: 1rem;
-}
-
-.progress-label {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0.5rem;
-}
-
-.progress-label span {
-    color: rgba(255, 255, 255, 0.8);
-    font-size: 0.875rem;
-}
-
-.progress-bar-custom {
-    height: 8px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 4px;
-    overflow: hidden;
-}
-
-.progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--students-cyan), var(--students-teal));
-    border-radius: 4px;
-    transition: width 0.5s ease;
-}
-
-.encuesta-actions {
-    display: flex;
     gap: 0.5rem;
-    flex-wrap: wrap;
-}
-
-.encuesta-actions .btn {
-    flex: 1;
-    min-width: 120px;
-}
-
-/* Modal Styles */
-.modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.8);
-    backdrop-filter: blur(5px);
-    z-index: 1000;
-    animation: fadeIn 0.3s ease;
-}
-
-.modal.show {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.modal-content {
-    background: linear-gradient(135deg, var(--bg-start), var(--bg-end));
-    border-radius: var(--border-radius);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    max-width: 600px;
-    width: 90%;
-    max-height: 90vh;
-    overflow-y: auto;
-    animation: zoomIn 0.3s ease;
-}
-
-.modal-content.modal-large {
-    max-width: 800px;
-}
-
-.modal-header {
-    padding: 1.5rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.modal-title {
-    color: var(--gold);
-    margin: 0;
-    font-size: 1.5rem;
-}
-
-.modal-close {
-    background: none;
-    border: none;
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 1.5rem;
-    cursor: pointer;
-    transition: color var(--transition-fast);
-}
-
-.modal-close:hover {
-    color: var(--students-red);
-}
-
-.modal-body {
-    padding: 1.5rem;
-}
-
-.modal-footer {
-    padding: 1.5rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    display: flex;
-    justify-content: flex-end;
-    gap: 1rem;
-}
-
-/* Form Styles */
-.form-group {
-    margin-bottom: 1.5rem;
-}
-
-.form-group label {
-    display: block;
-    color: rgba(255, 255, 255, 0.9);
-    margin-bottom: 0.5rem;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.9rem;
     font-weight: 500;
 }
 
-.form-control {
-    width: 100%;
-    padding: 0.75rem;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: var(--border-radius);
-    color: white;
-    transition: all var(--transition-medium);
+.encuesta-meta-item i {
+    color: #0dcaf0;
 }
 
-.form-control:focus {
-    outline: none;
-    border-color: var(--students-cyan);
-    box-shadow: 0 0 0 3px rgba(13, 202, 240, 0.2);
-    background: rgba(255, 255, 255, 0.15);
-}
-
-.form-control::placeholder {
-    color: rgba(255, 255, 255, 0.5);
-}
-
-/* Select multiple (Sedes) */
-select[multiple].form-control,
-select[multiple].form-select {
-    min-height: 120px;
-    padding: 0.5rem;
-    background: rgba(255, 255, 255, 0.15) !important;
-}
-
-select[multiple].form-control option,
-select[multiple].form-select option {
-    padding: 0.5rem;
-    background: rgba(26, 26, 43, 0.95);
-    color: white;
-    border-radius: 4px;
-    margin-bottom: 4px;
-}
-
-select[multiple].form-control option:hover,
-select[multiple].form-select option:hover {
-    background: rgba(13, 202, 240, 0.3);
-}
-
-select[multiple].form-control option:checked,
-select[multiple].form-select option:checked {
-    background: linear-gradient(135deg, var(--students-cyan), var(--students-teal));
-    color: white;
-    font-weight: 600;
-}
-
-.form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-}
-
-.form-check {
+/* Opciones de votación */
+.votacion-opciones {
     display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-}
-
-.form-check input[type="checkbox"] {
-    width: 20px;
-    height: 20px;
-    accent-color: var(--students-cyan);
-    cursor: pointer;
-    flex-shrink: 0;
-}
-
-.form-check label {
-    color: rgba(255, 255, 255, 0.9);
-    margin: 0;
-    cursor: pointer;
-    user-select: none;
-}
-
-/* Date inputs - mejor visibilidad */
-input[type="datetime-local"].form-control {
-    color-scheme: dark;
-    background: rgba(255, 255, 255, 0.15) !important;
-}
-
-input[type="datetime-local"].form-control::-webkit-calendar-picker-indicator {
-    filter: invert(1);
-    cursor: pointer;
-}
-
-/* Input group styles (opciones de respuesta) */
-.input-group {
-    display: flex;
-    gap: 0.5rem;
-}
-
-.input-group .form-control {
-    flex: 1;
-}
-
-.input-group .btn {
-    flex-shrink: 0;
-}
-
-#poll-options {
-    margin-bottom: 1rem;
-}
-
-/* Question Styles */
-.question-item {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: var(--border-radius);
-    padding: 1.5rem;
+    flex-direction: column;
+    gap: 0.75rem;
     margin-bottom: 1.5rem;
-    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.question-text {
-    color: var(--gold);
-    font-weight: 600;
-    margin-bottom: 1rem;
-    font-size: 1.1rem;
-}
-
-.question-options {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-}
-
-.option-item {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.75rem;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: var(--border-radius);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: all var(--transition-medium);
-    cursor: pointer;
-}
-
-.option-item:hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: var(--students-cyan);
-}
-
-.option-item input[type="radio"],
-.option-item input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
-    accent-color: var(--students-cyan);
-}
-
-.option-item label {
-    color: rgba(255, 255, 255, 0.9);
-    margin: 0;
-    cursor: pointer;
-    flex: 1;
-}
-
-/* Results Styles */
-.results-section {
-    margin-bottom: 2rem;
-}
-
-.results-section h3 {
-    color: var(--gold);
-    margin-bottom: 1rem;
-}
-
-.result-item {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: var(--border-radius);
+.opcion-voto {
+    position: relative;
     padding: 1rem;
-    margin-bottom: 1rem;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: all var(--transition-medium);
+    overflow: hidden;
 }
 
-.result-question {
-    color: var(--gold);
-    font-weight: 600;
-    margin-bottom: 0.75rem;
+.opcion-voto:hover {
+    border-color: var(--students-cyan);
+    background: rgba(13, 202, 240, 0.1);
+    transform: translateX(5px);
 }
 
-.result-options {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+.opcion-voto.selected {
+    border-color: var(--students-cyan);
+    background: rgba(13, 202, 240, 0.2);
 }
 
-.result-option {
+.opcion-voto.voted {
+    cursor: default;
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.opcion-voto.voted:hover {
+    transform: none;
+}
+
+.opcion-voto-content {
+    position: relative;
+    z-index: 2;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.5rem;
-    background: rgba(255, 255, 255, 0.05);
+}
+
+.opcion-voto-texto {
+    font-weight: 600;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.opcion-voto-porcentaje {
+    font-weight: 700;
+    color: white;
+    font-size: 1.2rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.opcion-voto-votos {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.9);
+    margin-left: 0.5rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.opcion-voto-barra {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background: linear-gradient(90deg, 
+        rgba(13, 202, 240, 0.6), 
+        rgba(32, 201, 151, 0.6));
+    z-index: 1;
+    transition: width 0.5s ease;
     border-radius: var(--border-radius);
 }
 
-.result-option-text {
-    color: rgba(255, 255, 255, 0.9);
+/* Botón de votar */
+.btn-votar {
+    width: 100%;
+    padding: 0.75rem;
+    background: linear-gradient(135deg, var(--students-cyan), var(--students-green));
+    border: none;
+    color: white;
+    font-weight: 600;
+    border-radius: var(--border-radius);
+    transition: all var(--transition-medium);
 }
 
-.result-option-count {
+.btn-votar:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(13, 202, 240, 0.4);
+}
+
+.btn-votar:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Estado de votación */
+.ya-votado-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    background: rgba(32, 201, 151, 0.25);
+    border: 2px solid var(--students-green);
+    border-radius: 50px;
+    color: #20c997;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    box-shadow: 0 4px 15px rgba(32, 201, 151, 0.3);
+}
+
+.ya-votado-badge i {
+    font-size: 1.2rem;
+    color: #20c997;
+}
+
+/* Resultados */
+.total-votos {
+    text-align: center;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--border-radius);
+    margin-bottom: 1rem;
+}
+
+.total-votos-numero {
+    font-size: 2rem;
+    font-weight: 700;
     color: var(--students-cyan);
-    font-weight: 600;
+    display: block;
 }
 
-.result-option-percentage {
-    color: var(--gold);
-    font-weight: 600;
+.total-votos-texto {
+    color: rgba(255, 255, 255, 0.6);
     font-size: 0.9rem;
 }
 
-/* Toast */
-.toast {
-    position: fixed;
-    top: 2rem;
-    right: 2rem;
-    background: var(--students-green);
-    color: white;
-    padding: 1rem 1.5rem;
-    border-radius: var(--border-radius);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-    z-index: 1001;
-    animation: slideInRight 0.3s ease;
+/* Empty state */
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    animation: fadeIn 0.5s ease;
 }
 
-.toast.error {
-    background: var(--students-red);
+.empty-state i {
+    font-size: 4rem;
+    color: rgba(255, 255, 255, 0.3);
+    margin-bottom: 1rem;
 }
 
-.toast.warning {
-    background: var(--students-orange);
+.empty-state h3 {
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 0.5rem;
 }
 
-.toast.info {
-    background: var(--students-cyan);
+.empty-state p {
+    color: rgba(255, 255, 255, 0.5);
 }
 
-/* Loading */
-.loading {
-    display: flex;
+/* Checkbox personalizado para múltiple selección */
+.opcion-voto input[type="checkbox"] {
+    display: none;
+}
+
+.opcion-voto .checkbox-custom {
+    width: 24px;
+    height: 24px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 2rem;
-    color: rgba(255, 255, 255, 0.7);
+    transition: all var(--transition-fast);
+    margin-right: 0.75rem;
 }
 
-.loading i {
-    animation: spin 1s linear infinite;
-    margin-right: 0.5rem;
+.opcion-voto.selected .checkbox-custom {
+    background: var(--students-cyan);
+    border-color: var(--students-cyan);
 }
 
-/* Empty State */
-.no-results {
-    text-align: center;
-    padding: 3rem 2rem;
-    color: rgba(255, 255, 255, 0.6);
+.opcion-voto.selected .checkbox-custom i {
+    color: white;
 }
 
-.no-results i {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-    color: rgba(255, 255, 255, 0.3);
+/* Radio personalizado */
+.opcion-voto .radio-custom {
+    width: 24px;
+    height: 24px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-fast);
+    margin-right: 0.75rem;
 }
 
-.no-results h4 {
-    color: rgba(255, 255, 255, 0.8);
-    margin-bottom: 1rem;
+.opcion-voto.selected .radio-custom {
+    border-color: var(--students-cyan);
 }
 
-.no-results p {
-    margin: 0;
+.opcion-voto.selected .radio-custom::after {
+    content: '';
+    width: 12px;
+    height: 12px;
+    background: var(--students-cyan);
+    border-radius: 50%;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-    .form-row {
-        grid-template-columns: 1fr;
+    .encuesta-card-image {
+        height: 200px;
     }
     
-    .section-header {
+    .encuesta-title {
+        font-size: 1.25rem;
+    }
+    
+    .encuesta-meta {
         flex-direction: column;
-        align-items: flex-start;
-        gap: 1rem;
+        gap: 0.5rem;
     }
     
-    .encuestas-list.grid-view {
-        grid-template-columns: 1fr;
-    }
-    
-    .encuesta-actions {
-        flex-direction: column;
-    }
-    
-    .encuesta-actions .btn {
-        min-width: auto;
-    }
-    
-    .modal-content {
-        width: 95%;
-        margin: 1rem;
-    }
-    
-    .modal-footer {
-        flex-direction: column;
+    .total-votos-numero {
+        font-size: 1.5rem;
     }
 }
 
-/* Animations */
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-@keyframes zoomIn {
-    from { 
-        opacity: 0;
-        transform: scale(0.8);
-    }
-    to { 
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
-@keyframes slideInRight {
+/* Animaciones */
+@keyframes fadeInUp {
     from {
         opacity: 0;
-        transform: translateX(100%);
+        transform: translateY(20px);
     }
     to {
         opacity: 1;
-        transform: translateX(0);
+        transform: translateY(0);
     }
 }
 
-@keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Loading skeleton */
+.skeleton-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    margin-bottom: 2rem;
+}
+
+.skeleton-image {
+    width: 100%;
+    height: 300px;
+    background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.05) 0%,
+        rgba(255, 255, 255, 0.1) 50%,
+        rgba(255, 255, 255, 0.05) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+.skeleton-text {
+    height: 20px;
+    background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.05) 0%,
+        rgba(255, 255, 255, 0.1) 50%,
+        rgba(255, 255, 255, 0.05) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 4px;
+    margin-bottom: 0.75rem;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
 }

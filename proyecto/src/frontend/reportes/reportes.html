@@ -15,12 +15,13 @@
     <link rel="stylesheet" href="/static/css/theme-dark.css">
     <link rel="stylesheet" href="/static/css/base-layout.css">
     <link rel="stylesheet" href="/static/css/animations.css">
-    <link rel="stylesheet" href="/static/css/reportes.css">
+    <link rel="stylesheet" href="/static/reportes/reportes.css">
     
     <!-- PWA -->
     <link rel="manifest" href="/static/manifest.json">
     <meta name="theme-color" content="#1a1a1b">
     <link rel="icon" href="/static/favicon.ico">
+    <link rel="apple-touch-icon" href="/static/images/icons/icon-192x192.png">
 </head>
 <body>
     <div class="app-container">
@@ -68,7 +69,7 @@
                     <span>Encuestas</span>
                 </a>
                 <a href="/reportes/" class="menu-item active">
-                    <i class="fas fa-chart-bar"></i>
+                    <i class="fas fa-exclamation-triangle"></i>
                     <span>Reportes</span>
                 </a>
                 <a href="/bienestar/" class="menu-item">
@@ -92,7 +93,7 @@
                 </a>
                 <a href="#" class="menu-item" onclick="logout(); return false;">
                     <i class="fas fa-sign-out-alt"></i>
-                    <span>Cerrar Sesion</span>
+                    <span>Cerrar Sesión</span>
                 </a>
             </div>
         </aside>
@@ -100,216 +101,179 @@
         <!-- Main Content -->
         <main class="main-content">
             <header class="top-header">
-                <h1 class="header-title">Reportes y Estadísticas</h1>
+                <h1 class="header-title">Reportes de Desperfectos</h1>
                 <div class="header-actions">
-                    <button class="btn btn-gradient-purple" id="btnNuevoReporte" title="Nuevo Reporte">
-                        <i class="fas fa-plus me-2"></i>Nuevo Reporte
-                    </button>
                     <button class="btn-icon" id="notificationsBtn" title="Notificaciones">
                         <i class="fas fa-bell"></i>
                     </button>
-                    <button class="btn-icon" id="settingsBtn" title="Configuracion">
+                    <button class="btn-icon" id="settingsBtn" title="Configuración">
                         <i class="fas fa-cog"></i>
                     </button>
                 </div>
             </header>
 
             <div class="content-wrapper fade-in">
-                <div class="glass p-4 mb-4">
-                    <p class="text-muted mb-0">
-                        <i class="fas fa-info-circle me-2"></i>
-                        Reporta incidencias en las salas de clases y espacios del campus (computadores rotos, baches, infraestructura dañada, etc.). 
-                        Puedes adjuntar fotos para documentar el problema. Los moderadores revisarán y gestionarán los reportes.
-                    </p>
-                </div>
-
-                <div class="glass p-4 mb-4">
-                    <h2 class="h5 mb-3"><i class="fas fa-sliders-h me-2"></i>Filtros</h2>
-                    <div class="row g-3">
-                        <div class="col-md-3">
-                            <label for="filtroFechaInicio" class="form-label">Fecha inicio</label>
-                            <input type="date" id="filtroFechaInicio" class="form-control">
+                <div class="particles-bg"></div>
+                
+                <!-- Header con botón crear -->
+                <div class="container mt-4">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h2 class="gradient-text mb-1">
+                                <i class="fas fa-tools me-2"></i>Reportar Desperfectos
+                            </h2>
+                            <p class="text-muted">Ayúdanos a mejorar reportando problemas en la sede</p>
                         </div>
-                        <div class="col-md-3">
-                            <label for="filtroFechaFin" class="form-label">Fecha fin</label>
-                            <input type="date" id="filtroFechaFin" class="form-control">
-                        </div>
-                        <div class="col-md-3">
-                            <label for="filtroTipo" class="form-label">Categoría</label>
-                            <select id="filtroTipo" class="form-select">
-                                <option value="">Todas las categorías</option>
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <label for="filtroCampus" class="form-label">Campus</label>
-                            <select id="filtroCampus" class="form-select">
-                                <option value="">Todas las sedes</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="d-flex justify-content-end gap-2 mt-3">
-                        <button id="btnLimpiarFiltros" class="btn btn-outline-secondary">
-                            <i class="fas fa-eraser me-2"></i>Limpiar filtros
-                        </button>
-                        <button id="btnAplicarFiltros" class="btn btn-gradient-purple">
-                            <i class="fas fa-filter me-2"></i>Aplicar filtros
+                        <button class="btn btn-primary btn-lg" onclick="mostrarModalCrear()">
+                            <i class="fas fa-plus-circle me-2"></i>Nuevo Reporte
                         </button>
                     </div>
-                </div>
 
-                <div class="glass p-4 mb-4">
-                    <div class="row g-3">
-                        <div class="col-md-3">
-                            <div class="kpi-card">
-                                <h3 id="totalReportes" class="kpi-value">0</h3>
-                                <p class="kpi-label">Reportes totales</p>
-                                <span class="kpi-trend text-primary" id="totalReportesTrend"><i class="fas fa-sync-alt"></i> Actualizado</span>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="kpi-card">
-                                <h3 id="reportesRevision" class="kpi-value">0</h3>
-                                <p class="kpi-label">En revisión</p>
-                                <span class="kpi-trend text-warning" id="reportesRevisionTrend"><i class="fas fa-hourglass-half"></i> Sin cambios</span>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="kpi-card">
-                                <h3 id="reportesResueltos" class="kpi-value">0</h3>
-                                <p class="kpi-label">Resueltos</p>
-                                <span class="kpi-trend text-success" id="reportesResueltosTrend"><i class="fas fa-check"></i> Buen trabajo</span>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="kpi-card">
-                                <h3 id="reportesPendientes" class="kpi-value">0</h3>
-                                <p class="kpi-label">Pendientes</p>
-                                <span class="kpi-trend text-muted" id="reportesPendientesTrend"><i class="fas fa-clock"></i> Actualizar filtros</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="glass p-4 mb-4">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h2 class="h5 mb-0"><i class="fas fa-chart-line me-2"></i>Visualizaciones</h2>
-                        <div class="btn-group">
-                            <button id="btnExportarExcel" class="btn btn-outline-success">
-                                <i class="fas fa-file-excel me-2"></i>Exportar Excel
-                            </button>
-                            <button id="btnExportarPDF" class="btn btn-outline-danger">
-                                <i class="fas fa-file-pdf me-2"></i>Exportar PDF
-                            </button>
-                        </div>
-                    </div>
-                    <div class="row g-3">
-                        <div class="col-lg-6">
-                            <div class="glass p-3">
-                                <h3 class="h6 mb-3"><i class="fas fa-users me-2"></i>Actividad de usuarios</h3>
-                                <div class="chart-placeholder" id="chartActividad">
-                                    <i class="fas fa-chart-area"></i>
-                                    <p>Próximamente: gráfico de actividad diaria.</p>
+                    <!-- Estadísticas -->
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <div class="stat-card-simple">
+                                <div class="stat-icon" style="background: linear-gradient(135deg, #ef4444, #dc2626);">
+                                    <i class="fas fa-exclamation-circle"></i>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="glass p-3">
-                                <h3 class="h6 mb-3"><i class="fas fa-smile-beam me-2"></i>Satisfacción de estudiantes</h3>
-                                <div class="chart-placeholder" id="chartSatisfaccion">
-                                    <i class="fas fa-chart-pie"></i>
-                                    <p>Próximamente: distribución de niveles de satisfacción.</p>
+                                <div class="stat-info">
+                                    <div class="stat-number" id="stat-total">0</div>
+                                    <div class="stat-label">Reportes Registrados</div>
                                 </div>
                             </div>
                         </div>
                     </div>
+
+                    <!-- Filtros -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <select class="form-select" id="filtroTipo" onchange="reportesManager.filtrarReportes()">
+                                <option value="">Todos los tipos</option>
+                                <option value="infraestructura">Infraestructura</option>
+                                <option value="equipamiento">Equipamiento</option>
+                                <option value="limpieza">Limpieza</option>
+                                <option value="seguridad">Seguridad</option>
+                                <option value="otro">Otro</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <input type="text" class="form-control" id="buscarReporte" placeholder="Buscar reportes..." onkeyup="reportesManager.filtrarReportes()">
+                        </div>
+                    </div>
                 </div>
 
-                <div class="glass p-4 mb-4">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h2 class="h5 mb-0"><i class="fas fa-list-ul me-2"></i>Reportes encontrados</h2>
-                        <span class="text-muted" id="reportesResultadoResumen"></span>
-                    </div>
-                    <div id="reportesLoading" class="reportes-loading text-center py-4" style="display: none;">
-                        <div class="spinner-border text-primary" role="status"></div>
-                        <p class="text-muted mt-3 mb-0">Cargando reportes...</p>
-                    </div>
-                    <div id="reportesLista" class="reports-grid"></div>
-                    <div id="reportesVacio" class="alert alert-light text-center" style="display: none;">
-                        <i class="fas fa-info-circle me-2"></i>No se encontraron reportes para los filtros seleccionados.
+                <!-- Lista de Reportes -->
+                <div class="container">
+                    <div class="row" id="reportes-container">
+                        <!-- Los reportes se cargarán aquí dinámicamente -->
+                        <div class="col-12 text-center py-5">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Cargando...</span>
+                            </div>
+                            <p class="mt-3 text-muted">Cargando reportes...</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </main>
     </div>
 
-    <!-- Modal para crear nuevo reporte -->
-    <div class="modal fade" id="modalNuevoReporte" tabindex="-1" aria-labelledby="modalNuevoReporteLabel" aria-hidden="true">
+    <!-- Modal Crear Reporte -->
+    <div class="modal fade" id="modalCrearReporte" tabindex="-1">
         <div class="modal-dialog modal-lg">
-            <div class="modal-content glass">
+            <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalNuevoReporteLabel">
-                        <i class="fas fa-camera me-2"></i>Nuevo Reporte de Incidencia
+                    <h5 class="modal-title">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Reportar Desperfecto
                     </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="formNuevoReporte">
+                    <form id="formCrearReporte">
+                        <!-- Imagen del desperfecto -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Foto del Desperfecto <span class="text-danger">*</span></label>
+                            <div class="image-upload-area" id="imageUploadArea">
+                                <input type="file" id="imagenReporte" accept="image/*" class="d-none" required>
+                                <div class="upload-placeholder" onclick="document.getElementById('imagenReporte').click()">
+                                    <i class="fas fa-camera fa-3x mb-3"></i>
+                                    <p class="mb-0">Click para tomar/seleccionar foto</p>
+                                    <small class="text-muted">PNG, JPG o GIF (máx. 5MB)</small>
+                                </div>
+                                <img id="imagenPreview" class="image-preview d-none" alt="Preview">
+                                <button type="button" class="btn btn-sm btn-danger remove-image d-none" onclick="removerImagen()">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Tipo de problema -->
                         <div class="mb-3">
-                            <label for="reporteSede" class="form-label">Sede/Campus <span class="text-danger">*</span></label>
-                            <select class="form-select" id="reporteSede" required>
-                                <option value="">Selecciona una sede</option>
+                            <label for="tipoProblema" class="form-label fw-bold">Tipo de Problema <span class="text-danger">*</span></label>
+                            <select class="form-select" id="tipoProblema" required>
+                                <option value="">Selecciona un tipo</option>
+                                <option value="infraestructura">🏗️ Infraestructura (paredes, techos, pisos)</option>
+                                <option value="equipamiento">💻 Equipamiento (computadores, proyectores)</option>
+                                <option value="limpieza">🧹 Limpieza (baños, salas, pasillos)</option>
+                                <option value="seguridad">🔒 Seguridad (cerraduras, luces)</option>
+                                <option value="otro">📋 Otro</option>
                             </select>
-                            <small class="text-muted">La sede se mostrará automáticamente en el reporte</small>
                         </div>
+
+                        <!-- Ubicación -->
                         <div class="mb-3">
-                            <label for="reporteCategoria" class="form-label">Categoría <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="reporteCategoria" placeholder="Ej: Computador roto, Bache, Baño dañado, etc." required>
+                            <label for="ubicacionReporte" class="form-label fw-bold">Ubicación <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="ubicacionReporte" required placeholder="Ej: Torre 2, Sala 201">
                         </div>
+
+                        <!-- Título -->
                         <div class="mb-3">
-                            <label for="reporteDescripcion" class="form-label">Descripción <span class="text-danger">*</span></label>
-                            <textarea class="form-control" id="reporteDescripcion" rows="4" placeholder="Describe el problema en detalle..." required></textarea>
+                            <label for="tituloReporte" class="form-label fw-bold">Título del Reporte <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="tituloReporte" required placeholder="Ej: Proyector dañado en sala 201">
                         </div>
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label for="reporteLat" class="form-label">Latitud <span class="text-danger">*</span></label>
-                                <input type="number" step="any" class="form-control" id="reporteLat" placeholder="-33.4489" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="reporteLng" class="form-label">Longitud <span class="text-danger">*</span></label>
-                                <input type="number" step="any" class="form-control" id="reporteLng" placeholder="-70.6693" required>
-                            </div>
-                            <small class="text-muted mt-2">
-                                <i class="fas fa-map-marker-alt me-1"></i>
-                                Puedes usar la ubicación de tu dispositivo o ingresar coordenadas manualmente
-                            </small>
-                        </div>
+
+                        <!-- Descripción -->
                         <div class="mb-3">
-                            <label for="reporteFotos" class="form-label">
-                                <i class="fas fa-camera me-2"></i>Fotos del problema (opcional)
-                            </label>
-                            <input type="file" class="form-control" id="reporteFotos" accept="image/*" multiple>
-                            <small class="text-muted">Puedes seleccionar múltiples fotos. Máximo 5MB por imagen.</small>
-                            <div id="fotosPreview" class="mt-3 d-flex flex-wrap gap-2"></div>
+                            <label for="descripcionReporte" class="form-label fw-bold">Descripción del Problema <span class="text-danger">*</span></label>
+                            <textarea class="form-control" id="descripcionReporte" rows="4" required placeholder="Describe detalladamente el problema encontrado..."></textarea>
                         </div>
-                        <div id="reporteError" class="alert alert-danger d-none" role="alert"></div>
+
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-gradient-purple" id="btnCrearReporte">
-                        <i class="fas fa-paper-plane me-2"></i>Crear Reporte
+                    <button type="button" class="btn btn-primary" onclick="crearReporte()">
+                        <i class="fas fa-paper-plane me-2"></i>Enviar Reporte
                     </button>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Modal Ver Detalle -->
+    <div class="modal fade" id="modalDetalleReporte" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="detalleModalTitle"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="detalleModalBody">
+                    <!-- Contenido dinámico -->
+                </div>
+                <div class="modal-footer" id="detalleModalFooter">
+                    <!-- Botones dinámicos -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/static/js/mobile-menu.js"></script>
     <script src="/static/js/auth-api.js"></script>
     <script src="/static/js/auth-header.js"></script>
     <script src="/static/js/main.js"></script>
-    <script src="/static/js/reportes.js"></script>
+    <script src="/static/reportes/reportes.js"></script>
 </body>
 </html>
-
