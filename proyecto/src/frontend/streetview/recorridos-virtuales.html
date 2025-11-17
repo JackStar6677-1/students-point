@@ -189,6 +189,56 @@
                     </div>
                 </div>
 
+                <!-- Buscador de Salas -->
+                <div class="container mt-4" id="salas-buscador" style="display: none;">
+                    <div class="text-center mb-4">
+                        <button class="btn btn-outline-secondary" onclick="backToRecorridos()">
+                            <i class="fas fa-arrow-left"></i> Volver a Recorridos
+                        </button>
+                    </div>
+                    
+                    <div class="row justify-content-center">
+                        <div class="col-md-8 col-lg-6">
+                            <div class="sede-selector-card">
+                                <div class="text-center mb-4">
+                                    <i class="fas fa-chalkboard-teacher fa-3x mb-3" style="color: var(--gold);"></i>
+                                    <h3 class="mb-3">Buscar Sala</h3>
+                                    <p class="text-muted">Ingresa el número de la sala que deseas visitar</p>
+                                </div>
+                                
+                                <div class="input-group input-group-lg mb-3">
+                                    <span class="input-group-text">
+                                        <i class="fas fa-search"></i>
+                                    </span>
+                                    <input 
+                                        type="text" 
+                                        class="form-control" 
+                                        id="sala-search-input" 
+                                        placeholder="Ej: 201, 305, 402..."
+                                        onkeypress="if(event.key === 'Enter') buscarSala()"
+                                    >
+                                    <button class="btn btn-primary" type="button" onclick="buscarSala()">
+                                        <i class="fas fa-search"></i> Buscar
+                                    </button>
+                                </div>
+                                
+                                <div id="sala-mensaje" class="alert" style="display: none;"></div>
+                                
+                                <div class="mt-4">
+                                    <p class="text-muted small text-center mb-2">
+                                        <strong>Salas disponibles:</strong>
+                                    </p>
+                                    <div class="text-center">
+                                        <span class="badge bg-secondary me-2 mb-2">Piso 2: 200-211</span>
+                                        <span class="badge bg-secondary me-2 mb-2">Piso 3: 300-319</span>
+                                        <span class="badge bg-secondary mb-2">Piso 4: 401-403</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Visor de Diapositivas -->
                 <div class="slideshow-fullscreen" id="slideshow-container" style="display: none;">
                     <!-- Header del visor -->
