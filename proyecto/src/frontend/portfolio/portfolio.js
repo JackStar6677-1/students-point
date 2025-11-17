@@ -263,7 +263,7 @@ class PortfolioManager {
             temaColor: document.getElementById('inputTemaColor')?.value || '#2e004f',
             mostrarContacto: document.getElementById('inputMostrarContacto')?.checked ?? true,
             mostrarRedes: document.getElementById('inputMostrarRedes')?.checked ?? true,
-                mostrarLogros: document.getElementById('inputMostrarLogros')?.checked ?? true,
+            mostrarLogros: document.getElementById('inputMostrarLogros')?.checked ?? true,
             mostrarProyectos: document.getElementById('inputMostrarProyectos')?.checked ?? true,
             mostrarExperiencia: document.getElementById('inputMostrarExperiencia')?.checked ?? true
         };
@@ -623,6 +623,15 @@ class PortfolioManager {
                 case 'moderna':
                     this.generateModernaTemplate(doc);
                     break;
+                case 'ejecutiva':
+                    this.generateEjecutivaTemplate(doc);
+                    break;
+                case 'corporativa':
+                    this.generateCorporativaTemplate(doc);
+                    break;
+                case 'tecnica':
+                    this.generateTecnicaTemplate(doc);
+                    break;
                 default:
                     this.generateProfesionalTemplate(doc);
             }
@@ -646,23 +655,23 @@ class PortfolioManager {
     
     // Plantilla Profesional - Elegante y corporativo
     generateProfesionalTemplate(doc) {
-        const perfil = this.portfolioData.perfil;
-        const config = this.portfolioData.configuracion;
+            const perfil = this.portfolioData.perfil;
+            const config = this.portfolioData.configuracion;
         let y = 20;
-        
+            
         // Header con fondo azul
         doc.setFillColor(46, 0, 79); // Morado oscuro
         doc.rect(0, 0, 210, 40, 'F');
-        
+            
         // Nombre en blanco
         doc.setTextColor(255, 255, 255);
         doc.setFontSize(26);
-        doc.setFont(undefined, 'bold');
+            doc.setFont(undefined, 'bold');
         doc.text(perfil.nombre || 'Nombre Completo', 20, 20);
-        
-        // Título profesional
+            
+            // Título profesional
         doc.setFontSize(14);
-        doc.setFont(undefined, 'normal');
+                doc.setFont(undefined, 'normal');
         doc.text(config.tituloProfesional || perfil.tituloProfesional || 'Título Profesional', 20, 30);
         
         y = 50;
@@ -676,16 +685,16 @@ class PortfolioManager {
         if (perfil.telefono) contactInfo.push(perfil.telefono);
         if (perfil.linkedin) contactInfo.push(perfil.linkedin);
         doc.text(contactInfo.join(' | '), 20, y);
-        y += 10;
-        
-        // Línea separadora
+                y += 10;
+            
+            // Línea separadora
         doc.setDrawColor(200, 200, 200);
-        doc.setLineWidth(0.5);
-        doc.line(20, y, 190, y);
-        y += 10;
-        
-        // Resumen profesional
-        if (config.resumenProfesional || perfil.resumenProfesional) {
+            doc.setLineWidth(0.5);
+            doc.line(20, y, 190, y);
+            y += 10;
+            
+            // Resumen profesional
+            if (config.resumenProfesional || perfil.resumenProfesional) {
             doc.setFontSize(14);
             doc.setFont(undefined, 'bold');
             doc.setTextColor(46, 0, 79);
@@ -745,8 +754,8 @@ class PortfolioManager {
                 y = 20;
             }
             
-            doc.setFontSize(12);
-            doc.setFont(undefined, 'bold');
+                doc.setFontSize(12);
+                doc.setFont(undefined, 'bold');
             
             if (type === 'experiencia') {
                 doc.text(`${item.cargo || ''} - ${item.empresa || ''}`, 20, y);
@@ -834,14 +843,14 @@ class PortfolioManager {
             doc.setFont(undefined, 'bold');
             doc.setTextColor(13, 202, 240);
             doc.text('SOBRE MÍ', 40, y);
-            y += 8;
-            
+                y += 8;
+                
             doc.setFontSize(10);
-            doc.setFont(undefined, 'normal');
+                doc.setFont(undefined, 'normal');
             doc.setTextColor(0, 0, 0);
-            const resumen = config.resumenProfesional || perfil.resumenProfesional;
-            const lineasResumen = doc.splitTextToSize(resumen, 170);
-            doc.text(lineasResumen, 20, y);
+                const resumen = config.resumenProfesional || perfil.resumenProfesional;
+                const lineasResumen = doc.splitTextToSize(resumen, 170);
+                doc.text(lineasResumen, 20, y);
             y += (lineasResumen.length * 5) + 10;
         }
         
@@ -879,8 +888,8 @@ class PortfolioManager {
         doc.setLineWidth(2);
         doc.line(20, y, 35, y);
         
-        doc.setFontSize(14);
-        doc.setFont(undefined, 'bold');
+            doc.setFontSize(14);
+            doc.setFont(undefined, 'bold');
         doc.setTextColor(...rgb);
         doc.text(title, 40, y);
         y += 10;
@@ -1009,7 +1018,7 @@ class PortfolioManager {
             
             if (type === 'experiencia') {
                 doc.text(`${item.cargo || ''}`, 20, y);
-                doc.setFont(undefined, 'normal');
+            doc.setFont(undefined, 'normal');
                 doc.text(`${item.empresa || ''}`, 100, y);
             } else {
                 doc.text(item.titulo || item.nombre || '', 20, y);
@@ -1068,15 +1077,15 @@ class PortfolioManager {
         doc.setFontSize(9);
         doc.setFont(undefined, 'bold');
         doc.text('CONTACTO', 10, y);
-        y += 6;
+                y += 6;
         doc.setFont(undefined, 'normal');
         
         if (perfil.email) {
             const emailLines = doc.splitTextToSize(perfil.email, 50);
             doc.text(emailLines, 10, y);
             y += emailLines.length * 5 + 4;
-        }
-        if (perfil.telefono) {
+            }
+            if (perfil.telefono) {
             doc.text(perfil.telefono, 10, y);
             y += 8;
         }
@@ -1191,6 +1200,647 @@ class PortfolioManager {
             }
             
             y += 7;
+        });
+        
+        return y;
+    }
+    
+    // Plantilla Ejecutiva - Sidebar verde a la izquierda
+    generateEjecutivaTemplate(doc) {
+        const perfil = this.portfolioData.perfil;
+        const config = this.portfolioData.configuracion;
+        
+        // Sidebar verde oscuro
+        doc.setFillColor(16, 71, 52); // Verde oscuro profesional
+        doc.rect(0, 0, 70, 297, 'F');
+        
+        // Nombre en sidebar
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(20);
+        doc.setFont(undefined, 'bold');
+        const nombreLines = doc.splitTextToSize(perfil.nombre || 'Nombre Completo', 60);
+        doc.text(nombreLines, 10, 25);
+        
+        let ySidebar = 25 + (nombreLines.length * 8) + 5;
+        
+        // Título profesional en sidebar
+        doc.setFontSize(11);
+        doc.setFont(undefined, 'normal');
+        const tituloLines = doc.splitTextToSize(config.tituloProfesional || perfil.tituloProfesional || '', 60);
+        doc.text(tituloLines, 10, ySidebar);
+        ySidebar += (tituloLines.length * 6) + 15;
+        
+        // Línea divisoria
+        doc.setDrawColor(255, 255, 255);
+        doc.setLineWidth(0.5);
+        doc.line(10, ySidebar, 60, ySidebar);
+        ySidebar += 10;
+        
+        // Detalles en sidebar
+        doc.setFontSize(12);
+        doc.setFont(undefined, 'bold');
+        doc.text('DETALLES', 10, ySidebar);
+        ySidebar += 8;
+        
+        doc.setFontSize(9);
+        doc.setFont(undefined, 'normal');
+        
+        if (perfil.email) {
+            doc.setFont(undefined, 'bold');
+            doc.text('Email', 10, ySidebar);
+            ySidebar += 5;
+            doc.setFont(undefined, 'normal');
+            const emailLines = doc.splitTextToSize(perfil.email, 55);
+            doc.text(emailLines, 10, ySidebar);
+            ySidebar += (emailLines.length * 5) + 6;
+        }
+        
+        if (perfil.telefono) {
+            doc.setFont(undefined, 'bold');
+            doc.text('Teléfono', 10, ySidebar);
+            ySidebar += 5;
+            doc.setFont(undefined, 'normal');
+            doc.text(perfil.telefono, 10, ySidebar);
+            ySidebar += 10;
+        }
+        
+            if (perfil.carrera) {
+            doc.setFont(undefined, 'bold');
+            doc.text('Carrera', 10, ySidebar);
+            ySidebar += 5;
+            doc.setFont(undefined, 'normal');
+            const carreraLines = doc.splitTextToSize(perfil.carrera, 55);
+            doc.text(carreraLines, 10, ySidebar);
+            ySidebar += (carreraLines.length * 5) + 6;
+        }
+        
+            if (perfil.campus) {
+            doc.setFont(undefined, 'bold');
+            doc.text('Campus', 10, ySidebar);
+            ySidebar += 5;
+            doc.setFont(undefined, 'normal');
+            const campusLines = doc.splitTextToSize(perfil.campus, 55);
+            doc.text(campusLines, 10, ySidebar);
+            ySidebar += (campusLines.length * 5) + 10;
+        }
+        
+        // Enlaces en sidebar
+        if (perfil.linkedin || perfil.github) {
+            doc.setFillColor(255, 255, 255, 0.1);
+            doc.roundedRect(10, ySidebar, 50, 3, 1, 1, 'F');
+            ySidebar += 8;
+            
+            doc.setFontSize(12);
+            doc.setFont(undefined, 'bold');
+            doc.text('ENLACES', 10, ySidebar);
+            ySidebar += 8;
+            
+            doc.setFontSize(9);
+            doc.setFont(undefined, 'normal');
+            
+            if (perfil.linkedin) {
+                const linkedinLines = doc.splitTextToSize(perfil.linkedin, 55);
+                doc.text(linkedinLines, 10, ySidebar);
+                ySidebar += (linkedinLines.length * 5) + 4;
+            }
+            
+            if (perfil.github) {
+                const githubLines = doc.splitTextToSize(perfil.github, 55);
+                doc.text(githubLines, 10, ySidebar);
+                ySidebar += (githubLines.length * 5);
+            }
+        }
+        
+        // Contenido principal
+        doc.setTextColor(0, 0, 0);
+        let y = 25;
+        
+        // Perfil/Resumen
+        if (config.resumenProfesional || perfil.resumenProfesional) {
+            doc.setFontSize(16);
+            doc.setFont(undefined, 'bold');
+            doc.setTextColor(16, 71, 52);
+            doc.text('Perfil', 80, y);
+            y += 8;
+            
+            doc.setFontSize(10);
+            doc.setFont(undefined, 'normal');
+            doc.setTextColor(0, 0, 0);
+            const resumen = config.resumenProfesional || perfil.resumenProfesional;
+            const lineasResumen = doc.splitTextToSize(resumen, 120);
+            doc.text(lineasResumen, 80, y);
+            y += (lineasResumen.length * 5) + 12;
+        }
+        
+        // Experiencia laboral
+        if (this.portfolioData.experiencias.length > 0) {
+            y = this.addEjecutivaSection(doc, 'Experiencia Laboral', this.portfolioData.experiencias, y, 'experiencia');
+        }
+        
+        // Proyectos
+        if (this.portfolioData.proyectos.length > 0) {
+            y = this.addEjecutivaSection(doc, 'Proyectos', this.portfolioData.proyectos, y, 'proyecto');
+        }
+        
+        // Formación/Logros
+        if (this.portfolioData.logros.length > 0) {
+            y = this.addEjecutivaSection(doc, 'Formación y Certificaciones', this.portfolioData.logros, y, 'logro');
+        }
+    }
+    
+    addEjecutivaSection(doc, title, items, startY, type) {
+        let y = startY;
+        
+        if (y > 250) {
+            doc.addPage();
+            // Mantener sidebar
+            doc.setFillColor(16, 71, 52);
+            doc.rect(0, 0, 70, 297, 'F');
+            y = 20;
+        }
+        
+        // Título de sección
+        doc.setFontSize(16);
+        doc.setFont(undefined, 'bold');
+        doc.setTextColor(16, 71, 52);
+        doc.text(title, 80, y);
+        y += 2;
+        
+        // Línea bajo título
+        doc.setDrawColor(16, 71, 52);
+        doc.setLineWidth(1.5);
+        doc.line(80, y, 200, y);
+        y += 10;
+        
+        doc.setTextColor(0, 0, 0);
+        
+        items.forEach((item, index) => {
+            if (y > 265) {
+                doc.addPage();
+                doc.setFillColor(16, 71, 52);
+                doc.rect(0, 0, 70, 297, 'F');
+                y = 20;
+            }
+            
+            // Bullet point
+            doc.setFillColor(16, 71, 52);
+            doc.circle(82, y - 1, 1.5, 'F');
+            
+            doc.setFontSize(12);
+            doc.setFont(undefined, 'bold');
+            
+            if (type === 'experiencia') {
+                doc.text(`${item.cargo || 'Cargo'}`, 87, y);
+            y += 5;
+                doc.setFontSize(10);
+                doc.setFont(undefined, 'italic');
+                doc.setTextColor(100, 100, 100);
+                doc.text(`${item.empresa || 'Empresa'}`, 87, y);
+                y += 4;
+            } else {
+                doc.text(item.titulo || item.nombre || '', 87, y);
+                y += 5;
+            }
+            
+            doc.setFontSize(9);
+            doc.setFont(undefined, 'normal');
+            doc.setTextColor(120, 120, 120);
+            if (item.fechaInicio) {
+                doc.text(`${this.formatDate(item.fechaInicio)} - ${item.fechaFin ? this.formatDate(item.fechaFin) : 'Actual'}`, 87, y);
+            } else if (item.fecha) {
+                doc.text(this.formatDate(item.fecha), 87, y);
+            }
+            y += 5;
+            
+            doc.setFontSize(10);
+            doc.setTextColor(0, 0, 0);
+            if (item.descripcion) {
+                const lineas = doc.splitTextToSize(item.descripcion, 115);
+                doc.text(lineas, 87, y);
+                y += (lineas.length * 5);
+            }
+            
+            y += 8;
+        });
+        
+        return y;
+    }
+    
+    // Plantilla Corporativa - Sidebar azul a la derecha
+    generateCorporativaTemplate(doc) {
+        const perfil = this.portfolioData.perfil;
+        const config = this.portfolioData.configuracion;
+        
+        // Sidebar azul oscuro a la derecha
+        doc.setFillColor(25, 55, 109); // Azul oscuro corporativo
+        doc.rect(140, 0, 70, 297, 'F');
+        
+        // Contenido principal (lado izquierdo)
+        doc.setTextColor(0, 0, 0);
+        let y = 25;
+        
+        // Nombre en área principal
+        doc.setFontSize(24);
+        doc.setFont(undefined, 'bold');
+        doc.setTextColor(25, 55, 109);
+        doc.text(perfil.nombre || 'Nombre Completo', 20, y);
+        y += 10;
+        
+        // Título profesional
+        doc.setFontSize(14);
+        doc.setFont(undefined, 'normal');
+        doc.setTextColor(100, 100, 100);
+        doc.text(config.tituloProfesional || perfil.tituloProfesional || '', 20, y);
+        y += 15;
+        
+        doc.setTextColor(0, 0, 0);
+        
+        // Perfil
+        if (config.resumenProfesional || perfil.resumenProfesional) {
+            doc.setFontSize(14);
+            doc.setFont(undefined, 'bold');
+            doc.setTextColor(25, 55, 109);
+            doc.text('Perfil', 20, y);
+            y += 8;
+            
+            doc.setFontSize(10);
+            doc.setFont(undefined, 'normal');
+            doc.setTextColor(0, 0, 0);
+            const resumen = config.resumenProfesional || perfil.resumenProfesional;
+            const lineasResumen = doc.splitTextToSize(resumen, 110);
+            doc.text(lineasResumen, 20, y);
+            y += (lineasResumen.length * 5) + 12;
+        }
+        
+        // Experiencia laboral
+        if (this.portfolioData.experiencias.length > 0) {
+            y = this.addCorporativaSection(doc, 'Experiencia Laboral', this.portfolioData.experiencias, y, 'experiencia');
+        }
+        
+        // Proyectos
+        if (this.portfolioData.proyectos.length > 0) {
+            y = this.addCorporativaSection(doc, 'Proyectos', this.portfolioData.proyectos, y, 'proyecto');
+        }
+        
+        // Logros
+        if (this.portfolioData.logros.length > 0) {
+            y = this.addCorporativaSection(doc, 'Formación', this.portfolioData.logros, y, 'logro');
+        }
+        
+        // Sidebar contenido
+        let ySidebar = 25;
+        doc.setTextColor(255, 255, 255);
+        
+        // Detalles en sidebar
+        doc.setFontSize(14);
+        doc.setFont(undefined, 'bold');
+        doc.text('Detalles', 145, ySidebar);
+        ySidebar += 10;
+        
+        doc.setFontSize(9);
+        doc.setFont(undefined, 'normal');
+        
+        if (perfil.email) {
+            doc.setFont(undefined, 'bold');
+            doc.text('Correo', 145, ySidebar);
+            ySidebar += 5;
+            doc.setFont(undefined, 'normal');
+            const emailLines = doc.splitTextToSize(perfil.email, 60);
+            doc.text(emailLines, 145, ySidebar);
+            ySidebar += (emailLines.length * 5) + 6;
+        }
+        
+        if (perfil.telefono) {
+            doc.setFont(undefined, 'bold');
+            doc.text('Teléfono', 145, ySidebar);
+            ySidebar += 5;
+            doc.setFont(undefined, 'normal');
+            doc.text(perfil.telefono, 145, ySidebar);
+            ySidebar += 10;
+        }
+        
+        if (perfil.carrera) {
+            doc.setFont(undefined, 'bold');
+            doc.text('Carrera', 145, ySidebar);
+            ySidebar += 5;
+            doc.setFont(undefined, 'normal');
+            const carreraLines = doc.splitTextToSize(perfil.carrera, 60);
+            doc.text(carreraLines, 145, ySidebar);
+            ySidebar += (carreraLines.length * 5) + 6;
+        }
+        
+        if (perfil.campus) {
+            doc.setFont(undefined, 'bold');
+            doc.text('Campus', 145, ySidebar);
+            ySidebar += 5;
+            doc.setFont(undefined, 'normal');
+            const campusLines = doc.splitTextToSize(perfil.campus, 60);
+            doc.text(campusLines, 145, ySidebar);
+            ySidebar += (campusLines.length * 5) + 10;
+        }
+        
+        // Enlaces
+        if (perfil.linkedin || perfil.github) {
+            doc.setDrawColor(255, 255, 255);
+            doc.setLineWidth(0.5);
+            doc.line(145, ySidebar, 205, ySidebar);
+            ySidebar += 8;
+            
+            doc.setFontSize(14);
+            doc.setFont(undefined, 'bold');
+            doc.text('Enlaces', 145, ySidebar);
+            ySidebar += 8;
+            
+            doc.setFontSize(9);
+            doc.setFont(undefined, 'normal');
+            
+            if (perfil.linkedin) {
+                const linkedinLines = doc.splitTextToSize(perfil.linkedin, 60);
+                doc.text(linkedinLines, 145, ySidebar);
+                ySidebar += (linkedinLines.length * 5) + 4;
+            }
+            
+            if (perfil.github) {
+                const githubLines = doc.splitTextToSize(perfil.github, 60);
+                doc.text(githubLines, 145, ySidebar);
+            }
+        }
+    }
+    
+    addCorporativaSection(doc, title, items, startY, type) {
+        let y = startY;
+        
+        if (y > 250) {
+            doc.addPage();
+            // Mantener sidebar
+            doc.setFillColor(25, 55, 109);
+            doc.rect(140, 0, 70, 297, 'F');
+            y = 20;
+        }
+        
+        // Título de sección
+        doc.setFontSize(14);
+        doc.setFont(undefined, 'bold');
+        doc.setTextColor(25, 55, 109);
+        doc.text(title, 20, y);
+        y += 8;
+        
+        doc.setTextColor(0, 0, 0);
+        
+        items.forEach(item => {
+            if (y > 265) {
+                doc.addPage();
+                doc.setFillColor(25, 55, 109);
+                doc.rect(140, 0, 70, 297, 'F');
+                y = 20;
+            }
+            
+            doc.setFontSize(12);
+            doc.setFont(undefined, 'bold');
+            
+            if (type === 'experiencia') {
+                doc.text(`${item.cargo || 'Cargo'}`, 20, y);
+                y += 5;
+                doc.setFontSize(10);
+                doc.setFont(undefined, 'italic');
+                doc.setTextColor(80, 80, 80);
+                doc.text(`${item.empresa || 'Empresa'}`, 20, y);
+                y += 4;
+            } else {
+                doc.text(item.titulo || item.nombre || '', 20, y);
+                y += 5;
+            }
+            
+            doc.setFontSize(9);
+            doc.setFont(undefined, 'normal');
+            doc.setTextColor(120, 120, 120);
+            if (item.fechaInicio) {
+                doc.text(`${this.formatDate(item.fechaInicio)} - ${item.fechaFin ? this.formatDate(item.fechaFin) : 'Actual'}`, 20, y);
+            } else if (item.fecha) {
+                doc.text(this.formatDate(item.fecha), 20, y);
+            }
+            y += 5;
+            
+            doc.setFontSize(10);
+            doc.setTextColor(0, 0, 0);
+            if (item.descripcion) {
+                const lineas = doc.splitTextToSize(item.descripcion, 110);
+                doc.text(lineas, 20, y);
+                y += (lineas.length * 5);
+            }
+            
+            y += 8;
+        });
+        
+        return y;
+    }
+    
+    // Plantilla Técnica - Sidebar gris/carbón a la izquierda
+    generateTecnicaTemplate(doc) {
+        const perfil = this.portfolioData.perfil;
+        const config = this.portfolioData.configuracion;
+        
+        // Sidebar gris oscuro/carbón
+        doc.setFillColor(52, 58, 64); // Gris carbón
+        doc.rect(0, 0, 65, 297, 'F');
+        
+        // Nombre y contacto en sidebar
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(18);
+        doc.setFont(undefined, 'bold');
+        const nombreLines = doc.splitTextToSize(perfil.nombre || 'Nombre', 55);
+        doc.text(nombreLines, 8, 20);
+        
+        let ySidebar = 20 + (nombreLines.length * 7) + 8;
+        
+        // Contacto compacto con etiquetas
+        doc.setFontSize(9);
+        doc.setFont(undefined, 'bold');
+        doc.text('CONTACTO', 8, ySidebar);
+        ySidebar += 7;
+        
+        doc.setFontSize(8);
+        doc.setFont(undefined, 'normal');
+        
+        if (perfil.telefono) {
+            doc.setFont(undefined, 'bold');
+            doc.text('Tel:', 8, ySidebar);
+            doc.setFont(undefined, 'normal');
+            doc.text(perfil.telefono, 18, ySidebar);
+            ySidebar += 6;
+        }
+        
+        if (perfil.email) {
+            doc.setFont(undefined, 'bold');
+            doc.text('Email:', 8, ySidebar);
+            ySidebar += 4;
+            doc.setFont(undefined, 'normal');
+            const emailLines = doc.splitTextToSize(perfil.email, 55);
+            doc.text(emailLines, 8, ySidebar);
+            ySidebar += (emailLines.length * 4) + 3;
+        }
+        
+        if (perfil.linkedin) {
+            doc.setFont(undefined, 'bold');
+            doc.text('LinkedIn:', 8, ySidebar);
+            ySidebar += 4;
+            doc.setFont(undefined, 'normal');
+            const linkedinLines = doc.splitTextToSize(perfil.linkedin, 55);
+            doc.text(linkedinLines, 8, ySidebar);
+            ySidebar += (linkedinLines.length * 4) + 3;
+        }
+        
+        if (perfil.github) {
+            doc.setFont(undefined, 'bold');
+            doc.text('GitHub:', 8, ySidebar);
+            ySidebar += 4;
+            doc.setFont(undefined, 'normal');
+            const githubLines = doc.splitTextToSize(perfil.github, 55);
+            doc.text(githubLines, 8, ySidebar);
+            ySidebar += (githubLines.length * 4) + 8;
+        }
+        
+        // Datos académicos en sidebar
+        if (perfil.carrera || perfil.campus) {
+            doc.setDrawColor(255, 255, 255);
+            doc.setLineWidth(0.3);
+            doc.line(8, ySidebar, 57, ySidebar);
+            ySidebar += 6;
+            
+            doc.setFontSize(10);
+            doc.setFont(undefined, 'bold');
+            doc.text('EDUCACIÓN', 8, ySidebar);
+            ySidebar += 6;
+            
+            doc.setFontSize(8);
+            doc.setFont(undefined, 'normal');
+            
+            if (perfil.carrera) {
+                const carreraLines = doc.splitTextToSize(perfil.carrera, 55);
+                doc.text(carreraLines, 8, ySidebar);
+                ySidebar += (carreraLines.length * 5) + 3;
+            }
+            
+            if (perfil.campus) {
+                const campusLines = doc.splitTextToSize(perfil.campus, 55);
+                doc.text(campusLines, 8, ySidebar);
+                ySidebar += (campusLines.length * 5);
+            }
+        }
+        
+        // Contenido principal
+        doc.setTextColor(0, 0, 0);
+        let y = 20;
+        
+        // Título profesional grande
+        doc.setFontSize(22);
+        doc.setFont(undefined, 'bold');
+        doc.setTextColor(52, 58, 64);
+        const tituloLines = doc.splitTextToSize(config.tituloProfesional || perfil.tituloProfesional || 'Título Profesional', 135);
+        doc.text(tituloLines, 73, y);
+        y += (tituloLines.length * 8) + 10;
+        
+        // Resumen profesional
+        if (config.resumenProfesional || perfil.resumenProfesional) {
+            doc.setFontSize(14);
+            doc.setFont(undefined, 'bold');
+            doc.setTextColor(52, 58, 64);
+            doc.text('RESUMEN PROFESIONAL', 73, y);
+            y += 8;
+            
+            doc.setFontSize(10);
+            doc.setFont(undefined, 'normal');
+            doc.setTextColor(0, 0, 0);
+            const resumen = config.resumenProfesional || perfil.resumenProfesional;
+            const lineasResumen = doc.splitTextToSize(resumen, 130);
+            doc.text(lineasResumen, 73, y);
+            y += (lineasResumen.length * 5) + 12;
+        }
+        
+        // Secciones
+        if (this.portfolioData.experiencias.length > 0) {
+            y = this.addTecnicaSection(doc, 'EXPERIENCIA', this.portfolioData.experiencias, y, 'experiencia');
+        }
+        
+        if (this.portfolioData.proyectos.length > 0) {
+            y = this.addTecnicaSection(doc, 'PROYECTOS', this.portfolioData.proyectos, y, 'proyecto');
+        }
+        
+        if (this.portfolioData.logros.length > 0) {
+            y = this.addTecnicaSection(doc, 'FORMACIÓN ACADÉMICA', this.portfolioData.logros, y, 'logro');
+        }
+    }
+    
+    addTecnicaSection(doc, title, items, startY, type) {
+        let y = startY;
+        
+        if (y > 250) {
+            doc.addPage();
+            // Mantener sidebar
+            doc.setFillColor(52, 58, 64);
+            doc.rect(0, 0, 65, 297, 'F');
+            y = 20;
+        }
+        
+        // Título de sección
+        doc.setFontSize(14);
+        doc.setFont(undefined, 'bold');
+        doc.setTextColor(52, 58, 64);
+        doc.text(title, 73, y);
+        y += 2;
+        
+        // Línea bajo título
+        doc.setDrawColor(52, 58, 64);
+        doc.setLineWidth(2);
+        doc.line(73, y, 105, y);
+        y += 10;
+        
+        doc.setTextColor(0, 0, 0);
+        
+        items.forEach(item => {
+            if (y > 265) {
+                doc.addPage();
+                doc.setFillColor(52, 58, 64);
+                doc.rect(0, 0, 65, 297, 'F');
+                y = 20;
+            }
+            
+            doc.setFontSize(11);
+            doc.setFont(undefined, 'bold');
+            
+            if (type === 'experiencia') {
+                doc.text(`${item.cargo || 'Cargo'}`, 73, y);
+                y += 5;
+                doc.setFontSize(10);
+                doc.setFont(undefined, 'normal');
+                doc.setTextColor(100, 100, 100);
+                doc.text(`${item.empresa || 'Empresa'}`, 73, y);
+                y += 4;
+            } else {
+                doc.text(item.titulo || item.nombre || '', 73, y);
+                y += 5;
+            }
+            
+            doc.setFontSize(9);
+            doc.setFont(undefined, 'italic');
+            doc.setTextColor(120, 120, 120);
+            if (item.fechaInicio) {
+                doc.text(`${this.formatDate(item.fechaInicio)} - ${item.fechaFin ? this.formatDate(item.fechaFin) : 'Actual'}`, 73, y);
+            } else if (item.fecha) {
+                doc.text(this.formatDate(item.fecha), 73, y);
+            }
+            y += 5;
+            
+            doc.setFontSize(9);
+            doc.setFont(undefined, 'normal');
+            doc.setTextColor(0, 0, 0);
+            if (item.descripcion) {
+                const lineas = doc.splitTextToSize(item.descripcion, 130);
+                doc.text(lineas, 73, y);
+                y += (lineas.length * 4.5);
+            }
+            
+            y += 8;
         });
         
         return y;
