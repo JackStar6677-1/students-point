@@ -82,7 +82,7 @@ echo [OK] Configuración de entorno revisada
 echo/
 
 REM 5. Aplicar migraciones y recolectar estáticos
-echo [5/10] Ejecutando migraciones y collectstatic...
+echo [5/11] Ejecutando migraciones y collectstatic...
 pushd "%BACKEND_DIR%"
 python manage.py migrate
 if errorlevel 1 (
@@ -95,15 +95,15 @@ python manage.py collectstatic --noinput >nul
 echo [OK] Migraciones aplicadas y archivos estáticos recolectados
 echo/
 
-REM 5.5. Crear superusuario y usuarios demo
-echo [6/10] Creando superusuario y usuarios de prueba...
+REM 6. Crear superusuario y usuarios demo
+echo [6/11] Creando superusuario y usuarios de prueba...
 python ensure_superuser.py >nul 2>&1
 python manage.py create_demo_users >nul 2>&1
 echo [OK] Usuarios creados
 echo/
 
-REM 5.6. Poblar categorías del marketplace
-echo [7/10] Poblando categorías del marketplace...
+REM 7. Poblar categorías del marketplace
+echo [7/11] Poblando categorías del marketplace...
 python manage.py poblar_categorias
 if errorlevel 1 (
     echo [WARNING] Error poblando categorías, continuando...
@@ -112,8 +112,8 @@ if errorlevel 1 (
 )
 echo/
 
-REM 5.7. Poblar datos de ejemplo
-echo [8/10] Poblando datos de ejemplo (foros, productos, etc.)...
+REM 8. Poblar datos de ejemplo
+echo [8/11] Poblando datos de ejemplo (foros, productos, etc.)...
 python manage.py populate_data
 if errorlevel 1 (
     echo [WARNING] Error poblando datos de ejemplo, continuando...
@@ -124,8 +124,8 @@ echo/
 
 popd
 
-REM 6. Verificar/levantar Redis
-echo [9/10] Verificando Redis...
+REM 9. Verificar/levantar Redis
+echo [9/11] Verificando Redis...
 where redis-server >nul 2>&1
 if errorlevel 1 (
     echo [WARNING] redis-server no se encontró en PATH. Arranca Redis manualmente si es requerido.
@@ -141,15 +141,15 @@ if errorlevel 1 (
 )
 echo/
 
-REM 7. Iniciar Celery worker (opcional pero recomendado)
-echo [10/10] Iniciando Celery worker...
+REM 10. Iniciar Celery worker (opcional pero recomendado)
+echo [10/11] Iniciando Celery worker...
 start "StudentsPoint - Celery" cmd /k ^
     "cd /d \"%BACKEND_DIR%\" && call \"%VENV_DIR%\Scripts\activate.bat\" && celery -A studentspoint worker -l info"
 timeout /t 2 >nul
 echo/
 
-REM 8. Iniciar servidor Django
-echo Iniciando servidor Django...
+REM 11. Iniciar servidor Django
+echo [11/11] Iniciando servidor Django...
 start "StudentsPoint - Django" cmd /k ^
     "cd /d \"%BACKEND_DIR%\" && call \"%VENV_DIR%\Scripts\activate.bat\" && python manage.py runserver 127.0.0.1:8000"
 timeout /t 2 >nul

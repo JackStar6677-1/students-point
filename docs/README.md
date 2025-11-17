@@ -31,8 +31,14 @@ Documentación específica de módulos y funcionalidades.
 Guías de configuración, despliegue y uso.
 - **CONFIGURACION-GOOGLE-EMAIL.md**: Configuración de OAuth y Email
 - **DEPLOYMENT-PRODUCTION.md**: Guía de despliegue en producción
+- **DEPLOY-PWA.md**: Guía de despliegue PWA en producción
+- **GUIA-RAPIDA-MOVIL.md**: Guía rápida para ejecutar en móvil (PWA)
 - **SISTEMA-LOGGING.md**: Sistema de logs y monitoreo
 - Y más guías...
+
+### 📋 [releases/](releases/)
+Notas de versión y changelog.
+- **RELEASE_NOTES_v5.1.0.md**: Notas de versión 5.1.0
 
 ### 📋 [especificaciones/](especificaciones/)
 Especificaciones detalladas de requisitos.
