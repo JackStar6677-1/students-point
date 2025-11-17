@@ -160,41 +160,60 @@ class EncuestasManager {
                 polls = polls?.results || [];
             }
 
+            // Filtrar por campus si está seleccionado
             if (campusFilter) {
                 const campus = this.sedes.find((sede) => sede.slug === campusFilter);
-                const campusName = campus ? campus.nombre : campusFilter;
-                const detailedPolls = await Promise.all(
-                    polls.map(async (poll) => {
-                        try {
-                            return await this.getPollDetail(poll.id);
-                        } catch {
-                            return null;
-                        }
-                    })
-                );
+                if (campus) {
+                    // Obtener detalles completos para filtrar por sedes
+                    const detailedPolls = await Promise.all(
+                        polls.map(async (poll) => {
+                            try {
+                                return await this.getPollDetail(poll.id);
+                            } catch {
+                                return poll; // Si falla, usar el poll básico
+                            }
+                        })
+                    );
 
-                polls = detailedPolls.filter((poll) => {
-                    if (!poll) return false;
-                    const sedes = poll.sedes_nombres || [];
-                    if (sedes.length === 0) {
-                        return campus === undefined; // encuestas abiertas para todos
-                    }
-                    return sedes.includes(campusName);
-                });
-            } else {
-                polls.forEach((poll) => this.pollCache.set(poll.id, { ...this.pollCache.get(poll.id), ...poll }));
+                    polls = detailedPolls.filter((poll) => {
+                        if (!poll) return false;
+                        const sedes = poll.sedes_nombres || [];
+                        // Si no tiene sedes asignadas, está abierta para todos
+                        if (sedes.length === 0) {
+                            return true;
+                        }
+                        // Verificar si el campus está en la lista de sedes
+                        return sedes.some((sedeNombre) => 
+                            sedeNombre === campus.nombre || sedeNombre === campus.slug
+                        );
+                    });
+                }
             }
+            
+            // Actualizar cache con los polls obtenidos
+            polls.forEach((poll) => {
+                const cached = this.pollCache.get(poll.id) || {};
+                this.pollCache.set(poll.id, { ...cached, ...poll });
+            });
 
             this.polls = polls;
             this.renderPolls();
         } catch (error) {
             console.error('Error cargando encuestas:', error);
-            this.pollsContainer.innerHTML = `
-                <div class="col-12 text-center py-5">
-                    <i class="fas fa-triangle-exclamation fa-2x text-danger mb-3"></i>
-                    <p class="text-danger mb-0">${this.escapeHtml(error.message || 'Error al cargar las encuestas')}</p>
-                </div>
-            `;
+            this.showLoading(false);
+            if (this.pollsContainer) {
+                this.pollsContainer.innerHTML = `
+                    <div class="col-12 text-center py-5">
+                        <i class="fas fa-triangle-exclamation fa-2x text-danger mb-3"></i>
+                        <p class="text-danger mb-0">${this.escapeHtml(error.message || 'Error al cargar las encuestas')}</p>
+                        <button class="btn btn-outline-primary mt-3" onclick="loadPolls()">
+                            <i class="fas fa-redo me-2"></i>Reintentar
+                        </button>
+                    </div>
+                `;
+            }
+        } finally {
+            this.showLoading(false);
         }
     }
 

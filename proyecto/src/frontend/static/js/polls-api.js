@@ -83,7 +83,7 @@ class PollsAPI {
             if (filters.categoria) params.append('categoria', filters.categoria);
             if (filters.search) params.append('search', filters.search);
 
-            const url = `${this.baseURL}/${params.toString() ? '?' + params : ''}`;
+            const url = `${this.baseURL}/${params.toString() ? '?' + params.toString() : ''}`;
             const response = await fetch(url, {
                 headers: this.getHeaders(true)
             });
@@ -182,12 +182,16 @@ class PollsAPI {
      * @param {Array} respuestas - Array de respuestas
      * @returns {Promise<Object>} Resultado de la votación
      */
-    async votePoll(id, respuestas) {
+    async votePoll(id, payload) {
         try {
+            // El payload puede venir como { opciones: [...] } o { respuestas: [...] }
+            // Normalizamos a { opciones: [...] } que es lo que espera el backend
+            const body = payload.opciones ? payload : { opciones: payload.respuestas || payload.opciones || [] };
+            
             const response = await fetch(`${this.baseURL}/${id}/votar/`, {
                 method: 'POST',
                 headers: this.getHeaders(true),
-                body: JSON.stringify({ respuestas })
+                body: JSON.stringify(body)
             });
 
             return await this.handleResponse(response);
