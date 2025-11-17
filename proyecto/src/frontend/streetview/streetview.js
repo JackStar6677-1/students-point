@@ -12,6 +12,9 @@ let totalSlides = 0;
 let currentRecorrido = null;
 let touchStartX = 0;
 let touchEndX = 0;
+let banosCurrentRecorrido = null;
+let banosCurrentFloor = null;
+let banosLastView = null;
 
 // Datos de recorridos disponibles
 const recorridosData = {
@@ -133,16 +136,265 @@ const recorridosData = {
             {
                 id: 'banos',
                 titulo: 'Baños',
-                descripcion: 'Ubicación de baños por piso',
+                descripcion: 'Ubica los baños por nivel y sector',
                 icono: 'fa-restroom',
-                disponible: false,
+                disponible: true,
                 tieneSubmenu: true,
                 submenu: [
-                    { id: 'banos-piso1', titulo: 'Baños Primer Piso', descripcion: 'Ubicación de baños en el primer piso' },
-                    { id: 'banos-piso2', titulo: 'Baños Segundo Piso', descripcion: 'Ubicación de baños en el segundo piso' },
-                    { id: 'banos-piso3', titulo: 'Baños Tercer Piso', descripcion: 'Ubicación de baños en el tercer piso' },
-                    { id: 'banos-piso4', titulo: 'Baños Cuarto Piso', descripcion: 'Ubicación de baños en el cuarto piso' },
-                    { id: 'banos-subterraneo', titulo: 'Baños Subterráneo', descripcion: 'Ubicación de baños en el subterráneo' }
+                    {
+                        id: 'banos-subterraneo',
+                        titulo: 'Baño Subterráneo',
+                        descripcion: 'Selecciona la torre del subterráneo',
+                        icono: 'fa-arrow-turn-down',
+                        opciones: [
+                            {
+                                id: 'banos-subterraneo-a',
+                                titulo: 'Baño Subterráneo - Torre 2',
+                                descripcion: 'Cercano a laboratorios y salas técnicas',
+                                icono: 'fa-toilet',
+                                disponible: true,
+                                imagenes: [
+                                    {
+                                        url: '/imagenes/mapa/baños/bañosubterraneo1/bañosubterraneoimg1.jpeg',
+                                        titulo: 'Acceso Subterráneo Torre 2',
+                                        descripcion: 'Ingreso principal al baño del subterráneo Torre 2'
+                                    },
+                                    {
+                                        url: '/imagenes/mapa/baños/bañosubterraneo1/bañosubterraneoimg2.jpeg',
+                                        titulo: 'Pasillo Subterráneo',
+                                        descripcion: 'Pasillo que conecta con las salas del subterráneo'
+                                    },
+                                    {
+                                        url: '/imagenes/mapa/baños/bañosubterraneo1/bañosubterraneoimg3.jpeg',
+                                        titulo: 'Lavamanos Subterráneo Torre 2',
+                                        descripcion: 'Zona de lavamanos e higienización'
+                                    },
+                                    {
+                                        url: '/imagenes/mapa/baños/bañosubterraneo1/bañosubterraneoimg4.jpeg',
+                                        titulo: 'Cubículos Subterráneo Torre 2',
+                                        descripcion: 'Vista de los cubículos individuales'
+                                    },
+                                    {
+                                        url: '/imagenes/mapa/baños/bañosubterraneo1/bañosubterraneoimg5.jpeg',
+                                        titulo: 'Salida de Emergencia',
+                                        descripcion: 'Salida cercana al baño del subterráneo'
+                                    }
+                                ]
+                            },
+                            {
+                                id: 'banos-subterraneo-b',
+                                titulo: 'Baño Subterráneo - Torre 3',
+                                descripcion: 'Sector cercano al hub estudiantil subterráneo',
+                                icono: 'fa-toilet',
+                                disponible: true,
+                                imagenes: [
+                                    {
+                                        url: '/imagenes/mapa/baños/banosubterraneo2/bañosubterraneoimg1.jpeg',
+                                        titulo: 'Entrada Subterráneo Torre 3',
+                                        descripcion: 'Ingreso al baño del subterráneo Torre 3'
+                                    },
+                                    {
+                                        url: '/imagenes/mapa/baños/banosubterraneo2/bañosubterraneoimg2.jpeg',
+                                        titulo: 'Pasillo Principal Torre 3',
+                                        descripcion: 'Conexión hacia los servicios del subterráneo'
+                                    },
+                                    {
+                                        url: '/imagenes/mapa/baños/banosubterraneo2/bañosubterraneoimg3.jpeg',
+                                        titulo: 'Lavamanos Subterráneo Torre 3',
+                                        descripcion: 'Área de lavamanos y espejos'
+                                    },
+                                    {
+                                        url: '/imagenes/mapa/baños/banosubterraneo2/bañosubterraneoimg4.jpeg',
+                                        titulo: 'Cubículos Subterráneo Torre 3',
+                                        descripcion: 'Cubículos independientes de la Torre 3'
+                                    },
+                                    {
+                                        url: '/imagenes/mapa/baños/banosubterraneo2/bañosubterraneoimg5.jpeg',
+                                        titulo: 'Vista General Subterráneo Torre 3',
+                                        descripcion: 'Panorámica del baño subterráneo Torre 3'
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        id: 'banos-piso1',
+                        titulo: 'Baño Piso 1',
+                        descripcion: 'Baños junto a recepción y admisiones',
+                        icono: 'fa-layer-group',
+                        opciones: [
+                            {
+                                id: 'banos-piso1-central',
+                                titulo: 'Baño Piso 1',
+                                descripcion: 'Punto sanitario principal del primer piso',
+                                icono: 'fa-toilet-paper',
+                                disponible: true,
+                                imagenes: [
+                                    {
+                                        url: '/imagenes/mapa/baños/bañoprimerpiso/bañoprimerpisoimg1.jpeg',
+                                        titulo: 'Entrada Piso 1',
+                                        descripcion: 'Acceso principal a los baños del primer piso'
+                                    },
+                                    {
+                                        url: '/imagenes/mapa/baños/bañoprimerpiso/bañoprimerpisoimg2.jpeg',
+                                        titulo: 'Pasillo Piso 1',
+                                        descripcion: 'Pasillo que conecta con la sala de espera'
+                                    },
+                                    {
+                                        url: '/imagenes/mapa/baños/bañoprimerpiso/bañoprimerpisoimg3.jpeg',
+                                        titulo: 'Lavamanos Piso 1',
+                                        descripcion: 'Espacio de lavamanos y dispensadores'
+                                    },
+                                    {
+                                        url: '/imagenes/mapa/baños/bañoprimerpiso/bañoprimerpisoimg4.jpeg',
+                                        titulo: 'Cubículos Piso 1',
+                                        descripcion: 'Zona de cubículos individuales'
+                                    },
+                                    {
+                                        url: '/imagenes/mapa/baños/bañoprimerpiso/bañoprimerpisoimg5.jpeg',
+                                        titulo: 'Acceso Universal',
+                                        descripcion: 'Entrada adaptada para personas con movilidad reducida'
+                                    },
+                                    {
+                                        url: '/imagenes/mapa/baños/bañoprimerpiso/bañoprimerpisoimg6.jpeg',
+                                        titulo: 'Zona de Secado',
+                                        descripcion: 'Secadores de mano y dispensadores de papel'
+                                    },
+                                    {
+                                        url: '/imagenes/mapa/baños/bañoprimerpiso/bañoprimerpisoimg7.jpeg',
+                                        titulo: 'Vista General Piso 1',
+                                        descripcion: 'Panorámica completa del baño del primer piso'
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        id: 'banos-piso2',
+                        titulo: 'Baño Piso 2',
+                        descripcion: 'Selecciona la torre del segundo piso',
+                        icono: 'fa-stairs',
+                        opciones: [
+                            {
+                                id: 'banos-piso2-a',
+                                titulo: 'Baño Piso 2 - Torre 2',
+                                descripcion: 'Frente a las salas de innovación',
+                                icono: 'fa-toilet',
+                                disponible: true,
+                                imagenes: [
+                                    {
+                                        url: '/imagenes/mapa/baños/bañosegundopiso1/bañosegundopisoimg1.jpeg',
+                                        titulo: 'Entrada Piso 2 - Torre 2',
+                                        descripcion: 'Ingreso principal a la Torre 2'
+                                    },
+                                    {
+                                        url: '/imagenes/mapa/baños/bañosegundopiso1/bañosegundopisoimg2.jpeg',
+                                        titulo: 'Pasillo Piso 2 - Torre 2',
+                                        descripcion: 'Pasillo que conecta con las salas del nivel'
+                                    },
+                                    {
+                                        url: '/imagenes/mapa/baños/bañosegundopiso1/bañosegundopisoimg3.jpeg',
+                                        titulo: 'Lavamanos Piso 2 - Torre 2',
+                                        descripcion: 'Área de lavamanos iluminada'
+                                    },
+                                    {
+                                        url: '/imagenes/mapa/baños/bañosegundopiso1/bañosegundopisoimg4.jpeg',
+                                        titulo: 'Cubículos Piso 2 - Torre 2',
+                                        descripcion: 'Cubículos individuales de la Torre 2'
+                                    },
+                                    {
+                                        url: '/imagenes/mapa/baños/bañosegundopiso1/bañosegundopisoimg5.jpeg',
+                                        titulo: 'Zona Accesible Piso 2 - Torre 2',
+                                        descripcion: 'Espacio adaptado para accesibilidad'
+                                    },
+                                    {
+                                        url: '/imagenes/mapa/baños/bañosegundopiso1/bañosegundopisoimg6.jpeg',
+                                        titulo: 'Pasillo Trasero Torre 2',
+                                        descripcion: 'Conexión hacia los lockers'
+                                    },
+                                    {
+                                        url: '/imagenes/mapa/baños/bañosegundopiso1/bañosegundopisoimg7.jpeg',
+                                        titulo: 'Señalética Torre 2',
+                                        descripcion: 'Referencia visual para ubicar la Torre 2'
+                                    },
+                                    {
+                                        url: '/imagenes/mapa/baños/bañosegundopiso1/bañosegundopisoimg8.jpeg',
+                                        titulo: 'Vista General Piso 2 - Torre 2',
+                                        descripcion: 'Panorámica completa del baño Torre 2'
+                                    }
+                                ]
+                            },
+                            {
+                                id: 'banos-piso2-b',
+                                titulo: 'Baño Piso 2 - Torre 3',
+                                descripcion: 'Sector cercano a las salas de docencia',
+                                icono: 'fa-toilet',
+                                disponible: true,
+                                imagenes: [
+                                    {
+                                        url: '/imagenes/mapa/baños/bañosegundopiso2/bañosegundopisoimg1.jpeg',
+                                        titulo: 'Entrada Piso 2 - Torre 3',
+                                        descripcion: 'Ingreso a la Torre 3 del segundo piso'
+                                    },
+                                    {
+                                        url: '/imagenes/mapa/baños/bañosegundopiso2/bañosegundopisoimg2.jpeg',
+                                        titulo: 'Pasillo Piso 2 - Torre 3',
+                                        descripcion: 'Pasillo principal de la Torre 3'
+                                    },
+                                    {
+                                        url: '/imagenes/mapa/baños/bañosegundopiso2/bañosegundopisoimg3.jpeg',
+                                        titulo: 'Lavamanos Piso 2 - Torre 3',
+                                        descripcion: 'Zona de lavamanos amplia'
+                                    },
+                                    {
+                                        url: '/imagenes/mapa/baños/bañosegundopiso2/bañosegundopisoimg4.jpeg',
+                                        titulo: 'Cubículos Piso 2 - Torre 3',
+                                        descripcion: 'Cubículos de la Torre 3'
+                                    },
+                                    {
+                                        url: '/imagenes/mapa/baños/bañosegundopiso2/bañosegundopisoimg5.jpeg',
+                                        titulo: 'Pasillo Posterior Torre 3',
+                                        descripcion: 'Conexión hacia salas cercanas'
+                                    },
+                                    {
+                                        url: '/imagenes/mapa/baños/bañosegundopiso2/bañosegundopisoimg6.jpeg',
+                                        titulo: 'Señalética Torre 3',
+                                        descripcion: 'Indicaciones de ubicación del baño'
+                                    },
+                                    {
+                                        url: '/imagenes/mapa/baños/bañosegundopiso2/bañosegundopisoimg7.jpeg',
+                                        titulo: 'Vista Cubículos Torre 3',
+                                        descripcion: 'Detalle de los cubículos de la Torre 3'
+                                    },
+                                    {
+                                        url: '/imagenes/mapa/baños/bañosegundopiso2/bañosegundopisoimg8.jpeg',
+                                        titulo: 'Área de Higiene Torre 3',
+                                        descripcion: 'Dispensadores y sanitización'
+                                    },
+                                    {
+                                        url: '/imagenes/mapa/baños/bañosegundopiso2/bañosegundopisoimg9.jpeg',
+                                        titulo: 'Corredor Torre 3',
+                                        descripcion: 'Conexión hacia la escalera principal'
+                                    },
+                                    {
+                                        url: '/imagenes/mapa/baños/bañosegundopiso2/bañosegundopisoimg10.jpeg',
+                                        titulo: 'Lavamanos Secundario Torre 3',
+                                        descripcion: 'Segunda área de lavamanos'
+                                    },
+                                    {
+                                        url: '/imagenes/mapa/baños/bañosegundopiso2/bañosegundopisoimg11.jpeg',
+                                        titulo: 'Zona Accesible Torre 3',
+                                        descripcion: 'Espacio adaptado para accesibilidad'
+                                    },
+                                    {
+                                        url: '/imagenes/mapa/baños/bañosegundopiso2/bañosegundopisoimg12.jpeg',
+                                        titulo: 'Vista General Piso 2 - Torre 3',
+                                        descripcion: 'Panorámica completa de la Torre 3'
+                                    }
+                                ]
+                            }
+                        ]
+                    }
                 ]
             },
             {
@@ -300,28 +552,16 @@ function backToSelector() {
 // ========================================
 
 function showBanosSubmenu(recorrido) {
-    const container = document.getElementById('banos-list');
-    container.innerHTML = '';
+    banosCurrentRecorrido = recorrido;
+    banosCurrentFloor = null;
 
-    recorrido.submenu.forEach(item => {
-        const col = document.createElement('div');
-        col.className = 'col-md-6 col-lg-4';
+    // Reiniciar vista de opciones específicas
+    const opcionesContainer = document.getElementById('banos-opciones');
+    const opcionesList = document.getElementById('banos-opciones-list');
+    if (opcionesContainer) opcionesContainer.style.display = 'none';
+    if (opcionesList) opcionesList.innerHTML = '';
 
-        const card = document.createElement('div');
-        card.className = 'recorrido-card disabled';
-
-        card.innerHTML = `
-            <div class="recorrido-icon">
-                <i class="fas fa-restroom"></i>
-                </div>
-            <h5>${item.titulo}</h5>
-            <p>${item.descripcion}</p>
-            <span class="badge-proximamente">Próximamente</span>
-        `;
-
-        col.appendChild(card);
-        container.appendChild(col);
-    });
+    renderBanosFloors(recorrido);
 
     // Cambiar vista
     document.getElementById('recorridos-container').style.display = 'none';
@@ -331,8 +571,129 @@ function showBanosSubmenu(recorrido) {
     if (window.playSound) window.playSound('click');
 }
 
+function renderBanosFloors(recorrido) {
+    const container = document.getElementById('banos-list');
+    if (!container) return;
+
+    container.innerHTML = '';
+    banosLastView = 'floors';
+
+    const title = document.getElementById('banos-title');
+    if (title) {
+        title.textContent = 'Baños - DuocUC Sede Maipú';
+    }
+
+    recorrido.submenu.forEach(floor => {
+        const col = document.createElement('div');
+        col.className = 'col-md-6 col-lg-4';
+
+        const card = document.createElement('div');
+        card.className = 'recorrido-card';
+        card.onclick = () => handleBanosFloorSelection(floor);
+
+        const hasMultiple = floor.opciones && floor.opciones.length > 1;
+
+        card.innerHTML = `
+            <div class="recorrido-icon">
+                <i class="fas ${floor.icono || 'fa-restroom'}"></i>
+            </div>
+            <h5>${floor.titulo}</h5>
+            <p>${floor.descripcion || ''}</p>
+            ${hasMultiple ? '<span class="badge-proximamente">2 torres</span>' : ''}
+        `;
+
+        col.appendChild(card);
+        container.appendChild(col);
+    });
+}
+
+function handleBanosFloorSelection(floor) {
+    if (!floor) return;
+
+    banosCurrentFloor = floor;
+
+    const opciones = floor.opciones || [];
+
+    if (opciones.length > 1) {
+        renderBanosOpciones(floor);
+        return;
+    }
+
+    if (opciones.length === 1) {
+        startSlideshow(opciones[0]);
+        return;
+    }
+
+    if (floor.imagenes && floor.imagenes.length > 0) {
+        startSlideshow(floor);
+        return;
+    }
+
+    showNotification('Este recorrido aún no está disponible', 'info');
+}
+
+function renderBanosOpciones(floor) {
+    const opcionesContainer = document.getElementById('banos-opciones');
+    const opcionesList = document.getElementById('banos-opciones-list');
+
+    if (!opcionesContainer || !opcionesList) return;
+
+    opcionesList.innerHTML = '';
+    banosLastView = 'options';
+
+    const title = document.getElementById('banos-opciones-title');
+    if (title) {
+        title.textContent = floor.titulo;
+    }
+
+    floor.opciones.forEach(opcion => {
+        const col = document.createElement('div');
+        col.className = 'col-md-6 col-lg-4';
+
+        const card = document.createElement('div');
+        card.className = 'recorrido-card';
+
+        card.onclick = () => startSlideshow(opcion);
+
+        card.innerHTML = `
+            <div class="recorrido-icon">
+                <i class="fas ${opcion.icono || 'fa-toilet'}"></i>
+            </div>
+            <h5>${opcion.titulo}</h5>
+            <p>${opcion.descripcion || ''}</p>
+        `;
+
+        col.appendChild(card);
+        opcionesList.appendChild(col);
+    });
+
+    document.getElementById('banos-submenu').style.display = 'none';
+    opcionesContainer.style.display = 'block';
+}
+
+function backToBanosFloors() {
+    const opcionesContainer = document.getElementById('banos-opciones');
+    const opcionesList = document.getElementById('banos-opciones-list');
+    if (opcionesContainer) opcionesContainer.style.display = 'none';
+    if (opcionesList) opcionesList.innerHTML = '';
+
+    banosCurrentFloor = null;
+    banosLastView = 'floors';
+
+    document.getElementById('banos-submenu').style.display = 'block';
+
+    if (window.playSound) window.playSound('click');
+}
+
 function backToRecorridos() {
     document.getElementById('banos-submenu').style.display = 'none';
+    const opcionesContainer = document.getElementById('banos-opciones');
+    const opcionesList = document.getElementById('banos-opciones-list');
+    if (opcionesContainer) opcionesContainer.style.display = 'none';
+    if (opcionesList) opcionesList.innerHTML = '';
+    banosCurrentRecorrido = null;
+    banosCurrentFloor = null;
+    banosLastView = null;
     document.getElementById('recorridos-container').style.display = 'block';
 
     // Reproducir sonido
@@ -344,7 +705,7 @@ function backToRecorridos() {
 // ========================================
 
 function startSlideshow(recorrido) {
-    if (!recorrido.disponible || !recorrido.imagenes || recorrido.imagenes.length === 0) {
+    if (recorrido.disponible === false || !recorrido.imagenes || recorrido.imagenes.length === 0) {
         showNotification('Este recorrido aún no está disponible', 'info');
         return;
     }
@@ -365,6 +726,10 @@ function startSlideshow(recorrido) {
 
     // Mostrar visor
     document.getElementById('recorridos-container').style.display = 'none';
+    const banosSubmenu = document.getElementById('banos-submenu');
+    const banosOpciones = document.getElementById('banos-opciones');
+    if (banosSubmenu) banosSubmenu.style.display = 'none';
+    if (banosOpciones) banosOpciones.style.display = 'none';
     document.getElementById('slideshow-container').style.display = 'flex';
 
     // Actualizar navegación
@@ -476,10 +841,16 @@ function goToSlide(index) {
 
 function exitSlideshow() {
     document.getElementById('slideshow-container').style.display = 'none';
-    
-    // Volver a la vista anterior
-    if (document.getElementById('banos-submenu').style.display === 'block') {
-        // Ya está en submenu
+
+    const banosSubmenu = document.getElementById('banos-submenu');
+    const banosOpciones = document.getElementById('banos-opciones');
+
+    if (banosCurrentRecorrido) {
+        if (banosLastView === 'options' && banosOpciones) {
+            banosOpciones.style.display = 'block';
+        } else if (banosSubmenu) {
+            banosSubmenu.style.display = 'block';
+        }
     } else {
         document.getElementById('recorridos-container').style.display = 'block';
     }
@@ -601,6 +972,7 @@ function logout() {
 window.loadRecorridos = loadRecorridos;
 window.backToSelector = backToSelector;
 window.backToRecorridos = backToRecorridos;
+window.backToBanosFloors = backToBanosFloors;
 window.nextSlide = nextSlide;
 window.previousSlide = previousSlide;
 window.goToSlide = goToSlide;
