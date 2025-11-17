@@ -147,3 +147,12 @@ lighthouse https://studentspoint.duocuc.cl --view
 - Cambiar CACHE_NAME en sw.js
 - Forzar actualización en DevTools
 
+# Después del despliegue, verificar:
+# 1. HTTPS funciona
+curl -I https://studentspoint.duocuc.cl
+
+# 2. Manifest accesible
+curl https://studentspoint.duocuc.cl/static/manifest.json
+
+# 3. Service Worker accesible
+curl https://studentspoint.duocuc.cl/static/sw.js
