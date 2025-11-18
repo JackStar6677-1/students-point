@@ -111,7 +111,7 @@ REM Crear directorio de logs si no existe
 if not exist logs mkdir logs >nul 2>&1
 
 REM Limpiar logs expirados (silenciosamente)
-python -c "from pathlib import Path; import os; logs_dir = Path('logs'); [os.remove(logs_dir / f) for f in os.listdir(logs_dir) if f.endswith('.log') and (logs_dir / f).stat().st_size > 50*1024*1024]" 2>nul
+python -c "from pathlib import Path; ; logs_dir = Path('logs'); [os.remove(logs_dir / f) for f in os.listdir(logs_dir) if f.endswith('.log') and (logs_dir / f).stat().st_size > 50*1024*1024]" 2>nul
 
 echo [8/8] Preparacion completada
 echo.

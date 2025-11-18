@@ -21,7 +21,6 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from django.conf import settings
 from django.views.static import serve
 from django.http import HttpResponse, FileResponse
-import os
 from pathlib import Path
 from rest_framework_simplejwt.views import TokenRefreshView
 
