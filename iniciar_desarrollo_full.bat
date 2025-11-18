@@ -148,16 +148,38 @@ start "StudentsPoint - Celery" cmd /k ^
 timeout /t 2 >nul
 echo/
 
-REM 11. Iniciar servidor Django
-echo [11/11] Iniciando servidor Django...
+REM 11. Detectar IP de Tailscale
+echo [11/12] Detectando IP de Tailscale...
+for /f "tokens=*" %%i in ('powershell -Command "Get-NetIPAddress -AddressFamily IPv4 | Where-Object {$_.IPAddress -like '100.*'} | Select-Object -ExpandProperty IPAddress -First 1"') do set TAILSCALE_IP=%%i
+if defined TAILSCALE_IP (
+    echo    IP de Tailscale detectada: %TAILSCALE_IP%
+) else (
+    echo    No se detecto IP de Tailscale
+)
+echo/
+
+REM 12. Iniciar servidor Django
+echo [12/12] Iniciando servidor Django...
 start "StudentsPoint - Django" cmd /k ^
-    "cd /d \"%BACKEND_DIR%\" && call \"%VENV_DIR%\Scripts\activate.bat\" && python manage.py runserver 127.0.0.1:8000"
+    "cd /d \"%BACKEND_DIR%\" && call \"%VENV_DIR%\Scripts\activate.bat\" && python manage.py runserver 0.0.0.0:8000"
 timeout /t 2 >nul
 
 echo ============================================================
-echo   Servidor arrancando en http://127.0.0.1:8000
+echo   Servidor arrancando
+echo ============================================================
+echo.
+echo URLs LOCALES:
+echo   Aplicacion: http://127.0.0.1:8000
 echo   Admin: http://127.0.0.1:8000/admin/
 echo   API Docs: http://127.0.0.1:8000/api/docs/
+echo.
+if defined TAILSCALE_IP (
+    echo URLs TAILSCALE (PWA):
+    echo   Aplicacion: http://%TAILSCALE_IP%:8000
+    echo   Admin: http://%TAILSCALE_IP%:8000/admin/
+    echo   API Docs: http://%TAILSCALE_IP%:8000/api/docs/
+    echo.
+)
 echo ============================================================
 echo/
 echo Nota:

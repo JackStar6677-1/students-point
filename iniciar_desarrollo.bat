@@ -116,14 +116,26 @@ python -c "from pathlib import Path; import os; logs_dir = Path('logs'); [os.rem
 echo [8/8] Preparacion completada
 echo.
 
+REM Detectar IP de Tailscale
+echo Detectando IP de Tailscale...
+for /f "tokens=*" %%i in ('powershell -Command "Get-NetIPAddress -AddressFamily IPv4 | Where-Object {$_.IPAddress -like '100.*'} | Select-Object -ExpandProperty IPAddress -First 1"') do set TAILSCALE_IP=%%i
+
 echo ============================================================
 echo    SERVIDOR LISTO
 echo ============================================================
 echo.
-echo Aplicacion: http://127.0.0.1:8000
-echo Admin: http://127.0.0.1:8000/admin/
-echo API Docs: http://127.0.0.1:8000/api/docs/
+echo URLs LOCALES:
+echo   Aplicacion: http://127.0.0.1:8000
+echo   Admin: http://127.0.0.1:8000/admin/
+echo   API Docs: http://127.0.0.1:8000/api/docs/
 echo.
+if defined TAILSCALE_IP (
+    echo URLs TAILSCALE (PWA):
+    echo   Aplicacion: http://%TAILSCALE_IP%:8000
+    echo   Admin: http://%TAILSCALE_IP%:8000/admin/
+    echo   API Docs: http://%TAILSCALE_IP%:8000/api/docs/
+    echo.
+)
 echo Credenciales: admin@studentspoint.app / admin123
 echo.
 echo [LOGS] Sistema de logging activo en: logs/
@@ -140,10 +152,11 @@ timeout /t 3 /nobreak >nul
 start http://127.0.0.1:8000
 
 echo Iniciando servidor Django...
+echo Servidor accesible desde todas las interfaces (0.0.0.0:8000)
 echo.
 
-REM Intentar iniciar el servidor
-python manage.py runserver 127.0.0.1:8000
+REM Intentar iniciar el servidor en 0.0.0.0 para acceso desde Tailscale
+python manage.py runserver 0.0.0.0:8000
 if errorlevel 1 (
     echo.
     echo [ERROR] El servidor no pudo iniciarse correctamente.
