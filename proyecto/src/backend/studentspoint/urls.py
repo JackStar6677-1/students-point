@@ -129,11 +129,10 @@ urlpatterns = [
     path('api/auth/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='docs'),
+    # Servir Service Worker y manifest ANTES de todo (prioridad alta para PWA)
+    re_path(r'^sw\.js$', serve_sw),
+    re_path(r'^manifest\.json$', serve_manifest),
     path('', include('studentspoint.apps.health.urls')),
-    # Servir Service Worker desde la raíz (con MIME type correcto y headers)
-    re_path(r'^sw\.js$', lambda request: serve_sw(request)),
-    # Servir manifest.json desde la raíz (para compatibilidad PWA)
-    re_path(r'^manifest\.json$', lambda request: serve_manifest(request)),
     re_path(r'^manifest\.webmanifest$', serve, {
         'document_root': Path(settings.STATIC_ROOT), 
         'path': 'manifest.webmanifest',
@@ -142,6 +141,7 @@ urlpatterns = [
     # Servir favicon específicamente
     re_path(r'^favicon\.ico$', serve, {'document_root': Path(settings.STATIC_ROOT), 'path': 'favicon.ico'}),
     # Servir archivos estaticos ANTES del catch-all (directamente desde staticfiles/)
+    # Nota: sw.js y manifest.json ya se sirven arriba, pero también desde /static/ para compatibilidad
     re_path(r'^static/(?P<path>.*)$', serve, {'document_root': Path(settings.STATIC_ROOT)}),
     # Servir archivos del conversor con MIME type correcto
     re_path(r'^converter/(?P<path>.*\.js)$', serve, {

@@ -44,20 +44,36 @@ class StudentsPointPWA {
       try {
         // Intentar registrar desde la raíz primero (recomendado para PWA)
         let registration;
+        let registered = false;
+        
         try {
           registration = await navigator.serviceWorker.register('/sw.js', {
             scope: '/'
           });
           console.log('PWA: Service Worker registrado desde /sw.js');
+          registered = true;
         } catch (rootError) {
+          console.log('PWA: Error registrando desde /sw.js:', rootError.message);
           // Si falla, intentar desde /static/sw.js
-          console.log('PWA: Intentando registrar desde /static/sw.js...');
-          registration = await navigator.serviceWorker.register('/static/sw.js', {
-            scope: '/'
-          });
-          console.log('PWA: Service Worker registrado desde /static/sw.js');
+          try {
+            console.log('PWA: Intentando registrar desde /static/sw.js...');
+            registration = await navigator.serviceWorker.register('/static/sw.js', {
+              scope: '/'
+            });
+            console.log('PWA: Service Worker registrado desde /static/sw.js');
+            registered = true;
+          } catch (staticError) {
+            console.error('PWA: Error registrando desde /static/sw.js:', staticError.message);
+            throw staticError;
+          }
         }
-        console.log('PWA: Service Worker registrado exitosamente:', registration);
+        
+        if (registered && registration) {
+          console.log('PWA: Service Worker registrado exitosamente:', {
+            scope: registration.scope,
+            active: registration.active ? 'Activo' : 'Inactivo'
+          });
+        }
         
         // Verificar actualizaciones
         registration.addEventListener('updatefound', () => {
