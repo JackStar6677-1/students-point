@@ -1,22 +1,29 @@
 from .base import *
 
 DEBUG = True
-ALLOWED_HOSTS = [
-    "*",
-    "localhost",
-    "127.0.0.1",
-    "0.0.0.0",
-    "192.168.100.2",
-    "192.168.100.6",
-    "192.168.100.59",
-    "100.75.238.19",  # Tailscale IP - jackstar6677-laptop
-    "100.113.204.115",  # Agregar otras IPs de Tailscale si es necesario
-]
+
+# Permitir todos los hosts en desarrollo (incluye ngrok)
+ALLOWED_HOSTS = ["*"]
+
+# Para producción, usar lista específica:
+# ALLOWED_HOSTS = [
+#     "localhost",
+#     "127.0.0.1",
+#     "0.0.0.0",
+#     "192.168.100.2",
+#     "192.168.100.6",
+#     "192.168.100.59",
+#     "100.75.238.19",  # Tailscale IP - jackstar6677-laptop
+#     "100.113.204.115",  # Tailscale - desktop
+#     "*.ngrok.io",  # Dominios de ngrok
+#     "*.ngrok-free.app",  # Nuevos dominios de ngrok
+# ]
 
 # SSL Server para HTTPS en desarrollo (PWA en Android)
 INSTALLED_APPS = INSTALLED_APPS + ['sslserver'] if 'sslserver' not in INSTALLED_APPS else INSTALLED_APPS
 
-# Deshabilitar CSRF para APIs
+# CSRF - En desarrollo, confiar en todos los orígenes (incluye ngrok)
+# IMPORTANTE: En producción, usar lista específica
 CSRF_TRUSTED_ORIGINS = [
     # HTTP
     "http://localhost:8000",
@@ -40,6 +47,19 @@ CSRF_TRUSTED_ORIGINS = [
     "https://100.113.204.115:8000",
     "https://100.113.204.115:8443",  # HTTPS Tailscale - desktop
 ]
+
+# Permitir dominios de ngrok dinámicamente
+import os
+if os.getenv('DJANGO_SETTINGS_MODULE', '').endswith('.dev'):
+    # En desarrollo, agregar patrones de ngrok
+    ngrok_patterns = [
+        "https://*.ngrok.io",
+        "https://*.ngrok-free.app",
+        "http://*.ngrok.io",
+        "http://*.ngrok-free.app",
+    ]
+    # Nota: Django no soporta wildcards en CSRF_TRUSTED_ORIGINS directamente
+    # pero ALLOWED_HOSTS = ["*"] permitirá el acceso
 
 # Deshabilitar CSRF para APIs REST
 CSRF_COOKIE_SECURE = False
