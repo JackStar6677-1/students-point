@@ -61,35 +61,44 @@ Esta arquitectura permite que las instituciones **reemplacen múltiples sistemas
 iniciar_desarrollo.bat
 ```
 
-#### Script completo recomendado
-
-Para un arranque totalmente reproducible (entorno virtual, `.env`, migraciones, datos demo y servicios auxiliares), utiliza:
-
-```batch
-iniciar_desarrollo_full.bat
-```
-
-Este script crea `.venv`, copia `env.development.example` si falta, ejecuta `migrate`, `collectstatic`, crea usuarios demo e intenta levantar Redis, Celery y Django en ventanas separadas.
-
 ### Linux/Mac
 ```bash
 chmod +x iniciar_desarrollo.sh
 ./iniciar_desarrollo.sh
 ```
 
-**¡Eso es todo!** El servidor y el monitor de logs se inician automáticamente.
+### PWA con HTTPS (ngrok)
+Para probar la PWA en celular con HTTPS:
+```batch
+iniciar_con_ngrok.bat
+```
 
-### Scripts Adicionales
+Este script inicia Django y ngrok automáticamente, dándote un enlace HTTPS público para instalar la PWA en Android/iOS sin problemas.
 
-Ver carpeta `scripts/` para scripts de utilidades:
+**Guía rápida:** Ver [`USAR-NGROK.md`](USAR-NGROK.md) en la raíz.
+
+**¡Eso es todo!** El servidor se inicia automáticamente.
+
+### Scripts de Inicio Disponibles
+
+**En la raíz del proyecto:**
+- `iniciar_desarrollo.bat/.sh` - Inicio rápido en desarrollo
+- `iniciar_con_ngrok.bat` - Inicio con HTTPS (ngrok) para PWA móvil
+
+**En la carpeta `scripts/`:**
 - `iniciar_produccion.bat/.sh` - Iniciar en modo producción
+- `configurar_https.bat` - Configurar HTTPS local con certificado self-signed
 - `ver_logs.bat/.sh` - Ver logs en tiempo real
 - `ver_logs_tests.bat/.sh` - Ver logs de pruebas
 - `deploy_linux.sh` - Despliegue en Linux
 - `instalar_postgresql.bat` - Instalador de PostgreSQL
+- `instalar_pwa.bat/.sh` - Instalar archivos PWA
 - `detener_servicios.sh` - Detener servicios en Linux
 - `detener_monitor.bat` - Detener monitor en Windows
- - `iniciar_desarrollo_full.bat` - Nuevo inicio integral de desarrollo en Windows
+- `aplicar_correcciones_movil.bat` - Aplicar correcciones de responsive móvil
+- `diagnostico.bat` - Diagnóstico del sistema
+- `iniciar_simple.bat` - Inicio simple alternativo
+- `verificar_pwa.bat` - Verificar archivos PWA
 
 ### Cobertura de módulos recientes
 
@@ -150,6 +159,16 @@ Ver carpeta `scripts/` para scripts de utilidades:
 - Historial de conversiones
 - Limpieza automatica de archivos temporales
 
+### PWA (Progressive Web App)
+- Service Worker con cache inteligente
+- Instalacion como app nativa (Android/iOS)
+- Funcionamiento offline
+- Actualizaciones automaticas
+- Iconos optimizados para todas las resoluciones
+- Soporte HTTPS con ngrok para testing rapido
+- Responsive design optimizado para moviles
+- Safe-area-inset para notches y barras inferiores
+
 ### Otras Funcionalidades
 - Portafolio profesional con generacion de PDF
 - Recorridos virtuales 360° del campus
@@ -159,7 +178,6 @@ Ver carpeta `scripts/` para scripts de utilidades:
 - **Sistema de encuestas** - Módulo independiente para votaciones institucionales (no confundir con el foro)
 - Notificaciones push
 - Sistema de reportes de incidencias en salas de clases y espacios del campus (con subida de fotos)
-- PWA (Progressive Web App) completamente funcional
 
 ### Sistema de Monitoreo y Auditoria
 - **Logging completo**: 4 archivos de log separados (general, errors, api, auth)
@@ -178,6 +196,7 @@ El proyecto incluye un sistema completo de testing automatizado:
 - **Pruebas Unitarias**: APIs, modelos, serializers, vistas
 - **Pruebas de Integracion**: Flujos completos de APIs
 - **Pruebas E2E**: Interfaz de usuario con Selenium
+- **Pruebas PWA**: 21 tests para verificar funcionamiento completo
 - **Cobertura**: >80% del codigo
 
 **Ejecutar pruebas:**
@@ -191,6 +210,15 @@ ejecutar_tests_dev.bat
 # Suite completa con reporte
 python tests/test_suite_completo.py --verbose --coverage
 ```
+
+**Testing PWA en Celular:**
+
+Ver [`docs/guias/PRUEBAS-PWA.md`](docs/guias/PRUEBAS-PWA.md) para:
+- 21 tests de verificacion PWA
+- Testing en Android/iOS
+- Verificacion de Service Worker
+- Pruebas de instalacion
+- Testing con ngrok (HTTPS)
 
 Para mas detalles, ver la documentacion en `docs/`
 
@@ -332,15 +360,24 @@ Ver [`docs/guias/DEPLOYMENT-PRODUCTION.md`](docs/guias/DEPLOYMENT-PRODUCTION.md)
 students-point/
 ├── docs/                       # Documentacion completa
 │   ├── academico/             # Documentos academicos del Capstone
+│   ├── arquitectura/          # Arquitectura del sistema
 │   ├── config-avanzada/       # Configuracion tecnica detallada
 │   ├── especificaciones/      # Especificaciones de requisitos
-│   ├── guias/                 # Guias de configuracion y despliegue
-│   └── historico/             # Resumenes y estados previos
+│   ├── guias/                 # Guias (PWA, ngrok, deployment, etc.)
+│   ├── historico/             # Resumenes y estados previos
+│   ├── modelo-datos/          # Modelos de datos
+│   ├── modulos/               # Documentacion de modulos
+│   ├── releases/              # Notas de versiones
+│   └── tecnologias/           # Stack tecnologico
 │
-├── scripts/                    # Scripts de utilidades
+├── scripts/                    # Scripts de utilidades organizados
 │   ├── iniciar_produccion.*   # Scripts de produccion
+│   ├── configurar_https.bat   # Configurar HTTPS local
+│   ├── instalar_pwa.*         # Instalacion PWA
 │   ├── ver_logs.*             # Scripts de visualizacion de logs
 │   ├── deploy_linux.sh        # Despliegue en Linux
+│   ├── diagnostico.bat        # Diagnostico del sistema
+│   ├── verificar_pwa.bat      # Verificacion PWA
 │   └── ...                    # Otros scripts de utilidad
 │
 ├── FASE 1/                     # Evidencias academicas Fase 1
@@ -357,7 +394,10 @@ students-point/
 │       └── frontend/          # Frontend (HTML, CSS, JS)
 │           ├── static/        # Archivos estaticos centralizados
 │           │   ├── js/        # JavaScript centralizado
-│           │   └── css/       # CSS centralizado
+│           │   ├── css/       # CSS centralizado (con mobile-fixes.css)
+│           │   ├── sw.js      # Service Worker PWA
+│           │   ├── manifest.json  # Web App Manifest
+│           │   └── pwa-config.js  # Configuracion PWA
 │           └── *.html         # Paginas HTML
 │
 ├── pruebas_unitarias/          # Tests unitarios (pytest)
@@ -367,7 +407,11 @@ students-point/
 ├── config/                     # Configuraciones del sistema
 │   └── systemd/               # Servicios systemd para Linux
 │
-├── iniciar_desarrollo.*        # Scripts de inicio (raiz)
+├── logs_tests/                 # Logs de pruebas automatizadas
+│
+├── iniciar_desarrollo.*        # Scripts de inicio rapido (raiz)
+├── iniciar_con_ngrok.bat       # Inicio con HTTPS/ngrok para PWA
+├── USAR-NGROK.md               # Guia rapida de ngrok
 ├── README.md                   # Este archivo
 ├── pyrightconfig.json          # Configuracion de linter
 └── .gitignore                  # Archivos ignorados por Git
@@ -396,6 +440,10 @@ La documentacion esta organizada en carpetas tematicas. Ver:
 - `CONFIGURACION-GOOGLE-EMAIL.md` - OAuth y Email SMTP
 - `DEPLOYMENT-PRODUCTION.md` - Despliegue en produccion
 - `SISTEMA-LOGGING.md` - Sistema de logs y monitoreo
+- `GUIA-NGROK.md` - Configuracion completa de ngrok para PWA con HTTPS
+- `PWA-CELULAR.md` - Guia rapida de instalacion PWA en celular
+- `INSTALACION-PWA.md` - Instalacion completa de PWA
+- `PRUEBAS-PWA.md` - 21 tests para verificar PWA
 - `Recorridos_Virtuales.md` - Sistema de recorridos
 
 ### Documentos Academicos (Fases del Proyecto)
