@@ -1,11 +1,11 @@
 /**
  * Service Worker para StudentsPoint
- * Versión: 1.2.3 - Optimizado para Tailscale y Chrome PWA
+ * Versión: 1.2.4 - Iconos actualizados con logo StudentsPoint
  */
 
-const CACHE_NAME = 'StudentsPoint-v1.2.3';
-const STATIC_CACHE = 'StudentsPoint-static-v1.2.3';
-const DYNAMIC_CACHE = 'StudentsPoint-dynamic-v1.2.3';
+const CACHE_NAME = 'StudentsPoint-v1.2.4';
+const STATIC_CACHE = 'StudentsPoint-static-v1.2.4';
+const DYNAMIC_CACHE = 'StudentsPoint-dynamic-v1.2.4';
 
 // Archivos estáticos para cache
 const STATIC_FILES = [

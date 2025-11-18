@@ -88,6 +88,7 @@ Este script inicia Django y ngrok automáticamente, dándote un enlace HTTPS pú
 **En la carpeta `scripts/`:**
 - `iniciar_produccion.bat/.sh` - Iniciar en modo producción
 - `configurar_https.bat` - Configurar HTTPS local con certificado self-signed
+- `regenerar_iconos_pwa.bat` - Regenerar iconos PWA con logo StudentsPoint
 - `ver_logs.bat/.sh` - Ver logs en tiempo real
 - `ver_logs_tests.bat/.sh` - Ver logs de pruebas
 - `deploy_linux.sh` - Despliegue en Linux
@@ -98,6 +99,7 @@ Este script inicia Django y ngrok automáticamente, dándote un enlace HTTPS pú
 - `aplicar_correcciones_movil.bat` - Aplicar correcciones de responsive móvil
 - `diagnostico.bat` - Diagnóstico del sistema
 - `iniciar_simple.bat` - Inicio simple alternativo
+- `iniciar_solo_ngrok.bat` - Iniciar solo ngrok (Django debe estar corriendo)
 - `verificar_pwa.bat` - Verificar archivos PWA
 
 ### Cobertura de módulos recientes
@@ -444,6 +446,7 @@ La documentacion esta organizada en carpetas tematicas. Ver:
 - `PWA-CELULAR.md` - Guia rapida de instalacion PWA en celular
 - `INSTALACION-PWA.md` - Instalacion completa de PWA
 - `PRUEBAS-PWA.md` - 21 tests para verificar PWA
+- `ACTUALIZAR-ICONOS-PWA.md` - Actualizar iconos PWA con logo StudentsPoint
 - `Recorridos_Virtuales.md` - Sistema de recorridos
 
 ### Documentos Academicos (Fases del Proyecto)

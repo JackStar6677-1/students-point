@@ -1,6 +1,6 @@
 /**
  * Configuración PWA para desarrollo local y Tailscale
- * StudentsPoint - Versión 1.2.3
+ * StudentsPoint - Versión 1.2.4 - Iconos actualizados
  */
 
 // Configuración para desarrollo local
@@ -15,9 +15,9 @@ const PWA_CONFIG = {
     
     // Configuración de cache
     cacheConfig: {
-        version: '1.2.3',
-        staticCache: 'StudentsPoint-static-v1.2.3',
-        dynamicCache: 'StudentsPoint-dynamic-v1.2.3',
+        version: '1.2.4',
+        staticCache: 'StudentsPoint-static-v1.2.4',
+        dynamicCache: 'StudentsPoint-dynamic-v1.2.4',
         maxAge: 86400000, // 24 horas
         maxEntries: 50
     },
