@@ -1,6 +1,6 @@
 /**
- * Configuración PWA para desarrollo local
- * StudentsPoint - Versión 1.2.0
+ * Configuración PWA para desarrollo local y Tailscale
+ * StudentsPoint - Versión 1.2.3
  */
 
 // Configuración para desarrollo local
@@ -8,15 +8,16 @@ const PWA_CONFIG = {
     // URLs base para diferentes entornos
     baseUrls: {
         development: 'http://localhost:8000',
-        tailscale: 'http://100.75.238.19:8000',  // Tailscale IP
+        tailscaleLaptop: 'http://100.75.238.19:8000',  // Tailscale IP - jackstar6677-laptop
+        tailscaleDesktop: 'http://100.113.204.115:8000', // Tailscale IP - desktop
         production: 'https://studentspoint.app'
     },
     
     // Configuración de cache
     cacheConfig: {
-        version: '1.2.2',
-        staticCache: 'StudentsPoint-static-v1.2.2',
-        dynamicCache: 'StudentsPoint-dynamic-v1.2.2',
+        version: '1.2.3',
+        staticCache: 'StudentsPoint-static-v1.2.3',
+        dynamicCache: 'StudentsPoint-dynamic-v1.2.3',
         maxAge: 86400000, // 24 horas
         maxEntries: 50
     },
@@ -48,9 +49,19 @@ const PWA_CONFIG = {
 function getEnvironment() {
     const hostname = window.location.hostname;
     
-    // Detectar Tailscale (IPs que empiezan con 100.)
+    // Detectar Tailscale específico (laptop)
+    if (hostname === '100.75.238.19') {
+        return 'tailscaleLaptop';
+    }
+    
+    // Detectar Tailscale específico (desktop)
+    if (hostname === '100.113.204.115') {
+        return 'tailscaleDesktop';
+    }
+    
+    // Detectar cualquier otra IP de Tailscale
     if (hostname.startsWith('100.')) {
-        return 'tailscale';
+        return 'tailscaleLaptop'; // Usar laptop como default
     }
     
     if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname.includes('192.168.')) {
@@ -63,7 +74,17 @@ function getEnvironment() {
 // Obtener URL base según el entorno
 function getBaseUrl() {
     const env = getEnvironment();
-    return PWA_CONFIG.baseUrls[env] || PWA_CONFIG.baseUrls.development;
+    const baseUrl = PWA_CONFIG.baseUrls[env];
+    
+    // Si no se encuentra, construir dinámicamente
+    if (!baseUrl) {
+        const protocol = window.location.protocol;
+        const hostname = window.location.hostname;
+        const port = window.location.port || '8000';
+        return `${protocol}//${hostname}:${port}`;
+    }
+    
+    return baseUrl;
 }
 
 // Configuración de desarrollo local
@@ -127,16 +148,43 @@ function getConfig() {
 function canPWAWork() {
     const config = getConfig();
     const hostname = window.location.hostname;
+    const protocol = window.location.protocol;
     
-    // Verificar contexto seguro
+    // Detectar contexto seguro
+    const isLocalhost = hostname === 'localhost' || 
+                       hostname === '127.0.0.1' ||
+                       hostname === '0.0.0.0';
+    
+    const isPrivateNetwork = hostname.startsWith('192.168.') ||
+                            hostname.startsWith('10.') ||
+                            hostname.startsWith('172.16.') ||
+                            hostname.startsWith('172.17.') ||
+                            hostname.startsWith('172.18.') ||
+                            hostname.startsWith('172.19.') ||
+                            hostname.startsWith('172.20.') ||
+                            hostname.startsWith('172.21.') ||
+                            hostname.startsWith('172.22.') ||
+                            hostname.startsWith('172.23.') ||
+                            hostname.startsWith('172.24.') ||
+                            hostname.startsWith('172.25.') ||
+                            hostname.startsWith('172.26.') ||
+                            hostname.startsWith('172.27.') ||
+                            hostname.startsWith('172.28.') ||
+                            hostname.startsWith('172.29.') ||
+                            hostname.startsWith('172.30.') ||
+                            hostname.startsWith('172.31.');
+    
+    const isTailscale = hostname.startsWith('100.');
+    
+    const isHttps = protocol === 'https:';
+    
+    // Chrome considera contextos seguros: localhost, 127.0.0.1, HTTPS
+    // Para PWA en Tailscale/redes privadas, necesitamos forzar el contexto como seguro
     const isSecureContext = window.isSecureContext || 
-                           hostname === 'localhost' || 
-                           hostname === '127.0.0.1' || 
-                           hostname.includes('192.168.') ||
-                           hostname.includes('10.0.') ||
-                           hostname.includes('172.') ||
-                           hostname.includes('100.') || // Tailscale
-                           window.location.protocol === 'https:';
+                           isLocalhost || 
+                           isPrivateNetwork ||
+                           isTailscale ||
+                           isHttps;
     
     // Verificar soporte de Service Worker
     const hasServiceWorker = 'serviceWorker' in navigator;
@@ -153,6 +201,12 @@ function canPWAWork() {
         hasServiceWorker,
         hasNotifications,
         hasInstallPrompt,
+        isLocalhost,
+        isPrivateNetwork,
+        isTailscale,
+        isHttps,
+        hostname,
+        protocol,
         config
     };
 }

@@ -1,11 +1,16 @@
 from .base import *
 
 DEBUG = True
-ALLOWED_HOSTS = ["*",
+ALLOWED_HOSTS = [
+    "*",
+    "localhost",
+    "127.0.0.1",
+    "0.0.0.0",
     "192.168.100.2",
     "192.168.100.6",
     "192.168.100.59",
-    "100.75.238.19",  # Tailscale IP
+    "100.75.238.19",  # Tailscale IP - jackstar6677-laptop
+    "100.113.204.115",  # Agregar otras IPs de Tailscale si es necesario
 ]
 
 # Deshabilitar CSRF para APIs
@@ -19,7 +24,12 @@ CSRF_TRUSTED_ORIGINS = [
     "http://192.168.0.1:8000",
     "http://192.168.100.6:8000",
     "http://192.168.100.59:8000",
-    "http://100.75.238.19:8000",  # Tailscale
+    "http://100.75.238.19:8000",  # Tailscale - laptop
+    "http://100.113.204.115:8000",  # Tailscale - desktop
+    "https://localhost:8000",
+    "https://127.0.0.1:8000",
+    "https://100.75.238.19:8000",
+    "https://100.113.204.115:8000",
 ]
 
 # Deshabilitar CSRF para APIs REST

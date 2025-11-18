@@ -1,40 +1,46 @@
 @echo off
-REM Script de inicio automático para StudentsPoint - Desarrollo
+chcp 65001 >nul
+REM Script de inicio completo para StudentsPoint - Desarrollo
 REM Ejecutar con doble click para iniciar todo el proyecto
 
 title StudentsPoint - Desarrollo
 color 0A
 
-REM Cambiar al directorio del script para rutas relativas
+REM Cambiar al directorio del script
 cd /d "%~dp0"
 
 echo ============================================================
 echo    StudentsPoint - Modo Desarrollo
 echo ============================================================
 echo.
-echo IMPORTANTE: Si esta ventana se cierra inesperadamente,
-echo ejecuta este script desde una ventana de CMD para ver los errores.
+echo Este script instalara todo lo necesario y iniciara el servidor
 echo.
 
-REM Verificar Python
-echo [1/8] Verificando Python...
-python --version
+REM ============================================================
+REM FASE 1: VERIFICACION DE REQUISITOS
+REM ============================================================
+
+echo [1/10] Verificando Python...
+python --version >nul 2>&1
 if errorlevel 1 (
+    echo [ERROR] Python no encontrado
+    echo Instala Python 3.11+ desde python.org
     echo.
-    echo [ERROR] Python no encontrado. Instala Python 3.11+ desde python.org
-    echo.
-    echo Presiona cualquier tecla para salir...
-    pause >nul
+    pause
     exit /b 1
 )
-echo [OK] Python encontrado
+for /f "tokens=*" %%i in ('python --version 2^>^&1') do set PYTHON_VERSION=%%i
+echo [OK] %PYTHON_VERSION% encontrado
 echo.
 
-REM Navegar al directorio backend
-echo [2/8] Cambiando al directorio backend...
+REM ============================================================
+REM FASE 2: NAVEGAR AL BACKEND
+REM ============================================================
+
+echo [2/10] Accediendo al directorio backend...
 cd proyecto\src\backend
 if errorlevel 1 (
-    echo [ERROR] No se pudo acceder al directorio backend
+    echo [ERROR] No se encontro el directorio backend
     echo Asegurate de estar en la raiz del proyecto
     pause
     exit /b 1
@@ -42,127 +48,205 @@ if errorlevel 1 (
 echo [OK] Directorio backend encontrado
 echo.
 
-REM Instalar dependencias
-echo [3/8] Instalando dependencias...
-python -m pip install --no-cache-dir -r requirements.txt -q
+REM ============================================================
+REM FASE 3: INSTALAR DEPENDENCIAS
+REM ============================================================
+
+echo [3/10] Instalando dependencias de Python...
+echo Esto puede tomar unos minutos la primera vez...
+python -m pip install --quiet --upgrade pip
+python -m pip install --quiet -r requirements.txt
 if errorlevel 1 (
-    echo [WARNING] Algunas dependencias pueden no haberse instalado correctamente
-    echo Intentando instalacion sin cache...
-    python -m pip install --no-cache-dir -r requirements.txt
+    echo [WARNING] Algunas dependencias pueden no haberse instalado
+    echo Intentando instalacion detallada...
+    python -m pip install -r requirements.txt
 )
 echo [OK] Dependencias instaladas
 echo.
 
-REM Verificar configuración
-echo [4/8] Verificando configuración...
-python manage.py check
+REM ============================================================
+REM FASE 4: VERIFICAR CONFIGURACION
+REM ============================================================
+
+echo [4/10] Verificando configuracion del proyecto...
+python manage.py check --deploy 2>nul
 if errorlevel 1 (
-    echo [WARNING] Hay advertencias en la configuración, continuando...
+    echo [WARNING] Advertencias de configuracion detectadas
+    python manage.py check
 ) else (
-    echo [OK] Configuración correcta
+    echo [OK] Configuracion correcta
 )
 echo.
 
-REM Aplicar migraciones
-echo [5/8] Aplicando migraciones...
+REM ============================================================
+REM FASE 5: APLICAR MIGRACIONES
+REM ============================================================
+
+echo [5/10] Aplicando migraciones de base de datos...
+python manage.py makemigrations 2>nul
 python manage.py migrate --run-syncdb
 if errorlevel 1 (
-    echo [ERROR] Error en migraciones. Revisa los mensajes anteriores.
+    echo [ERROR] Error aplicando migraciones
     echo.
-    echo Presiona cualquier tecla para salir...
-    pause >nul
+    pause
     exit /b 1
-) else (
-    echo [OK] Migraciones aplicadas
 )
+echo [OK] Migraciones aplicadas correctamente
 echo.
 
-REM Recolectar archivos estáticos
-echo [6/8] Recolectando archivos estáticos...
-python manage.py collectstatic --noinput >nul 2>&1
+REM ============================================================
+REM FASE 6: RECOLECTAR ARCHIVOS ESTATICOS
+REM ============================================================
+
+echo [6/10] Recolectando archivos estaticos (PWA)...
+python manage.py collectstatic --noinput --clear >nul 2>&1
 if errorlevel 1 (
-    echo [WARNING] Error recolectando estáticos, continuando...
+    echo [WARNING] Error al recolectar estaticos
+    echo Intentando sin cache...
+    python manage.py collectstatic --noinput
 ) else (
-    echo [OK] Archivos estáticos actualizados
+    echo [OK] Archivos estaticos actualizados (PWA lista)
 )
 echo.
 
-REM Crear superusuario
-echo [7/8] Verificando superusuario...
-python ensure_superuser.py
+REM ============================================================
+REM FASE 7: CREAR SUPERUSUARIO
+REM ============================================================
+
+echo [7/10] Configurando superusuario...
+if exist ensure_superuser.py (
+    python ensure_superuser.py
+    if errorlevel 1 (
+        echo [WARNING] No se pudo crear superusuario automaticamente
+    ) else (
+        echo [OK] Superusuario configurado
+    )
+) else (
+    echo [WARNING] Script ensure_superuser.py no encontrado
+)
+echo.
+
+REM ============================================================
+REM FASE 8: CREAR USUARIOS DE PRUEBA
+REM ============================================================
+
+echo [8/10] Creando usuarios de prueba...
+python manage.py create_demo_users 2>nul
 if errorlevel 1 (
-    echo [WARNING] Error creando superusuario, continuando...
+    echo [WARNING] No se pudieron crear usuarios de prueba
 ) else (
-    echo [OK] Superusuario configurado
+    echo [OK] Usuarios de prueba creados
 )
 echo.
 
-REM Crear usuarios de prueba
-echo Creando usuarios de prueba...
-python manage.py create_demo_users
-if errorlevel 1 (
-    echo [WARNING] Error creando usuarios de prueba, continuando...
-) else (
-    echo [OK] Usuarios de prueba listos
+REM ============================================================
+REM FASE 9: CONFIGURAR DIRECTORIOS
+REM ============================================================
+
+echo [9/10] Configurando directorios necesarios...
+if not exist logs mkdir logs
+if not exist media mkdir media
+if not exist staticfiles mkdir staticfiles
+echo [OK] Directorios configurados
+echo.
+
+REM ============================================================
+REM FASE 10: DETECTAR IPS
+REM ============================================================
+
+echo [10/10] Detectando direcciones IP...
+
+REM IP Local
+for /f "tokens=2 delims=:" %%a in ('ipconfig ^| findstr /i "IPv4" ^| findstr "192.168"') do (
+    set LOCAL_IP=%%a
+    set LOCAL_IP=!LOCAL_IP:~1!
+    goto :local_found
 )
+:local_found
+
+REM IP Tailscale
+set TAILSCALE_IP=
+for /f "tokens=2 delims=:" %%a in ('ipconfig ^| findstr /i "IPv4" ^| findstr "100."') do (
+    set TAILSCALE_IP=%%a
+    set TAILSCALE_IP=!TAILSCALE_IP:~1!
+    goto :tailscale_found
+)
+:tailscale_found
+
+echo [OK] IPs detectadas
 echo.
 
-REM Crear directorio de logs si no existe
-if not exist logs mkdir logs >nul 2>&1
-
-REM Limpiar logs expirados (silenciosamente)
-python -c "from pathlib import Path; import os; logs_dir = Path('logs'); [os.remove(logs_dir / f) for f in os.listdir(logs_dir) if f.endswith('.log') and (logs_dir / f).stat().st_size > 50*1024*1024]" 2>nul
-
-echo [8/8] Preparacion completada
-echo.
-
-REM Detectar IP de Tailscale
-echo Detectando IP de Tailscale...
-for /f "tokens=*" %%i in ('powershell -Command "Get-NetIPAddress -AddressFamily IPv4 | Where-Object {$_.IPAddress -like '100.*'} | Select-Object -ExpandProperty IPAddress -First 1"') do set TAILSCALE_IP=%%i
+REM ============================================================
+REM SERVIDOR INICIADO
+REM ============================================================
 
 echo ============================================================
-echo    SERVIDOR LISTO
+echo    SERVIDOR INICIADO - StudentsPoint v5.0.0
 echo ============================================================
 echo.
-echo URLs LOCALES:
-echo   Aplicacion: http://127.0.0.1:8000
-echo   Admin: http://127.0.0.1:8000/admin/
-echo   API Docs: http://127.0.0.1:8000/api/docs/
+echo URLS DE ACCESO:
 echo.
-if defined TAILSCALE_IP (
-    echo URLs TAILSCALE (PWA):
-    echo   Aplicacion: http://%TAILSCALE_IP%:8000
-    echo   Admin: http://%TAILSCALE_IP%:8000/admin/
-    echo   API Docs: http://%TAILSCALE_IP%:8000/api/docs/
+echo [LOCALHOST]
+echo   App:       http://127.0.0.1:8000
+echo   Admin:     http://127.0.0.1:8000/admin/
+echo   API Docs:  http://127.0.0.1:8000/api/docs/
+echo.
+
+if defined LOCAL_IP (
+    echo [RED LOCAL]
+    echo   App:       http://%LOCAL_IP%:8000
+    echo   Admin:     http://%LOCAL_IP%:8000/admin/
     echo.
 )
-echo Credenciales: admin@studentspoint.app / admin123
+
+if defined TAILSCALE_IP (
+    echo [TAILSCALE - PWA MOVIL]
+    echo   App:       http://%TAILSCALE_IP%:8000
+    echo   Admin:     http://%TAILSCALE_IP%:8000/admin/
+    echo.
+    echo Para instalar PWA en celular:
+    echo   1. Conecta tu celular a Tailscale
+    echo   2. Abre Chrome en el celular
+    echo   3. Navega a http://%TAILSCALE_IP%:8000
+    echo   4. Menu ^(tres puntos^) -^> Agregar a pantalla de inicio
+    echo.
+)
+
+echo CREDENCIALES DE ACCESO:
+echo   Usuario:   admin@studentspoint.app
+echo   Password:  admin123
 echo.
-echo [LOGS] Sistema de logging activo en: logs/
-echo   - general.log: Todos los eventos
-echo   - errors.log: Solo errores
-echo   - api.log: Peticiones API
-echo   - auth.log: Autenticacion
+echo SISTEMA DE LOGS:
+echo   General:   logs/general.log
+echo   Errores:   logs/errors.log
+echo   API:       logs/api.log
+echo   Auth:      logs/auth.log
+echo.
+echo ============================================================
 echo.
 echo Presiona Ctrl+C para detener el servidor
 echo.
+echo Abriendo navegador en 3 segundos...
+echo.
 
-REM Abrir navegador automáticamente después de 3 segundos
+REM Abrir navegador
 timeout /t 3 /nobreak >nul
 start http://127.0.0.1:8000
 
-echo Iniciando servidor Django...
-echo Servidor accesible desde todas las interfaces (0.0.0.0:8000)
+echo ============================================================
+echo SERVIDOR DJANGO INICIANDO...
+echo ============================================================
 echo.
 
-REM Intentar iniciar el servidor en 0.0.0.0 para acceso desde Tailscale
+REM Iniciar servidor en todas las interfaces para Tailscale
 python manage.py runserver 0.0.0.0:8000
-if errorlevel 1 (
-    echo.
-    echo [ERROR] El servidor no pudo iniciarse correctamente.
-    echo Revisa los mensajes de error anteriores.
-    echo.
-    echo Presiona cualquier tecla para salir...
-    pause >nul
-    exit /b 1
-)
+
+REM Si el servidor se detiene
+echo.
+echo ============================================================
+echo SERVIDOR DETENIDO
+echo ============================================================
+echo.
+echo El servidor Django se ha detenido.
+echo.
+pause

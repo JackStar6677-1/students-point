@@ -111,11 +111,10 @@ USE_TZ = True
 # ---- Archivos estáticos y media ----
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
-# Los archivos de frontend/static/ van directamente a staticfiles/ (no a staticfiles/static/)
-# Los HTMLs de frontend/ van también a staticfiles/
+# Archivos estáticos desde frontend
 STATICFILES_DIRS = [
-    ("", BASE_DIR.parent / "frontend" / "static"),  # CSS, JS, images, audio → staticfiles/
-    ("", BASE_DIR.parent / "frontend"),  # HTMLs y otras carpetas → staticfiles/
+    BASE_DIR.parent / "frontend" / "static",  # CSS, JS, images, audio, sw.js, manifest.json
+    BASE_DIR.parent / "frontend",  # HTMLs y otras carpetas
 ]
 
 MEDIA_URL = "/media/"

@@ -1,11 +1,11 @@
 /**
  * Service Worker para StudentsPoint
- * Versión: 1.2.2
+ * Versión: 1.2.3 - Optimizado para Tailscale y Chrome PWA
  */
 
-const CACHE_NAME = 'StudentsPoint-v1.2.2';
-const STATIC_CACHE = 'StudentsPoint-static-v1.2.2';
-const DYNAMIC_CACHE = 'StudentsPoint-dynamic-v1.2.2';
+const CACHE_NAME = 'StudentsPoint-v1.2.3';
+const STATIC_CACHE = 'StudentsPoint-static-v1.2.3';
+const DYNAMIC_CACHE = 'StudentsPoint-dynamic-v1.2.3';
 
 // Archivos estáticos para cache
 const STATIC_FILES = [
@@ -129,10 +129,31 @@ self.addEventListener('fetch', (event) => {
   // En Service Worker, verificar origen de forma segura
   const isHttps = url.protocol === 'https:';
   const isLocalhost = url.hostname === 'localhost' || 
-                      url.hostname === '127.0.0.1' || 
-                      url.hostname.startsWith('192.168.') ||
-                      url.hostname.startsWith('10.0.') ||
-                      url.hostname.startsWith('100.'); // Tailscale
+                      url.hostname === '127.0.0.1' ||
+                      url.hostname === '0.0.0.0';
+  
+  // Detectar redes locales y Tailscale
+  const isPrivateNetwork = url.hostname.startsWith('192.168.') ||
+                          url.hostname.startsWith('10.') ||
+                          url.hostname.startsWith('172.16.') ||
+                          url.hostname.startsWith('172.17.') ||
+                          url.hostname.startsWith('172.18.') ||
+                          url.hostname.startsWith('172.19.') ||
+                          url.hostname.startsWith('172.20.') ||
+                          url.hostname.startsWith('172.21.') ||
+                          url.hostname.startsWith('172.22.') ||
+                          url.hostname.startsWith('172.23.') ||
+                          url.hostname.startsWith('172.24.') ||
+                          url.hostname.startsWith('172.25.') ||
+                          url.hostname.startsWith('172.26.') ||
+                          url.hostname.startsWith('172.27.') ||
+                          url.hostname.startsWith('172.28.') ||
+                          url.hostname.startsWith('172.29.') ||
+                          url.hostname.startsWith('172.30.') ||
+                          url.hostname.startsWith('172.31.');
+  
+  // Detectar Tailscale (rango 100.64.0.0/10)
+  const isTailscale = url.hostname.startsWith('100.');
   
   // Obtener origen del Service Worker de forma segura
   let swOrigin = null;
@@ -143,13 +164,15 @@ self.addEventListener('fetch', (event) => {
       swOrigin = new URL(self.registration.scope).origin;
     }
   } catch (e) {
-    // Si no se puede determinar, permitir localhost y HTTPS
+    // Si no se puede determinar, permitir localhost, redes privadas y HTTPS
   }
   
   const isSameOrigin = swOrigin ? url.origin === swOrigin : false;
   
-  // Permitir solo mismo origen, HTTPS o localhost
-  if (!isSameOrigin && !isHttps && !isLocalhost) {
+  // Permitir mismo origen, HTTPS, localhost, redes privadas o Tailscale
+  const isAllowedOrigin = isSameOrigin || isHttps || isLocalhost || isPrivateNetwork || isTailscale;
+  
+  if (!isAllowedOrigin) {
     return; // No interceptar requests de otros orígenes no seguros
   }
   
