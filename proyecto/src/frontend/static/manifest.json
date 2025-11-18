@@ -1,4 +1,5 @@
 {
+  "id": "/",
   "name": "StudentsPoint - Plataforma Integral Estudiantil",
   "short_name": "StudentsPoint",
   "description": "Plataforma integral para la comunidad estudiantil global",
@@ -11,6 +12,8 @@
   "lang": "es",
   "dir": "ltr",
   "categories": ["education", "productivity", "social"],
+  "iarc_rating_id": "",
+  "prefer_related_applications": false,
   "icons": [
     {
       "src": "/static/images/icons/icon-72x72.png",
