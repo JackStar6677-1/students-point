@@ -120,6 +120,16 @@
                 ¿No tienes cuenta? 
                 <a href="/register.html" class="text-gradient-gold" style="font-weight: 600;">Regístrate aquí</a>
             </p>
+            
+            <!-- Botón de Instalación PWA -->
+            <div id="pwa-install-container" style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(255, 255, 255, 0.1);">
+                <button id="install-button" class="btn btn-outline w-100" style="display: none;">
+                    <i class="fas fa-download me-2"></i> Instalar StudentsPoint
+                </button>
+                <button id="install-button-manual" class="btn btn-outline w-100" style="display: none;">
+                    <i class="fas fa-mobile-alt me-2"></i> Añadir a Pantalla de Inicio
+                </button>
+            </div>
         </form>
     </div>
 
@@ -294,5 +304,152 @@
     <!-- PWA Scripts -->
     <script src="/static/pwa-config.js"></script>
     <script src="/static/js/pwa.js"></script>
+    
+    <script>
+        // Manejo específico del botón de instalación en login
+        document.addEventListener('DOMContentLoaded', function() {
+            const installButton = document.getElementById('install-button');
+            const installButtonManual = document.getElementById('install-button-manual');
+            const installContainer = document.getElementById('pwa-install-container');
+            let deferredPrompt;
+            
+            // Verificar si ya está instalado
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+            const isAndroid = /Android/.test(navigator.userAgent);
+            const isMobile = isIOS || isAndroid;
+            
+            if (isStandalone) {
+                console.log('PWA: Ya está instalado');
+                if (installContainer) {
+                    installContainer.style.display = 'none';
+                }
+                return;
+            }
+            
+            // Mostrar siempre el contenedor en móviles
+            if (isMobile && installContainer) {
+                installContainer.style.display = 'block';
+            }
+            
+            // Escuchar el evento beforeinstallprompt (Chrome/Edge)
+            window.addEventListener('beforeinstallprompt', (e) => {
+                console.log('PWA: Prompt de instalación disponible');
+                e.preventDefault();
+                deferredPrompt = e;
+                
+                // Mostrar el botón automático
+                if (installButton) {
+                    installButton.style.display = 'block';
+                    if (installContainer) {
+                        installContainer.style.display = 'block';
+                    }
+                }
+                
+                // Ocultar el botón manual si hay prompt automático
+                if (installButtonManual) {
+                    installButtonManual.style.display = 'none';
+                }
+            });
+            
+            // Si no hay prompt automático después de 2 segundos, mostrar botón manual en móviles
+            setTimeout(() => {
+                if (!deferredPrompt && isMobile && installButtonManual) {
+                    installButtonManual.style.display = 'block';
+                    if (installContainer) {
+                        installContainer.style.display = 'block';
+                    }
+                }
+            }, 2000);
+            
+            // Manejar clic en el botón de instalación automático
+            if (installButton) {
+                installButton.addEventListener('click', async () => {
+                    if (!deferredPrompt) {
+                        showInstallInstructions();
+                        return;
+                    }
+                    
+                    try {
+                        // Mostrar el prompt de instalación
+                        deferredPrompt.prompt();
+                        
+                        // Esperar a que el usuario responda
+                        const { outcome } = await deferredPrompt.userChoice;
+                        console.log(`PWA: Usuario eligió: ${outcome}`);
+                        
+                        if (outcome === 'accepted') {
+                            showAlert('¡StudentsPoint se está instalando!', 'success');
+                        }
+                        
+                        // Limpiar el prompt
+                        deferredPrompt = null;
+                        if (installButton) {
+                            installButton.style.display = 'none';
+                        }
+                    } catch (error) {
+                        console.error('Error al mostrar prompt:', error);
+                        showInstallInstructions();
+                    }
+                });
+            }
+            
+            // Manejar clic en el botón de instalación manual
+            if (installButtonManual) {
+                installButtonManual.addEventListener('click', () => {
+                    showInstallInstructions();
+                });
+            }
+            
+            // Detectar si ya está instalado
+            window.addEventListener('appinstalled', () => {
+                console.log('PWA: App instalada exitosamente');
+                if (installButton) {
+                    installButton.style.display = 'none';
+                }
+                if (installButtonManual) {
+                    installButtonManual.style.display = 'none';
+                }
+                if (installContainer) {
+                    installContainer.style.display = 'none';
+                }
+                deferredPrompt = null;
+                showAlert('¡StudentsPoint instalado exitosamente!', 'success');
+            });
+            
+            // Función para mostrar instrucciones de instalación manual
+            function showInstallInstructions() {
+                let message = '';
+                if (isIOS) {
+                    message = '📱 Para instalar en iOS:<br>1. Toca el botón de compartir (□↑)<br>2. Selecciona "Añadir a pantalla de inicio"<br>3. Toca "Añadir"';
+                } else if (isAndroid) {
+                    message = '📱 Para instalar en Android:<br>1. Toca el menú (⋮) en la esquina superior<br>2. Selecciona "Instalar app" o "Añadir a pantalla de inicio"<br>3. Confirma la instalación';
+                } else {
+                    message = '💻 Para instalar:<br>Usa el menú del navegador y selecciona "Instalar StudentsPoint" o busca el ícono de instalación en la barra de direcciones';
+                }
+                
+                // Crear un modal o alert más visible
+                const modal = document.createElement('div');
+                modal.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 10000; display: flex; align-items: center; justify-content: center; padding: 2rem;';
+                modal.innerHTML = `
+                    <div class="glass" style="max-width: 400px; width: 100%; padding: 2rem; border-radius: 1rem; position: relative;">
+                        <button onclick="this.parentElement.parentElement.remove()" style="position: absolute; top: 1rem; right: 1rem; background: none; border: none; color: var(--color-white); font-size: 1.5rem; cursor: pointer;">&times;</button>
+                        <h3 style="color: var(--color-gold); margin-bottom: 1rem;">Instalar StudentsPoint</h3>
+                        <div style="color: var(--color-gray-light); line-height: 1.6;">
+                            ${message}
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+                
+                // Cerrar al hacer clic fuera
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        modal.remove();
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>
