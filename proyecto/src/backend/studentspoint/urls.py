@@ -28,14 +28,39 @@ from rest_framework_simplejwt.views import TokenRefreshView
 
 def serve_sw(request):
     """Servir Service Worker con headers correctos para PWA"""
+    # Intentar desde staticfiles primero
     sw_path = Path(settings.STATIC_ROOT) / 'sw.js'
+    if not sw_path.exists():
+        # Si no está en staticfiles, buscar en static
+        sw_path = Path(settings.BASE_DIR).parent / 'frontend' / 'static' / 'sw.js'
+    
     if sw_path.exists():
-        response = FileResponse(open(sw_path, 'rb'), content_type='application/javascript')
-        # Header importante para permitir scope del service worker
+        with open(sw_path, 'rb') as f:
+            content = f.read()
+        response = HttpResponse(content, content_type='application/javascript')
+        # Headers importantes para PWA
         response['Service-Worker-Allowed'] = '/'
         response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+        response['Pragma'] = 'no-cache'
+        response['Expires'] = '0'
         return response
     return HttpResponse('Service Worker not found', status=404)
+
+def serve_manifest(request):
+    """Servir manifest.json con headers correctos para PWA"""
+    # Intentar desde staticfiles primero
+    manifest_path = Path(settings.STATIC_ROOT) / 'manifest.json'
+    if not manifest_path.exists():
+        # Si no está en staticfiles, buscar en static
+        manifest_path = Path(settings.BASE_DIR).parent / 'frontend' / 'static' / 'manifest.json'
+    
+    if manifest_path.exists():
+        with open(manifest_path, 'rb') as f:
+            content = f.read()
+        response = HttpResponse(content, content_type='application/manifest+json')
+        response['Cache-Control'] = 'public, max-age=3600'
+        return response
+    return HttpResponse('Manifest not found', status=404)
 
 def spa_serve(request, path=""):
     # Servir HTMLs y otros archivos desde staticfiles
@@ -108,12 +133,8 @@ urlpatterns = [
     path('', include('studentspoint.apps.health.urls')),
     # Servir Service Worker desde la raíz (con MIME type correcto y headers)
     re_path(r'^sw\.js$', lambda request: serve_sw(request)),
-    # Servir manifest.json desde la raíz también (para compatibilidad)
-    re_path(r'^manifest\.json$', serve, {
-        'document_root': Path(settings.STATIC_ROOT), 
-        'path': 'manifest.json',
-        'content_type': 'application/manifest+json'
-    }),
+    # Servir manifest.json desde la raíz (para compatibilidad PWA)
+    re_path(r'^manifest\.json$', lambda request: serve_manifest(request)),
     re_path(r'^manifest\.webmanifest$', serve, {
         'document_root': Path(settings.STATIC_ROOT), 
         'path': 'manifest.webmanifest',
