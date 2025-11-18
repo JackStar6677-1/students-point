@@ -107,6 +107,9 @@ class AuthAPI {
                 localStorage.setItem('user_data', JSON.stringify(data.user));
             }
             
+            // Disparar evento de login exitoso para iniciar servicio de renovación de tokens
+            window.dispatchEvent(new Event('userLoggedIn'));
+            
             return data;
         } catch (error) {
             console.error('Error en login:', error);
@@ -437,6 +440,9 @@ class AuthAPI {
         localStorage.removeItem('user_data');
         localStorage.removeItem('remember_me');
         localStorage.removeItem('saved_email');
+        
+        // Disparar evento de logout para detener servicio de renovación de tokens
+        window.dispatchEvent(new Event('userLoggedOut'));
         
         // Redirigir al login si se solicita
         if (redirect) {

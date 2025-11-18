@@ -1,4 +1,5 @@
 from pathlib import Path
+from datetime import timedelta
 import os
 
 # base.py está en: server/studentspoint/settings/base.py
@@ -25,6 +26,7 @@ INSTALLED_APPS = [
     "drf_spectacular",
     "corsheaders",
     "rest_framework_simplejwt",
+    "rest_framework_simplejwt.token_blacklist",  # Para blacklist de tokens
     "django_filters",
 
     # Local apps (ajusta nombres si cambiaste rutas)
@@ -138,6 +140,38 @@ REST_FRAMEWORK = {
         "rest_framework.throttling.AnonRateThrottle",
     ],
     "DEFAULT_THROTTLE_RATES": {"user": "1000/day", "anon": "100/day"},
+}
+
+# ---- JWT Authentication ----
+SIMPLE_JWT = {
+    # Tokens de acceso duran 60 minutos (1 hora)
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
+    
+    # Tokens de refresh duran 7 días
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+    
+    # Rotación de refresh tokens (seguridad adicional)
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": True,
+    
+    # Configuración del algoritmo
+    "ALGORITHM": "HS256",
+    "SIGNING_KEY": SECRET_KEY,
+    
+    # Headers
+    "AUTH_HEADER_TYPES": ("Bearer",),
+    "AUTH_HEADER_NAME": "HTTP_AUTHORIZATION",
+    
+    # Claims personalizados
+    "USER_ID_FIELD": "id",
+    "USER_ID_CLAIM": "user_id",
+    
+    # Configuración de tokens
+    "AUTH_TOKEN_CLASSES": ("rest_framework_simplejwt.tokens.AccessToken",),
+    "TOKEN_TYPE_CLAIM": "token_type",
+    
+    # Actualizar el last_login del usuario al generar token
+    "UPDATE_LAST_LOGIN": True,
 }
 
 if os.getenv("DEMO_MODE") == "1":
