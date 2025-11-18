@@ -54,17 +54,35 @@ echo.
 echo [4/4] Iniciando servidor Django en puerto 8000...
 echo.
 
-REM Iniciar Django en segundo plano
-start /B "Django Server" python manage.py runserver 0.0.0.0:8000
+REM Iniciar Django en una nueva ventana separada
+start "Django Server - NO CERRAR" cmd /k "python manage.py runserver 0.0.0.0:8000"
 
-REM Esperar a que Django inicie
-timeout /t 5 /nobreak >nul
+echo Esperando a que Django inicie...
+echo.
+
+REM Esperar 10 segundos para que Django inicie completamente
+timeout /t 10 /nobreak
 
 echo ============================================================
-echo    Servidor Django Iniciado
+echo    Servidor Django Iniciado en ventana separada
 echo ============================================================
 echo.
-echo Servidor local: http://127.0.0.1:8000
+echo IMPORTANTE:
+echo   - NO CIERRES la ventana "Django Server - NO CERRAR"
+echo   - Servidor local: http://127.0.0.1:8000
+echo.
+echo Verificando que Django esta corriendo...
+echo.
+
+REM Verificar que Django responde
+curl -s http://localhost:8000 >nul 2>&1
+if errorlevel 1 (
+    echo [ADVERTENCIA] Django puede no estar listo todavia
+    echo Esperando 5 segundos mas...
+    timeout /t 5 /nobreak >nul
+)
+
+echo [OK] Django esta corriendo
 echo.
 echo Ahora iniciando ngrok...
 echo.
@@ -74,20 +92,23 @@ echo   2. Usa ese enlace en tu celular para probar la PWA
 echo   3. La PWA se instalara correctamente con HTTPS
 echo   4. El enlace cambia cada vez que reinicias ngrok
 echo.
-echo Presiona Ctrl+C para detener ngrok y el servidor
+echo PARA DETENER:
+echo   - Presiona Ctrl+C en esta ventana para detener ngrok
+echo   - Cierra la ventana "Django Server" para detener Django
 echo.
 
 timeout /t 3 /nobreak >nul
 
-REM Iniciar ngrok
+REM Volver a la raiz para iniciar ngrok
 cd ..\..\..
+
+REM Iniciar ngrok
 ngrok http 8000
 
-REM Si ngrok se cierra, matar el servidor Django
-taskkill /F /FI "WINDOWTITLE eq Django Server*" >nul 2>&1
-
 echo.
-echo Servidor y ngrok detenidos
+echo ngrok detenido
+echo.
+echo RECUERDA: Cierra manualmente la ventana "Django Server - NO CERRAR"
 echo.
 pause
 
