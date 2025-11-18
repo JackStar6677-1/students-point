@@ -44,9 +44,11 @@ echo.
 
 REM Instalar dependencias
 echo [3/8] Instalando dependencias...
-pip install -r requirements.txt -q
+python -m pip install --no-cache-dir -r requirements.txt -q
 if errorlevel 1 (
     echo [WARNING] Algunas dependencias pueden no haberse instalado correctamente
+    echo Intentando instalacion sin cache...
+    python -m pip install --no-cache-dir -r requirements.txt
 )
 echo [OK] Dependencias instaladas
 echo.
