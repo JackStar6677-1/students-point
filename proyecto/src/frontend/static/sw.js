@@ -131,7 +131,8 @@ self.addEventListener('fetch', (event) => {
   const isLocalhost = url.hostname === 'localhost' || 
                       url.hostname === '127.0.0.1' || 
                       url.hostname.startsWith('192.168.') ||
-                      url.hostname.startsWith('10.0.');
+                      url.hostname.startsWith('10.0.') ||
+                      url.hostname.startsWith('100.'); // Tailscale
   
   // Obtener origen del Service Worker de forma segura
   let swOrigin = null;

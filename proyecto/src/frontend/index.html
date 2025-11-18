@@ -19,8 +19,11 @@
     <link rel="stylesheet" href="/static/css/homepage.css">
     
     <!-- PWA -->
-    <link rel="manifest" href="/static/manifest.json">
-    <meta name="theme-color" content="#1a1a1b">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#4A148C">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="StudentsPoint">
     <link rel="icon" href="/static/favicon.ico">
     <link rel="apple-touch-icon" href="/static/images/icons/icon-192x192.png">
     
@@ -324,8 +327,18 @@
     <script src="/static/js/auth-api.js"></script>
     <script src="/static/js/auth-header.js"></script>
     <script src="/static/js/sounds.js"></script>
-    <script src="/static/js/pwa.js"></script>
+    <!-- PWA Scripts - Cargar antes del cierre del body -->
     <script src="/static/pwa-config.js"></script>
+    <script src="/static/js/pwa.js"></script>
+    <!-- Script de diagnóstico PWA (solo en desarrollo) -->
+    <script>
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname.startsWith('100.')) {
+            const script = document.createElement('script');
+            script.src = '/static/js/pwa-debug.js';
+            script.onload = () => console.log('PWA Debug cargado - Revisa la consola');
+            document.head.appendChild(script);
+        }
+    </script>
     <script src="/static/js/notifications.js"></script>
     <script src="/static/js/main.js"></script>
     

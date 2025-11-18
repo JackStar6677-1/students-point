@@ -5,6 +5,7 @@ ALLOWED_HOSTS = ["*",
     "192.168.100.2",
     "192.168.100.6",
     "192.168.100.59",
+    "100.75.238.19",  # Tailscale IP
 ]
 
 # Deshabilitar CSRF para APIs
@@ -18,6 +19,7 @@ CSRF_TRUSTED_ORIGINS = [
     "http://192.168.0.1:8000",
     "http://192.168.100.6:8000",
     "http://192.168.100.59:8000",
+    "http://100.75.238.19:8000",  # Tailscale
 ]
 
 # Deshabilitar CSRF para APIs REST

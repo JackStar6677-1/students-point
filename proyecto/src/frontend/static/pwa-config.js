@@ -8,6 +8,7 @@ const PWA_CONFIG = {
     // URLs base para diferentes entornos
     baseUrls: {
         development: 'http://localhost:8000',
+        tailscale: 'http://100.75.238.19:8000',  // Tailscale IP
         production: 'https://studentspoint.app'
     },
     
@@ -47,6 +48,11 @@ const PWA_CONFIG = {
 function getEnvironment() {
     const hostname = window.location.hostname;
     
+    // Detectar Tailscale (IPs que empiezan con 100.)
+    if (hostname.startsWith('100.')) {
+        return 'tailscale';
+    }
+    
     if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname.includes('192.168.')) {
         return 'development';
     }
@@ -57,7 +63,7 @@ function getEnvironment() {
 // Obtener URL base según el entorno
 function getBaseUrl() {
     const env = getEnvironment();
-    return PWA_CONFIG.baseUrls[env];
+    return PWA_CONFIG.baseUrls[env] || PWA_CONFIG.baseUrls.development;
 }
 
 // Configuración de desarrollo local
@@ -72,6 +78,10 @@ const DEV_CONFIG = {
     // URLs de desarrollo
     apiUrl: 'http://localhost:8000/api',
     staticUrl: 'http://localhost:8000/static',
+    
+    // URLs de Tailscale (si está disponible)
+    tailscaleApiUrl: 'http://100.75.238.19:8000/api',
+    tailscaleStaticUrl: 'http://100.75.238.19:8000/static',
     
     // Configuración de cache para desarrollo
     cacheStrategy: 'networkFirst',

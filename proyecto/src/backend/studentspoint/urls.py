@@ -20,9 +20,46 @@ from django.views.generic import RedirectView
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from django.conf import settings
 from django.views.static import serve
+from django.http import HttpResponse, FileResponse
 from pathlib import Path
 from rest_framework_simplejwt.views import TokenRefreshView
 
+
+def serve_sw(request):
+    """Servir Service Worker con headers correctos para PWA"""
+    # Intentar desde staticfiles primero
+    sw_path = Path(settings.STATIC_ROOT) / 'sw.js'
+    if not sw_path.exists():
+        # Si no está en staticfiles, buscar en static
+        sw_path = Path(settings.BASE_DIR).parent / 'frontend' / 'static' / 'sw.js'
+    
+    if sw_path.exists():
+        with open(sw_path, 'rb') as f:
+            content = f.read()
+        response = HttpResponse(content, content_type='application/javascript')
+        # Headers importantes para PWA
+        response['Service-Worker-Allowed'] = '/'
+        response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+        response['Pragma'] = 'no-cache'
+        response['Expires'] = '0'
+        return response
+    return HttpResponse('Service Worker not found', status=404)
+
+def serve_manifest(request):
+    """Servir manifest.json con headers correctos para PWA"""
+    # Intentar desde staticfiles primero
+    manifest_path = Path(settings.STATIC_ROOT) / 'manifest.json'
+    if not manifest_path.exists():
+        # Si no está en staticfiles, buscar en static
+        manifest_path = Path(settings.BASE_DIR).parent / 'frontend' / 'static' / 'manifest.json'
+    
+    if manifest_path.exists():
+        with open(manifest_path, 'rb') as f:
+            content = f.read()
+        response = HttpResponse(content, content_type='application/manifest+json')
+        response['Cache-Control'] = 'public, max-age=3600'
+        return response
+    return HttpResponse('Manifest not found', status=404)
 
 def spa_serve(request, path=""):
     # Servir HTMLs y otros archivos desde staticfiles
@@ -92,19 +129,10 @@ urlpatterns = [
     path('api/auth/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='docs'),
+    # Servir Service Worker y manifest ANTES de todo (prioridad alta para PWA)
+    re_path(r'^sw\.js$', serve_sw),
+    re_path(r'^manifest\.json$', serve_manifest),
     path('', include('studentspoint.apps.health.urls')),
-    # Servir Service Worker desde la raíz (con MIME type correcto)
-    re_path(r'^sw\.js$', serve, {
-        'document_root': Path(settings.STATIC_ROOT), 
-        'path': 'sw.js',
-        'content_type': 'application/javascript'
-    }),
-    # Servir manifest.json desde la raíz también (para compatibilidad)
-    re_path(r'^manifest\.json$', serve, {
-        'document_root': Path(settings.STATIC_ROOT), 
-        'path': 'manifest.json',
-        'content_type': 'application/manifest+json'
-    }),
     re_path(r'^manifest\.webmanifest$', serve, {
         'document_root': Path(settings.STATIC_ROOT), 
         'path': 'manifest.webmanifest',
@@ -113,6 +141,7 @@ urlpatterns = [
     # Servir favicon específicamente
     re_path(r'^favicon\.ico$', serve, {'document_root': Path(settings.STATIC_ROOT), 'path': 'favicon.ico'}),
     # Servir archivos estaticos ANTES del catch-all (directamente desde staticfiles/)
+    # Nota: sw.js y manifest.json ya se sirven arriba, pero también desde /static/ para compatibilidad
     re_path(r'^static/(?P<path>.*)$', serve, {'document_root': Path(settings.STATIC_ROOT)}),
     # Servir archivos del conversor con MIME type correcto
     re_path(r'^converter/(?P<path>.*\.js)$', serve, {

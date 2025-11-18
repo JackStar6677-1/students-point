@@ -140,3 +140,12 @@ pause >nul
 
 echo Iniciando servidor de produccion...
 python manage.py runserver 0.0.0.0:8000
+if errorlevel 1 (
+    echo.
+    echo [ERROR] El servidor no pudo iniciarse correctamente.
+    echo Revisa los mensajes de error anteriores.
+    echo.
+    echo Presiona cualquier tecla para salir...
+    pause >nul
+    exit /b 1
+)
