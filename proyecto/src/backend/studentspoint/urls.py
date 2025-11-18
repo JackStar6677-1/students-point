@@ -86,7 +86,7 @@ urlpatterns = [
     path('api/', include('studentspoint.apps.wellbeing.urls')),
     path('api/', include('studentspoint.apps.portfolio.urls')),
     path('api/', include('studentspoint.apps.document_converter.urls')),
-    path('api/marketplace/', include('studentspoint.apps.market.urls')),
+    path('api/market/', include('studentspoint.apps.market.urls')),
     path('api/campus/', include('campus_map.urls')),
     path('api/infrastructure/', include('infrastructure_monitoring.urls')),
     path('api/auth/refresh/', TokenRefreshView.as_view(), name='token_refresh'),

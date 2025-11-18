@@ -562,15 +562,52 @@ class ForumManager {
                 postData.imagen = imageElement.files[0];
             }
 
-            await window.forumAPI.createPost(postData);
+            // Mostrar indicador de carga en el botón
+            const submitBtn = document.querySelector('#newPostModal .btn-primary');
+            const originalBtnText = submitBtn ? submitBtn.innerHTML : '';
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Publicando...';
+            }
 
-            this.showAlert('Post creado correctamente', 'success');
-            bootstrap.Modal.getInstance(document.getElementById('newPostModal')).hide();
+            const newPost = await window.forumAPI.createPost(postData);
+
+            // Cerrar modal
+            const modalElement = document.getElementById('newPostModal');
+            const modal = bootstrap.Modal.getInstance(modalElement);
+            if (modal) {
+                modal.hide();
+            }
+
+            // Limpiar formulario e imagen preview
             const form = document.getElementById('newPostForm');
             if (form) form.reset();
-            this.loadPosts();
+            removeImage();
+
+            // Mostrar mensaje de éxito
+            this.showAlert('¡Post publicado correctamente! 🎉', 'success');
+            
+            // Recargar lista de posts para ver el nuevo
+            await this.loadPosts();
+            
+            // Scroll al top para ver el nuevo post
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            // Restaurar botón
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnText;
+            }
         } catch (error) {
             console.error('Error creating post:', error);
+            
+            // Restaurar botón
+            const submitBtn = document.querySelector('#newPostModal .btn-primary');
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'Publicar';
+            }
+            
             this.showAlert(error.message || 'Error al crear el post', 'danger');
         }
     }
@@ -658,19 +695,20 @@ class ForumManager {
 
     showAlert(message, type) {
         const alertDiv = document.createElement('div');
-        alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+        alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+        alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);';
         alertDiv.innerHTML = `
             ${message}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         `;
         
-        const container = document.querySelector('.container');
-        container.insertBefore(alertDiv, container.firstChild);
+        document.body.appendChild(alertDiv);
         
         // Auto-dismiss after 5 seconds
         setTimeout(() => {
             if (alertDiv.parentNode) {
-                alertDiv.remove();
+                alertDiv.classList.remove('show');
+                setTimeout(() => alertDiv.remove(), 300);
             }
         }, 5000);
     }

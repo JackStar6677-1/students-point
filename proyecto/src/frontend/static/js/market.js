@@ -19,8 +19,6 @@ class MarketApp {
     async init() {
         await this.checkAuth();
         this.setupEventListeners();
-        await this.loadCategorias();
-        await this.loadCampus();
         this.loadProductos();
     }
     
@@ -86,6 +84,7 @@ class MarketApp {
         document.getElementById('formCrearProducto')?.addEventListener('submit', (e) => this.crearProducto(e));
         document.getElementById('formReportar')?.addEventListener('submit', (e) => this.reportarProducto(e));
         
+        
         // Modales
         this.setupModalListeners();
     }
@@ -106,34 +105,6 @@ class MarketApp {
         });
     }
     
-    // === CARGA DE DATOS ===
-    async loadCategorias() {
-        try {
-            this.categorias = await window.marketAPI.getCategorias();
-            this.populateCategorias();
-        } catch (error) {
-            console.error('Error cargando categorías:', error);
-        }
-    }
-    
-    async loadCampus() {
-        try {
-            const headers = {};
-            if (window.authAPI && window.authAPI.getAuthToken) {
-                const token = window.authAPI.getAuthToken();
-                if (token) {
-                    headers['Authorization'] = `Bearer ${token}`;
-                }
-            }
-            const response = await fetch(`${this.apiBaseUrl}/sedes/`, { headers });
-            if (response.ok) {
-                this.campus = await response.json();
-                this.populateCampus();
-            }
-        } catch (error) {
-            console.error('Error cargando campus:', error);
-        }
-    }
     
     async loadProductos() {
         this.showLoading(true);
@@ -150,36 +121,6 @@ class MarketApp {
     }
     
     // === RENDERIZADO ===
-    populateCategorias() {
-        const select = document.getElementById('filtroCategoria');
-        const selectCrear = document.getElementById('inputCategoria');
-        
-        if (select) {
-            select.innerHTML = '<option value="">Todas</option>';
-            this.categorias.forEach(cat => {
-                select.innerHTML += `<option value="${cat.id}">${cat.nombre}</option>`;
-            });
-        }
-        
-        if (selectCrear) {
-            selectCrear.innerHTML = '<option value="">Seleccionar categoría</option>';
-            this.categorias.forEach(cat => {
-                selectCrear.innerHTML += `<option value="${cat.id}">${cat.nombre}</option>`;
-            });
-        }
-    }
-    
-    populateCampus() {
-        const select = document.getElementById('filtroCampus');
-        
-        if (select) {
-            select.innerHTML = '<option value="">Todos</option>';
-            this.campus.forEach(campus => {
-                select.innerHTML += `<option value="${campus.slug}">${campus.nombre}</option>`;
-            });
-        }
-    }
-    
     renderProductos() {
         const container = document.getElementById('productosList');
         const noResults = document.getElementById('noResults');
@@ -197,8 +138,8 @@ class MarketApp {
         container.innerHTML = this.productos.map(producto => `
             <div class="producto-card" data-id="${producto.id}">
                 <div class="producto-imagen">
-                    ${producto.og_image ? 
-                        `<img src="${producto.og_image}" alt="${producto.titulo}" loading="lazy">` :
+                    ${producto.imagen_url ? 
+                        `<img src="${producto.imagen_url}" alt="${producto.titulo}" loading="lazy">` :
                         `<div class="no-image"><i class="bi bi-image"></i></div>`
                     }
                     <div class="producto-favorito ${producto.es_favorito ? 'activo' : ''}">
@@ -281,20 +222,7 @@ class MarketApp {
     // === MODALES ===
     showCrearProducto() {
         document.getElementById('modalCrearProducto').style.display = 'block';
-        this.cargarPerfilVendedor();
-    }
-    
-    cargarPerfilVendedor() {
-        // Cargar el perfil del usuario actual en el formulario
-        if (this.currentUser) {
-            document.getElementById('vendedorNombre').textContent = this.currentUser.name || this.currentUser.email || 'No especificado';
-            document.getElementById('vendedorCarrera').textContent = this.currentUser.career || 'No especificada';
-            document.getElementById('vendedorCampus').textContent = this.currentUser.campus_nombre || this.currentUser.campus || 'No especificado';
-        } else {
-            document.getElementById('vendedorNombre').textContent = 'Error al cargar';
-            document.getElementById('vendedorCarrera').textContent = 'Error al cargar';
-            document.getElementById('vendedorCampus').textContent = 'Error al cargar';
-        }
+        document.getElementById('formCrearProducto').reset();
     }
     
     async showMisProductos() {
@@ -337,8 +265,8 @@ class MarketApp {
         const detalle = document.getElementById('productoDetalle');
         detalle.innerHTML = `
             <div class="producto-modal-imagen">
-                ${producto.og_image ? 
-                    `<img src="${producto.og_image}" alt="${producto.titulo}">` :
+                ${producto.imagen_url ? 
+                    `<img src="${producto.imagen_url}" alt="${producto.titulo}">` :
                     `<div class="no-image-large"><i class="bi bi-image"></i></div>`
                 }
             </div>
@@ -426,77 +354,68 @@ class MarketApp {
     async crearProducto(e) {
         e.preventDefault();
         
-        // Validar checkboxes de términos OBLIGATORIOS
-        const checkTerminos = document.getElementById('checkTerminos');
-        const checkResponsabilidad = document.getElementById('checkResponsabilidad');
+        // Obtener valores
+        const descripcion = document.getElementById('inputDescripcion').value.trim();
+        const urlPrincipal = document.getElementById('inputUrlPrincipal').value.trim();
+        const precio = document.getElementById('inputPrecio').value;
+        const precioStudentPoint = document.getElementById('inputPrecioStudentPoint').value;
         
-        if (!checkTerminos.checked) {
-            this.showError('Debes aceptar los Términos y Condiciones para publicar.');
-            checkTerminos.focus();
+        // Validar
+        if (!descripcion) {
+            this.showError('El mensaje es obligatorio');
             return;
         }
         
-        if (!checkResponsabilidad.checked) {
-            this.showError('Debes aceptar la responsabilidad legal para publicar.');
-            checkResponsabilidad.focus();
+        if (!urlPrincipal) {
+            this.showError('El link es obligatorio');
             return;
         }
         
-        // Validar URL principal (OBLIGATORIO)
-        const urlPrincipal = document.getElementById('inputUrlPrincipal').value;
-        if (!urlPrincipal || urlPrincipal.trim() === '') {
-            this.showError('El enlace principal es OBLIGATORIO. StudentsPoint solo actúa como medio de difusión.');
-            document.getElementById('inputUrlPrincipal').focus();
-            return;
-        }
-        
-        const formData = {
-            titulo: document.getElementById('inputTitulo').value,
-            descripcion: document.getElementById('inputDescripcion').value,
-            categoria: document.getElementById('inputCategoria').value,
-            tipo_enlace: document.getElementById('inputTipoEnlace').value,
-            url_principal: urlPrincipal,
-            precio: document.getElementById('inputPrecio').value || null,
-            precio_student_point: document.getElementById('inputPrecioStudentPoint').value || null,
-            moneda: document.getElementById('inputMoneda').value,
-            acepta_terminos: checkTerminos.checked,
-            acepta_responsabilidad: checkResponsabilidad.checked
-        };
-        
-        // Procesar URLs adicionales
-        const urlsAdicionales = document.getElementById('inputUrlsAdicionales').value
-            .split('\n')
-            .map(url => url.trim())
-            .filter(url => url);
-        
-        if (urlsAdicionales.length > 0) {
-            formData.urls_adicionales = urlsAdicionales;
-        }
+        const btnSubmit = document.getElementById('btnSubmitProducto');
+        btnSubmit.disabled = true;
+        btnSubmit.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Publicando...';
         
         try {
-            // Deshabilitar botón de submit para evitar doble click
-            const btnSubmit = document.getElementById('btnSubmitProducto');
-            const originalText = btnSubmit.innerHTML;
-            btnSubmit.disabled = true;
-            btnSubmit.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Publicando...';
+            const data = {
+                titulo: descripcion.substring(0, 50), // Primera parte como título
+                descripcion: descripcion,
+                url_principal: urlPrincipal
+            };
             
-            await window.marketAPI.createProducto(formData);
-            this.showSuccess('Producto publicado exitosamente. Los metadatos de la URL se están extrayendo automáticamente...');
+            if (precio) data.precio = precio;
+            if (precioStudentPoint) data.precio_student_point = precioStudentPoint;
+            
+            console.log('Enviando:', data);
+            
+            const response = await fetch(`${this.apiBaseUrl}/market/productos/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${window.authAPI.getAuthToken()}`
+                },
+                body: JSON.stringify(data)
+            });
+            
+            if (!response.ok) {
+                const error = await response.json();
+                console.error('Error:', error);
+                throw new Error(JSON.stringify(error));
+            }
+            
+            const producto = await response.json();
+            console.log('Creado:', producto);
+            
+            this.showSuccess('¡Publicado!');
             this.closeModal();
             document.getElementById('formCrearProducto').reset();
             
-            // Reestablecer botón
-            btnSubmit.disabled = false;
-            btnSubmit.innerHTML = originalText;
+            // Recargar
+            this.loadProductos();
             
-            // Recargar después de un breve delay para que se procesen los metadatos
-            setTimeout(() => this.loadProductos(), 2000);
         } catch (error) {
-            console.error('Error creando producto:', error);
-            this.showError(error.message || 'Error publicando producto. Verifica que hayas aceptado los términos y que el enlace sea válido.');
-            
-            // Reestablecer botón en caso de error
-            const btnSubmit = document.getElementById('btnSubmitProducto');
+            console.error(error);
+            this.showError('Error al publicar. Revisa la consola (F12)');
+        } finally {
             btnSubmit.disabled = false;
             btnSubmit.innerHTML = '<i class="fas fa-paper-plane me-2"></i>Publicar';
         }

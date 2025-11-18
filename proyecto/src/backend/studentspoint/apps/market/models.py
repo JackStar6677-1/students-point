@@ -46,7 +46,7 @@ class Producto(models.Model):
         related_name="productos_vendidos"
     )
     titulo = models.CharField(max_length=200)
-    descripcion = models.TextField()
+    descripcion = models.TextField(blank=True, default="")
     categoria = models.ForeignKey(CategoriaProducto, on_delete=models.PROTECT, related_name="productos")
     
     # Enlaces externos (OBLIGATORIO para evitar responsabilidades legales)
@@ -78,6 +78,14 @@ class Producto(models.Model):
     og_description = models.TextField(blank=True)
     og_image = models.URLField(blank=True)
     og_site_name = models.CharField(max_length=100, blank=True)
+    
+    # Imagen subida manualmente (opcional, prioridad sobre og_image)
+    imagen = models.ImageField(
+        upload_to='market/productos/%Y/%m/',
+        blank=True,
+        null=True,
+        help_text="Imagen del producto subida manualmente"
+    )
     
     # Estado y fechas
     estado = models.CharField(max_length=20, choices=Estados.choices, default=Estados.BORRADOR)

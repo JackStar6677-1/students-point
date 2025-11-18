@@ -100,7 +100,7 @@ class Post(models.Model):
         help_text="Imagen adjunta (requiere aprobación de administrador)"
     )
     imagen_aprobada = models.BooleanField(
-        default=False,
+        default=True,  # Auto-aprobar imágenes por defecto
         help_text="True si la imagen fue aprobada por un administrador"
     )
     # Archivo adjunto (solo para tipo ARCHIVO)
@@ -139,9 +139,9 @@ class Post(models.Model):
         self.titulo = censurar_texto(self.titulo)
         self.cuerpo = censurar_texto(self.cuerpo)
         
-        # Si hay imagen, debe ir a revisión
-        if self.imagen and not self.imagen_aprobada:
-            self.estado = Post.Estado.REVISION
+        # Auto-aprobar imágenes (no requiere revisión manual)
+        if self.imagen and not self.pk:  # Solo en creación
+            self.imagen_aprobada = True
         
         super().save(*args, **kwargs)
     

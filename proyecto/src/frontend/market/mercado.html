@@ -15,12 +15,49 @@
     <link rel="stylesheet" href="/static/css/theme-dark.css">
     <link rel="stylesheet" href="/static/css/base-layout.css">
     <link rel="stylesheet" href="/static/css/animations.css">
-    <link rel="stylesheet" href="/static/css/market.css">
     
-    <!-- PWA -->
-    <link rel="manifest" href="/static/manifest.json">
-    <meta name="theme-color" content="#1a1a1b">
-    <link rel="icon" href="/static/favicon.ico">
+    <style>
+        .producto-card {
+            background: #2a2a2a;
+            border: 1px solid #3a3a3a;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.2s ease;
+        }
+        .producto-card:hover {
+            border-color: #4a4a4a;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        .btn-link-externo {
+            background: #6c63ff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+        .btn-link-externo:hover {
+            background: #5a52d5;
+            color: white;
+        }
+        .badge {
+            font-weight: 500;
+            padding: 6px 12px;
+            border-radius: 6px;
+        }
+        .badge.bg-secondary {
+            background-color: #ffa726 !important;
+            color: #000;
+        }
+        .badge.bg-success {
+            background-color: #66bb6a !important;
+            color: #fff;
+        }
+    </style>
 </head>
 <body>
     <div class="app-container">
@@ -92,7 +129,7 @@
                 </a>
                 <a href="#" class="menu-item" onclick="logout(); return false;">
                     <i class="fas fa-sign-out-alt"></i>
-                    <span>Cerrar Sesion</span>
+                    <span>Cerrar Sesión</span>
                 </a>
             </div>
         </aside>
@@ -102,19 +139,13 @@
             <header class="top-header">
                 <h1 class="header-title">Marketplace Estudiantil</h1>
                 <div class="header-actions">
-                    <button id="btnFavoritos" class="btn-icon" title="Favoritos">
-                        <i class="fas fa-heart"></i>
-                    </button>
-                    <button id="btnMisProductos" class="btn-icon" title="Mis productos">
-                        <i class="fas fa-box"></i>
-                    </button>
-                    <button id="btnCrearProducto" class="btn btn-gradient-purple">
-                        <i class="fas fa-plus me-2"></i>Publicar producto
+                    <button class="btn btn-gradient-purple" data-bs-toggle="modal" data-bs-target="#modalPublicar">
+                        <i class="fas fa-plus me-2"></i>Publicar Producto
                     </button>
                     <button class="btn-icon" id="notificationsBtn" title="Notificaciones">
                         <i class="fas fa-bell"></i>
                     </button>
-                    <button class="btn-icon" id="settingsBtn" title="Configuracion">
+                    <button class="btn-icon" id="settingsBtn" title="Configuración">
                         <i class="fas fa-cog"></i>
                     </button>
                 </div>
@@ -122,263 +153,137 @@
 
             <div class="content-wrapper fade-in">
                 <div class="glass p-4 mb-4">
-                    <p class="text-muted mb-0">Publica tus productos, comparte servicios y descubre oportunidades dentro de la comunidad StudentsPoint.</p>
+                    <p class="text-muted mb-0">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Descubre productos y servicios de la comunidad estudiantil
+                    </p>
                 </div>
-
-                <div class="glass p-4 mb-4">
-                    <h2 class="h5 mb-3"><i class="fas fa-filter me-2"></i>Filtros de búsqueda</h2>
-                    <div class="filtros-container">
-                        <div class="filtro-grupo">
-                            <label for="busqueda">Buscar</label>
-                            <input type="text" id="busqueda" placeholder="Titulo, descripción o vendedor">
-                        </div>
-                        <div class="filtro-grupo">
-                            <label for="filtroCategoria">Categoría</label>
-                            <select id="filtroCategoria">
-                                <option value="">Todas</option>
-                            </select>
-                        </div>
-                        <div class="filtro-grupo">
-                            <label for="filtroCampus">Campus</label>
-                            <select id="filtroCampus">
-                                <option value="">Todos</option>
-                            </select>
-                        </div>
-                        <div class="filtro-grupo">
-                            <label for="filtroPrecio">Precio máximo (CLP)</label>
-                            <input type="number" id="filtroPrecio" min="0" placeholder="Ej: 50000">
-                        </div>
-                    </div>
-                    <div class="d-flex justify-content-end gap-2 mt-3">
-                        <button id="btnLimpiarFiltros" class="btn btn-outline-secondary">
-                            <i class="fas fa-eraser me-2"></i>Limpiar
-                        </button>
-                        <button id="btnFiltrar" class="btn btn-gradient-purple">
-                            <i class="fas fa-filter me-2"></i>Aplicar filtros
-                        </button>
-                    </div>
-                </div>
-
-                <div class="glass p-4">
-                    <div id="loading" class="loading" style="display: none;">
-                        <i class="fas fa-spinner"></i>Cargando productos...
-                    </div>
-                    <div id="noResults" class="no-results" style="display: none;">
-                        <i class="fas fa-box-open"></i>
-                        <p>No encontramos productos que coincidan con tu búsqueda.</p>
-                    </div>
-                    <div id="productosList" class="productos-grid"></div>
-                </div>
+                
+                <div id="productos"></div>
             </div>
         </main>
     </div>
-
-    <div id="toast" class="toast" style="display: none;">
-        <span id="toastMessage"></span>
-    </div>
-
-    <!-- Modal: Crear producto -->
-    <div id="modalCrearProducto" class="modal" style="display: none;">
-        <div class="modal-dialog" onclick="event.stopPropagation()">
-            <div class="modal-content">
+    
+    <!-- Modal -->
+    <div class="modal fade" id="modalPublicar" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content bg-dark">
                 <div class="modal-header">
-                    <h5 class="modal-title"><i class="fas fa-plus me-2"></i>Publicar producto</h5>
-                    <button type="button" class="modal-close btn btn-link text-decoration-none">
-                        <i class="fas fa-times"></i>
-                    </button>
+                    <h5 class="modal-title">Publicar Producto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="formCrearProducto" class="form">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="inputTitulo">Título</label>
-                                <input type="text" id="inputTitulo" required placeholder="Ej: Libro de cálculo diferencial">
+                    <form id="form">
+                        <div class="mb-3">
+                            <label>Descripción *</label>
+                            <textarea class="form-control" id="descripcion" required rows="3"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label>Link *</label>
+                            <input type="url" class="form-control" id="url" required>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <label>Precio (CLP)</label>
+                                <input type="number" class="form-control" id="precio">
                             </div>
-                            <div class="form-group">
-                                <label for="inputCategoria">Categoría</label>
-                                <select id="inputCategoria" required>
-                                    <option value="">Seleccionar categoría</option>
-                                </select>
+                            <div class="col">
+                                <label>Precio Estudiante (CLP)</label>
+                                <input type="number" class="form-control" id="precioEstudiante">
                             </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="inputDescripcion">Descripción</label>
-                            <textarea id="inputDescripcion" rows="4" required placeholder="Describe el estado, detalles y beneficios del producto"></textarea>
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="inputPrecio">Precio (opcional)</label>
-                                <input type="number" id="inputPrecio" min="0" placeholder="Ej: 25000">
-                                <small>Si dejas vacío, se mostrará como 'precio a consultar'.</small>
-                            </div>
-                            <div class="form-group">
-                                <label for="inputMoneda">Moneda</label>
-                                <select id="inputMoneda">
-                                    <option value="CLP">CLP</option>
-                                    <option value="USD">USD</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="inputPrecioStudentPoint">Precio StudentsPoint (opcional)</label>
-                            <input type="number" id="inputPrecioStudentPoint" min="0" placeholder="Ej: 22000">
-                            <small>Este precio destacado se mostrará dentro de StudentsPoint para que puedas ofrecer un valor especial a la comunidad.</small>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="inputTipoEnlace">Tipo de enlace</label>
-                            <select id="inputTipoEnlace" required>
-                                <option value="externo">Enlace externo</option>
-                                <option value="facebook">Facebook Marketplace</option>
-                                <option value="mercadolibre">MercadoLibre</option>
-                                <option value="yapo">Yapo.cl</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="inputUrlPrincipal">Enlace principal <span class="text-danger">*</span></label>
-                            <input type="url" id="inputUrlPrincipal" required placeholder="https://...">
-                            <small class="text-muted">OBLIGATORIO: Link a Facebook Marketplace, MercadoLibre, Yapo.cl u otra plataforma externa.</small>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="inputUrlsAdicionales">Enlaces adicionales (uno por línea)</label>
-                            <textarea id="inputUrlsAdicionales" rows="3" placeholder="https://link1.com&#10;https://link2.com"></textarea>
-                        </div>
-
-                        <!-- Sección de perfil del vendedor -->
-                        <div class="alert alert-info mt-3">
-                            <h6 class="alert-heading"><i class="fas fa-user-circle me-2"></i>Tu perfil de vendedor</h6>
-                            <p class="mb-1"><strong>Nombre:</strong> <span id="vendedorNombre">Cargando...</span></p>
-                            <p class="mb-1"><strong>Carrera:</strong> <span id="vendedorCarrera">Cargando...</span></p>
-                            <p class="mb-0"><strong>Campus:</strong> <span id="vendedorCampus">Cargando...</span></p>
-                            <small class="text-muted">Esta información se mostrará en tu publicación.</small>
-                        </div>
-
-                        <!-- Términos y condiciones -->
-                        <div class="border border-warning rounded p-3 mt-3 bg-light">
-                            <h6 class="text-warning mb-3">
-                                <i class="fas fa-exclamation-triangle me-2"></i>Términos y Condiciones OBLIGATORIOS
-                            </h6>
-                            
-                            <div class="form-check mb-2">
-                                <input class="form-check-input" type="checkbox" id="checkTerminos" required>
-                                <label class="form-check-label" for="checkTerminos">
-                                    He leído y acepto los <a href="/docs/TERMINOS-MARKETPLACE.md" target="_blank" class="text-primary">Términos y Condiciones</a> del Marketplace
-                                </label>
-                            </div>
-                            
-                            <div class="form-check mb-3">
-                                <input class="form-check-input" type="checkbox" id="checkResponsabilidad" required>
-                                <label class="form-check-label" for="checkResponsabilidad">
-                                    <strong>Acepto la responsabilidad legal</strong> por esta publicación y <strong>descargo de toda responsabilidad a StudentsPoint</strong>
-                                </label>
-                            </div>
-
-                            <div class="alert alert-warning mb-0" role="alert">
-                                <small>
-                                    <strong>IMPORTANTE:</strong> StudentsPoint actúa ÚNICAMENTE como medio de difusión. 
-                                    La gestión de la venta, pagos y entregas debe realizarse a través de la plataforma externa vinculada. 
-                                    StudentsPoint NO es intermediario en transacciones y NO se hace responsable por disputas, 
-                                    productos defectuosos o transacciones fallidas.
-                                </small>
-                            </div>
-                        </div>
-
-                        <div class="d-flex justify-content-end gap-2 mt-3">
-                            <button type="button" class="btn btn-outline-secondary modal-close">Cancelar</button>
-                            <button type="submit" class="btn btn-primary" id="btnSubmitProducto">
-                                <i class="fas fa-paper-plane me-2"></i>Publicar
-                            </button>
                         </div>
                     </form>
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal: Ver producto -->
-    <div id="modalVerProducto" class="modal" style="display: none;">
-        <div class="modal-dialog modal-xl modal-dialog-scrollable" onclick="event.stopPropagation()">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalTitulo">Detalle del producto</h5>
-                    <button type="button" class="modal-close btn btn-link text-decoration-none">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-                <div class="modal-body" id="productoDetalle">
-                    <!-- generado dinámicamente -->
-                </div>
-                <div class="modal-footer d-flex justify-content-between">
-                    <button type="button" class="btn btn-outline-danger" id="btnReportar">
-                        <i class="fas fa-flag me-2"></i>Reportar
-                    </button>
-                    <div class="d-flex gap-2">
-                        <button type="button" class="btn btn-outline-secondary" id="btnToggleFavorito">
-                            <i class="fas fa-heart me-2"></i><span id="favoritoTexto">Agregar a favoritos</span>
-                        </button>
-                        <button type="button" class="btn btn-primary" id="btnVerEnlace">
-                            <i class="fas fa-external-link-alt me-2"></i>Ver publicación
-                        </button>
-                    </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="publicar()">Publicar</button>
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- Modal: Reportar producto -->
-    <div id="modalReportar" class="modal" style="display: none;">
-        <div class="modal-dialog" onclick="event.stopPropagation()">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title"><i class="fas fa-flag me-2 text-danger"></i>Reportar producto</h5>
-                    <button type="button" class="modal-close btn btn-link text-decoration-none">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form id="formReportar" class="form">
-                        <div class="form-group">
-                            <label for="inputTipoReporte">Motivo</label>
-                            <select id="inputTipoReporte" required>
-                                <option value="">Selecciona un motivo</option>
-                                <option value="fraude">Fraude o estafa</option>
-                                <option value="contenido_inapropiado">Contenido inapropiado</option>
-                                <option value="informacion_falsa">Información falsa</option>
-                                <option value="producto_prohibido">Producto prohibido</option>
-                                <option value="otro">Otro</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="inputDescripcionReporte">Descripción</label>
-                            <textarea id="inputDescripcionReporte" rows="4" required placeholder="Describe brevemente el problema detectado"></textarea>
-                        </div>
-                        <div class="d-flex justify-content-end gap-2">
-                            <button type="button" class="btn btn-outline-secondary modal-close">Cancelar</button>
-                            <button type="submit" class="btn btn-danger">
-                                <i class="fas fa-paper-plane me-2"></i>Enviar reporte
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
+    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/static/js/mobile-menu.js"></script>
     <script src="/static/js/auth-api.js"></script>
-    <script src="/static/js/market-api.js"></script>
     <script src="/static/js/auth-header.js"></script>
     <script src="/static/js/main.js"></script>
-    <script src="/static/js/sounds.js"></script>
-    <script src="/static/js/pwa.js"></script>
-    <script src="/static/pwa-config.js"></script>
-    <script src="/static/js/market.js"></script>
+    <script>
+        const API = '/api/market/productos/';
+        
+        function getToken() {
+            return localStorage.getItem('access_token');
+        }
+        
+        async function cargar() {
+            try {
+                const res = await fetch(API);
+                const productos = await res.json();
+                
+                const html = productos.map(p => `
+                    <div class="producto-card">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="flex-grow-1">
+                                <p class="mb-3">${p.descripcion}</p>
+                                <div class="d-flex gap-2 align-items-center flex-wrap">
+                                    ${p.precio ? `<span class="badge bg-secondary">💰 $${Number(p.precio).toLocaleString()}</span>` : ''}
+                                    ${p.precio_estudiante ? `<span class="badge bg-success">🎓 $${Number(p.precio_estudiante).toLocaleString()}</span>` : ''}
+                                    <small class="text-muted ms-2">${p.fecha}</small>
+                                </div>
+                            </div>
+                            <div class="ms-3">
+                                <a href="${p.url}" target="_blank" class="btn-link-externo">
+                                    Ver Producto <i class="fas fa-external-link-alt ms-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+                
+                document.getElementById('productos').innerHTML = html || '<div class="glass p-4 text-center"><p class="text-muted mb-0">No hay productos publicados</p></div>';
+            } catch (e) {
+                console.error(e);
+            }
+        }
+        
+        async function publicar() {
+            const token = getToken();
+            if (!token) {
+                alert('Debes iniciar sesión');
+                return;
+            }
+            
+            const data = {
+                descripcion: document.getElementById('descripcion').value,
+                url: document.getElementById('url').value,
+                precio: document.getElementById('precio').value || null,
+                precio_estudiante: document.getElementById('precioEstudiante').value || null
+            };
+            
+            try {
+                const res = await fetch(API, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                if (res.ok) {
+                    alert('¡Publicado!');
+                    document.getElementById('form').reset();
+                    bootstrap.Modal.getInstance(document.getElementById('modalPublicar')).hide();
+                    cargar();
+                } else {
+                    alert('Error al publicar');
+                }
+            } catch (e) {
+                console.error(e);
+                alert('Error');
+            }
+        }
+        
+        cargar();
+    </script>
 </body>
 </html>
-

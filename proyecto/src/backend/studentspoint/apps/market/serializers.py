@@ -26,13 +26,14 @@ class ProductoSerializer(serializers.ModelSerializer):
     campus_nombre = serializers.CharField(source='campus.nombre', read_only=True)
     es_favorito = serializers.SerializerMethodField()
     tiempo_publicado_humanizado = serializers.SerializerMethodField()
+    imagen_url = serializers.SerializerMethodField()
     
     class Meta:
         model = Producto
         fields = [
             'id', 'titulo', 'descripcion', 'categoria', 'categoria_nombre', 'categoria_icono',
             'vendedor', 'vendedor_nombre', 'url_principal', 'tipo_enlace', 'urls_adicionales',
-            'og_title', 'og_description', 'og_image', 'og_site_name',
+            'og_title', 'og_description', 'og_image', 'og_site_name', 'imagen', 'imagen_url',
             'estado', 'precio', 'precio_student_point', 'moneda', 'campus', 'campus_nombre', 'carrera',
             'created_at', 'updated_at', 'publicado_at', 'vendido_at',
             'visualizaciones', 'clicks_enlace', 'es_favorito', 'tiempo_publicado_humanizado'
@@ -42,6 +43,15 @@ class ProductoSerializer(serializers.ModelSerializer):
             'created_at', 'updated_at', 'publicado_at', 'vendido_at',
             'visualizaciones', 'clicks_enlace'
         ]
+    
+    def get_imagen_url(self, obj):
+        """Retorna la URL de la imagen, priorizando imagen manual sobre og_image."""
+        if obj.imagen:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.imagen.url)
+            return obj.imagen.url
+        return obj.og_image
     
     def get_es_favorito(self, obj):
         """Verifica si el producto es favorito del usuario actual."""
@@ -56,74 +66,49 @@ class ProductoSerializer(serializers.ModelSerializer):
 
 
 class ProductoCreateSerializer(serializers.ModelSerializer):
-    """Serializer para crear productos con extracción automática de OpenGraph."""
+    """Serializer SIMPLE para crear productos."""
     
     class Meta:
         model = Producto
-        fields = [
-            'titulo', 'descripcion', 'categoria', 'url_principal', 
-            'tipo_enlace', 'urls_adicionales', 'precio', 'precio_student_point', 'moneda',
-            'acepta_terminos', 'acepta_responsabilidad'
-        ]
-    
-    def validate_url_principal(self, value):
-        """Valida que la URL sea válida y obligatoria."""
-        if not value:
-            raise serializers.ValidationError(
-                "El enlace principal es OBLIGATORIO. StudentsPoint solo actúa como medio de difusión."
-            )
-        if not ProductoValidationService.validar_url(value):
-            raise serializers.ValidationError("URL inválida")
-        return value
-    
-    def validate(self, data):
-        """Valida que se hayan aceptado los términos y condiciones."""
-        if not data.get('acepta_terminos'):
-            raise serializers.ValidationError({
-                'acepta_terminos': 'Debes aceptar los términos y condiciones para publicar en el Marketplace.'
-            })
-        
-        if not data.get('acepta_responsabilidad'):
-            raise serializers.ValidationError({
-                'acepta_responsabilidad': 'Debes aceptar la responsabilidad legal para publicar en el Marketplace.'
-            })
-        
-        # Validar que el URL principal no esté vacío
-        if not data.get('url_principal'):
-            raise serializers.ValidationError({
-                'url_principal': 'El enlace principal es OBLIGATORIO. No se puede publicar sin un enlace externo.'
-            })
-        
-        return data
+        fields = ['titulo', 'descripcion', 'url_principal', 'precio', 'precio_student_point']
     
     def create(self, validated_data):
-        """Crea un nuevo producto y obtiene metadatos OpenGraph automáticamente."""
+        """Crea un producto de forma SIMPLE."""
+        from django.utils import timezone
+        
         request = self.context.get('request')
+        
+        # Datos del usuario
         validated_data['vendedor'] = request.user
-        validated_data['campus'] = request.user.campus
-        validated_data['carrera'] = request.user.career
+        validated_data['campus'] = request.user.campus if hasattr(request.user, 'campus') else None
+        validated_data['carrera'] = request.user.career if hasattr(request.user, 'career') else ""
         
-        # Capturar IP del usuario para fines legales
-        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-        if x_forwarded_for:
-            validated_data['ip_aceptacion'] = x_forwarded_for.split(',')[0]
-        else:
-            validated_data['ip_aceptacion'] = request.META.get('REMOTE_ADDR')
+        # Configuración simple
+        validated_data['estado'] = 'publicado'
+        validated_data['publicado_at'] = timezone.now()
+        validated_data['moneda'] = 'CLP'
+        validated_data['tipo_enlace'] = 'externo'
+        validated_data['acepta_terminos'] = True
+        validated_data['acepta_responsabilidad'] = True
+        validated_data['fecha_aceptacion_terminos'] = timezone.now()
         
-        # Detectar tipo de enlace automáticamente si no se especificó
-        url_principal = validated_data.get('url_principal')
-        if url_principal and not validated_data.get('tipo_enlace'):
-            validated_data['tipo_enlace'] = ProductoValidationService.detectar_tipo_enlace(url_principal)
+        # Categoría por defecto
+        if not validated_data.get('categoria'):
+            from .models import CategoriaProducto
+            categoria_default, _ = CategoriaProducto.objects.get_or_create(
+                nombre='Otros',
+                defaults={'descripcion': 'Categoría general', 'activa': True}
+            )
+            validated_data['categoria'] = categoria_default
         
-        # Obtener metadatos OpenGraph de la URL principal
-        if url_principal:
-            metadatos = OpenGraphService.obtener_metadatos_opengraph(url_principal)
-            validated_data.update(metadatos)
-        
+        # Crear producto
         producto = super().create(validated_data)
         
-        # Crear analytics para el producto
-        ProductoAnalytics.objects.create(producto=producto)
+        # Crear analytics
+        try:
+            ProductoAnalytics.objects.create(producto=producto)
+        except:
+            pass
         
         return producto
     
@@ -194,12 +179,13 @@ class ProductoListSerializer(serializers.ModelSerializer):
     vendedor_nombre = serializers.CharField(source='vendedor.name', read_only=True)
     campus_nombre = serializers.CharField(source='campus.nombre', read_only=True)
     es_favorito = serializers.SerializerMethodField()
+    imagen_url = serializers.SerializerMethodField()
     
     class Meta:
         model = Producto
         fields = [
             'id', 'titulo', 'descripcion', 'categoria_nombre', 'categoria_icono',
-            'vendedor_nombre', 'url_principal', 'tipo_enlace', 'og_image',
+            'vendedor_nombre', 'url_principal', 'tipo_enlace', 'og_image', 'imagen_url',
             'estado', 'precio', 'precio_student_point', 'moneda', 'campus_nombre', 'carrera',
             'created_at', 'visualizaciones', 'es_favorito'
         ]
@@ -210,3 +196,12 @@ class ProductoListSerializer(serializers.ModelSerializer):
         if request and request.user.is_authenticated:
             return obj.favoritos.filter(usuario=request.user).exists()
         return False
+    
+    def get_imagen_url(self, obj):
+        """Retorna la URL de la imagen, priorizando imagen manual sobre og_image."""
+        if obj.imagen:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.imagen.url)
+            return obj.imagen.url
+        return obj.og_image

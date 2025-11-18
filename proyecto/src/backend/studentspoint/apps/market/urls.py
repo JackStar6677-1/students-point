@@ -1,20 +1,11 @@
-"""URLs para el sistema de compra/venta."""
+"""URLs marketplace"""
 
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-
-from .views import (
-    CategoriaProductoViewSet, ProductoViewSet, 
-    ProductoReporteViewSet, ProductoAnalyticsViewSet
-)
-
-app_name = 'market'
+from .views import ProductoViewSet
 
 router = DefaultRouter()
-router.register(r'categories', CategoriaProductoViewSet, basename='category')
-router.register(r'products', ProductoViewSet, basename='product')
-router.register(r'reports', ProductoReporteViewSet, basename='report')
-router.register(r'analytics', ProductoAnalyticsViewSet, basename='analytics')
+router.register(r'productos', ProductoViewSet, basename='producto')
 
 urlpatterns = [
     path('', include(router.urls)),
