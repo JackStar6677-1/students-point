@@ -165,6 +165,9 @@ echo   - Redis y Celery se abrieron en ventanas separadas.
 echo   - Presiona Ctrl+C en cada ventana para detener los procesos.
 echo   - El entorno virtual .venv se reutilizará en ejecuciones futuras.
 echo/
+echo Esta ventana se cerrará automáticamente en 5 segundos...
+echo Si ves algún error arriba, presiona cualquier tecla para mantenerla abierta.
+timeout /t 5 /nobreak >nul 2>&1
 
 exit /b 0
 

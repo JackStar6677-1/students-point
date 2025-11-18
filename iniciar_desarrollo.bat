@@ -12,11 +12,15 @@ echo ============================================================
 echo    StudentsPoint - Modo Desarrollo
 echo ============================================================
 echo.
+echo IMPORTANTE: Si esta ventana se cierra inesperadamente,
+echo ejecuta este script desde una ventana de CMD para ver los errores.
+echo.
 
 REM Verificar Python
 echo [1/8] Verificando Python...
-python --version >nul 2>&1
+python --version
 if errorlevel 1 (
+    echo.
     echo [ERROR] Python no encontrado. Instala Python 3.11+ desde python.org
     echo.
     echo Presiona cualquier tecla para salir...
@@ -49,7 +53,7 @@ echo.
 
 REM Verificar configuración
 echo [4/8] Verificando configuración...
-python manage.py check >nul 2>&1
+python manage.py check
 if errorlevel 1 (
     echo [WARNING] Hay advertencias en la configuración, continuando...
 ) else (
@@ -59,9 +63,13 @@ echo.
 
 REM Aplicar migraciones
 echo [5/8] Aplicando migraciones...
-python manage.py migrate --run-syncdb >nul 2>&1
+python manage.py migrate --run-syncdb
 if errorlevel 1 (
-    echo [WARNING] Error en migraciones, continuando...
+    echo [ERROR] Error en migraciones. Revisa los mensajes anteriores.
+    echo.
+    echo Presiona cualquier tecla para salir...
+    pause >nul
+    exit /b 1
 ) else (
     echo [OK] Migraciones aplicadas
 )
@@ -79,7 +87,7 @@ echo.
 
 REM Crear superusuario
 echo [7/8] Verificando superusuario...
-python ensure_superuser.py >nul 2>&1
+python ensure_superuser.py
 if errorlevel 1 (
     echo [WARNING] Error creando superusuario, continuando...
 ) else (
@@ -89,8 +97,12 @@ echo.
 
 REM Crear usuarios de prueba
 echo Creando usuarios de prueba...
-python manage.py create_demo_users >nul 2>&1
-echo [OK] Usuarios de prueba listos
+python manage.py create_demo_users
+if errorlevel 1 (
+    echo [WARNING] Error creando usuarios de prueba, continuando...
+) else (
+    echo [OK] Usuarios de prueba listos
+)
 echo.
 
 REM Crear directorio de logs si no existe
@@ -127,4 +139,15 @@ start http://127.0.0.1:8000
 
 echo Iniciando servidor Django...
 echo.
+
+REM Intentar iniciar el servidor
 python manage.py runserver 127.0.0.1:8000
+if errorlevel 1 (
+    echo.
+    echo [ERROR] El servidor no pudo iniciarse correctamente.
+    echo Revisa los mensajes de error anteriores.
+    echo.
+    echo Presiona cualquier tecla para salir...
+    pause >nul
+    exit /b 1
+)
