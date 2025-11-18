@@ -13,8 +13,12 @@ ALLOWED_HOSTS = [
     "100.113.204.115",  # Agregar otras IPs de Tailscale si es necesario
 ]
 
+# SSL Server para HTTPS en desarrollo (PWA en Android)
+INSTALLED_APPS = INSTALLED_APPS + ['sslserver'] if 'sslserver' not in INSTALLED_APPS else INSTALLED_APPS
+
 # Deshabilitar CSRF para APIs
 CSRF_TRUSTED_ORIGINS = [
+    # HTTP
     "http://localhost:8000",
     "http://127.0.0.1:8000",
     "http://0.0.0.0:8000",
@@ -26,10 +30,15 @@ CSRF_TRUSTED_ORIGINS = [
     "http://192.168.100.59:8000",
     "http://100.75.238.19:8000",  # Tailscale - laptop
     "http://100.113.204.115:8000",  # Tailscale - desktop
+    # HTTPS (para PWA en Android)
     "https://localhost:8000",
+    "https://localhost:8443",
     "https://127.0.0.1:8000",
+    "https://127.0.0.1:8443",
     "https://100.75.238.19:8000",
+    "https://100.75.238.19:8443",  # HTTPS Tailscale - laptop
     "https://100.113.204.115:8000",
+    "https://100.113.204.115:8443",  # HTTPS Tailscale - desktop
 ]
 
 # Deshabilitar CSRF para APIs REST
