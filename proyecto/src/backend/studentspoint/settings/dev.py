@@ -19,8 +19,15 @@ ALLOWED_HOSTS = ["*"]
 #     "*.ngrok-free.app",  # Nuevos dominios de ngrok
 # ]
 
-# SSL Server para HTTPS en desarrollo (PWA en Android)
-INSTALLED_APPS = INSTALLED_APPS + ['sslserver'] if 'sslserver' not in INSTALLED_APPS else INSTALLED_APPS
+# SSL Server para HTTPS en desarrollo (solo si esta instalado)
+# Para instalar: pip install django-sslserver
+try:
+    import sslserver
+    if 'sslserver' not in INSTALLED_APPS:
+        INSTALLED_APPS = INSTALLED_APPS + ['sslserver']
+except ImportError:
+    # sslserver no esta instalado, se omite (no es necesario con ngrok)
+    pass
 
 # CSRF - En desarrollo, confiar en todos los orígenes (incluye ngrok)
 # IMPORTANTE: En producción, usar lista específica
