@@ -2,13 +2,15 @@
 
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from django.utils import timezone
 from .models import Producto, CategoriaProducto
 
 
 class ProductoViewSet(viewsets.ViewSet):
-    """ViewSet simple para productos"""
+    """ViewSet simple para productos con soporte de imágenes"""
     permission_classes = [permissions.AllowAny]
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
     
     def list(self, request):
         """Listar productos"""
@@ -20,13 +22,14 @@ class ProductoViewSet(viewsets.ViewSet):
             'url': p.url_principal,
             'precio': str(p.precio) if p.precio else None,
             'precio_estudiante': str(p.precio_student_point) if p.precio_student_point else None,
-            'fecha': p.created_at.strftime('%d/%m/%Y')
+            'fecha': p.created_at.strftime('%d/%m/%Y'),
+            'imagen': request.build_absolute_uri(p.imagen.url) if p.imagen else None
         } for p in productos]
         
         return Response(data)
     
     def create(self, request):
-        """Crear producto"""
+        """Crear producto con imagen opcional"""
         if not request.user.is_authenticated:
             return Response({'error': 'Login requerido'}, status=401)
         
@@ -42,6 +45,7 @@ class ProductoViewSet(viewsets.ViewSet):
             defaults={'activa': True}
         )
         
+        # Crear producto
         producto = Producto.objects.create(
             titulo=descripcion[:100],
             descripcion=descripcion,
@@ -57,4 +61,14 @@ class ProductoViewSet(viewsets.ViewSet):
             acepta_responsabilidad=True
         )
         
-        return Response({'id': producto.id, 'success': True}, status=201)
+        # Agregar imagen si existe
+        imagen = request.FILES.get('imagen')
+        if imagen:
+            producto.imagen = imagen
+            producto.save()
+        
+        return Response({
+            'id': producto.id,
+            'success': True,
+            'imagen': request.build_absolute_uri(producto.imagen.url) if producto.imagen else None
+        }, status=201)

@@ -1,0 +1,294 @@
+/* Account/Profile Styles - Modern Glassmorphism */
+
+.main-content {
+    background: transparent !important;
+    color: #ffffff;
+}
+
+.content-wrapper {
+    background: transparent;
+    position: relative;
+    z-index: 1;
+}
+
+:root {
+    --students-cyan: #0dcaf0;
+    --students-green: #20c997;
+    --students-purple: #9333ea;
+    --gold: #fbbf24;
+    --border-radius: 12px;
+    --transition-medium: all 0.3s ease;
+    --transition-fast: all 0.15s ease;
+}
+
+.container h2,
+.container h3,
+.container h4,
+.container h5,
+.container h6,
+.container p {
+    color: #ffffff;
+}
+
+.gradient-text {
+    background: linear-gradient(135deg, var(--students-cyan) 0%, var(--students-purple) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.text-muted {
+    color: rgba(255, 255, 255, 0.6) !important;
+}
+
+.glass {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--border-radius);
+    transition: all var(--transition-medium);
+    animation: fadeInUp 0.5s ease;
+    overflow: hidden;
+}
+
+.glass:hover {
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.glass .border-bottom {
+    border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Profile Card Header */
+.glass .p-3 h2,
+.glass .p-3 h6 {
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.glass .p-3 i {
+    color: var(--students-cyan);
+}
+
+/* Form Controls */
+.form-control, .form-select {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    border-radius: var(--border-radius);
+    transition: all var(--transition-fast);
+    padding: 0.75rem 1rem;
+}
+
+.form-control:focus, .form-select:focus {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--students-cyan);
+    color: white;
+    box-shadow: 0 0 0 0.2rem rgba(13, 202, 240, 0.25);
+    transform: translateY(-2px);
+}
+
+.form-control:read-only {
+    background: rgba(255, 255, 255, 0.03);
+    border-color: rgba(255, 255, 255, 0.1);
+    cursor: not-allowed;
+}
+
+.form-control::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.form-label {
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+/* Buttons */
+.btn-gradient-purple {
+    background: linear-gradient(135deg, var(--students-purple), var(--students-cyan));
+    border: none;
+    color: white;
+    font-weight: 600;
+    transition: all var(--transition-medium);
+    border-radius: var(--border-radius);
+    padding: 0.75rem 1.5rem;
+}
+
+.btn-gradient-purple:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(147, 51, 234, 0.4);
+    color: white;
+}
+
+.btn-outline-primary {
+    background: transparent;
+    border: 1px solid var(--students-cyan);
+    color: var(--students-cyan);
+    font-weight: 500;
+    transition: all var(--transition-fast);
+    border-radius: var(--border-radius);
+}
+
+.btn-outline-primary:hover {
+    background: rgba(13, 202, 240, 0.1);
+    border-color: var(--students-cyan);
+    color: var(--students-cyan);
+    transform: translateY(-2px);
+}
+
+.btn-outline-secondary {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 500;
+    transition: all var(--transition-fast);
+    border-radius: var(--border-radius);
+}
+
+.btn-outline-secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.5);
+    color: white;
+}
+
+/* Profile Stats */
+.profile-stat {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: var(--border-radius);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all var(--transition-fast);
+}
+
+.profile-stat:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: var(--students-cyan);
+}
+
+.profile-stat i {
+    font-size: 1.5rem;
+    color: var(--students-cyan);
+}
+
+.profile-stat-info h6 {
+    margin: 0;
+    color: #ffffff;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.profile-stat-info p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.85rem;
+}
+
+/* Status Messages */
+#emailStatus {
+    padding: 0.75rem 1rem;
+    border-radius: var(--border-radius);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 1rem;
+}
+
+#emailStatus.verified {
+    background: rgba(32, 201, 151, 0.15);
+    border-color: var(--students-green);
+    color: var(--students-green);
+}
+
+#emailStatus.unverified {
+    background: rgba(255, 107, 53, 0.15);
+    border-color: #ff6b35;
+    color: #ff9b71;
+}
+
+/* HR Divider */
+hr {
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    opacity: 1;
+}
+
+/* Edit Section Animation */
+#editSection {
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Grid Spacing */
+.row.g-4 {
+    gap: 1.5rem;
+}
+
+/* Loading & Empty States */
+.loading-spinner {
+    text-align: center;
+    padding: 3rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.spinner-border {
+    color: var(--students-cyan);
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+    .glass {
+        margin-bottom: 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .btn-gradient-purple {
+        width: 100%;
+        text-align: center;
+    }
+    
+    .d-flex.gap-2 {
+        flex-direction: column;
+    }
+    
+    .d-flex.gap-2 .btn {
+        width: 100%;
+    }
+}
+

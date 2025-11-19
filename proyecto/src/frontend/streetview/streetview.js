@@ -1249,6 +1249,12 @@ function startSlideshow(recorrido) {
     if (banosOpciones) banosOpciones.style.display = 'none';
     if (salasBuscador) salasBuscador.style.display = 'none';
     document.getElementById('slideshow-container').style.display = 'flex';
+    
+    // Ocultar botón hamburguesa durante el slideshow
+    const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+    if (mobileMenuToggle) {
+        mobileMenuToggle.classList.add('hidden');
+    }
 
     // Actualizar navegación
     updateSlideNavigation();
@@ -1379,6 +1385,12 @@ function exitSlideshow() {
         }
     } else {
         document.getElementById('recorridos-container').style.display = 'block';
+    }
+    
+    // Mostrar botón hamburguesa al salir del slideshow
+    const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+    if (mobileMenuToggle) {
+        mobileMenuToggle.classList.remove('hidden');
     }
 
     // Limpiar

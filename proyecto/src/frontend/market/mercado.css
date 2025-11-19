@@ -1,0 +1,417 @@
+/* Marketplace Styles - Modern Glassmorphism */
+
+.main-content {
+    background: transparent !important;
+    color: #ffffff;
+}
+
+.content-wrapper {
+    background: transparent;
+    position: relative;
+    z-index: 1;
+}
+
+:root {
+    --students-cyan: #0dcaf0;
+    --students-green: #20c997;
+    --students-purple: #9333ea;
+    --gold: #fbbf24;
+    --border-radius: 12px;
+    --transition-medium: all 0.3s ease;
+    --transition-fast: all 0.15s ease;
+}
+
+.container h2,
+.container h3,
+.container h4,
+.container p {
+    color: #ffffff;
+}
+
+.gradient-text {
+    background: linear-gradient(135deg, var(--students-cyan) 0%, var(--students-purple) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.text-muted {
+    color: rgba(255, 255, 255, 0.6) !important;
+}
+
+.glass {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    transition: all var(--transition-medium);
+    animation: fadeInUp 0.5s ease;
+}
+
+.glass:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Producto Cards */
+.producto-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    transition: all var(--transition-medium);
+    animation: fadeInUp 0.5s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.producto-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--students-cyan), var(--students-purple));
+    transform: scaleX(0);
+    transition: transform var(--transition-medium);
+}
+
+.producto-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 40px rgba(13, 202, 240, 0.3);
+    border-color: var(--students-cyan);
+}
+
+.producto-card:hover::before {
+    transform: scaleX(1);
+}
+
+/* Producto con Imagen */
+.producto-card-con-imagen {
+    display: grid;
+    grid-template-columns: 150px 1fr auto;
+    gap: 1.5rem;
+    align-items: center;
+}
+
+.producto-imagen {
+    width: 150px;
+    height: 150px;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.producto-imagen img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--transition-medium);
+}
+
+.producto-card:hover .producto-imagen img {
+    transform: scale(1.1);
+}
+
+.producto-imagen i {
+    font-size: 3rem;
+    color: rgba(255, 255, 255, 0.3);
+}
+
+/* Producto Info */
+.producto-info p {
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 1rem;
+    line-height: 1.6;
+}
+
+.producto-precios {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 0.75rem;
+}
+
+.badge {
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.badge.bg-secondary {
+    background: rgba(251, 191, 36, 0.25) !important;
+    color: var(--gold) !important;
+    border: 1px solid var(--gold);
+}
+
+.badge.bg-success {
+    background: rgba(32, 201, 151, 0.25) !important;
+    color: var(--students-green) !important;
+    border: 1px solid var(--students-green);
+}
+
+.badge.bg-info {
+    background: rgba(13, 202, 240, 0.25) !important;
+    color: var(--students-cyan) !important;
+    border: 1px solid var(--students-cyan);
+}
+
+/* Botones */
+.btn-link-externo {
+    background: linear-gradient(135deg, var(--students-cyan), var(--students-purple));
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--border-radius);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    transition: all var(--transition-medium);
+    white-space: nowrap;
+}
+
+.btn-link-externo:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(13, 202, 240, 0.4);
+    color: white;
+}
+
+.btn-gradient-purple {
+    background: linear-gradient(135deg, var(--students-purple), var(--students-cyan));
+    border: none;
+    color: white;
+    font-weight: 600;
+    transition: all var(--transition-medium);
+    border-radius: var(--border-radius);
+}
+
+.btn-gradient-purple:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(147, 51, 234, 0.4);
+    color: white;
+}
+
+/* Modal */
+.modal-content {
+    background: rgba(26, 26, 46, 0.95) !important;
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--border-radius);
+}
+
+.modal-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1.5rem;
+}
+
+.modal-title {
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.modal-footer {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1.5rem;
+}
+
+/* Form Controls */
+.form-control, .form-select {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    border-radius: var(--border-radius);
+    transition: all var(--transition-fast);
+    padding: 0.75rem 1rem;
+}
+
+.form-control:focus, .form-select:focus {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--students-cyan);
+    color: white;
+    box-shadow: 0 0 0 0.2rem rgba(13, 202, 240, 0.25);
+    transform: translateY(-2px);
+}
+
+.form-control::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.form-label {
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+/* File Upload Zone */
+.upload-zone {
+    position: relative;
+    width: 100%;
+    min-height: 200px;
+    border: 2px dashed rgba(255, 255, 255, 0.3);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    transition: all var(--transition-medium);
+    background: rgba(255, 255, 255, 0.05);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: rgba(255, 255, 255, 0.7);
+    text-align: center;
+    padding: 1.5rem;
+}
+
+.upload-zone:hover {
+    border-color: var(--students-cyan);
+    background: rgba(13, 202, 240, 0.1);
+    color: var(--students-cyan);
+}
+
+.upload-zone.dragover {
+    border-color: var(--students-green);
+    background: rgba(32, 201, 151, 0.1);
+    transform: scale(1.02);
+    color: var(--students-green);
+}
+
+.upload-zone i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: var(--students-cyan);
+}
+
+.upload-zone input[type="file"] {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+}
+
+.image-preview {
+    width: 100%;
+    height: 200px;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    margin-top: 1rem;
+    display: none;
+    position: relative;
+}
+
+.image-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.image-preview.show {
+    display: block;
+}
+
+.image-preview .remove-image {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(239, 68, 68, 0.9);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.image-preview .remove-image:hover {
+    background: rgba(239, 68, 68, 1);
+    transform: scale(1.1);
+}
+
+/* Loading & Empty States */
+.loading-spinner, .empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.spinner-border {
+    color: var(--students-cyan);
+}
+
+.empty-state i {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    color: rgba(255, 255, 255, 0.3);
+}
+
+/* Animaciones */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .producto-card-con-imagen {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .producto-imagen {
+        width: 100%;
+        height: 200px;
+    }
+    
+    .btn-link-externo {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .producto-precios {
+        justify-content: center;
+    }
+}
+

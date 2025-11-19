@@ -1,4 +1,4 @@
-@echo off
+s@echo off
 chcp 65001 >nul
 title StudentsPoint - ngrok HTTPS
 color 0D

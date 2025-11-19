@@ -15,49 +15,7 @@
     <link rel="stylesheet" href="/static/css/theme-dark.css">
     <link rel="stylesheet" href="/static/css/base-layout.css">
     <link rel="stylesheet" href="/static/css/animations.css">
-    
-    <style>
-        .producto-card {
-            background: #2a2a2a;
-            border: 1px solid #3a3a3a;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 15px;
-            transition: all 0.2s ease;
-        }
-        .producto-card:hover {
-            border-color: #4a4a4a;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-        }
-        .btn-link-externo {
-            background: #6c63ff;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 14px;
-            transition: all 0.2s ease;
-        }
-        .btn-link-externo:hover {
-            background: #5a52d5;
-            color: white;
-        }
-        .badge {
-            font-weight: 500;
-            padding: 6px 12px;
-            border-radius: 6px;
-        }
-        .badge.bg-secondary {
-            background-color: #ffa726 !important;
-            color: #000;
-        }
-        .badge.bg-success {
-            background-color: #66bb6a !important;
-            color: #fff;
-        }
-    </style>
+    <link rel="stylesheet" href="/static/market/mercado.css">
 </head>
 <body>
     <div class="app-container">
@@ -142,12 +100,6 @@
                     <button class="btn btn-gradient-purple" data-bs-toggle="modal" data-bs-target="#modalPublicar">
                         <i class="fas fa-plus me-2"></i>Publicar Producto
                     </button>
-                    <button class="btn-icon" id="notificationsBtn" title="Notificaciones">
-                        <i class="fas fa-bell"></i>
-                    </button>
-                    <button class="btn-icon" id="settingsBtn" title="Configuración">
-                        <i class="fas fa-cog"></i>
-                    </button>
                 </div>
             </header>
 
@@ -175,21 +127,41 @@
                 <div class="modal-body">
                     <form id="form">
                         <div class="mb-3">
-                            <label>Descripción *</label>
-                            <textarea class="form-control" id="descripcion" required rows="3"></textarea>
+                            <label class="form-label">Descripción *</label>
+                            <textarea class="form-control" id="descripcion" required rows="3" placeholder="Describe tu producto..."></textarea>
                         </div>
+                        
                         <div class="mb-3">
-                            <label>Link *</label>
-                            <input type="url" class="form-control" id="url" required>
-                        </div>
-                        <div class="row">
-                            <div class="col">
-                                <label>Precio (CLP)</label>
-                                <input type="number" class="form-control" id="precio">
+                            <label class="form-label">Imagen del Producto</label>
+                            <div class="upload-zone" id="uploadZone">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <p class="mb-2"><strong>Click para subir</strong> o arrastra una imagen aquí</p>
+                                <small class="text-muted">PNG, JPG, JPEG (máx. 5MB)</small>
+                                <input type="file" id="imagen" accept="image/*">
                             </div>
-                            <div class="col">
-                                <label>Precio Estudiante (CLP)</label>
-                                <input type="number" class="form-control" id="precioEstudiante">
+                            <div class="image-preview" id="imagePreview">
+                                <img id="previewImg" src="" alt="Vista previa">
+                                <button type="button" class="remove-image" id="removeImage">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Link Externo *</label>
+                            <input type="url" class="form-control" id="url" required placeholder="https://...">
+                            <small class="text-muted">Link a Facebook Marketplace, MercadoLibre, etc.</small>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Precio Normal (CLP)</label>
+                                <input type="number" class="form-control" id="precio" placeholder="0">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Precio Estudiante (CLP)</label>
+                                <input type="number" class="form-control" id="precioEstudiante" placeholder="0">
+                                <small class="text-muted">Precio especial para estudiantes</small>
                             </div>
                         </div>
                     </form>
@@ -203,7 +175,7 @@
     </div>
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/static/js/mobile-menu.js"></script>
+    <script src="/static/js/swipe-menu.js"></script>
     <script src="/static/js/auth-api.js"></script>
     <script src="/static/js/auth-header.js"></script>
     <script src="/static/js/main.js"></script>
@@ -221,18 +193,23 @@
                 
                 const html = productos.map(p => `
                     <div class="producto-card">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div class="flex-grow-1">
+                        <div class="producto-card-con-imagen">
+                            ${p.imagen ? `
+                                <div class="producto-imagen">
+                                    <img src="${p.imagen}" alt="${p.descripcion}" loading="lazy">
+                                </div>
+                            ` : ''}
+                            <div class="producto-info flex-grow-1">
                                 <p class="mb-3">${p.descripcion}</p>
-                                <div class="d-flex gap-2 align-items-center flex-wrap">
-                                    ${p.precio ? `<span class="badge bg-secondary">💰 $${Number(p.precio).toLocaleString()}</span>` : ''}
-                                    ${p.precio_estudiante ? `<span class="badge bg-success">🎓 $${Number(p.precio_estudiante).toLocaleString()}</span>` : ''}
-                                    <small class="text-muted ms-2">${p.fecha}</small>
+                                <div class="producto-precios">
+                                    ${p.precio ? `<span class="badge bg-secondary"><i class="fas fa-tag"></i> $${Number(p.precio).toLocaleString()}</span>` : ''}
+                                    ${p.precio_estudiante ? `<span class="badge bg-success"><i class="fas fa-graduation-cap"></i> $${Number(p.precio_estudiante).toLocaleString()}</span>` : ''}
+                                    ${p.fecha ? `<span class="badge bg-info"><i class="far fa-clock"></i> ${p.fecha}</span>` : ''}
                                 </div>
                             </div>
-                            <div class="ms-3">
+                            <div>
                                 <a href="${p.url}" target="_blank" class="btn-link-externo">
-                                    Ver Producto <i class="fas fa-external-link-alt ms-1"></i>
+                                    <i class="fas fa-external-link-alt"></i> Ver Producto
                                 </a>
                             </div>
                         </div>
@@ -252,36 +229,99 @@
                 return;
             }
             
-            const data = {
-                descripcion: document.getElementById('descripcion').value,
-                url: document.getElementById('url').value,
-                precio: document.getElementById('precio').value || null,
-                precio_estudiante: document.getElementById('precioEstudiante').value || null
-            };
+            const formData = new FormData();
+            formData.append('descripcion', document.getElementById('descripcion').value);
+            formData.append('url', document.getElementById('url').value);
+            
+            const precio = document.getElementById('precio').value;
+            const precioEstudiante = document.getElementById('precioEstudiante').value;
+            
+            if (precio) formData.append('precio', precio);
+            if (precioEstudiante) formData.append('precio_estudiante', precioEstudiante);
+            
+            // Agregar imagen si existe
+            const imagenInput = document.getElementById('imagen');
+            if (imagenInput.files.length > 0) {
+                formData.append('imagen', imagenInput.files[0]);
+            }
             
             try {
                 const res = await fetch(API, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}`
                     },
-                    body: JSON.stringify(data)
+                    body: formData
                 });
                 
                 if (res.ok) {
-                    alert('¡Publicado!');
+                    alert('¡Publicado exitosamente!');
                     document.getElementById('form').reset();
+                    document.getElementById('imagePreview').classList.remove('show');
                     bootstrap.Modal.getInstance(document.getElementById('modalPublicar')).hide();
                     cargar();
                 } else {
-                    alert('Error al publicar');
+                    const error = await res.json();
+                    console.error('Error:', error);
+                    alert('Error al publicar: ' + JSON.stringify(error));
                 }
             } catch (e) {
                 console.error(e);
-                alert('Error');
+                alert('Error al publicar');
             }
         }
+        
+        // Upload zone functionality
+        const uploadZone = document.getElementById('uploadZone');
+        const imagenInput = document.getElementById('imagen');
+        const imagePreview = document.getElementById('imagePreview');
+        const previewImg = document.getElementById('previewImg');
+        const removeImage = document.getElementById('removeImage');
+        
+        imagenInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('La imagen es muy grande. Máximo 5MB');
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImg.src = e.target.result;
+                    imagePreview.classList.add('show');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        removeImage.addEventListener('click', function() {
+            imagenInput.value = '';
+            imagePreview.classList.remove('show');
+            previewImg.src = '';
+        });
+        
+        // Drag and drop
+        uploadZone.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            uploadZone.classList.add('dragover');
+        });
+        
+        uploadZone.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            uploadZone.classList.remove('dragover');
+        });
+        
+        uploadZone.addEventListener('drop', function(e) {
+            e.preventDefault();
+            uploadZone.classList.remove('dragover');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                imagenInput.files = files;
+                imagenInput.dispatchEvent(new Event('change'));
+            }
+        });
         
         cargar();
     </script>
