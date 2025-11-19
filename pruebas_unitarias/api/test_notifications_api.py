@@ -28,7 +28,6 @@ def client():
     return APIClient()
 
 
-@pytest.mark.skip(reason="Los endpoints de notificaciones devuelven FileResponse en lugar de JSON API - requiere implementación")
 class TestNotificationsAPI:
     """Pruebas para la API de Notificaciones"""
     

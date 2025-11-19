@@ -1,354 +1,248 @@
-### Pruebas unitarias/integración (pytest)
+# Pruebas Unitarias - StudentsPoint
 
-## Instalación
+Este directorio contiene todas las pruebas unitarias del proyecto StudentsPoint.
 
+## Estructura de Pruebas
+
+```
+pruebas_unitarias/
+├── api/
+│   ├── test_audit_logging.py          # Tests de auditoría y logging
+│   ├── test_auth_me.py                 # Tests de autenticación /api/auth/me/
+│   ├── test_campus_map.py              # Tests de mapa de campus
+│   ├── test_converter_api.py           # Tests de conversión de documentos
+│   ├── test_email_verification.py      # Tests de verificación de email
+│   ├── test_forum_api.py               # Tests básicos del foro
+│   ├── test_forum_comprehensive.py     # Tests comprehensivos del foro
+│   ├── test_forum_images.py           # Tests de imágenes en foro (nuevo)
+│   ├── test_health_api.py              # Tests de health checks
+│   ├── test_login_api.py               # Tests de login
+│   ├── test_marketplace_api.py         # Tests básicos del marketplace
+│   ├── test_marketplace_comprehensive.py # Tests comprehensivos del marketplace
+│   ├── test_marketplace_images.py      # Tests de imágenes en marketplace (nuevo)
+│   ├── test_notifications_api.py       # Tests de notificaciones
+│   ├── test_polls_api.py               # Tests de encuestas
+│   ├── test_portfolio_api.py           # Tests de portafolio
+│   ├── test_profile_api.py             # Tests de perfil de usuario
+│   ├── test_register_api.py            # Tests de registro
+│   └── test_swipe_menu.py              # Tests de integración del menú swipe (nuevo)
+└── README.md                            # Este archivo
+```
+
+## Ejecutar Pruebas
+
+### Ejecutar todas las pruebas
 ```bash
-python -m pip install pytest pytest-django djangorestframework
+cd proyecto/src/backend
+pytest ../../pruebas_unitarias/ -v
 ```
 
-## Ejecución rápida
-
-**Todas las pruebas:**
+### Ejecutar pruebas específicas por módulo
 ```bash
-python tests/run_pytest.py -q
+# Tests del foro
+pytest ../../pruebas_unitarias/api/test_forum_api.py -v
+
+# Tests del marketplace
+pytest ../../pruebas_unitarias/api/test_marketplace_api.py -v
+
+# Tests de autenticación
+pytest ../../pruebas_unitarias/api/test_login_api.py -v
 ```
 
-**Archivo específico:**
+### Ejecutar con cobertura
 ```bash
-python tests/run_pytest.py pruebas_unitarias/api/test_login_api.py -v
+pytest ../../pruebas_unitarias/ --cov=studentspoint --cov-report=html
 ```
 
-**Test específico:**
+### Ejecutar solo tests que no están marcados como skip
 ```bash
-python tests/run_pytest.py pruebas_unitarias/api/test_login_api.py::test_login_ok_then_me -v
+pytest ../../pruebas_unitarias/ -v -m "not skip"
 ```
 
-**Con más detalle:**
-```bash
-python tests/run_pytest.py -vv
+## Nuevos Tests Agregados
+
+### 1. Tests de Imágenes en Marketplace (`test_marketplace_images.py`)
+Pruebas para la nueva funcionalidad de subida de imágenes en productos:
+- ✅ Crear producto con imagen
+- ✅ Crear producto sin imagen
+- ✅ Validación de tamaño de imagen (máx 5MB)
+- ✅ Validación de tipo de archivo
+- ✅ Verificación de URL absoluta para imágenes
+- ✅ Soporte para múltiples formatos (JPG, PNG, WebP)
+- ✅ Autenticación requerida para subir imágenes
+
+### 2. Tests de Imágenes en Foro (`test_forum_images.py`)
+Pruebas para la funcionalidad de imágenes en posts del foro:
+- ✅ Crear post con imagen
+- ✅ Crear post sin imagen
+- ✅ Auto-aprobación de imágenes
+- ✅ Validación de formatos de imagen
+- ✅ Posts anónimos con imágenes
+- ✅ Autenticación requerida para subir imágenes
+
+### 3. Tests de Integración del Menú Swipe (`test_swipe_menu.py`)
+Pruebas de integración para el nuevo sistema de navegación:
+- ✅ Verificación de carga del script swipe-menu.js
+- ✅ Presencia del sidebar en todas las páginas
+- ✅ Verificación de estilos CSS de glassmorphism
+- ✅ Consistencia de navegación entre módulos
+- ✅ Verificación de que mobile-menu.js fue removido
+
+## Tests Actualizados
+
+### Converter API (`test_converter_api.py`)
+- ✅ **Removido skip**: Los tests ahora están activos y completamente funcionales
+- Cobertura completa de conversión de documentos (Word to PDF, PDF to Word)
+- Tests de estados (pendiente, procesando, completado, error)
+- Tests de validación de archivos
+- Tests de OCR
+- Tests de filtrado por tipo y estado
+
+### Notifications API (`test_notifications_api.py`)
+- ✅ **Removido skip**: Los tests ahora están activos
+- Tests de creación y listado de notificaciones
+- Tests de marcar como leída
+- Tests de configuración de notificaciones
+- Tests de filtrado por tipo y estado
+- Tests de prioridades y datos extra
+
+## Módulos con Cobertura Completa
+
+### ✅ Autenticación y Usuarios
+- Login/Logout
+- Registro de usuarios
+- Verificación de email
+- Perfil de usuario
+- Auditoría de actividades
+
+### ✅ Foro
+- Creación de posts y comentarios
+- Sistema de votación
+- Posts anónimos
+- Moderación y reportes
+- **Nuevo**: Subida de imágenes
+
+### ✅ Marketplace
+- CRUD de productos
+- Categorías
+- Filtros y búsqueda
+- Favoritos
+- **Nuevo**: Subida de imágenes
+
+### ✅ Encuestas (Polls)
+- Creación de encuestas
+- Sistema de votación
+- Encuestas anónimas
+- Resultados y estadísticas
+
+### ✅ Portafolio
+- Logros y certificaciones
+- Proyectos
+- Experiencia laboral
+- Habilidades
+
+### ✅ Campus
+- Listado de sedes
+- Recorridos virtuales
+- Mapas interactivos
+
+### ✅ Notificaciones
+- Creación y envío
+- Configuración de preferencias
+- Filtrado por tipo
+- Sistema de prioridades
+
+### ✅ Converter
+- Conversión de documentos
+- Soporte de OCR
+- Estados de conversión
+- Historial de conversiones
+
+### ✅ Health Checks
+- Liveness checks
+- Readiness checks
+- API info endpoint
+
+## Configuración de Fixtures
+
+Todos los tests utilizan fixtures de pytest para:
+- Crear usuarios de prueba
+- Configurar clientes API autenticados
+- Crear datos de prueba (productos, posts, encuestas, etc.)
+- Limpiar la base de datos entre tests (`pytestmark = pytest.mark.django_db`)
+
+## Mejores Prácticas
+
+1. **Aislamiento**: Cada test es independiente y no depende de otros
+2. **Limpieza**: La base de datos se limpia automáticamente entre tests
+3. **Nombres descriptivos**: Los nombres de los tests describen claramente qué se está probando
+4. **Fixtures**: Se reutilizan fixtures para evitar duplicación de código
+5. **Assertions claras**: Cada test verifica comportamientos específicos
+6. **Documentación**: Cada test tiene un docstring explicativo
+
+## Notas Importantes
+
+### Tests con @pytest.mark.skip
+Algunos tests están marcados con `skip` por las siguientes razones válidas:
+
+1. **Endpoints no implementados**: Tests para endpoints que están planificados pero no implementados
+2. **Implementación variable**: Tests que dependen de configuraciones específicas
+3. **No críticos**: Tests de características opcionales
+
+### Tests Removidos del Skip
+- ✅ `TestDocumentConverterAPI`: Ahora completamente funcional
+- ✅ `TestNotificationsAPI`: Ahora completamente funcional
+
+## Próximos Pasos
+
+### Tests Pendientes de Implementar
+- [ ] Tests E2E con Selenium/Playwright
+- [ ] Tests de performance con locust
+- [ ] Tests de seguridad (SQL injection, XSS, etc.)
+- [ ] Tests de carga para endpoints críticos
+- [ ] Tests de integración con servicios externos
+
+### Mejoras Sugeridas
+- [ ] Aumentar cobertura de código al 90%+
+- [ ] Agregar tests para casos edge
+- [ ] Implementar tests de regresión visual
+- [ ] Agregar tests de accesibilidad
+- [ ] Crear suite de tests de humo para CI/CD
+
+## Ejecución en CI/CD
+
+Para integrar con GitHub Actions u otro sistema CI/CD:
+
+```yaml
+# .github/workflows/tests.yml
+name: Tests
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.10'
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+      - name: Run tests
+        run: |
+          cd proyecto/src/backend
+          pytest ../../pruebas_unitarias/ -v --cov=studentspoint
 ```
 
-## 🚀 PRUEBAS NUEVAS - APIs Principales
+## Contacto y Soporte
 
-### **Ejecutar todas las pruebas nuevas:**
-```bash
-python tests/run_pytest.py pruebas_unitarias/api/ -v
-```
-
-### **Por módulo específico:**
-
-**🏆 Portfolio API (CV/Curriculum):**
-```bash
-python tests/run_pytest.py pruebas_unitarias/api/test_portfolio_api.py -v
-```
-
-**🛒 Marketplace API (Productos):**
-```bash
-python tests/run_pytest.py pruebas_unitarias/api/test_marketplace_api.py -v
-```
-
-**🔔 Notifications API:**
-```bash
-python tests/run_pytest.py pruebas_unitarias/api/test_notifications_api.py -v
-```
-
-**📊 Polls API (Encuestas):**
-```bash
-python tests/run_pytest.py pruebas_unitarias/api/test_polls_api.py -v
-```
-
-**🏥 Health API (Estado del sistema):**
-```bash
-python tests/run_pytest.py pruebas_unitarias/api/test_health_api.py -v
-```
-
-**📄 Converter API (Conversión de documentos):**
-```bash
-python tests/run_pytest.py pruebas_unitarias/api/test_converter_api.py -v
-```
-
-### **Scripts automáticos (Windows):**
-```bash
-# Ejecutar todas las pruebas nuevas con detalles
-ejecutar_pruebas_nuevas.bat
-
-# Ejecutar todas las pruebas nuevas de forma rápida
-ejecutar_pruebas_rapidas.bat
-```
-
-## Cómo funciona
-
-### 1. Configuración del entorno
-
-**`conftest.py`** (raíz): Agrega `proyecto/src/backend` al PYTHONPATH para que Python encuentre el módulo `studentspoint`.
-
-**`pytest.ini`** (raíz): Define configuración de pytest:
-- `DJANGO_SETTINGS_MODULE`: Usa `studentspoint.settings.base`
-- `testpaths`: Busca tests en `pruebas_unitarias/`
-- `python_files`: Descubre archivos `test_*.py`
-
-**`run_pytest.py`**: Script que:
-1. Prepara el entorno (PYTHONPATH + DJANGO_SETTINGS)
-2. Ejecuta pytest con los argumentos que le pases
-
-### 2. Estructura de un test
-
-```python
-import pytest
-from rest_framework.test import APIClient
-
-@pytest.mark.django_db  # Marca que el test usa base de datos
-def test_ejemplo():
-    # 1. ARRANGE (preparar datos)
-    from django.contrib.auth import get_user_model
-    User = get_user_model()
-    user = User.objects.create_user(email='test@duocuc.cl', password='pass123')
-    
-    # 2. ACT (ejecutar acción)
-    client = APIClient()
-    response = client.post('/api/auth/login/', {
-        'email': 'test@duocuc.cl',
-        'password': 'pass123'
-    }, format='json')
-    
-    # 3. ASSERT (verificar resultado)
-    assert response.status_code == 200
-    assert 'access' in response.json()
-```
-
-### 3. Base de datos de prueba
-
-pytest-django crea una **base de datos temporal en memoria** para cada test:
-
-1. **Antes del test**: Crea BD vacía → Aplica migraciones
-2. **Durante el test**: Puedes crear/leer/modificar datos
-3. **Después del test**: Destruye la BD (rollback automático)
-
-Cada test es **independiente** y empieza con BD limpia.
-
-### 4. APIClient (Django REST Framework)
-
-```python
-from rest_framework.test import APIClient
-
-client = APIClient()
-
-# GET request
-resp = client.get('/api/auth/me/')
-
-# POST request con JSON
-resp = client.post('/api/auth/login/', {
-    'email': 'test@duocuc.cl',
-    'password': 'pass123'
-}, format='json')
-
-# Agregar headers de autenticación
-client.credentials(HTTP_AUTHORIZATION='Bearer token_aqui')
-
-# Leer respuesta
-data = resp.json()
-status = resp.status_code
-```
-
-### 5. Marcadores (decoradores)
-
-- `@pytest.mark.django_db`: Permite acceso a la base de datos
-- `@pytest.skip("razón")`: Salta el test
-- `@pytest.mark.parametrize`: Ejecuta el test con múltiples valores
-
-## Tests existentes
-
-### **Tests Originales:**
-### `test_login_api.py`
-- `test_auth_me_requires_token`: Verifica que `/api/auth/me/` rechace peticiones sin token
-- `test_login_ok_then_me`: Login exitoso → obtener perfil con token
-
-### `test_register_api.py`
-- `test_register_then_login_ok`: Registra usuario → hace login
-
-### `test_campus_map.py`
-- `test_list_campuses_ok`: Lista de campus (paginada o simple)
-- `test_list_tours_and_steps_smoke`: Tours por campus con pasos ordenados
-
-### `test_auth_me.py`
-- `test_auth_me_requires_token`: Verifica que `/api/auth/me/` rechace peticiones sin token
+Para preguntas o problemas con las pruebas, contacta al equipo de desarrollo o crea un issue en el repositorio.
 
 ---
 
-## 🆕 TESTS NUEVOS - APIs Principales
-
-### **🏆 Portfolio API (`test_portfolio_api.py`) - 12 pruebas**
-- ✅ Crear logros, proyectos, experiencias, habilidades
-- ✅ Listar elementos del portfolio
-- ✅ Actualizar y eliminar elementos
-- ✅ Portfolio completo del usuario
-- ✅ Filtros de visibilidad
-- ✅ Autenticación requerida
-
-### **🛒 Marketplace API (`test_marketplace_api.py`) - 12 pruebas**
-- ✅ Crear y listar productos
-- ✅ Gestión de categorías
-- ✅ Filtros por estado y categoría
-- ✅ URLs adicionales
-- ✅ Permisos de propietario
-- ✅ Diferentes tipos de enlaces
-
-### **🔔 Notifications API (`test_notifications_api.py`) - 12 pruebas**
-- ✅ Crear y listar notificaciones
-- ✅ Marcar como leídas
-- ✅ Filtros por tipo y estado
-- ✅ Configuración de usuario
-- ✅ Diferentes prioridades
-- ✅ Datos extra y redirecciones
-
-### **📊 Polls API (`test_polls_api.py`) - 12 pruebas**
-- ✅ Crear encuestas con opciones
-- ✅ Votación simple y múltiple
-- ✅ Resultados en tiempo real
-- ✅ Votación anónima
-- ✅ Justificaciones requeridas
-- ✅ Filtros por carrera
-
-### **🏥 Health API (`test_health_api.py`) - 15 pruebas**
-- ✅ Health checks básicos
-- ✅ Liveness y readiness
-- ✅ Información de API
-- ✅ Verificación de servicios
-- ✅ Manejo de errores
-- ✅ Headers CORS
-
-### **📄 Converter API (`test_converter_api.py`) - 15 pruebas**
-- ✅ Conversión Word ↔ PDF
-- ✅ Opción OCR
-- ✅ Estados de conversión
-- ✅ Manejo de errores
-- ✅ Filtros por tipo y estado
-- ✅ Timestamps y archivos
-
-### **🎯 Total: 78 pruebas nuevas**
-
-## Variables de entorno
-
-```bash
-# Windows PowerShell
-$env:E2E_EMAIL="admin@duocuc.cl"
-$env:E2E_PASSWORD="admin123"
-python tests/run_pytest.py -v
-
-# Linux/Mac
-export E2E_EMAIL="admin@duocuc.cl"
-export E2E_PASSWORD="admin123"
-python tests/run_pytest.py -v
-```
-
-## Flujo de ejecución
-
-```
-1. python tests/run_pytest.py -q
-   ↓
-2. Prepara entorno (PYTHONPATH, DJANGO_SETTINGS)
-   ↓
-3. pytest descubre test_*.py en pruebas_unitarias/
-   ↓
-4. Por cada función test_*():
-    Crea BD temporal
-    Ejecuta test (arrange → act → assert)
-    Destruye BD
-   ↓
-5. Muestra resumen: X passed, Y skipped, Z failed
-```
-
-## Mejores prácticas
-
-1. **Nombres descriptivos**: `test_login_con_credenciales_invalidas`
-2. **Un test, una cosa**: Verifica un comportamiento específico
-3. **Arrange-Act-Assert**: Estructura clara en 3 partes
-4. **Independencia**: Cada test debe poder ejecutarse solo
-5. **BD limpia**: No asumas datos previos; crea lo necesario en el test
-
-## Comandos útiles
-
-```bash
-# Solo tests que contengan "login" en el nombre
-python tests/run_pytest.py -k login -v
-
-# Detener en el primer fallo
-python tests/run_pytest.py -x
-
-# Mostrar prints y output
-python tests/run_pytest.py -s
-
-# Ejecutar en paralelo (requiere pytest-xdist)
-python tests/run_pytest.py -n auto
-
-# Solo las pruebas nuevas de APIs
-python tests/run_pytest.py pruebas_unitarias/api/ -v
-
-# Filtrar por módulo específico
-python tests/run_pytest.py -k "portfolio or marketplace" -v
-```
-
-## Troubleshooting
-
-**Error: No module named 'studentspoint'**
-- Usa `python tests/run_pytest.py` en lugar de `pytest` directo
-
-**Error: can't open file 'run_pytest.py'**
-- El archivo está en `tests/run_pytest.py`, no en la raíz del proyecto
-
-**Test se salta (SKIPPED)**
-- Verifica que exista el usuario demo o que las credenciales en variables de entorno sean correctas
-
-**BD locks o errores de migración**
-- pytest usa BD en memoria; si usas sqlite, asegúrate de cerrar conexiones previas
-
-**Error en pruebas de APIs nuevas**
-- Verifica que el servidor Django esté ejecutándose si las pruebas requieren endpoints activos
-- Algunas pruebas pueden fallar si no están configuradas las URLs correspondientes
-
----
-
-## 📋 RESUMEN RÁPIDO DE COMANDOS
-
-### **Comandos más usados:**
-```bash
-# Todas las pruebas (originales + nuevas)
-python tests/run_pytest.py pruebas_unitarias/ -v
-
-# Solo las pruebas nuevas de APIs
-python tests/run_pytest.py pruebas_unitarias/api/ -v
-
-# Por módulo específico
-python tests/run_pytest.py pruebas_unitarias/api/test_portfolio_api.py -v
-python tests/run_pytest.py pruebas_unitarias/api/test_marketplace_api.py -v
-python tests/run_pytest.py pruebas_unitarias/api/test_notifications_api.py -v
-
-# Scripts automáticos (Windows)
-ejecutar_pruebas_nuevas.bat
-```
-
-### **Filtros útiles:**
-```bash
-# Solo pruebas de autenticación
-python tests/run_pytest.py -k "auth or login" -v
-
-# Solo pruebas de portfolio y marketplace
-python tests/run_pytest.py -k "portfolio or marketplace" -v
-
-# Solo pruebas de APIs nuevas
-python tests/run_pytest.py -k "portfolio or marketplace or notifications or polls or health or converter" -v
-```
-
-### **Con más detalle:**
-```bash
-# Con stack trace completo
-python tests/run_pytest.py pruebas_unitarias/api/ -v --tb=long
-
-# Detener en primer fallo
-python tests/run_pytest.py pruebas_unitarias/api/ -x
-
-# Solo mostrar fallos
-python tests/run_pytest.py pruebas_unitarias/api/ -v --tb=short
-```
-
-
+**Última actualización**: Noviembre 2024
+**Versión de pytest**: 7.x
+**Framework de testing**: pytest + pytest-django

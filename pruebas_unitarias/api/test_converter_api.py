@@ -29,7 +29,6 @@ def client():
     return APIClient()
 
 
-@pytest.mark.skip(reason="Los endpoints de converter devuelven FileResponse en lugar de JSON API - requiere implementación")
 class TestDocumentConverterAPI:
     """Pruebas para la API de Document Converter"""
     
