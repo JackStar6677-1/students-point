@@ -688,6 +688,32 @@ class PortfolioManager {
                 throw new Error('jsPDF no está cargado');
             }
             
+            // IMPORTANTE: Capturar valores actuales del formulario antes de generar el PDF
+            // Esto asegura que los datos más recientes aparezcan en el PDF incluso si no se han guardado
+            const tituloProfesionalActual = document.getElementById('inputTituloProfesional')?.value || '';
+            const resumenProfesionalActual = document.getElementById('inputResumenProfesional')?.value || '';
+            const telefonoActual = document.getElementById('inputTelefono')?.value || '';
+            const linkedinActual = document.getElementById('inputLinkedin')?.value || '';
+            const githubActual = document.getElementById('inputGithub')?.value || '';
+            
+            // Actualizar temporalmente los datos para el PDF
+            const datosOriginales = {
+                tituloProfesional: this.portfolioData.configuracion.tituloProfesional,
+                resumenProfesional: this.portfolioData.configuracion.resumenProfesional,
+                telefono: this.portfolioData.perfil.telefono,
+                linkedin: this.portfolioData.perfil.linkedin,
+                github: this.portfolioData.perfil.github
+            };
+            
+            // Aplicar valores actuales del formulario
+            this.portfolioData.configuracion.tituloProfesional = tituloProfesionalActual;
+            this.portfolioData.configuracion.resumenProfesional = resumenProfesionalActual;
+            this.portfolioData.perfil.tituloProfesional = tituloProfesionalActual;
+            this.portfolioData.perfil.resumenProfesional = resumenProfesionalActual;
+            this.portfolioData.perfil.telefono = telefonoActual;
+            this.portfolioData.perfil.linkedin = linkedinActual;
+            this.portfolioData.perfil.github = githubActual;
+            
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
             const plantilla = this.portfolioData.configuracion.plantilla || 'profesional';
@@ -718,6 +744,15 @@ class PortfolioManager {
                 default:
                     this.generateProfesionalTemplate(doc);
             }
+            
+            // Restaurar valores originales después de generar el PDF
+            this.portfolioData.configuracion.tituloProfesional = datosOriginales.tituloProfesional;
+            this.portfolioData.configuracion.resumenProfesional = datosOriginales.resumenProfesional;
+            this.portfolioData.perfil.tituloProfesional = datosOriginales.tituloProfesional;
+            this.portfolioData.perfil.resumenProfesional = datosOriginales.resumenProfesional;
+            this.portfolioData.perfil.telefono = datosOriginales.telefono;
+            this.portfolioData.perfil.linkedin = datosOriginales.linkedin;
+            this.portfolioData.perfil.github = datosOriginales.github;
             
             // Save PDF
             const perfil = this.portfolioData.perfil;

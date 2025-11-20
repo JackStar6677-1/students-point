@@ -100,6 +100,26 @@ class PortafolioConfigViewSet(viewsets.ModelViewSet):
             usuario=self.request.user
         )
         return obj
+    
+    def list(self, request, *args, **kwargs):
+        """Devuelve la configuración única del usuario (no una lista)."""
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+    
+    def update(self, request, *args, **kwargs):
+        """Actualiza la configuración del usuario."""
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        return Response(serializer.data)
+    
+    def partial_update(self, request, *args, **kwargs):
+        """Actualización parcial de la configuración."""
+        kwargs['partial'] = True
+        return self.update(request, *args, **kwargs)
 
 
 class PortafolioSugerenciaViewSet(viewsets.ReadOnlyModelViewSet):

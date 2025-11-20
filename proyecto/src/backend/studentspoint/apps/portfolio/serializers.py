@@ -63,14 +63,14 @@ class PortafolioConfigSerializer(serializers.ModelSerializer):
     class Meta:
         model = PortafolioConfig
         fields = [
-            'titulo_profesional', 'resumen_profesional', 'telefono',
+            'id', 'titulo_profesional', 'resumen_profesional', 'telefono',
             'linkedin_url', 'github_url', 'portfolio_url',
             'mostrar_contacto', 'mostrar_redes_sociales', 'mostrar_logros',
             'mostrar_proyectos', 'mostrar_experiencia', 'mostrar_habilidades',
             'tema_color', 'incluir_foto', 'foto_url',
             'ultima_generacion', 'version_pdf'
         ]
-        read_only_fields = ['ultima_generacion', 'version_pdf']
+        read_only_fields = ['id', 'ultima_generacion', 'version_pdf']
 
 
 class PortafolioSugerenciaSerializer(serializers.ModelSerializer):
@@ -104,7 +104,7 @@ class PortafolioCompletoSerializer(serializers.Serializer):
     # Información del usuario
     usuario_nombre = serializers.CharField(source='name')
     usuario_email = serializers.CharField(source='email')
-    usuario_campus = serializers.CharField(source='campus.nombre')
+    usuario_campus = serializers.SerializerMethodField()
     usuario_carrera = serializers.CharField(source='career')
     
     # Configuración
@@ -121,3 +121,9 @@ class PortafolioCompletoSerializer(serializers.Serializer):
     
     # Sugerencias
     sugerencias = PortafolioSugerenciaSerializer(many=True, read_only=True)
+    
+    def get_usuario_campus(self, obj):
+        """Obtiene el nombre del campus, manejando el caso cuando es None."""
+        if obj.campus:
+            return obj.campus.nombre
+        return ''

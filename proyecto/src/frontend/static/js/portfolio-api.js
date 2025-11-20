@@ -453,13 +453,39 @@ class PortfolioAPI {
      */
     async updateConfiguracion(configData) {
         try {
-            const response = await fetch(`${this.baseURL}/config/`, {
-                method: 'POST',
-                headers: this.getHeaders(true),
-                body: JSON.stringify(configData)
-            });
+            // Primero, obtener la configuración existente directamente
+            // El endpoint GET /config/ siempre devuelve el objeto único (creándolo si no existe)
+            let configId = null;
+            try {
+                const existingConfig = await this.getConfiguracion();
+                if (existingConfig && existingConfig.id) {
+                    configId = existingConfig.id;
+                }
+            } catch (error) {
+                console.log('Error obteniendo configuración:', error);
+            }
 
-            return await this.handleResponse(response);
+            // Siempre usar PATCH si tenemos ID (que deberíamos tener después del GET)
+            if (configId) {
+                const response = await fetch(`${this.baseURL}/config/${configId}/`, {
+                    method: 'PATCH',
+                    headers: this.getHeaders(true),
+                    body: JSON.stringify(configData)
+                });
+
+                return await this.handleResponse(response);
+            } else {
+                // Fallback: Si por alguna razón no tenemos ID, intentar POST
+                // Esto debería ser muy raro debido a get_or_create en el backend
+                console.log('No se encontró ID, intentando POST');
+                const response = await fetch(`${this.baseURL}/config/`, {
+                    method: 'POST',
+                    headers: this.getHeaders(true),
+                    body: JSON.stringify(configData)
+                });
+
+                return await this.handleResponse(response);
+            }
         } catch (error) {
             console.error('Error actualizando configuración:', error);
             throw error;
