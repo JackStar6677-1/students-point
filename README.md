@@ -71,38 +71,31 @@ Este script maestro te permite elegir el modo de inicio:
 7. Produccion - Modo produccion
 8. Instalar Dependencias - Instala todo automaticamente
 
-### Windows (Modo tradicional)
+**Documentacion completa:** Ver [`docs/guias/LAUNCHER.md`](docs/guias/LAUNCHER.md)
+
+### Alternativas en carpeta scripts/
+
+**Windows:**
 ```batch
-iniciar_desarrollo.bat
+scripts\iniciar_desarrollo.bat
 ```
 
-### Linux/Mac
+**Linux/Mac:**
 ```bash
-chmod +x iniciar_desarrollo.sh
-./iniciar_desarrollo.sh
+chmod +x scripts/iniciar_desarrollo.sh
+./scripts/iniciar_desarrollo.sh
 ```
 
-### PWA con HTTPS (ngrok)
-Para probar la PWA en celular con HTTPS:
-```batch
-iniciar_con_ngrok.bat
-```
+### Otros Modos de Inicio
 
-Este script inicia Django y ngrok automáticamente, dándote un enlace HTTPS público para instalar la PWA en Android/iOS sin problemas.
+Usa el launcher universal `iniciar_studentspoint.bat` y selecciona:
+- **Opcion [4]** - ngrok con HTTPS (perfecto para PWA)
+- **Opcion [5]** - playit.gg tunel permanente
+- **Opcion [6]** - playit.gg con HTTPS
 
-**Guía rápida:** Ver [`USAR-NGROK.md`](USAR-NGROK.md) en la raíz.
-
-### PWA con Tunel Publico (playit.gg)
-Para acceso público permanente usando playit.gg:
-```batch
-iniciar_con_playit.bat
-```
-
-Este script inicia Django y el agente de playit.gg automáticamente, dándote acceso público con dominio permanente.
-
-**NOTA:** playit.gg usa HTTP por defecto (no HTTPS). Para PWA se recomienda usar ngrok que da HTTPS automáticamente.
-
-**Guía rápida:** Ver [`USAR-PLAYIT.md`](USAR-PLAYIT.md) en la raíz.
+**Guias completas:**
+- [`docs/guias/USAR-NGROK.md`](docs/guias/USAR-NGROK.md) - Configuracion de ngrok
+- [`docs/guias/USAR-PLAYIT.md`](docs/guias/USAR-PLAYIT.md) - Configuracion de playit.gg
 
 **¡Eso es todo!** El servidor se inicia automáticamente.
 
@@ -110,12 +103,14 @@ Este script inicia Django y el agente de playit.gg automáticamente, dándote ac
 
 **En la raíz del proyecto:**
 - `iniciar_studentspoint.bat` - **Launcher Universal** - Menu interactivo con todas las opciones
+
+**En la carpeta `scripts/`:**
 - `iniciar_desarrollo.bat/.sh` - Inicio rápido en desarrollo
 - `iniciar_con_ngrok.bat` - Inicio con HTTPS (ngrok) para PWA móvil
 - `iniciar_playit_https.bat` - Inicio con playit.gg y HTTPS
-
-**En la carpeta `scripts/`:**
 - `iniciar_produccion.bat/.sh` - Iniciar en modo producción
+- `iniciar_simple.bat` - Inicio minimalista sin extras
+- `iniciar_solo_ngrok.bat` - Solo tunel ngrok (Django debe estar corriendo)
 - `configurar_https.bat` - Configurar HTTPS local con certificado self-signed
 - `regenerar_iconos_pwa.bat` - Regenerar iconos PWA con logo StudentsPoint
 - `ver_logs.bat/.sh` - Ver logs en tiempo real
@@ -127,6 +122,7 @@ Este script inicia Django y el agente de playit.gg automáticamente, dándote ac
 - `detener_monitor.bat` - Detener monitor en Windows
 - `aplicar_correcciones_movil.bat` - Aplicar correcciones de responsive móvil
 - `diagnostico.bat` - Diagnóstico del sistema
+- `verificar_pwa.bat` - Verificar instalación PWA
 - `iniciar_simple.bat` - Inicio simple alternativo
 - `iniciar_solo_ngrok.bat` - Iniciar solo ngrok (Django debe estar corriendo)
 - `verificar_pwa.bat` - Verificar archivos PWA
@@ -471,10 +467,9 @@ La documentacion esta organizada en carpetas tematicas. Ver:
 - `CONFIGURACION-GOOGLE-EMAIL.md` - OAuth y Email SMTP
 - `DEPLOYMENT-PRODUCTION.md` - Despliegue en produccion
 - `SISTEMA-LOGGING.md` - Sistema de logs y monitoreo
-- `LAUNCHER.md` - Guia completa del launcher universal con todas las opciones
-- `GUIA-NGROK.md` - Configuracion completa de ngrok para PWA con HTTPS
-- `USAR-NGROK.md` - Guia rapida para usar ngrok
-- `USAR-PLAYIT.md` - Guia rapida para usar playit.gg con tunel publico
+- `docs/guias/LAUNCHER.md` - Guia completa del launcher universal con todas las opciones
+- `docs/guias/USAR-NGROK.md` - Guia rapida para usar ngrok con HTTPS
+- `docs/guias/USAR-PLAYIT.md` - Guia rapida para usar playit.gg con tunel publico
 - `PWA-CELULAR.md` - Guia rapida de instalacion PWA en celular
 - `INSTALACION-PWA.md` - Instalacion completa de PWA
 - `PRUEBAS-PWA.md` - 21 tests para verificar PWA
