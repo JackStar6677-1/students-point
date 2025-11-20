@@ -46,5 +46,6 @@ class CursoAPITests(APITestCase):
             visible=True,
         )
 
-        resp = self.client.get(url)
+        # Filtrar solo cursos vigentes con el parámetro correcto
+        resp = self.client.get(url, {'vigente': 'true'})
         self.assertEqual(resp.data["count"], 1)

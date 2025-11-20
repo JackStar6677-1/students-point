@@ -16,12 +16,13 @@ class BienestarAPITests(APITestCase):
     def test_listar_por_carrera(self):
         BienestarItem.objects.create(
             carrera="Informatica",
-            tipo=BienestarItem.Tipos.KINE,
+            tipo=BienestarItem.Tipos.FISICO,
+            categoria=BienestarItem.Categorias.ESTIRAMIENTOS,
             titulo="Estiramientos",
             contenido_md="**Mover**",
         )
         self.client.force_authenticate(self.user)
-        url = reverse("bienestar")
+        url = reverse("bienestar-list")
         resp = self.client.get(url, {"carrera": "Informatica"})
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.data["count"], 1)

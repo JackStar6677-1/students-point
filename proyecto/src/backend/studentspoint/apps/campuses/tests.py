@@ -12,7 +12,7 @@ class CampusEndpointsTests(APITestCase):
     def setUp(self):
         User = get_user_model()
         user = User.objects.create_user(email="tester@duocuc.cl", password="pass123")
-        login = self.client.post("/api/auth/login", {"email": user.email, "password": "pass123"})
+        login = self.client.post("/api/auth/login/", {"email": user.email, "password": "pass123"})
         token = login.data["access"]
         self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {token}")
 
@@ -42,13 +42,13 @@ class CampusEndpointsTests(APITestCase):
         )
 
     def test_list_sedes(self):
-        response = self.client.get("/api/sedes")
+        response = self.client.get("/api/campuses/sedes")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data["results"]), 1)
         self.assertEqual(response.data["results"][0]["slug"], "maipu")
 
     def test_recorridos_por_sede(self):
-        response = self.client.get("/api/recorridos", {"sede": "maipu"})
+        response = self.client.get("/api/campuses/recorridos", {"sede": "maipu"})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data["results"]), 2)
         self.assertEqual(response.data["results"][0]["orden"], 1)

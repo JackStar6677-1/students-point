@@ -69,7 +69,7 @@ class PollAPITests(APITestCase):
         )
         
         # Login como moderador
-        response = self.client.post('/api/auth/login', {
+        response = self.client.post('/api/auth/login/', {
             'email': self.moderator.email,
             'password': 'pass123'
         })
