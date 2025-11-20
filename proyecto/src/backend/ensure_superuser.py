@@ -17,18 +17,36 @@ def main() -> None:
 	email = 'admin@studentspoint.app'
 	password = 'admin123'
 
-	if User.objects.filter(email=email).exists():
-		print('Superusuario ya existe')
-		return
-
-	User.objects.create_superuser(
+	user, created = User.objects.get_or_create(
 		email=email,
-		password=password,
-		name='Administrador StudentsPoint',
-		role='admin_global',
-		career='Administración'
+		defaults={
+			'name': 'Administrador StudentsPoint',
+			'role': 'admin_global',
+			'career': 'Administración',
+			'is_staff': True,
+			'is_superuser': True,
+			'is_email_verified': True
+		}
 	)
-	print('Superusuario creado: admin@studentspoint.app / admin123')
+	
+	# Asegurar que tenga todos los permisos (actualizar si ya existía)
+	user.is_staff = True
+	user.is_superuser = True
+	user.is_email_verified = True
+	user.role = 'admin_global'
+	user.set_password(password)  # Actualizar contraseña
+	user.save()
+	
+	if created:
+		print('Superusuario creado: admin@studentspoint.app / admin123')
+	else:
+		print('Superusuario actualizado: admin@studentspoint.app / admin123')
+	
+	print(f'  - Email: {user.email}')
+	print(f'  - is_staff: {user.is_staff}')
+	print(f'  - is_superuser: {user.is_superuser}')
+	print(f'  - role: {user.role}')
+	print(f'  - is_email_verified: {user.is_email_verified}')
 
 
 if __name__ == '__main__':

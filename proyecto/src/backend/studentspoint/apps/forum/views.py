@@ -135,7 +135,7 @@ class ForoListView(generics.ListAPIView):
                 )
 
 
-class PostListCreateView(generics.ListCreateAPIView):
+class PostListCreateView(generics.ListCreateAPIView, generics.DestroyAPIView):
     """Lista posts de un foro y permite crear nuevas publicaciones.
     
     RESTRICCION IMPORTANTE: Los usuarios solo pueden crear posts en el foro
@@ -201,6 +201,28 @@ class PostListCreateView(generics.ListCreateAPIView):
                 pass
 
         return queryset
+    
+    def destroy(self, request, *args, **kwargs):
+        """Eliminar un post y actualizar reportes relacionados. Solo para moderadores/admins."""
+        # Verificar permisos de moderador/admin
+        if not IsModerator().has_permission(request, self):
+            return Response(
+                {'error': 'No tienes permisos para eliminar posts'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        
+        post = self.get_object()
+        
+        # Actualizar todos los reportes relacionados a "post_eliminado"
+        PostReporte.objects.filter(post=post).update(
+            estado=PostReporte.Estado.POST_ELIMINADO
+        )
+        
+        # Eliminar el post
+        post.delete()
+        
+        # 204 No Content no debe tener body
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     def perform_create(self, serializer):
         # Obtener el foro donde se va a postear
@@ -324,9 +346,34 @@ class PostReporteView(generics.CreateAPIView):
     serializer_class = PostReporteSerializer
     permission_classes = [IsAuthenticated]
     
-    def perform_create(self, serializer):
-        post = get_object_or_404(Post, pk=self.kwargs["pk"])
-        serializer.save(post=post, usuario=self.request.user)
+    def create(self, request, *args, **kwargs):
+        """Crear reporte con manejo de errores mejorado"""
+        try:
+            post = get_object_or_404(Post, pk=self.kwargs["pk"])
+            
+            # Validar datos
+            tipo = request.data.get('tipo')
+            descripcion = request.data.get('descripcion', '')
+            
+            if not tipo:
+                return Response(
+                    {'error': 'Debes especificar el tipo de reporte'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            
+            # Usar el método reportar del modelo (maneja duplicados automáticamente)
+            reporte = post.reportar(request.user, tipo, descripcion)
+            
+            # Serializar el reporte creado/actualizado
+            serializer = self.get_serializer(reporte)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            return Response(
+                {'error': f'Error al crear el reporte: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class PostModeracionView(generics.GenericAPIView):
@@ -403,10 +450,33 @@ class PostReportesListView(generics.ListAPIView):
 
 
 class ReporteUpdateView(generics.UpdateAPIView):
-    """Permite a moderadores actualizar el estado de un reporte."""
+    """Permite a moderadores y administradores actualizar el estado de un reporte."""
     permission_classes = [IsModerator]
     serializer_class = PostReporteSerializer
 
     def get_queryset(self):
         return PostReporte.objects.all()
 
+
+class TodosReportesListView(generics.ListAPIView):
+    """Lista TODOS los reportes del foro - Solo para administradores."""
+    
+    permission_classes = [IsModerator]
+    serializer_class = PostReporteSerializer
+    
+    def get_queryset(self):
+        """Obtener todos los reportes con información del post"""
+        qs = PostReporte.objects.select_related(
+            'post', 'post__usuario', 'post__foro', 'usuario'
+        ).order_by("-created_at")
+        
+        # Filtros opcionales
+        estado = self.request.query_params.get("estado")
+        if estado:
+            qs = qs.filter(estado=estado)
+        
+        tipo = self.request.query_params.get("tipo")
+        if tipo:
+            qs = qs.filter(tipo=tipo)
+        
+        return qs

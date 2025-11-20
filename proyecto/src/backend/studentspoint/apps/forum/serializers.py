@@ -209,15 +209,65 @@ class ScoreSerializer(serializers.Serializer):
 class PostReporteSerializer(serializers.ModelSerializer):
     """Serializer para reportes de posts."""
     
-    usuario_name = serializers.CharField(source="usuario.name", read_only=True)
+    usuario_name = serializers.SerializerMethodField()
+    usuario_email = serializers.SerializerMethodField()
+    post_titulo = serializers.SerializerMethodField()
+    post_cuerpo = serializers.SerializerMethodField()
+    post_usuario = serializers.SerializerMethodField()
+    post_foro = serializers.SerializerMethodField()
+    tipo_display = serializers.CharField(source="get_tipo_display", read_only=True)
+    estado_display = serializers.CharField(source="get_estado_display", read_only=True)
     
     class Meta:
         model = PostReporte
         fields = [
-            "id", "post", "usuario", "usuario_name", "tipo", 
-            "descripcion", "estado", "created_at"
+            "id", "post", "post_titulo", "post_cuerpo", "post_usuario", "post_foro",
+            "usuario", "usuario_name", "usuario_email", "tipo", "tipo_display",
+            "descripcion", "estado", "estado_display", "created_at"
         ]
         read_only_fields = ["usuario", "created_at"]
+    
+    def get_usuario_name(self, obj):
+        """Obtener nombre del usuario de forma segura"""
+        try:
+            return obj.usuario.name if obj.usuario else None
+        except:
+            return None
+    
+    def get_usuario_email(self, obj):
+        """Obtener email del usuario de forma segura"""
+        try:
+            return obj.usuario.email if obj.usuario else None
+        except:
+            return None
+    
+    def get_post_titulo(self, obj):
+        """Obtener título del post de forma segura"""
+        try:
+            return obj.post.titulo if obj.post else None
+        except:
+            return None
+    
+    def get_post_cuerpo(self, obj):
+        """Obtener cuerpo del post de forma segura"""
+        try:
+            return obj.post.cuerpo if obj.post else None
+        except:
+            return None
+    
+    def get_post_usuario(self, obj):
+        """Obtener nombre del autor del post de forma segura"""
+        try:
+            return obj.post.usuario.name if obj.post and obj.post.usuario else None
+        except:
+            return None
+    
+    def get_post_foro(self, obj):
+        """Obtener título del foro de forma segura"""
+        try:
+            return obj.post.foro.titulo if obj.post and obj.post.foro else None
+        except:
+            return None
 
 
 class ModeracionSerializer(serializers.Serializer):

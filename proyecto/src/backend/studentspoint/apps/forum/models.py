@@ -199,6 +199,13 @@ class Post(models.Model):
             }
         )
         
+        # Si el reporte ya existía, actualizar tipo y descripción
+        if not created:
+            reporte.tipo = tipo
+            reporte.descripcion = descripcion
+            reporte.estado = PostReporte.Estado.PENDIENTE  # Resetear a pendiente si se actualiza
+            reporte.save()
+        
         if created:
             self.total_reportes += 1
             self.ultimo_reporte_at = timezone.now()
@@ -279,6 +286,7 @@ class PostReporte(models.Model):
         PENDIENTE = "pendiente", "Pendiente"
         RESUELTO = "resuelto", "Resuelto"
         DESCARTADO = "descartado", "Descartado"
+        POST_ELIMINADO = "post_eliminado", "Post Eliminado"
     
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="reportes")
     usuario = models.ForeignKey(

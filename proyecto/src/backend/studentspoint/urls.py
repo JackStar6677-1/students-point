@@ -82,6 +82,7 @@ def spa_serve(request, path=""):
         'reportes': 'reportes/reportes.html',
         'streetview': 'streetview/recorridos-virtuales.html',
         'converter': 'converter/conversor.html',
+        'moderacion': 'admin/reportes.html',  # Módulo de moderación de reportes del foro
     }
     
     # Si es un directorio, buscar archivo específico o index.html
@@ -112,6 +113,8 @@ def spa_serve(request, path=""):
     return serve(request, path, document_root=base)
 
 urlpatterns = [
+    # Ruta de moderación ANTES del admin de Django para evitar conflictos
+    re_path(r'^moderacion/?$', spa_serve, {'path': 'admin/reportes.html'}),
     path('admin/', admin.site.urls),
     path('api/', include('studentspoint.apps.accounts.urls')),
     path('api/', include('studentspoint.apps.campuses.urls')),
