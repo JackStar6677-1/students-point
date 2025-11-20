@@ -66,17 +66,25 @@ Documentos académicos del Capstone.
 
 ## Documentos Principales
 
-### Para Inicio Rápido
-- **[GUIA-COMPLETA.md](GUIA-COMPLETA.md)**: Guía de inicio completo del proyecto
+### 🎯 Para Presentacion/Defensa (EMPIEZA AQUI)
+- **[PRESENTACION-PROYECTO.md](PRESENTACION-PROYECTO.md)** ⭐ - Guia completa para presentar (Stack, Arquitectura, BD, Demo, FAQ)
+- **[BASE-DE-DATOS-RESUMEN.md](BASE-DE-DATOS-RESUMEN.md)** - Esquema completo de la BD con consultas SQL utiles
+- **[academico/DEFENSA-PWA-CAPSTONE.md](academico/DEFENSA-PWA-CAPSTONE.md)** - Argumentos para la defensa del Capstone
 
-### Para Presentaciones
-- **Arquitectura**: Ver `arquitectura/ARQUITECTURA-PRESENTACION.md`
-- **Modelo de Datos**: Ver `modelo-datos/MODELO-DE-DATOS-PRESENTACION.md`
-- **Tecnologías**: Ver `tecnologias/TECNOLOGIAS-PRESENTACION.md`
+### 📖 Para Entender el Proyecto
+- **[GUIA-COMPLETA.md](GUIA-COMPLETA.md)** - Documentacion tecnica completa
+- **[arquitectura/ARQUITECTURA-SOFTWARE.md](arquitectura/ARQUITECTURA-SOFTWARE.md)** - Como esta estructurado
+- **[modelo-datos/MODELO-DE-DATOS.md](modelo-datos/MODELO-DE-DATOS.md)** - Todas las tablas y relaciones
 
-### Para Desarrollo
-- Ver carpeta `guias/` para guías de configuración
-- Ver carpeta `config-avanzada/` para configuración técnica
+### 🚀 Para Iniciar el Proyecto
+- **Ver README.md en la raiz** del proyecto
+- **Launcher:** `iniciar_studentspoint.bat` (menu interactivo)
+- **[guias/LAUNCHER.md](guias/LAUNCHER.md)** - Guia del launcher con todas las opciones
+
+### 💻 Para Desarrollo
+- **[guias/COMO-INICIAR.md](guias/COMO-INICIAR.md)** - Scripts de inicio disponibles
+- **[guias/DEPLOYMENT-PRODUCTION.md](guias/DEPLOYMENT-PRODUCTION.md)** - Despliegue en produccion
+- **[guias/SISTEMA-LOGGING.md](guias/SISTEMA-LOGGING.md)** - Sistema de logs
 
 ## Navegación Rápida
 
