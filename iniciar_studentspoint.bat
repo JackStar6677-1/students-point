@@ -370,23 +370,48 @@ echo    Modo: PLAYIT.GG - Tunel HTTP Publico
 echo ============================================================
 echo.
 
-REM Verificar playit
+REM Verificar playit de multiples formas
+set PLAYIT_AVAILABLE=0
+
+REM Opcion 1: Verificar comando playit
 where playit >nul 2>&1
-if errorlevel 1 (
-    echo [INFO] playit.gg no esta instalado
-    echo.
-    echo Para instalar playit.gg:
-    echo   1. Descarga desde: https://playit.gg/download
-    echo   2. Instala el programa
-    echo   3. Configura tu tunel en: https://playit.gg/account
-    echo.
-    set /p continuar_sin_playit="Continuar sin playit (solo Django local)? [S/N]: "
-    if /i not "!continuar_sin_playit!"=="S" goto MENU
-    set PLAYIT_AVAILABLE=0
-) else (
-    echo [OK] playit.gg encontrado
+if not errorlevel 1 (
+    echo [OK] playit.gg encontrado en PATH
     set PLAYIT_AVAILABLE=1
+    goto :playit_found
 )
+
+REM Opcion 2: Verificar playit.exe
+where playit.exe >nul 2>&1
+if not errorlevel 1 (
+    echo [OK] playit.exe encontrado en PATH
+    set PLAYIT_AVAILABLE=1
+    goto :playit_found
+)
+
+REM Opcion 3: Verificar si playit esta corriendo
+tasklist /FI "IMAGENAME eq playit.exe" 2>nul | find /I "playit.exe" >nul
+if not errorlevel 1 (
+    echo [OK] playit.gg ya esta corriendo
+    set PLAYIT_AVAILABLE=1
+    goto :playit_found
+)
+
+REM No se encontro playit
+echo [INFO] playit.gg no detectado automaticamente
+echo.
+echo Para instalar playit.gg:
+echo   1. Descarga desde: https://playit.gg/download
+echo   2. Instala el programa
+echo   3. Configura tu tunel en: https://playit.gg/account
+echo.
+echo Si ya tienes playit instalado y corriendo, puedes continuar.
+echo El tunel debe estar activo manualmente antes de continuar.
+echo.
+set /p continuar_sin_playit="Continuar de todos modos? [S/N]: "
+if /i not "!continuar_sin_playit!"=="S" goto MENU
+
+:playit_found
 
 echo.
 
@@ -407,10 +432,29 @@ timeout /t 10 /nobreak >nul
 
 cd ..\..\..
 
-if %PLAYIT_AVAILABLE%==1 (
+REM Verificar si playit ya esta corriendo
+tasklist /FI "IMAGENAME eq playit.exe" 2>nul | find /I "playit.exe" >nul
+if errorlevel 1 (
+    REM Playit no esta corriendo, intentar iniciarlo
+    if %PLAYIT_AVAILABLE%==1 (
+        echo.
+        echo Iniciando playit.gg...
+        where playit >nul 2>&1
+        if not errorlevel 1 (
+            start "Playit.gg Tunnel - NO CERRAR" cmd /k "playit"
+        ) else (
+            where playit.exe >nul 2>&1
+            if not errorlevel 1 (
+                start "Playit.gg Tunnel - NO CERRAR" cmd /k "playit.exe"
+            ) else (
+                echo [WARNING] No se pudo iniciar playit automaticamente
+                echo Inicia playit manualmente si aun no esta corriendo
+            )
+        )
+    )
+) else (
     echo.
-    echo Iniciando playit.gg...
-    start "Playit.gg Tunnel - NO CERRAR" cmd /k "playit"
+    echo [OK] playit.gg ya esta corriendo (no se inicia de nuevo)
 )
 
 echo.
@@ -454,18 +498,34 @@ echo    Modo: PLAYIT.GG con HTTPS
 echo ============================================================
 echo.
 
-REM Verificar playit
+REM Verificar playit de multiples formas
 where playit >nul 2>&1
-if errorlevel 1 (
-    echo [ERROR] playit.gg no esta instalado
-    echo.
-    echo Descarga desde: https://playit.gg/download
-    echo.
-    pause
-    goto MENU
+if not errorlevel 1 (
+    echo [OK] playit.gg encontrado en PATH
+    goto :playit_https_found
 )
 
-echo [OK] playit.gg encontrado
+where playit.exe >nul 2>&1
+if not errorlevel 1 (
+    echo [OK] playit.exe encontrado en PATH
+    goto :playit_https_found
+)
+
+tasklist /FI "IMAGENAME eq playit.exe" 2>nul | find /I "playit.exe" >nul
+if not errorlevel 1 (
+    echo [OK] playit.gg ya esta corriendo
+    goto :playit_https_found
+)
+
+echo [ERROR] playit.gg no detectado
+echo.
+echo Descarga desde: https://playit.gg/download
+echo O si ya lo tienes instalado, inicia el agente manualmente
+echo.
+pause
+goto MENU
+
+:playit_https_found
 echo.
 
 cd proyecto\src\backend
@@ -517,8 +577,25 @@ timeout /t 10 /nobreak >nul
 cd ..\..\..
 
 echo.
-echo Iniciando playit.gg...
-start "Playit.gg Tunnel - NO CERRAR" cmd /k "playit"
+REM Verificar si playit ya esta corriendo
+tasklist /FI "IMAGENAME eq playit.exe" 2>nul | find /I "playit.exe" >nul
+if errorlevel 1 (
+    echo Iniciando playit.gg...
+    where playit >nul 2>&1
+    if not errorlevel 1 (
+        start "Playit.gg Tunnel - NO CERRAR" cmd /k "playit"
+    ) else (
+        where playit.exe >nul 2>&1
+        if not errorlevel 1 (
+            start "Playit.gg Tunnel - NO CERRAR" cmd /k "playit.exe"
+        ) else (
+            echo [WARNING] No se pudo iniciar playit automaticamente
+            echo Asegurate de que playit este corriendo manualmente
+        )
+    )
+) else (
+    echo [OK] playit.gg ya esta corriendo (no se inicia de nuevo)
+)
 
 echo.
 echo ============================================================
