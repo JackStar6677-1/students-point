@@ -13,6 +13,7 @@ class Curso(models.Model):
     class TipoCurso(models.TextChoices):
         ANUNCIO_PERSONAL = 'personal', 'Clases Privadas / Tutorias'
         ENLACE_EXTERNO = 'externo', 'Curso Externo'
+        CURSO_VIDEO = 'video', 'Curso con Videos'
         
     class Modalidad(models.TextChoices):
         PRESENCIAL = 'presencial', 'Presencial'
@@ -147,3 +148,53 @@ class Curso(models.Model):
 
     def __str__(self) -> str:
         return f"{self.titulo} - {self.get_tipo_display()}"
+
+
+class ClaseVideo(models.Model):
+    """Clase individual con video dentro de un curso con videos."""
+    
+    curso = models.ForeignKey(
+        Curso,
+        on_delete=models.CASCADE,
+        related_name='clases_video',
+        help_text='Curso al que pertenece esta clase'
+    )
+    numero_clase = models.PositiveIntegerField(
+        help_text='Número de la clase (1, 2, 3, etc.)'
+    )
+    titulo = models.CharField(
+        max_length=200,
+        help_text='Título de la clase'
+    )
+    descripcion = models.TextField(
+        blank=True,
+        help_text='Descripción opcional de la clase'
+    )
+    video = models.FileField(
+        upload_to='cursos/videos/',
+        help_text='Archivo de video de la clase'
+    )
+    duracion_segundos = models.PositiveIntegerField(
+        null=True,
+        blank=True,
+        help_text='Duración del video en segundos (opcional)'
+    )
+    orden = models.PositiveIntegerField(
+        default=0,
+        help_text='Orden de visualización (para ordenar clases)'
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        verbose_name = 'Clase con Video'
+        verbose_name_plural = 'Clases con Video'
+        ordering = ['curso', 'orden', 'numero_clase']
+        unique_together = [['curso', 'numero_clase']]
+        indexes = [
+            models.Index(fields=['curso', 'orden']),
+            models.Index(fields=['curso', 'numero_clase']),
+        ]
+    
+    def __str__(self) -> str:
+        return f"{self.curso.titulo} - Clase {self.numero_clase}: {self.titulo}"

@@ -2,12 +2,12 @@
 
 from django.utils import timezone
 from django.db.models import Q
-from rest_framework import permissions, viewsets, status
+from rest_framework import permissions, viewsets, status, serializers
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from .models import Curso
-from .serializers import CursoSerializer, CursoListSerializer
+from .models import Curso, ClaseVideo
+from .serializers import CursoSerializer, CursoListSerializer, ClaseVideoSerializer
 
 
 class CursoViewSet(viewsets.ModelViewSet):
@@ -100,7 +100,7 @@ class CursoViewSet(viewsets.ModelViewSet):
         instance = self.get_object()
         instance.visualizaciones += 1
         instance.save(update_fields=['visualizaciones'])
-        serializer = self.get_serializer(instance)
+        serializer = self.get_serializer(instance, context={'request': request})
         return Response(serializer.data)
     
     @action(detail=False, methods=['get'])
@@ -125,8 +125,131 @@ class CursoViewSet(viewsets.ModelViewSet):
             'total_cursos': qs.count(),
             'cursos_personales': qs.filter(tipo=Curso.TipoCurso.ANUNCIO_PERSONAL).count(),
             'cursos_externos': qs.filter(tipo=Curso.TipoCurso.ENLACE_EXTERNO).count(),
+            'cursos_video': qs.filter(tipo=Curso.TipoCurso.CURSO_VIDEO).count(),
             'cursos_gratuitos': qs.filter(Q(es_gratuito=True) | Q(precio__isnull=True)).count(),
             'categorias': qs.values_list('categoria', flat=True).distinct().count(),
         }
         
         return Response(stats)
+
+
+class ClaseVideoViewSet(viewsets.ModelViewSet):
+    """ViewSet para gestionar clases con video dentro de cursos"""
+    
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = ClaseVideoSerializer
+    queryset = ClaseVideo.objects.select_related('curso').all()
+    
+    def get_serializer_context(self):
+        """Asegurar que el serializer tenga el contexto del request"""
+        context = super().get_serializer_context()
+        context['request'] = self.request
+        return context
+    
+    def get_queryset(self):
+        """Filtrar clases por curso"""
+        qs = super().get_queryset()
+        curso_id = self.request.query_params.get('curso_id', None)
+        
+        if curso_id:
+            try:
+                curso_id = int(curso_id)
+                qs = qs.filter(curso_id=curso_id)
+            except (ValueError, TypeError):
+                pass
+        
+        # Solo permitir ver clases de cursos visibles o del usuario actual
+        if self.action in ['list', 'retrieve']:
+            qs = qs.filter(
+                Q(curso__visible=True) | Q(curso__autor=self.request.user)
+            )
+        
+        return qs.order_by('curso', 'orden', 'numero_clase')
+    
+    def list(self, request, *args, **kwargs):
+        """Listar clases - siempre devolver array"""
+        try:
+            response = super().list(request, *args, **kwargs)
+            # Asegurar que siempre devolvemos un array
+            if isinstance(response.data, dict) and 'results' in response.data:
+                return Response(response.data['results'])
+            return response
+        except Exception as e:
+            return Response(
+                {'error': str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+    
+    def create(self, request, *args, **kwargs):
+        """Crear clase con manejo de errores mejorado"""
+        try:
+            curso_id = request.data.get('curso')
+            if not curso_id:
+                return Response(
+                    {'error': 'Debes especificar el curso'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            
+            try:
+                curso_id = int(curso_id)
+                curso = Curso.objects.get(id=curso_id)
+            except (ValueError, TypeError):
+                return Response(
+                    {'error': 'ID de curso inválido'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            except Curso.DoesNotExist:
+                return Response(
+                    {'error': 'Curso no encontrado'},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+            
+            # Solo el autor puede agregar clases
+            if curso.autor != request.user:
+                return Response(
+                    {'error': 'Solo el autor del curso puede agregar clases'},
+                    status=status.HTTP_403_FORBIDDEN
+                )
+            
+            # Validar que el curso sea de tipo video
+            if curso.tipo != Curso.TipoCurso.CURSO_VIDEO:
+                return Response(
+                    {'error': 'Solo se pueden agregar clases a cursos de tipo video'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            
+            # Validar que el video esté presente
+            if 'video' not in request.FILES:
+                return Response(
+                    {'error': 'Debes subir un archivo de video'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            
+            return super().create(request, *args, **kwargs)
+        except serializers.ValidationError as e:
+            return Response(
+                {'error': str(e.detail) if hasattr(e, 'detail') else str(e)},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            return Response(
+                {'error': f'Error al crear la clase: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+    
+    def perform_update(self, serializer):
+        """Validar permisos al actualizar"""
+        instance = serializer.instance
+        if instance.curso.autor != self.request.user:
+            from rest_framework.exceptions import PermissionDenied
+            raise PermissionDenied('Solo el autor del curso puede modificar clases')
+        serializer.save()
+    
+    def perform_destroy(self, instance):
+        """Validar permisos al eliminar"""
+        if instance.curso.autor != self.request.user:
+            from rest_framework.exceptions import PermissionDenied
+            raise PermissionDenied('Solo el autor del curso puede eliminar clases')
+        instance.delete()

@@ -116,7 +116,7 @@ function renderizarCursos(cursosArray) {
                 `}
                 
                 <div class="mb-2">
-                    <span class="badge ${curso.tipo === 'personal' ? 'bg-purple' : 'bg-primary'}">
+                    <span class="badge ${curso.tipo === 'personal' ? 'bg-purple' : curso.tipo === 'video' ? 'bg-success' : 'bg-primary'}">
                         ${curso.tipo_display}
                     </span>
                     <span class="badge bg-secondary">${curso.nivel_display}</span>
@@ -229,6 +229,8 @@ function mostrarDetalleCurso(curso) {
     document.getElementById('detalletitulo').textContent = curso.titulo;
     
     let contactoHTML = '';
+    let clasesHTML = '';
+    
     if (curso.tipo === 'personal') {
         contactoHTML = `
             <div class="alert alert-info">
@@ -237,6 +239,46 @@ function mostrarDetalleCurso(curso) {
                 ${curso.telefono_contacto ? `<p class="mb-1"><i class="fas fa-phone"></i> ${curso.telefono_contacto}</p>` : ''}
                 ${curso.url ? `<p class="mb-0"><i class="fas fa-link"></i> <a href="${curso.url}" target="_blank">Enlace de contacto</a></p>` : ''}
             </div>
+        `;
+    } else if (curso.tipo === 'video') {
+        // Mostrar clases de video
+        if (curso.clases_video && curso.clases_video.length > 0) {
+            clasesHTML = `
+                <div class="mb-3">
+                    <h5><i class="fas fa-video"></i> Clases del Curso</h5>
+                    <div class="list-group">
+                        ${curso.clases_video.map((clase, index) => `
+                            <div class="list-group-item">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-1">Clase ${clase.numero_clase}: ${clase.titulo}</h6>
+                                        ${clase.descripcion ? `<p class="mb-2 text-muted small">${clase.descripcion}</p>` : ''}
+                                        <video controls class="w-100 mt-2" style="max-height: 400px;">
+                                            <source src="${clase.video_url}" type="video/mp4">
+                                            Tu navegador no soporta la reproduccion de videos.
+                                        </video>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        } else {
+            clasesHTML = `
+                <div class="alert alert-warning">
+                    <i class="fas fa-info-circle"></i> Este curso aun no tiene clases agregadas.
+                </div>
+            `;
+        }
+        
+        // Boton para gestionar clases (solo si es el autor)
+        // Nota: En una implementación completa, se debería verificar desde el backend
+        // Por ahora, permitimos que cualquier usuario autenticado gestione (se validará en backend)
+        contactoHTML = `
+            <button class="btn btn-gradient-purple w-100 mb-3" onclick="gestionarClases(${curso.id})">
+                <i class="fas fa-video"></i> Gestionar Clases
+            </button>
         `;
     } else {
         contactoHTML = curso.url ? `
@@ -282,10 +324,185 @@ function mostrarDetalleCurso(curso) {
         ` : ''}
         
         ${contactoHTML}
+        ${clasesHTML}
     `;
     
     document.getElementById('detalleBody').innerHTML = detalleHTML;
     new bootstrap.Modal(document.getElementById('detalleCursoModal')).show();
+}
+
+// Gestionar clases de video
+async function gestionarClases(cursoId) {
+    document.getElementById('cursoIdClase').value = cursoId;
+    
+    // Cargar clases existentes
+    await cargarClases(cursoId);
+    
+    // Mostrar modal
+    new bootstrap.Modal(document.getElementById('gestionarClasesModal')).show();
+}
+
+// Cargar clases de un curso
+async function cargarClases(cursoId) {
+    try {
+        const token = localStorage.getItem('access_token');
+        const response = await fetch(`/api/clases-video/?curso_id=${cursoId}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Error del servidor:', response.status, errorText);
+            mostrarError('Error al cargar las clases');
+            return;
+        }
+        
+        let data = await response.json();
+        
+        // Manejar diferentes formatos de respuesta
+        let clases = [];
+        if (Array.isArray(data)) {
+            clases = data;
+        } else if (data.results && Array.isArray(data.results)) {
+            clases = data.results;
+        } else if (data.error) {
+            mostrarError(data.error);
+            return;
+        }
+        
+        const container = document.getElementById('clasesContainer');
+        
+        if (clases.length === 0) {
+            container.innerHTML = `
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i> Aun no hay clases agregadas. Agrega la primera clase abajo.
+                </div>
+            `;
+        } else {
+            container.innerHTML = `
+                <h6>Clases Existentes (${clases.length})</h6>
+                <div class="list-group mb-3">
+                    ${clases.map(clase => `
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1">Clase ${clase.numero_clase}: ${clase.titulo}</h6>
+                                    ${clase.descripcion ? `<p class="mb-1 text-muted small">${clase.descripcion}</p>` : ''}
+                                    <small class="text-muted">Orden: ${clase.orden}</small>
+                                </div>
+                                <button class="btn btn-sm btn-danger" onclick="eliminarClase(${clase.id})">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+    } catch (error) {
+        console.error('Error cargando clases:', error);
+        mostrarError('Error de conexion al cargar clases: ' + error.message);
+    }
+}
+
+// Agregar nueva clase
+async function agregarClase() {
+    const cursoId = document.getElementById('cursoIdClase').value;
+    const numeroClase = document.getElementById('numeroClase').value;
+    const titulo = document.getElementById('tituloClase').value;
+    const descripcion = document.getElementById('descripcionClase').value;
+    const video = document.getElementById('videoClase').files[0];
+    const orden = document.getElementById('ordenClase').value || 0;
+    
+    if (!video) {
+        mostrarError('Debes seleccionar un archivo de video');
+        return;
+    }
+    
+    if (!numeroClase || !titulo) {
+        mostrarError('Debes completar el numero de clase y el titulo');
+        return;
+    }
+    
+    const formData = new FormData();
+    formData.append('curso', cursoId);
+    formData.append('numero_clase', numeroClase);
+    formData.append('titulo', titulo);
+    if (descripcion) {
+        formData.append('descripcion', descripcion);
+    }
+    formData.append('video', video);
+    formData.append('orden', orden);
+    
+    try {
+        const token = localStorage.getItem('access_token');
+        const response = await fetch('/api/clases-video/', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`
+                // NO incluir Content-Type para FormData, el navegador lo hace automáticamente
+            },
+            body: formData
+        });
+        
+        if (!response.ok) {
+            // Intentar leer el error como JSON, si falla usar el texto
+            let errorMsg = 'Error al agregar la clase';
+            try {
+                const errorData = await response.json();
+                if (errorData.error) {
+                    errorMsg = errorData.error;
+                } else if (typeof errorData === 'object') {
+                    errorMsg = Object.values(errorData).flat().join(', ');
+                }
+            } catch (e) {
+                const errorText = await response.text();
+                if (errorText && !errorText.startsWith('<!DOCTYPE')) {
+                    errorMsg = errorText.substring(0, 200);
+                }
+            }
+            mostrarError(errorMsg);
+            return;
+        }
+        
+        mostrarExito('Clase agregada exitosamente');
+        document.getElementById('formNuevaClase').reset();
+        document.getElementById('cursoIdClase').value = cursoId;
+        await cargarClases(cursoId);
+    } catch (error) {
+        console.error('Error agregando clase:', error);
+        mostrarError('Error de conexion al agregar la clase: ' + error.message);
+    }
+}
+
+// Eliminar clase
+async function eliminarClase(claseId) {
+    if (!confirm('¿Estas seguro de eliminar esta clase?')) {
+        return;
+    }
+    
+    try {
+        const token = localStorage.getItem('access_token');
+        const response = await fetch(`/api/clases-video/${claseId}/`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        
+        if (response.ok) {
+            mostrarExito('Clase eliminada exitosamente');
+            const cursoId = document.getElementById('cursoIdClase').value;
+            await cargarClases(cursoId);
+        } else {
+            mostrarError('Error al eliminar la clase');
+        }
+    } catch (error) {
+        console.error('Error eliminando clase:', error);
+        mostrarError('Error de conexion al eliminar la clase');
+    }
 }
 
 // Publicar curso
@@ -300,7 +517,7 @@ async function publicarCurso() {
             mostrarError('Debes proporcionar la URL del curso externo');
             return;
         }
-    } else {
+    } else if (tipo === 'personal') {
         const email = document.getElementById('emailContacto').value;
         const telefono = document.getElementById('telefonoContacto').value;
         const urlContacto = document.getElementById('urlContacto').value;
@@ -309,7 +526,16 @@ async function publicarCurso() {
             mostrarError('Debes proporcionar al menos un medio de contacto');
             return;
         }
+    } else if (tipo === 'video') {
+        // Los cursos con videos deben ser gratuitos
+        if (!esGratuito) {
+            mostrarError('Los cursos con videos deben ser gratuitos');
+            return;
+        }
     }
+    
+    // Si es curso con videos, forzar que sea gratuito
+    const esGratuitoFinal = tipo === 'video' ? true : esGratuito;
     
     const cursoData = {
         tipo: tipo,
@@ -320,11 +546,11 @@ async function publicarCurso() {
         modalidad: document.getElementById('modalidadCurso').value,
         nivel: document.getElementById('nivelCurso').value,
         duracion: document.getElementById('duracionCurso').value,
-        es_gratuito: esGratuito,
-        precio: esGratuito ? null : document.getElementById('precioCurso').value || null,
-        url: tipo === 'externo' ? document.getElementById('urlCurso').value : document.getElementById('urlContacto').value,
-        email_contacto: document.getElementById('emailContacto').value,
-        telefono_contacto: document.getElementById('telefonoContacto').value,
+        es_gratuito: esGratuitoFinal,
+        precio: esGratuitoFinal ? null : document.getElementById('precioCurso').value || null,
+        url: tipo === 'externo' ? document.getElementById('urlCurso').value : (tipo === 'personal' ? document.getElementById('urlContacto').value : ''),
+        email_contacto: tipo === 'personal' ? document.getElementById('emailContacto').value : '',
+        telefono_contacto: tipo === 'personal' ? document.getElementById('telefonoContacto').value : '',
         imagen_url: document.getElementById('imagenCurso').value,
         fecha_inicio: document.getElementById('fechaInicioCurso').value,
         fecha_fin: document.getElementById('fechaFinCurso').value || null
@@ -342,6 +568,7 @@ async function publicarCurso() {
         });
         
         if (response.ok) {
+            const cursoCreado = await response.json();
             mostrarExito('Curso publicado exitosamente');
             
             // Cerrar modal correctamente
@@ -362,6 +589,13 @@ async function publicarCurso() {
                 document.body.style.paddingRight = '';
             }, 100);
             
+            // Si es curso con videos, abrir modal para gestionar clases
+            if (tipo === 'video') {
+                setTimeout(() => {
+                    gestionarClases(cursoCreado.id);
+                }, 500);
+            }
+            
             // Recargar datos
             cargarCursos();
             cargarEstadisticas();
@@ -381,6 +615,14 @@ function toggleCamposTipo() {
     const tipo = document.getElementById('tipoCurso').value;
     document.getElementById('camposExterno').style.display = tipo === 'externo' ? 'block' : 'none';
     document.getElementById('camposPersonal').style.display = tipo === 'personal' ? 'block' : 'none';
+    document.getElementById('camposVideo').style.display = tipo === 'video' ? 'block' : 'none';
+    
+    // Si es curso con videos, forzar que sea gratuito
+    if (tipo === 'video') {
+        document.getElementById('esGratuito').checked = true;
+        document.getElementById('campoPrecio').style.display = 'none';
+        document.getElementById('precioCurso').value = '';
+    }
 }
 
 // Toggle precio

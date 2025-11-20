@@ -139,6 +139,7 @@
                                 <option value="">Todos los tipos</option>
                                 <option value="personal">Clases Privadas</option>
                                 <option value="externo">Cursos Externos</option>
+                                <option value="video">Cursos con Videos</option>
                             </select>
                         </div>
                         <div class="col-md-2">
@@ -230,6 +231,7 @@
                             <select class="form-select" id="tipoCurso" required onchange="toggleCamposTipo()">
                                 <option value="externo">Curso Externo (compartir enlace)</option>
                                 <option value="personal">Clases Privadas / Tutorias (mis clases)</option>
+                                <option value="video">Curso con Videos (subir videos por clase)</option>
                             </select>
                         </div>
 
@@ -322,6 +324,13 @@
                             </div>
                         </div>
 
+                        <!-- Campos especificos para curso con videos -->
+                        <div id="camposVideo" style="display: none;">
+                            <div class="alert alert-success">
+                                <i class="fas fa-video"></i> Los cursos con videos son gratuitos. Podras agregar las clases despues de crear el curso.
+                            </div>
+                        </div>
+
                         <!-- Imagen -->
                         <div class="mb-3">
                             <label class="form-label">URL de imagen (opcional)</label>
@@ -361,6 +370,58 @@
                 </div>
                 <div class="modal-body" id="detalleBody">
                     <!-- Se carga dinamicamente -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para gestionar clases de video -->
+    <div class="modal fade" id="gestionarClasesModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Gestionar Clases del Curso</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="clasesContainer">
+                        <!-- Se carga dinamicamente -->
+                    </div>
+                    <hr>
+                    <h6>Agregar Nueva Clase</h6>
+                    <form id="formNuevaClase">
+                        <input type="hidden" id="cursoIdClase">
+                        <div class="row">
+                            <div class="col-md-3 mb-3">
+                                <label class="form-label">Numero de Clase</label>
+                                <input type="number" class="form-control" id="numeroClase" min="1" required>
+                            </div>
+                            <div class="col-md-9 mb-3">
+                                <label class="form-label">Titulo de la Clase</label>
+                                <input type="text" class="form-control" id="tituloClase" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Descripcion (opcional)</label>
+                            <textarea class="form-control" id="descripcionClase" rows="2"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Video</label>
+                            <input type="file" class="form-control" id="videoClase" accept="video/*" required>
+                            <small class="text-muted">Formatos soportados: MP4, WebM, etc.</small>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Orden</label>
+                            <input type="number" class="form-control" id="ordenClase" min="0" value="0">
+                            <small class="text-muted">Numero para ordenar las clases (menor = primero)</small>
+                        </div>
+                        <button type="button" class="btn btn-gradient-gold" onclick="agregarClase()">
+                            <i class="fas fa-plus"></i> Agregar Clase
+                        </button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                 </div>
             </div>
         </div>
