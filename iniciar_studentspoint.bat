@@ -531,20 +531,26 @@ echo.
 cd proyecto\src\backend
 
 echo [1/6] Verificando compatibilidad de Python...
-for /f "tokens=2" %%i in ('python --version 2^>^&1') do set PYTHON_VERSION=%%i
-echo Python version: %PYTHON_VERSION%
+python --version 2>&1 | findstr "3.13" >nul
+set IS_PYTHON313=%errorlevel%
 
-REM Verificar si es Python 3.13+
-echo %PYTHON_VERSION% | findstr /R "3\.13 3\.14 3\.15" >nul
-if not errorlevel 1 (
+python --version 2>&1 | findstr "3.14" >nul
+if %errorlevel%==0 set IS_PYTHON313=0
+
+python --version 2>&1 | findstr "3.15" >nul
+if %errorlevel%==0 set IS_PYTHON313=0
+
+for /f "tokens=*" %%v in ('python --version 2^>^&1') do echo %%v
+
+if %IS_PYTHON313%==0 (
     echo.
     echo [ERROR] Python 3.13+ no es compatible con django-sslserver
     echo.
-    echo django-sslserver usa ssl.wrap_socket() que fue eliminado en Python 3.13
+    echo django-sslserver usa ssl.wrap_socket que fue eliminado en Python 3.13
     echo.
     echo SOLUCIONES RECOMENDADAS:
     echo.
-    echo [1] Usar ngrok (MAS FACIL - HTTPS automatico)
+    echo [1] Usar ngrok - MAS FACIL - HTTPS automatico
     echo     - Vuelve al menu y selecciona opcion [4]
     echo     - ngrok da HTTPS sin necesidad de certificados
     echo     - Funciona perfectamente con cualquier version de Python
@@ -556,7 +562,7 @@ if not errorlevel 1 (
     echo [3] Usar Stunnel como proxy HTTPS
     echo     - Configuracion manual requerida
     echo.
-    echo RECOMENDACION: Usa ngrok (opcion [4] del menu)
+    echo RECOMENDACION: Usa ngrok - opcion [4] del menu
     echo Es mas facil, rapido y funciona mejor para PWA
     echo.
     pause
