@@ -20,7 +20,7 @@ Chrome en Android **requiere HTTPS** para instalar PWAs como aplicaciones nativa
 
 ```bash
 # Windows
-winget install OpenSSL.Light
+winget install ShiningLight.OpenSSL.Light
 
 # O descarga desde:
 # https://slproweb.com/products/Win32OpenSSL.html

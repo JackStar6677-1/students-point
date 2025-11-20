@@ -279,7 +279,7 @@ scripts\configurar_https.bat
 ```
 
 **Requisitos**:
-- OpenSSL instalado
+- OpenSSL instalado: `winget install ShiningLight.OpenSSL.Light`
 
 ## Scripts de Diagnostico
 

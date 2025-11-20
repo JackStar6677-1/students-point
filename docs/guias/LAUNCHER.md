@@ -333,7 +333,7 @@ winget install ngrok.ngrok
 
 **Solucion manual:**
 ```batch
-winget install OpenSSL.Light
+winget install ShiningLight.OpenSSL.Light
 ```
 
 ### Error: No se puede instalar ngrok/OpenSSL

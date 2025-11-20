@@ -538,28 +538,67 @@ if errorlevel 1 (
 )
 
 echo [2/6] Verificando OpenSSL...
+
+REM Verificar OpenSSL en PATH
 where openssl >nul 2>&1
-if errorlevel 1 (
-    echo [ERROR] OpenSSL no encontrado
+if not errorlevel 1 (
+    echo [OK] OpenSSL encontrado en PATH
+    goto :openssl_found_https
+)
+
+REM Verificar OpenSSL en ubicacion por defecto
+if exist "C:\Program Files\OpenSSL-Win64\bin\openssl.exe" (
+    echo [OK] OpenSSL encontrado en C:\Program Files\OpenSSL-Win64\bin\
+    set "OPENSSL_PATH=C:\Program Files\OpenSSL-Win64\bin\openssl.exe"
+    goto :openssl_found_https
+)
+
+REM OpenSSL no encontrado, ofrecer instalacion
+echo [ERROR] OpenSSL no encontrado
+echo.
+echo Instala OpenSSL con:
+echo   winget install ShiningLight.OpenSSL.Light
+echo   O descarga: https://slproweb.com/products/Win32OpenSSL.html
+echo.
+set /p instalar_openssl="Deseas instalar OpenSSL automaticamente? [S/N]: "
+if /i "!instalar_openssl!"=="S" (
     echo.
-    echo Instala OpenSSL:
-    echo   winget install OpenSSL.Light
-    echo   O descarga: https://slproweb.com/products/Win32OpenSSL.html
+    echo Instalando OpenSSL...
+    winget install ShiningLight.OpenSSL.Light --accept-package-agreements --accept-source-agreements
+    if errorlevel 1 (
+        echo [ERROR] No se pudo instalar OpenSSL
+        pause
+        cd ..\..\..
+        goto MENU
+    )
     echo.
+    echo [OK] OpenSSL instalado en C:\Program Files\OpenSSL-Win64\bin\
+    echo.
+    REM Usar OpenSSL recien instalado
+    set "OPENSSL_PATH=C:\Program Files\OpenSSL-Win64\bin\openssl.exe"
+    goto :openssl_found_https
+) else (
     pause
     cd ..\..\..
     goto MENU
 )
 
+:openssl_found_https
+
 echo [3/6] Generando certificados SSL...
 if not exist cert.pem (
-    openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes -subj "/C=CL/ST=Santiago/L=Santiago/O=StudentsPoint/CN=best-wales.gl.at.ply.gg"
+    if defined OPENSSL_PATH (
+        "%OPENSSL_PATH%" req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes -subj "/C=CL/ST=Santiago/L=Santiago/O=StudentsPoint/CN=best-wales.gl.at.ply.gg"
+    ) else (
+        openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes -subj "/C=CL/ST=Santiago/L=Santiago/O=StudentsPoint/CN=best-wales.gl.at.ply.gg"
+    )
     if errorlevel 1 (
         echo [ERROR] No se pudo generar certificado
         pause
         cd ..\..\..
         goto MENU
     )
+    echo [OK] Certificados generados
 ) else (
     echo [OK] Certificados ya existen
 )
@@ -723,12 +762,19 @@ echo [6/10] Verificando OpenSSL...
 where openssl >nul 2>&1
 if errorlevel 1 (
     echo [INFO] OpenSSL no encontrado. Instalando...
-    winget install OpenSSL.Light --accept-package-agreements --accept-source-agreements --silent
+    winget install ShiningLight.OpenSSL.Light --accept-package-agreements --accept-source-agreements --silent
     if errorlevel 1 (
         echo [WARNING] No se pudo instalar OpenSSL automaticamente
-        echo Descarga manual: https://slproweb.com/products/Win32OpenSSL.html
+        echo.
+        echo Opciones de instalacion manual:
+        echo   1. winget install ShiningLight.OpenSSL.Light
+        echo   2. Descarga desde: https://slproweb.com/products/Win32OpenSSL.html
+        echo.
     ) else (
         echo [OK] OpenSSL instalado
+        echo.
+        echo IMPORTANTE: Reinicia la terminal para que OpenSSL este en el PATH
+        echo.
     )
 ) else (
     echo [OK] OpenSSL ya esta instalado
