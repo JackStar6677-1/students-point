@@ -460,8 +460,8 @@ function renderHistory(jobs) {
                     ${job.usar_ocr ? '<span class="badge bg-info">OCR</span>' : ''}
                 </div>
                 <div class="d-flex gap-2">
-                    ${job.archivo_convertido_url ? `
-                        <a href="${job.archivo_convertido_url}" class="btn btn-sm btn-gradient-gold" download>
+                    ${job.estado === 'completado' ? `
+                        <a href="/api/converter/${job.id}/download/" class="btn btn-sm btn-gradient-gold" onclick="event.preventDefault(); downloadFile(${job.id}); return false;">
                             <i class="fas fa-download"></i>
                         </a>
                     ` : ''}
@@ -528,13 +528,22 @@ async function showResult(jobId) {
             }
         });
         
+        if (!response.ok) {
+            throw new Error('Error al obtener información del archivo');
+        }
+        
         const data = await response.json();
         
         document.getElementById('progressSection').style.display = 'none';
         document.getElementById('resultSection').style.display = 'block';
         
         const downloadLink = document.getElementById('downloadLink');
-        downloadLink.href = data.archivo_convertido_url;
+        // Usar endpoint de descarga directa en lugar de URL del archivo
+        downloadLink.href = '#';
+        downloadLink.onclick = async (e) => {
+            e.preventDefault();
+            await downloadFile(jobId);
+        };
         
     } catch (error) {
         console.error('Error:', error);
@@ -623,6 +632,55 @@ async function initAuth() {
         console.error('Error loading user:', error);
         document.querySelector('.user-menu').style.display = 'none';
         document.querySelector('.auth-buttons').style.display = 'block';
+    }
+}
+
+// Descargar archivo
+async function downloadFile(jobId) {
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+        showAlert('Debes iniciar sesión para descargar', 'warning');
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/api/converter/${jobId}/download/`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({ error: 'Error al descargar' }));
+            throw new Error(errorData.error || 'Error al descargar el archivo');
+        }
+        
+        // Obtener el nombre del archivo del header Content-Disposition
+        const contentDisposition = response.headers.get('Content-Disposition');
+        let filename = 'archivo_convertido';
+        if (contentDisposition) {
+            const filenameMatch = contentDisposition.match(/filename="?(.+?)"?$/);
+            if (filenameMatch) {
+                filename = filenameMatch[1];
+            }
+        }
+        
+        // Crear blob y descargar
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+        
+        showAlert('Archivo descargado exitosamente', 'success');
+        
+    } catch (error) {
+        console.error('Error descargando archivo:', error);
+        showAlert(error.message || 'Error al descargar el archivo', 'danger');
     }
 }
 

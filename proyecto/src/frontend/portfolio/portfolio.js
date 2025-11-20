@@ -94,6 +94,62 @@ class PortfolioManager {
             const data = await window.portfolioAPI.getPortfolioCompleto();
             if (data) {
                 this.portfolioData = { ...this.portfolioData, ...data };
+                
+                // Cargar configuración y llenar formulario de información personal
+                if (data.config) {
+                    const config = data.config;
+                    // Llenar campos de información personal desde la configuración
+                    if (document.getElementById('inputTelefono')) {
+                        document.getElementById('inputTelefono').value = config.telefono || '';
+                    }
+                    if (document.getElementById('inputLinkedin')) {
+                        document.getElementById('inputLinkedin').value = config.linkedin_url || '';
+                    }
+                    if (document.getElementById('inputGithub')) {
+                        document.getElementById('inputGithub').value = config.github_url || '';
+                    }
+                    
+                    // Llenar campos de configuración
+                    if (document.getElementById('inputTituloProfesional')) {
+                        document.getElementById('inputTituloProfesional').value = config.titulo_profesional || '';
+                    }
+                    if (document.getElementById('inputResumenProfesional')) {
+                        document.getElementById('inputResumenProfesional').value = config.resumen_profesional || '';
+                    }
+                    if (document.getElementById('inputMostrarContacto')) {
+                        document.getElementById('inputMostrarContacto').checked = config.mostrar_contacto ?? true;
+                    }
+                    if (document.getElementById('inputMostrarRedes')) {
+                        document.getElementById('inputMostrarRedes').checked = config.mostrar_redes_sociales ?? true;
+                    }
+                    if (document.getElementById('inputMostrarLogros')) {
+                        document.getElementById('inputMostrarLogros').checked = config.mostrar_logros ?? true;
+                    }
+                    if (document.getElementById('inputMostrarProyectos')) {
+                        document.getElementById('inputMostrarProyectos').checked = config.mostrar_proyectos ?? true;
+                    }
+                    if (document.getElementById('inputMostrarExperiencia')) {
+                        document.getElementById('inputMostrarExperiencia').checked = config.mostrar_experiencia ?? true;
+                    }
+                    
+                    // Actualizar datos locales
+                    this.portfolioData.configuracion = {
+                        tituloProfesional: config.titulo_profesional || '',
+                        resumenProfesional: config.resumen_profesional || '',
+                        mostrarContacto: config.mostrar_contacto ?? true,
+                        mostrarRedes: config.mostrar_redes_sociales ?? true,
+                        mostrarLogros: config.mostrar_logros ?? true,
+                        mostrarProyectos: config.mostrar_proyectos ?? true,
+                        mostrarExperiencia: config.mostrar_experiencia ?? true,
+                    };
+                    
+                    this.portfolioData.perfil = {
+                        ...this.portfolioData.perfil,
+                        telefono: config.telefono || '',
+                        linkedin: config.linkedin_url || '',
+                        github: config.github_url || '',
+                    };
+                }
             }
         } catch (error) {
             console.error('Error loading portfolio data:', error);
@@ -226,60 +282,87 @@ class PortfolioManager {
     }
     
     // === GUARDAR DATOS ===
-    savePerfil() {
-        // Capturar todos los valores del formulario
-        this.portfolioData.perfil = {
-            nombre: document.getElementById('inputNombre')?.value || '',
-            email: document.getElementById('inputEmail')?.value || '',
-            telefono: document.getElementById('inputTelefono')?.value || '',
-            linkedin: document.getElementById('inputLinkedin')?.value || '',
-            github: document.getElementById('inputGithub')?.value || '',
-            carrera: document.getElementById('inputCarrera')?.value || '',
-            campus: document.getElementById('inputCampus')?.value || '',
-            sitioWeb: document.getElementById('inputSitioWeb')?.value || '',
-            resumenProfesional: document.getElementById('inputResumenBio')?.value || ''
-        };
-        
-        // Debug: mostrar datos capturados
-        console.log('Datos de perfil guardados:', this.portfolioData.perfil);
-        
-        this.savePortfolioData();
-        this.updateProgress();
-        this.showToast('Perfil guardado exitosamente', 'success');
-        
-        if (window.playSound) {
-            window.playSound('success');
+    async savePerfil() {
+        try {
+            // Capturar todos los valores del formulario
+            const perfilData = {
+                telefono: document.getElementById('inputTelefono')?.value || '',
+                linkedin_url: document.getElementById('inputLinkedin')?.value || '',
+                github_url: document.getElementById('inputGithub')?.value || '',
+            };
+            
+            // Guardar en el backend usando updateConfiguracion
+            if (window.portfolioAPI) {
+                await window.portfolioAPI.updateConfiguracion(perfilData);
+            }
+            
+            // Actualizar datos locales
+            this.portfolioData.perfil = {
+                nombre: document.getElementById('inputNombre')?.value || '',
+                email: document.getElementById('inputEmail')?.value || '',
+                telefono: perfilData.telefono,
+                linkedin: perfilData.linkedin_url,
+                github: perfilData.github_url,
+                carrera: document.getElementById('inputCarrera')?.value || '',
+                campus: document.getElementById('inputCampus')?.value || '',
+            };
+            
+            this.updateProgress();
+            this.showToast('Perfil guardado exitosamente', 'success');
+            
+            if (window.playSound) {
+                window.playSound('success');
+            }
+        } catch (error) {
+            console.error('Error guardando perfil:', error);
+            this.showToast('Error al guardar el perfil', 'error');
         }
     }
     
-    saveConfiguracion() {
-        // Capturar configuración y datos adicionales del perfil
-        const tituloProfesional = document.getElementById('inputTituloProfesional')?.value || '';
-        const resumenProfesional = document.getElementById('inputResumenProfesional')?.value || '';
-        
-        this.portfolioData.configuracion = {
-            tituloProfesional: tituloProfesional,
-            resumenProfesional: resumenProfesional,
-            temaColor: document.getElementById('inputTemaColor')?.value || '#2e004f',
-            mostrarContacto: document.getElementById('inputMostrarContacto')?.checked ?? true,
-            mostrarRedes: document.getElementById('inputMostrarRedes')?.checked ?? true,
-            mostrarLogros: document.getElementById('inputMostrarLogros')?.checked ?? true,
-            mostrarProyectos: document.getElementById('inputMostrarProyectos')?.checked ?? true,
-            mostrarExperiencia: document.getElementById('inputMostrarExperiencia')?.checked ?? true
-        };
-        
-        // Actualizar también el perfil con título y resumen
-        this.portfolioData.perfil.tituloProfesional = tituloProfesional;
-        this.portfolioData.perfil.resumenProfesional = resumenProfesional;
-        
-        // Debug: mostrar configuración guardada
-        console.log('Configuración guardada:', this.portfolioData.configuracion);
-        
-        this.savePortfolioData();
-        this.showToast('Configuración guardada exitosamente', 'success');
-        
-        if (window.playSound) {
-            window.playSound('success');
+    async saveConfiguracion() {
+        try {
+            // Capturar configuración y datos adicionales del perfil
+            const tituloProfesional = document.getElementById('inputTituloProfesional')?.value || '';
+            const resumenProfesional = document.getElementById('inputResumenProfesional')?.value || '';
+            
+            const configData = {
+                titulo_profesional: tituloProfesional,
+                resumen_profesional: resumenProfesional,
+                mostrar_contacto: document.getElementById('inputMostrarContacto')?.checked ?? true,
+                mostrar_redes_sociales: document.getElementById('inputMostrarRedes')?.checked ?? true,
+                mostrar_logros: document.getElementById('inputMostrarLogros')?.checked ?? true,
+                mostrar_proyectos: document.getElementById('inputMostrarProyectos')?.checked ?? true,
+                mostrar_experiencia: document.getElementById('inputMostrarExperiencia')?.checked ?? true
+            };
+            
+            // Guardar en el backend
+            if (window.portfolioAPI) {
+                await window.portfolioAPI.updateConfiguracion(configData);
+            }
+            
+            // Actualizar datos locales
+            this.portfolioData.configuracion = {
+                tituloProfesional: tituloProfesional,
+                resumenProfesional: resumenProfesional,
+                mostrarContacto: configData.mostrar_contacto,
+                mostrarRedes: configData.mostrar_redes_sociales,
+                mostrarLogros: configData.mostrar_logros,
+                mostrarProyectos: configData.mostrar_proyectos,
+                mostrarExperiencia: configData.mostrar_experiencia
+            };
+            
+            // Actualizar también el perfil con título y resumen
+            this.portfolioData.perfil.tituloProfesional = tituloProfesional;
+            this.portfolioData.perfil.resumenProfesional = resumenProfesional;
+            
+            this.showToast('Configuración guardada exitosamente', 'success');
+            
+            if (window.playSound) {
+                window.playSound('success');
+            }
+        } catch (error) {
+            console.error('Error guardando configuración:', error);
+            this.showToast('Error al guardar la configuración', 'error');
         }
     }
     

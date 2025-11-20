@@ -565,6 +565,10 @@
     padding: 1.5rem;
 }
 
+.modal-body .form-group label {
+    color: white;
+}
+
 .modal-footer {
     padding: 1.5rem;
     border-top: 1px solid rgba(255, 255, 255, 0.1);

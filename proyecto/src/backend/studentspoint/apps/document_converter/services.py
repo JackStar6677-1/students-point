@@ -139,14 +139,29 @@ class DocumentConverter:
     @staticmethod
     def pdf_to_word(pdf_file_path, output_path=None, usar_ocr=False):
         """Convierte PDF a Word usando PyPDF2 y python-docx"""
+        # Validar que el archivo existe y es válido
+        is_valid, error_msg = DocumentValidator.validate_file_path(pdf_file_path)
+        if not is_valid:
+            raise FileValidationError(error_msg)
+        
         try:
             from PyPDF2 import PdfReader
             from docx import Document
             from docx.shared import Pt, RGBColor
             from docx.enum.text import WD_ALIGN_PARAGRAPH
             
-            # Leer PDF
-            reader = PdfReader(pdf_file_path)
+            logger.info(f"Iniciando conversión PDF a Word: {pdf_file_path}")
+            
+            # Leer PDF con manejo de errores mejorado
+            try:
+                reader = PdfReader(pdf_file_path)
+                num_pages = len(reader.pages)
+                logger.info(f"PDF leído correctamente. Páginas: {num_pages}")
+            except Exception as e:
+                raise FileValidationError(f"Error leyendo el archivo PDF: {str(e)}. El archivo puede estar corrupto o protegido.")
+            
+            if num_pages == 0:
+                raise FileValidationError("El PDF no contiene páginas")
             
             # Crear documento Word
             doc = Document()
@@ -158,41 +173,82 @@ class DocumentConverter:
             font.size = Pt(11)
             
             # Extraer texto de cada página
+            total_text_extracted = False
             for page_num, page in enumerate(reader.pages):
-                text = page.extract_text()
-                
-                if usar_ocr and not text.strip():
-                    # Si no hay texto, intentar OCR
-                    text = DocumentConverter._extract_with_ocr(pdf_file_path, page_num)
-                
-                if text.strip():
-                    # Agregar número de página
-                    heading = doc.add_heading(f'Pagina {page_num + 1}', level=2)
-                    heading.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                try:
+                    text = page.extract_text()
                     
-                    # Agregar contenido
-                    paragraphs = text.split('\n')
-                    for para_text in paragraphs:
-                        if para_text.strip():
-                            p = doc.add_paragraph(para_text)
-                            p.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+                    if usar_ocr and not text.strip():
+                        # Si no hay texto, intentar OCR
+                        logger.info(f"Intentando OCR en página {page_num + 1}")
+                        text = DocumentConverter._extract_with_ocr(pdf_file_path, page_num)
                     
-                    # Separador de página
-                    if page_num < len(reader.pages) - 1:
-                        doc.add_page_break()
+                    if text.strip():
+                        total_text_extracted = True
+                        # Agregar número de página
+                        heading = doc.add_heading(f'Pagina {page_num + 1}', level=2)
+                        heading.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                        
+                        # Agregar contenido
+                        paragraphs = text.split('\n')
+                        for para_text in paragraphs:
+                            if para_text.strip():
+                                try:
+                                    p = doc.add_paragraph(para_text)
+                                    p.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+                                except Exception as e:
+                                    logger.warning(f"Error agregando párrafo en página {page_num + 1}: {e}")
+                                    # Continuar con el siguiente párrafo
+                        
+                        # Separador de página
+                        if page_num < len(reader.pages) - 1:
+                            doc.add_page_break()
+                except Exception as e:
+                    logger.warning(f"Error procesando página {page_num + 1}: {e}")
+                    # Continuar con la siguiente página
+                    continue
+            
+            if not total_text_extracted:
+                # Si no se extrajo texto, agregar mensaje
+                doc.add_paragraph("No se pudo extraer texto del PDF. El PDF puede estar protegido o contener solo imágenes.")
+                logger.warning("No se extrajo texto del PDF")
             
             # Guardar documento Word
             if output_path is None:
-                output_path = str(pdf_file_path).replace('.pdf', '.docx')
+                base_path = Path(pdf_file_path)
+                output_path = str(base_path.with_suffix('.docx'))
             
-            doc.save(output_path)
+            # Sanitizar nombre de archivo de salida
+            output_path_obj = Path(output_path)
+            sanitized_name = DocumentValidator.sanitize_filename(output_path_obj.name)
+            output_path = str(output_path_obj.parent / sanitized_name)
             
-            logger.info(f"Conversion PDF a Word exitosa: {output_path}")
+            try:
+                doc.save(output_path)
+            except Exception as e:
+                raise Exception(f"Error guardando documento Word: {str(e)}")
+            
+            # Verificar que el archivo se creó correctamente
+            if not os.path.exists(output_path):
+                raise Exception("El archivo Word no se generó correctamente")
+            
+            file_size = os.path.getsize(output_path)
+            if file_size == 0:
+                raise Exception("El archivo Word generado está vacío")
+            
+            logger.info(f"Conversion PDF a Word exitosa: {output_path} ({file_size} bytes)")
             return output_path
             
-        except Exception as e:
-            logger.error(f"Error convirtiendo PDF a Word: {e}", exc_info=True)
+        except FileValidationError:
             raise
+        except ImportError as e:
+            error_msg = f"Librería requerida no disponible: {str(e)}"
+            logger.error(error_msg, exc_info=True)
+            raise Exception(error_msg)
+        except Exception as e:
+            error_msg = f"Error convirtiendo PDF a Word: {str(e)}"
+            logger.error(error_msg, exc_info=True)
+            raise Exception(error_msg)
     
     @staticmethod
     def _extract_with_ocr(pdf_path, page_num):

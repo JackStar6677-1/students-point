@@ -1,5 +1,8 @@
 import logging
 import threading
+import os
+from django.http import FileResponse, Http404
+from django.conf import settings
 from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -74,4 +77,56 @@ class ConversionDeleteView(generics.DestroyAPIView):
         if instance.archivo_convertido:
             instance.archivo_convertido.delete(save=False)
         instance.delete()
+
+
+class ConversionDownloadView(APIView):
+    """Descarga un archivo convertido"""
+    
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request, pk):
+        try:
+            job = ConversionJob.objects.get(pk=pk, usuario=request.user)
+        except ConversionJob.DoesNotExist:
+            raise Http404("Trabajo de conversión no encontrado")
+        
+        if not job.archivo_convertido:
+            return Response(
+                {'error': 'El archivo convertido no está disponible'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
+        if job.estado != ConversionJob.Estado.COMPLETADO:
+            return Response(
+                {'error': 'La conversión no está completada'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        try:
+            file_path = job.archivo_convertido.path
+            if not os.path.exists(file_path):
+                return Response(
+                    {'error': 'El archivo no existe en el servidor'},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+            
+            # Obtener el nombre del archivo
+            filename = os.path.basename(file_path)
+            
+            # Crear FileResponse con headers para forzar descarga
+            response = FileResponse(
+                open(file_path, 'rb'),
+                content_type='application/octet-stream'
+            )
+            response['Content-Disposition'] = f'attachment; filename="{filename}"'
+            response['Content-Length'] = os.path.getsize(file_path)
+            
+            return response
+            
+        except Exception as e:
+            logger.error(f"Error descargando archivo {job.id}: {str(e)}", exc_info=True)
+            return Response(
+                {'error': f'Error al descargar el archivo: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
