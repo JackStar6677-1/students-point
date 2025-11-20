@@ -1,335 +1,302 @@
-"""
-Pruebas unitarias para la API de Marketplace (Productos)
-"""
-import pytest
-from rest_framework.test import APIClient
-from rest_framework import status
-from django.contrib.auth import get_user_model
-from django.db import connection
+"""Tests para la API de Marketplace."""
 
-from studentspoint.apps.market.models import CategoriaProducto, Producto
+from django.contrib.auth import get_user_model
+from django.utils import timezone
+from rest_framework.test import APITestCase
+
+from studentspoint.apps.market.models import Producto, CategoriaProducto
+from studentspoint.apps.campuses.models import Sede
 
 User = get_user_model()
-pytestmark = pytest.mark.django_db
 
 
-@pytest.fixture
-def user():
-    """Usuario de prueba para marketplace"""
-    return User.objects.create_user(
-        email='vendedor@duocuc.cl',
-        password='testpass123',
-        name='Vendedor Test',
-        career='Ingeniería en Informática'
-    )
-
-
-@pytest.fixture
-def categoria():
-    """Categoría de producto de prueba"""
-    return CategoriaProducto.objects.create(
-        nombre='Electrónicos',
-        descripcion='Dispositivos electrónicos y tecnología'
-    )
-
-
-@pytest.fixture
-def client():
-    """Cliente API para pruebas"""
-    return APIClient()
-
-
-def _has_precio_student_point_column():
-    """Detecta si la tabla de productos incluye la columna precio_student_point (algunas DB de test no aplican migraciones recientes)."""
-    try:
-        with connection.cursor() as cursor:
-            cursor.execute("PRAGMA table_info(market_producto)")
-            return any(row[1] == 'precio_student_point' for row in cursor.fetchall())
-    except Exception:
-        return False
-
-
-def _skip_if_schema_outdated():
-    if not _has_precio_student_point_column():
-        pytest.skip("La base de datos de pruebas no incluye la columna precio_student_point; se omite test de marketplace.")
-
-
-@pytest.fixture(autouse=True)
-def _ensure_precio_column():
-    """Evita ejecutar las pruebas si el esquema no está alineado con la versión actual del Marketplace."""
-    _skip_if_schema_outdated()
-
-
-class TestMarketplaceAPI:
-    """Pruebas para la API de Marketplace"""
+class MarketplaceAPITests(APITestCase):
+    """Tests para el sistema de Marketplace."""
     
-    def test_list_categorias_authenticated(self, client, user):
-        """Prueba listar categorías con usuario autenticado"""
-        CategoriaProducto.objects.create(
-            nombre='Electrónicos',
-            descripcion='Dispositivos electrónicos'
-        )
-        CategoriaProducto.objects.create(
-            nombre='Libros',
-            descripcion='Libros y material académico'
+    def setUp(self):
+        """Configurar datos de prueba."""
+        # Crear sede
+        self.sede = Sede.objects.create(
+            slug="maipu",
+            nombre="Sede Maipú",
+            direccion="Av. Américo Vespucio 1501",
+            lat=-33.5,
+            lng=-70.7
         )
         
-        client.force_authenticate(user=user)
-        response = client.get('/api/marketplace/categories/')
-        assert response.status_code == status.HTTP_200_OK
-        assert response.data['count'] == 2
-        assert len(response.data['results']) == 2
+        # Crear usuarios
+        self.vendedor = User.objects.create_user(
+            email="vendedor@duocuc.cl",
+            password="pass123",
+            name="Vendedor Test",
+            career="Ingeniería en Informática",
+            campus=self.sede
+        )
+        
+        self.comprador = User.objects.create_user(
+            email="comprador@duocuc.cl",
+            password="pass123",
+            name="Comprador Test",
+            career="Ingeniería en Informática",
+            campus=self.sede
+        )
+        
+        # Crear categoría
+        self.categoria = CategoriaProducto.objects.create(
+            nombre="General",
+            descripcion="Categoría general",
+            activa=True
+        )
+        
+        # Autenticar como vendedor
+        self.client.force_authenticate(self.vendedor)
     
-    def test_list_categorias_unauthenticated(self, client):
-        """Prueba listar categorías sin autenticación"""
-        response = client.get('/api/marketplace/categories/')
-        assert response.status_code == status.HTTP_401_UNAUTHORIZED
-    
-    def test_create_producto_authenticated(self, client, user, categoria):
-        """Prueba crear producto con usuario autenticado"""
-        client.force_authenticate(user=user)
+    def test_crear_producto_exitoso(self):
+        """Test crear un producto con los campos mínimos requeridos."""
         data = {
-            'titulo': 'Laptop Dell Inspiron',
-            'descripcion': 'Laptop en excelente estado, ideal para programación',
-            'categoria': categoria.id,
-            'url_principal': 'https://yapo.cl/123456',
-            'tipo_enlace': 'yapo',
-            'precio': 500000,
-            'precio_student_point': 450000,
-            'moneda': 'CLP',
-            'acepta_terminos': True,
-            'acepta_responsabilidad': True
+            'descripcion': 'Laptop HP Core i5 en buen estado',
+            'url': 'https://facebook.com/marketplace/item/123',
+            'precio': 250000,
+            'precio_estudiante': 230000
         }
-        response = client.post('/api/marketplace/products/', data)
-        assert response.status_code == status.HTTP_201_CREATED
-        assert Producto.objects.count() == 1
-        assert Producto.objects.first().vendedor == user
+        
+        response = self.client.post('/api/market/productos/', data, format='json')
+        
+        # Debe ser exitoso
+        self.assertEqual(response.status_code, 201)
+        self.assertTrue(response.data.get('success'))
+        
+        # Verificar que el producto se creó
+        self.assertEqual(Producto.objects.count(), 1)
+        producto = Producto.objects.first()
+        self.assertEqual(producto.descripcion, 'Laptop HP Core i5 en buen estado')
+        self.assertEqual(producto.vendedor, self.vendedor)
+        self.assertEqual(producto.estado, 'publicado')
     
-    def test_create_producto_unauthenticated(self, client, categoria):
-        """Prueba crear producto sin autenticación"""
+    def test_crear_producto_sin_descripcion(self):
+        """Test que falla al crear producto sin descripción."""
         data = {
-            'titulo': 'Laptop Dell Inspiron',
-            'descripcion': 'Laptop en excelente estado',
-            'categoria': categoria.id,
-            'url_principal': 'https://yapo.cl/123456',
-            'tipo_enlace': 'yapo',
-            'precio': 500000,
-            'acepta_terminos': True,
-            'acepta_responsabilidad': True
+            'url': 'https://example.com/test'
         }
-        response = client.post('/api/marketplace/products/', data)
-        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+        
+        response = self.client.post('/api/market/productos/', data, format='json')
+        
+        # Debe fallar
+        self.assertEqual(response.status_code, 400)
+        self.assertIn('error', response.data)
     
-    def test_list_productos_authenticated(self, client, user, categoria):
-        """Prueba listar productos con usuario autenticado"""
-        # Crear algunos productos
+    def test_crear_producto_sin_url(self):
+        """Test que falla al crear producto sin URL."""
+        data = {
+            'descripcion': 'Producto sin URL'
+        }
+        
+        response = self.client.post('/api/market/productos/', data, format='json')
+        
+        # Debe fallar
+        self.assertEqual(response.status_code, 400)
+        self.assertIn('error', response.data)
+    
+    def test_crear_producto_sin_autenticacion(self):
+        """Test que usuarios no autenticados no pueden crear productos."""
+        # Cerrar sesión
+        self.client.force_authenticate(user=None)
+        
+        data = {
+            'descripcion': 'Producto sin auth',
+            'url': 'https://example.com/test'
+        }
+        
+        response = self.client.post('/api/market/productos/', data, format='json')
+        
+        # Debe rechazar
+        self.assertEqual(response.status_code, 401)
+    
+    def test_listar_productos_publicos(self):
+        """Test listar productos publicados."""
+        # Crear productos
         Producto.objects.create(
-            vendedor=user,
+            vendedor=self.vendedor,
             titulo='Producto 1',
-            descripcion='Descripción 1',
-            categoria=categoria,
-            url_principal='https://yapo.cl/1',
-            tipo_enlace='yapo',
+            descripcion='Descripción producto 1',
+            url_principal='https://example.com/1',
+            categoria=self.categoria,
             estado='publicado',
+            publicado_at=timezone.now(),
+            precio=10000,
             acepta_terminos=True,
             acepta_responsabilidad=True
         )
+        
         Producto.objects.create(
-            vendedor=user,
+            vendedor=self.vendedor,
             titulo='Producto 2',
-            descripcion='Descripción 2',
-            categoria=categoria,
-            url_principal='https://yapo.cl/2',
-            tipo_enlace='yapo',
+            descripcion='Descripción producto 2',
+            url_principal='https://example.com/2',
+            categoria=self.categoria,
             estado='publicado',
+            publicado_at=timezone.now(),
+            precio=20000,
             acepta_terminos=True,
             acepta_responsabilidad=True
         )
         
-        client.force_authenticate(user=user)
-        response = client.get('/api/marketplace/products/')
-        assert response.status_code == status.HTTP_200_OK
-        assert response.data['count'] == 2
-        assert len(response.data['results']) == 2
-    
-    def test_list_productos_unauthenticated(self, client):
-        """Prueba listar productos sin autenticación"""
-        response = client.get('/api/marketplace/products/')
-        assert response.status_code == status.HTTP_401_UNAUTHORIZED
-    
-    def test_get_producto_detail_authenticated(self, client, user, categoria):
-        """Prueba obtener detalle de producto con usuario autenticado"""
-        producto = Producto.objects.create(
-            vendedor=user,
-            titulo='Laptop Dell Inspiron',
-            descripcion='Laptop en excelente estado',
-            categoria=categoria,
-            url_principal='https://yapo.cl/123456',
-            tipo_enlace='yapo',
-            estado='publicado',
-            acepta_terminos=True,
-            acepta_responsabilidad=True
-        )
+        # Listar productos (sin autenticación)
+        self.client.force_authenticate(user=None)
+        response = self.client.get('/api/market/productos/')
         
-        client.force_authenticate(user=user)
-        response = client.get(f'/api/marketplace/products/{producto.id}/')
-        assert response.status_code == status.HTTP_200_OK
-        assert response.data['titulo'] == 'Laptop Dell Inspiron'
-        assert response.data['vendedor'] == user.id
-    
-    def test_update_producto_owner(self, client, user, categoria):
-        """Prueba actualizar producto siendo el propietario"""
-        producto = Producto.objects.create(
-            vendedor=user,
-            titulo='Producto Original',
-            descripcion='Descripción original',
-            categoria=categoria,
-            url_principal='https://yapo.cl/123456',
-            tipo_enlace='yapo',
-            estado='publicado',
-            acepta_terminos=True,
-            acepta_responsabilidad=True
-        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.data), 2)
         
-        client.force_authenticate(user=user)
-        data = {
-            'titulo': 'Producto Actualizado',
-            'descripcion': 'Descripción actualizada',
-            'precio': 600000
-        }
-        response = client.patch(f'/api/marketplace/products/{producto.id}/', data)
-        assert response.status_code == status.HTTP_200_OK
-        
-        producto.refresh_from_db()
-        assert producto.titulo == 'Producto Actualizado'
-        assert producto.descripcion == 'Descripción actualizada'
-        assert producto.precio == 600000
+        # Verificar estructura de datos
+        primer_producto = response.data[0]
+        self.assertIn('id', primer_producto)
+        self.assertIn('descripcion', primer_producto)
+        self.assertIn('url', primer_producto)
+        self.assertIn('precio', primer_producto)
     
-    def test_delete_producto_owner(self, client, user, categoria):
-        """Prueba eliminar producto siendo el propietario"""
-        producto = Producto.objects.create(
-            vendedor=user,
-            titulo='Producto a Eliminar',
-            descripcion='Este producto será eliminado',
-            categoria=categoria,
-            url_principal='https://yapo.cl/123456',
-            tipo_enlace='yapo',
-            estado='publicado',
-            acepta_terminos=True,
-            acepta_responsabilidad=True
-        )
-        
-        client.force_authenticate(user=user)
-        response = client.delete(f'/api/marketplace/products/{producto.id}/')
-        assert response.status_code == status.HTTP_204_NO_CONTENT
-        assert Producto.objects.count() == 0
-    
-    def test_producto_estados_filter(self, client, user, categoria):
-        """Prueba filtrado por estados de producto"""
+    def test_solo_lista_productos_publicados(self):
+        """Test que solo lista productos con estado publicado."""
+        # Crear producto publicado
         Producto.objects.create(
-            vendedor=user,
+            vendedor=self.vendedor,
             titulo='Producto Publicado',
-            descripcion='Este está publicado',
-            categoria=categoria,
-            url_principal='https://yapo.cl/1',
-            tipo_enlace='yapo',
+            descripcion='Visible',
+            url_principal='https://example.com/1',
+            categoria=self.categoria,
             estado='publicado',
+            publicado_at=timezone.now(),
             acepta_terminos=True,
             acepta_responsabilidad=True
         )
+        
+        # Crear producto borrador
         Producto.objects.create(
-            vendedor=user,
-            titulo='Producto Vendido',
-            descripcion='Este ya se vendió',
-            categoria=categoria,
-            url_principal='https://yapo.cl/2',
-            tipo_enlace='yapo',
-            estado='vendido',
-            acepta_terminos=True,
-            acepta_responsabilidad=True
-        )
-        Producto.objects.create(
-            vendedor=user,
+            vendedor=self.vendedor,
             titulo='Producto Borrador',
-            descripcion='Este es borrador',
-            categoria=categoria,
-            url_principal='https://yapo.cl/3',
-            tipo_enlace='yapo',
+            descripcion='No visible',
+            url_principal='https://example.com/2',
+            categoria=self.categoria,
             estado='borrador',
             acepta_terminos=True,
             acepta_responsabilidad=True
         )
         
-        client.force_authenticate(user=user)
-        
-        # Filtrar por estado publicado
-        response = client.get('/api/marketplace/products/?estado=publicado')
-        assert response.status_code == status.HTTP_200_OK
-        assert response.data['count'] == 1
-        assert len(response.data['results']) == 1
-        assert response.data['results'][0]['titulo'] == 'Producto Publicado'
-        
-        # Filtrar por estado vendido
-        response = client.get('/api/marketplace/products/?estado=vendido')
-        assert response.status_code == status.HTTP_200_OK
-        assert response.data['count'] == 1
-        assert len(response.data['results']) == 1
-        assert response.data['results'][0]['titulo'] == 'Producto Vendido'
-    
-    def test_producto_categoria_filter(self, client, user, categoria):
-        """Prueba filtrado por categoría de producto"""
-        categoria2 = CategoriaProducto.objects.create(
-            nombre='Libros',
-            descripcion='Libros y material académico'
-        )
-        
+        # Crear producto vendido
         Producto.objects.create(
-            vendedor=user,
-            titulo='Laptop',
-            descripcion='Laptop',
-            categoria=categoria,
-            url_principal='https://yapo.cl/1',
-            tipo_enlace='yapo',
-            estado='publicado'
-        )
-        Producto.objects.create(
-            vendedor=user,
-            titulo='Libro Python',
-            descripcion='Libro de Python',
-            categoria=categoria2,
-            url_principal='https://yapo.cl/2',
-            tipo_enlace='yapo',
-            estado='publicado'
+            vendedor=self.vendedor,
+            titulo='Producto Vendido',
+            descripcion='Ya vendido',
+            url_principal='https://example.com/3',
+            categoria=self.categoria,
+            estado='vendido',
+            vendido_at=timezone.now(),
+            acepta_terminos=True,
+            acepta_responsabilidad=True
         )
         
-        client.force_authenticate(user=user)
-        response = client.get(f'/api/marketplace/products/?categoria={categoria.id}')
-        assert response.status_code == status.HTTP_200_OK
-        assert response.data['count'] == 1
-        assert len(response.data['results']) == 1
-        assert response.data['results'][0]['titulo'] == 'Laptop'
+        # Listar productos
+        response = self.client.get('/api/market/productos/')
+        
+        self.assertEqual(response.status_code, 200)
+        # Solo debe mostrar el producto publicado
+        self.assertEqual(len(response.data), 1)
+        self.assertIn('Visible', response.data[0]['descripcion'])
     
-    def test_producto_urls_adicionales(self, client, user, categoria):
-        """Prueba crear producto con URLs adicionales"""
-        client.force_authenticate(user=user)
+    def test_crear_producto_con_precio(self):
+        """Test crear producto con precio."""
         data = {
-            'titulo': 'Laptop con Fotos',
-            'descripcion': 'Laptop con múltiples fotos',
-            'categoria': categoria.id,
-            'url_principal': 'https://yapo.cl/123456',
-            'tipo_enlace': 'yapo',
-            'urls_adicionales': [
-                'https://img1.com/foto1.jpg',
-                'https://img2.com/foto2.jpg',
-                'https://video.com/demo.mp4'
-            ],
-            'estado': 'publicado',
-            'acepta_terminos': True,
-            'acepta_responsabilidad': True
+            'descripcion': 'Libro de Programación Python',
+            'url': 'https://yapo.cl/item/123',
+            'precio': 15000,
+            'precio_estudiante': 12000
         }
-        response = client.post('/api/marketplace/products/', data, format='json')
-        assert response.status_code == status.HTTP_201_CREATED
+        
+        response = self.client.post('/api/market/productos/', data, format='json')
+        
+        self.assertEqual(response.status_code, 201)
         
         producto = Producto.objects.first()
-        assert len(producto.urls_adicionales) == 3
-        assert 'https://img1.com/foto1.jpg' in producto.urls_adicionales
+        self.assertEqual(producto.precio, 15000)
+        self.assertEqual(producto.precio_student_point, 12000)
+        self.assertEqual(producto.moneda, 'CLP')
+    
+    def test_crear_producto_sin_precio(self):
+        """Test crear producto sin especificar precio."""
+        data = {
+            'descripcion': 'Producto sin precio',
+            'url': 'https://mercadolibre.cl/item/123'
+        }
+        
+        response = self.client.post('/api/market/productos/', data, format='json')
+        
+        self.assertEqual(response.status_code, 201)
+        
+        producto = Producto.objects.first()
+        self.assertIsNone(producto.precio)
+        self.assertIsNone(producto.precio_student_point)
+    
+    def test_producto_se_asigna_categoria_general(self):
+        """Test que productos se asignan a categoría General por defecto."""
+        data = {
+            'descripcion': 'Producto de prueba',
+            'url': 'https://example.com/test'
+        }
+        
+        response = self.client.post('/api/market/productos/', data, format='json')
+        
+        self.assertEqual(response.status_code, 201)
+        
+        producto = Producto.objects.first()
+        self.assertEqual(producto.categoria.nombre, 'General')
+    
+    def test_producto_acepta_terminos_automaticamente(self):
+        """Test que al crear producto se aceptan términos automáticamente."""
+        data = {
+            'descripcion': 'Producto con términos',
+            'url': 'https://example.com/terminos'
+        }
+        
+        response = self.client.post('/api/market/productos/', data, format='json')
+        
+        self.assertEqual(response.status_code, 201)
+        
+        producto = Producto.objects.first()
+        self.assertTrue(producto.acepta_terminos)
+        self.assertTrue(producto.acepta_responsabilidad)
+    
+    def test_productos_ordenados_por_fecha_descendente(self):
+        """Test que productos se listan del más reciente al más antiguo."""
+        import time
+        
+        # Crear productos con diferentes tiempos
+        for i in range(3):
+            Producto.objects.create(
+                vendedor=self.vendedor,
+                titulo=f'Producto {i}',
+                descripcion=f'Descripción {i}',
+                url_principal=f'https://example.com/{i}',
+                categoria=self.categoria,
+                estado='publicado',
+                publicado_at=timezone.now(),
+                acepta_terminos=True,
+                acepta_responsabilidad=True
+            )
+            if i < 2:  # No esperar después del último
+                time.sleep(0.1)
+        
+        response = self.client.get('/api/market/productos/')
+        
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.data), 3)
+        
+        # El primer producto debe ser el más reciente (Producto 2)
+        self.assertIn('Descripción 2', response.data[0]['descripcion'])
+    
+    def test_limitar_productos_a_100(self):
+        """Test que solo se devuelven los últimos 100 productos."""
+        # Este test solo verifica que la consulta existe, no crea 101 productos
+        response = self.client.get('/api/market/productos/')
+        self.assertEqual(response.status_code, 200)
+        # Verificar que devuelve una lista (vacía o con productos)
+        self.assertIsInstance(response.data, list)

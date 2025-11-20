@@ -3,6 +3,7 @@ import sys
 import pathlib
 import logging
 import pytest
+import django
 from datetime import datetime
 
 # Asegurar que Django (backend) esté en PYTHONPATH
@@ -12,7 +13,11 @@ BACKEND_ROOT = pathlib.Path(__file__).resolve().parents[1] / 'proyecto' / 'src' 
 if str(BACKEND_ROOT) not in sys.path:
     sys.path.insert(0, str(BACKEND_ROOT))
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'studentspoint.settings.base')
+# Configurar Django ANTES de importar cualquier modelo
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'studentspoint.settings.test')
+
+# Inicializar Django
+django.setup()
 
 # Configurar logs de tests
 TEST_LOGS_DIR = pathlib.Path(__file__).resolve().parents[1] / 'logs_tests'
