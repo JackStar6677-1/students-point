@@ -135,7 +135,7 @@ Se abrira un menu con todas las opciones disponibles.
 
 ---
 
-### [5] playit.gg - Tunel HTTP Permanente
+### [5] Produccion
 
 **Cuando usar:** Necesitas URL permanente, sin limites de conexion.
 
@@ -170,7 +170,7 @@ Se abrira un menu con todas las opciones disponibles.
 
 ---
 
-### [6] playit.gg HTTPS - Con Certificados SSL
+### [6] Instalar Dependencias
 
 **Cuando usar:** Necesitas HTTPS con playit.gg y URL permanente.
 
