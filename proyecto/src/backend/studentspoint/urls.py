@@ -23,6 +23,7 @@ from django.views.static import serve
 from django.http import HttpResponse, FileResponse
 from pathlib import Path
 from rest_framework_simplejwt.views import TokenRefreshView
+from studentspoint.apps.otec.video_views import serve_video
 
 
 def serve_sw(request):
@@ -159,7 +160,9 @@ urlpatterns = [
     re_path(r'^images/(?P<path>.*)$', serve, {'document_root': Path(settings.STATIC_ROOT) / "images"}),
     # Servir imágenes desde la carpeta imagenes (legacy)
     re_path(r'^imagenes/(?P<path>.*)$', serve, {'document_root': Path(settings.BASE_DIR).parent.parent / "imagenes"}),
-    # Servir archivos media (archivos subidos por usuarios: conversiones, fotos de perfil, etc.)
+    # Servir videos con soporte de streaming (HTTP Range Requests)
+    re_path(r'^media/cursos/videos/(?P<path>.*)$', serve_video, name='serve_video'),
+    # Servir otros archivos media (archivos subidos por usuarios: conversiones, fotos de perfil, etc.)
     re_path(r'^media/(?P<path>.*)$', serve, {'document_root': Path(settings.MEDIA_ROOT)}),
     # Catch-all al final
     re_path(r'^(?P<path>.*)$', spa_serve),

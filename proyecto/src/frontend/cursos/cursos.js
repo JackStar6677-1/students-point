@@ -9,6 +9,19 @@ document.addEventListener('DOMContentLoaded', () => {
     cargarEstadisticas();
     cargarCursos();
     configurarFechaMinima();
+    
+    // Configurar event listener para pausar videos al cerrar el modal
+    const modalDetalleCurso = document.getElementById('detalleCursoModal');
+    if (modalDetalleCurso) {
+        modalDetalleCurso.addEventListener('hidden.bs.modal', function () {
+            // Pausar todos los videos cuando se cierra el modal
+            const videos = this.querySelectorAll('video.curso-video-player');
+            videos.forEach(video => {
+                video.pause();
+                video.currentTime = 0;
+            });
+        });
+    }
 });
 
 // Autenticacion
@@ -253,7 +266,7 @@ function mostrarDetalleCurso(curso) {
                                     <div class="flex-grow-1">
                                         <h6 class="mb-1">Clase ${clase.numero_clase}: ${clase.titulo}</h6>
                                         ${clase.descripcion ? `<p class="mb-2 text-muted small">${clase.descripcion}</p>` : ''}
-                                        <video controls class="w-100 mt-2" style="max-height: 400px;">
+                                        <video controls preload="metadata" class="w-100 mt-2 curso-video-player" style="max-height: 400px;">
                                             <source src="${clase.video_url}" type="video/mp4">
                                             Tu navegador no soporta la reproduccion de videos.
                                         </video>
