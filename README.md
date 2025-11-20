@@ -89,9 +89,11 @@ chmod +x scripts/iniciar_desarrollo.sh
 ### Otros Modos de Inicio
 
 Usa el launcher universal `iniciar_studentspoint.bat` y selecciona:
-- **Opcion [4]** - ngrok con HTTPS (perfecto para PWA)
+- **Opcion [4]** - ngrok con HTTPS (perfecto para PWA, funciona con Python 3.13)
 - **Opcion [5]** - playit.gg tunel permanente
-- **Opcion [6]** - playit.gg con HTTPS
+- **Opcion [6]** - playit.gg con HTTPS (requiere Python 3.12 o inferior)
+
+**Nota Python 3.13:** Si tienes Python 3.13+, usa ngrok (opcion 4) para HTTPS. Ver [`docs/guias/HTTPS-PYTHON313.md`](docs/guias/HTTPS-PYTHON313.md)
 
 **Guias completas:**
 - [`docs/guias/USAR-NGROK.md`](docs/guias/USAR-NGROK.md) - Configuracion de ngrok

@@ -174,10 +174,15 @@ Se abrira un menu con todas las opciones disponibles.
 
 **Cuando usar:** Necesitas HTTPS con playit.gg y URL permanente.
 
+**IMPORTANTE:** No compatible con Python 3.13+. Ver `docs/guias/HTTPS-PYTHON313.md`
+
 **Requisitos:**
+- Python 3.12 o inferior (django-sslserver no funciona con Python 3.13+)
 - playit.gg instalado
 - OpenSSL instalado (el script puede instalarlo)
 - Configurar tunel al puerto 8443
+
+**Alternativa para Python 3.13:** Usa opcion [4] - ngrok (HTTPS automatico sin problemas)
 
 **Que hace:**
 - Instala django-sslserver

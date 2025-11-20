@@ -530,14 +530,48 @@ echo.
 
 cd proyecto\src\backend
 
-echo [1/6] Instalando django-sslserver...
+echo [1/6] Verificando compatibilidad de Python...
+for /f "tokens=2" %%i in ('python --version 2^>^&1') do set PYTHON_VERSION=%%i
+echo Python version: %PYTHON_VERSION%
+
+REM Verificar si es Python 3.13+
+echo %PYTHON_VERSION% | findstr /R "3\.13 3\.14 3\.15" >nul
+if not errorlevel 1 (
+    echo.
+    echo [ERROR] Python 3.13+ no es compatible con django-sslserver
+    echo.
+    echo django-sslserver usa ssl.wrap_socket() que fue eliminado en Python 3.13
+    echo.
+    echo SOLUCIONES RECOMENDADAS:
+    echo.
+    echo [1] Usar ngrok (MAS FACIL - HTTPS automatico)
+    echo     - Vuelve al menu y selecciona opcion [4]
+    echo     - ngrok da HTTPS sin necesidad de certificados
+    echo     - Funciona perfectamente con cualquier version de Python
+    echo.
+    echo [2] Usar Python 3.11 o 3.12
+    echo     - Instala Python 3.12: winget install Python.Python.3.12
+    echo     - Configura Python 3.12 como version por defecto
+    echo.
+    echo [3] Usar Stunnel como proxy HTTPS
+    echo     - Configuracion manual requerida
+    echo.
+    echo RECOMENDACION: Usa ngrok (opcion [4] del menu)
+    echo Es mas facil, rapido y funciona mejor para PWA
+    echo.
+    pause
+    cd ..\..\..
+    goto MENU
+)
+
+echo [2/6] Instalando django-sslserver...
 pip install django-sslserver -q 2>nul
 if errorlevel 1 (
     echo [WARNING] Instalando sin quiet mode...
     pip install django-sslserver
 )
 
-echo [2/6] Verificando OpenSSL...
+echo [3/6] Verificando OpenSSL...
 
 REM Verificar OpenSSL en PATH
 where openssl >nul 2>&1
@@ -585,7 +619,7 @@ if /i "!instalar_openssl!"=="S" (
 
 :openssl_found_https
 
-echo [3/6] Generando certificados SSL...
+echo [4/6] Generando certificados SSL...
 if not exist cert.pem (
     if defined OPENSSL_PATH (
         "%OPENSSL_PATH%" req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes -subj "/C=CL/ST=Santiago/L=Santiago/O=StudentsPoint/CN=best-wales.gl.at.ply.gg"
@@ -603,14 +637,14 @@ if not exist cert.pem (
     echo [OK] Certificados ya existen
 )
 
-echo [4/6] Migraciones...
+echo [5/6] Migraciones...
 python manage.py migrate --run-syncdb >nul 2>&1
 python manage.py collectstatic --noinput >nul 2>&1
 
-echo [5/6] Iniciando Django con HTTPS...
+echo [6/6] Iniciando Django con HTTPS...
 start "Django HTTPS Server - NO CERRAR" cmd /k "python manage.py runsslserver 0.0.0.0:8443 --certificate cert.pem --key key.pem"
 
-echo [6/6] Esperando Django...
+echo [7/7] Esperando Django...
 timeout /t 10 /nobreak >nul
 
 cd ..\..\..
