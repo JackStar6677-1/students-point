@@ -2,7 +2,7 @@ from .base import *
 
 DEBUG = True
 
-# Permitir todos los hosts en desarrollo (incluye ngrok)
+# Permitir todos los hosts en desarrollo (incluye ngrok y playit.gg)
 ALLOWED_HOSTS = ["*"]
 
 # Para producción, usar lista específica:
@@ -17,6 +17,8 @@ ALLOWED_HOSTS = ["*"]
 #     "100.113.204.115",  # Tailscale - desktop
 #     "*.ngrok.io",  # Dominios de ngrok
 #     "*.ngrok-free.app",  # Nuevos dominios de ngrok
+#     "*.gl.at.ply.gg",  # Dominios de playit.gg
+#     "best-wales.gl.at.ply.gg",  # Dominio específico de playit.gg
 # ]
 
 # SSL Server para HTTPS en desarrollo (solo si esta instalado)
@@ -26,10 +28,10 @@ try:
     if 'sslserver' not in INSTALLED_APPS:
         INSTALLED_APPS = INSTALLED_APPS + ['sslserver']
 except ImportError:
-    # sslserver no esta instalado, se omite (no es necesario con ngrok)
+    # sslserver no esta instalado, se omite (no es necesario con ngrok o playit.gg)
     pass
 
-# CSRF - En desarrollo, confiar en todos los orígenes (incluye ngrok)
+# CSRF - En desarrollo, confiar en todos los orígenes (incluye ngrok y playit.gg)
 # IMPORTANTE: En producción, usar lista específica
 CSRF_TRUSTED_ORIGINS = [
     # HTTP
@@ -44,6 +46,9 @@ CSRF_TRUSTED_ORIGINS = [
     "http://192.168.100.59:8000",
     "http://100.75.238.19:8000",  # Tailscale - laptop
     "http://100.113.204.115:8000",  # Tailscale - desktop
+    # playit.gg tunnel
+    "http://best-wales.gl.at.ply.gg:16063",
+    "http://147.185.221.24:16063",
     # HTTPS (para PWA en Android)
     "https://localhost:8000",
     "https://localhost:8443",
@@ -53,17 +58,22 @@ CSRF_TRUSTED_ORIGINS = [
     "https://100.75.238.19:8443",  # HTTPS Tailscale - laptop
     "https://100.113.204.115:8000",
     "https://100.113.204.115:8443",  # HTTPS Tailscale - desktop
+    # playit.gg HTTPS (si se configura)
+    "https://best-wales.gl.at.ply.gg:16063",
+    "https://147.185.221.24:16063",
 ]
 
-# Permitir dominios de ngrok dinámicamente
+# Permitir dominios de ngrok y playit.gg dinámicamente
 import os
 if os.getenv('DJANGO_SETTINGS_MODULE', '').endswith('.dev'):
-    # En desarrollo, agregar patrones de ngrok
-    ngrok_patterns = [
+    # En desarrollo, agregar patrones de ngrok y playit.gg
+    tunnel_patterns = [
         "https://*.ngrok.io",
         "https://*.ngrok-free.app",
         "http://*.ngrok.io",
         "http://*.ngrok-free.app",
+        "http://*.gl.at.ply.gg",
+        "https://*.gl.at.ply.gg",
     ]
     # Nota: Django no soporta wildcards en CSRF_TRUSTED_ORIGINS directamente
     # pero ALLOWED_HOSTS = ["*"] permitirá el acceso

@@ -77,6 +77,16 @@ Este script inicia Django y ngrok automáticamente, dándote un enlace HTTPS pú
 
 **Guía rápida:** Ver [`USAR-NGROK.md`](USAR-NGROK.md) en la raíz.
 
+### PWA con Tunel Publico (playit.gg)
+Para acceso público permanente usando playit.gg:
+```batch
+iniciar_con_playit.bat
+```
+
+Este script inicia Django y el agente de playit.gg automáticamente, dándote acceso público con dominio permanente para instalar la PWA desde cualquier dispositivo.
+
+**Guía rápida:** Ver [`USAR-PLAYIT.md`](USAR-PLAYIT.md) en la raíz.
+
 **¡Eso es todo!** El servidor se inicia automáticamente.
 
 ### Scripts de Inicio Disponibles
@@ -84,6 +94,7 @@ Este script inicia Django y ngrok automáticamente, dándote un enlace HTTPS pú
 **En la raíz del proyecto:**
 - `iniciar_desarrollo.bat/.sh` - Inicio rápido en desarrollo
 - `iniciar_con_ngrok.bat` - Inicio con HTTPS (ngrok) para PWA móvil
+- `iniciar_con_playit.bat` - Inicio con túnel público (playit.gg) para acceso desde internet
 
 **En la carpeta `scripts/`:**
 - `iniciar_produccion.bat/.sh` - Iniciar en modo producción
@@ -443,6 +454,8 @@ La documentacion esta organizada en carpetas tematicas. Ver:
 - `DEPLOYMENT-PRODUCTION.md` - Despliegue en produccion
 - `SISTEMA-LOGGING.md` - Sistema de logs y monitoreo
 - `GUIA-NGROK.md` - Configuracion completa de ngrok para PWA con HTTPS
+- `USAR-NGROK.md` - Guia rapida para usar ngrok
+- `USAR-PLAYIT.md` - Guia rapida para usar playit.gg con tunel publico
 - `PWA-CELULAR.md` - Guia rapida de instalacion PWA en celular
 - `INSTALACION-PWA.md` - Instalacion completa de PWA
 - `PRUEBAS-PWA.md` - 21 tests para verificar PWA
