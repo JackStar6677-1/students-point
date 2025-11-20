@@ -83,7 +83,9 @@ Para acceso público permanente usando playit.gg:
 iniciar_con_playit.bat
 ```
 
-Este script inicia Django y el agente de playit.gg automáticamente, dándote acceso público con dominio permanente para instalar la PWA desde cualquier dispositivo.
+Este script inicia Django y el agente de playit.gg automáticamente, dándote acceso público con dominio permanente.
+
+**NOTA:** playit.gg usa HTTP por defecto (no HTTPS). Para PWA se recomienda usar ngrok que da HTTPS automáticamente.
 
 **Guía rápida:** Ver [`USAR-PLAYIT.md`](USAR-PLAYIT.md) en la raíz.
 
@@ -93,8 +95,9 @@ Este script inicia Django y el agente de playit.gg automáticamente, dándote ac
 
 **En la raíz del proyecto:**
 - `iniciar_desarrollo.bat/.sh` - Inicio rápido en desarrollo
-- `iniciar_con_ngrok.bat` - Inicio con HTTPS (ngrok) para PWA móvil
-- `iniciar_con_playit.bat` - Inicio con túnel público (playit.gg) para acceso desde internet
+- `iniciar_con_ngrok.bat` - Inicio con HTTPS (ngrok) para PWA móvil - **Recomendado para PWA**
+- `iniciar_con_playit.bat` - Inicio con túnel público (playit.gg) HTTP
+- `iniciar_playit_https.bat` - Inicio con playit.gg y HTTPS (requiere configuración adicional)
 
 **En la carpeta `scripts/`:**
 - `iniciar_produccion.bat/.sh` - Iniciar en modo producción

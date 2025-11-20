@@ -7,6 +7,34 @@ Segun tu configuracion:
 - **IP Publica:** 147.185.221.24:16063
 - **Agente:** students-point
 - **Puerto Local:** 127.0.0.1:8000
+- **Protocolo:** HTTP (no HTTPS por defecto)
+
+## IMPORTANTE: Limitacion de HTTPS
+
+**playit.gg usa HTTP por defecto, no HTTPS.** Esto significa que:
+
+- El navegador mostrara advertencia "No es seguro"
+- La PWA puede no instalarse correctamente en algunos navegadores
+- Los datos no estan encriptados en transito
+
+### Soluciones para HTTPS:
+
+**OPCION 1 (Recomendada): Usar ngrok**
+- ngrok da HTTPS automaticamente sin configuracion
+- Es mas facil para probar PWA en dispositivos moviles
+- Ejecuta: `iniciar_con_ngrok.bat`
+- Ver: `USAR-NGROK.md`
+
+**OPCION 2: Configurar HTTPS con playit.gg**
+- Requiere django-sslserver y certificados SSL
+- Debes cambiar el tunel al puerto 8443
+- Ejecuta: `iniciar_playit_https.bat`
+- Mas complejo pero funcional
+
+**OPCION 3: Cloudflare Tunnel**
+- Da HTTPS gratuito y permanente
+- Requiere cuenta de Cloudflare
+- Mas configuracion inicial
 
 ---
 
@@ -144,6 +172,42 @@ El agente se conectara automaticamente usando tu configuracion existente.
    - Cierra la ventana "Playit.gg Tunnel"
    - Ejecuta manualmente: `playit`
 
+### Configurar HTTPS con playit.gg
+
+Si necesitas HTTPS (recomendado para PWA):
+
+**Paso 1: Ejecuta el script de HTTPS**
+```bash
+iniciar_playit_https.bat
+```
+
+Este script:
+- Instala django-sslserver
+- Genera certificados SSL self-signed
+- Inicia Django en puerto 8443 con HTTPS
+- Te indica como configurar el tunel
+
+**Paso 2: Configura el tunel para puerto 8443**
+
+1. Ve a: https://playit.gg/account
+2. Click en tu tunel "unnamed"
+3. En "Local Port" cambia de `8000` a `8443`
+4. Click en "Update"
+5. Reinicia el agente de playit
+
+**Paso 3: Accede con HTTPS**
+```
+https://best-wales.gl.at.ply.gg:16063
+```
+
+**Nota:** El navegador mostrara advertencia de certificado porque es self-signed.
+Click en "Avanzado" -> "Continuar de todos modos"
+
+**Alternativa mas facil:** Usa ngrok que da HTTPS automaticamente:
+```bash
+iniciar_con_ngrok.bat
+```
+
 ### Cambio de dominio
 
 Si tu dominio de playit.gg cambia o es diferente:
@@ -184,6 +248,13 @@ Si tu dominio de playit.gg cambia o es diferente:
 **Multi-protocolo** - Soporta TCP y UDP
 **Dashboard web** - Administra tus tuneles desde el navegador
 
+## Desventajas de usar playit.gg
+
+**No tiene HTTPS automatico** - Requiere configuracion manual de certificados
+**Advertencia de seguridad** - El navegador mostrara "No es seguro"
+**PWA puede fallar** - Algunos navegadores requieren HTTPS para PWA
+**Configuracion mas compleja** - Para HTTPS necesitas django-sslserver
+
 ---
 
 ## Notas Importantes
@@ -215,27 +286,39 @@ Alli puedes:
 
 ## Comparacion de herramientas
 
-### playit.gg (Recomendado para desarrollo):
-- Dominio permanente
-- Sin limites de conexiones
-- Gratis sin restricciones
-- Configuracion simple
-- Multi-protocolo (TCP/UDP)
-- Requiere instalacion del agente
-
-### ngrok (Alternativa):
-- HTTPS automatico
-- Facil de usar
+### ngrok (Recomendado para PWA y pruebas rapidas):
+- **HTTPS automatico** - Sin configuracion
+- Facil de usar - Un solo comando
+- **Perfecto para PWA** - Sin advertencias de seguridad
 - URL cambia cada reinicio (version gratuita)
 - 40 conexiones/minuto (limite gratuito)
 - Solo HTTP/HTTPS en version gratuita
 
-### Tailscale + HTTPS:
+### playit.gg (Recomendado para desarrollo sin PWA):
+- Dominio permanente - No cambia entre reinicios
+- Sin limites de conexiones
+- Gratis sin restricciones
+- Multi-protocolo (TCP/UDP)
+- **NO tiene HTTPS automatico** - Requiere configuracion
+- Mejor para APIs y desarrollo backend
+
+### Tailscale (Recomendado para produccion):
 - Red privada segura
 - URL fija
 - Sin limites
 - Requiere Tailscale en todos los dispositivos
-- Mejor para produccion
+- Mejor para produccion y equipo
+
+### Resumen rapido:
+
+**Para probar PWA en celular:**
+- Usa `iniciar_con_ngrok.bat` (HTTPS automatico)
+
+**Para desarrollo backend/API:**
+- Usa `iniciar_con_playit.bat` (dominio permanente)
+
+**Para produccion o equipo:**
+- Usa Tailscale con certificado SSL
 
 ---
 
