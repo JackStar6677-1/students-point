@@ -56,7 +56,22 @@ Esta arquitectura permite que las instituciones **reemplacen múltiples sistemas
 
 ##  Inicio Rápido
 
-### Windows
+### Launcher Universal (Recomendado)
+```batch
+iniciar_studentspoint.bat
+```
+
+Este script maestro te permite elegir el modo de inicio:
+1. Local - Solo esta PC
+2. Red Local - WiFi
+3. Tailscale - VPN privada
+4. ngrok - HTTPS publico (perfecto para PWA)
+5. playit.gg - Tunel HTTP permanente
+6. playit.gg HTTPS - Con certificados SSL
+7. Produccion - Modo produccion
+8. Instalar Dependencias - Instala todo automaticamente
+
+### Windows (Modo tradicional)
 ```batch
 iniciar_desarrollo.bat
 ```
@@ -94,10 +109,10 @@ Este script inicia Django y el agente de playit.gg automáticamente, dándote ac
 ### Scripts de Inicio Disponibles
 
 **En la raíz del proyecto:**
+- `iniciar_studentspoint.bat` - **Launcher Universal** - Menu interactivo con todas las opciones
 - `iniciar_desarrollo.bat/.sh` - Inicio rápido en desarrollo
-- `iniciar_con_ngrok.bat` - Inicio con HTTPS (ngrok) para PWA móvil - **Recomendado para PWA**
-- `iniciar_con_playit.bat` - Inicio con túnel público (playit.gg) HTTP
-- `iniciar_playit_https.bat` - Inicio con playit.gg y HTTPS (requiere configuración adicional)
+- `iniciar_con_ngrok.bat` - Inicio con HTTPS (ngrok) para PWA móvil
+- `iniciar_playit_https.bat` - Inicio con playit.gg y HTTPS
 
 **En la carpeta `scripts/`:**
 - `iniciar_produccion.bat/.sh` - Iniciar en modo producción
@@ -456,6 +471,7 @@ La documentacion esta organizada en carpetas tematicas. Ver:
 - `CONFIGURACION-GOOGLE-EMAIL.md` - OAuth y Email SMTP
 - `DEPLOYMENT-PRODUCTION.md` - Despliegue en produccion
 - `SISTEMA-LOGGING.md` - Sistema de logs y monitoreo
+- `LAUNCHER.md` - Guia completa del launcher universal con todas las opciones
 - `GUIA-NGROK.md` - Configuracion completa de ngrok para PWA con HTTPS
 - `USAR-NGROK.md` - Guia rapida para usar ngrok
 - `USAR-PLAYIT.md` - Guia rapida para usar playit.gg con tunel publico
