@@ -1,10 +1,35 @@
 """Servicios para el módulo de foros."""
 
 from typing import TYPE_CHECKING
+import unicodedata
+import re
 
 if TYPE_CHECKING:
     from django.contrib.auth import get_user_model
     User = get_user_model()
+
+
+def normalizar_carrera(carrera: str) -> str:
+    """Normaliza el nombre de una carrera para comparación.
+    
+    Elimina tildes, convierte a minúsculas y normaliza espacios.
+    
+    Args:
+        carrera: Nombre de la carrera
+        
+    Returns:
+        str: Nombre normalizado
+    """
+    if not carrera:
+        return ""
+    # Convertir a minúsculas
+    carrera = carrera.lower()
+    # Eliminar tildes y caracteres especiales
+    carrera = unicodedata.normalize('NFD', carrera)
+    carrera = ''.join(c for c in carrera if unicodedata.category(c) != 'Mn')
+    # Normalizar espacios (múltiples espacios a uno solo)
+    carrera = re.sub(r'\s+', ' ', carrera).strip()
+    return carrera
 
 
 class ForumPermissionService:
@@ -45,7 +70,10 @@ class ForumPermissionService:
             return True
             
         # Usuario normal solo puede postear en foro de su carrera
-        return usuario.career == foro.carrera
+        # Comparación normalizada para manejar diferencias de tildes y mayúsculas
+        carrera_usuario = normalizar_carrera(usuario.career) if usuario.career else ""
+        carrera_foro = normalizar_carrera(foro.carrera) if foro.carrera else ""
+        return carrera_usuario == carrera_foro
     
     @classmethod
     def puede_ver_foro(cls, usuario, foro) -> bool:
@@ -71,7 +99,10 @@ class ForumPermissionService:
             return True
             
         # Usuario normal solo puede ver foros privados de su carrera
-        return usuario.career == foro.carrera
+        # Comparación normalizada para manejar diferencias de tildes y mayúsculas
+        carrera_usuario = normalizar_carrera(usuario.career) if usuario.career else ""
+        carrera_foro = normalizar_carrera(foro.carrera) if foro.carrera else ""
+        return carrera_usuario == carrera_foro
     
     @classmethod
     def filtrar_foros_visibles(cls, usuario, queryset):
