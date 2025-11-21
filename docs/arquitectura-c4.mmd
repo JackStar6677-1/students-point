@@ -1,0 +1,46 @@
+%% C4-Style Context + Containers (simplificado) - StudentsPoint
+flowchart TB
+    classDef person fill:#d1e9ff,stroke:#1f2937,color:#111827,stroke-width:1.2px
+    classDef system fill:#e8e8e8,stroke:#111827,color:#111827,stroke-width:1.2px
+    classDef container fill:#e2f0cb,stroke:#1f2937,color:#111827,stroke-width:1.2px
+    classDef external fill:#fcdabf,stroke:#1f2937,color:#111827,stroke-width:1.2px
+    classDef data fill:#c7e3d0,stroke:#1f2937,color:#111827,stroke-width:1.2px
+
+    %% Contexto
+    P["Usuarios / Estudiantes<br/>Web + PWA"]:::person
+    Adm["Staff / Admin"]:::person
+
+    SP["StudentsPoint<br/>(Sistema principal)"]:::system
+    ExtPay["Servicios externos<br/>(ngrok / pasarelas / media)"]:::external
+
+    P -->|Navega / consume API| SP
+    Adm -->|Administra| SP
+    SP -- HTTPS t?nel --> ExtPay
+
+    %% Contenedores internos del sistema
+    subgraph Sistema StudentsPoint
+        direction TB
+        API["Backend Django + DRF<br/>Servicios: auth, forum, market,<br/>reportes, encuestas, portfolio"]:::container
+        Front["Frontend SPA/PWA est?tica<br/>HTML/CSS/JS + manifest + SW"]:::container
+        DB["Base de datos<br/>SQLite (dev) / Postgres (prod)"]:::data
+        Media["Almacenamiento media<br/>Uploads locales (dev)<br/>S3/Blob (prod)"]:::data
+    end
+
+    P --> Front
+    Front -->|fetch| API
+    Adm -->|dashboards| API
+    API --> DB
+    API --> Media
+    API --> Front
+
+    %% Infra de acceso
+    subgraph Acceso y despliegue local
+        direction LR
+        Ngrok["ngrok t?nel p?blico<br/>https://<id>.ngrok-free.app -> 8000"]:::external
+        Run["Servidor Django dev<br/>runserver/gunicorn :8000"]:::container
+    end
+
+    Front -. servido por .-> Run
+    API -. WSGI/ASGI .-> Run
+    Run --> Ngrok
+    P -->|HTTPS| Ngrok --> Run

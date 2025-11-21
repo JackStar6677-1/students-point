@@ -1,0 +1,24 @@
+flowchart LR
+    classDef box stroke:#374151,stroke-width:1.2px,fill:#d1e9ff,color:#111827
+    classDef endpoint fill:#ffe5d9
+    classDef agent fill:#fff3b0
+    classDef django fill:#e2f0cb
+    classDef frontend fill:#d3c4f3
+    classDef db fill:#c7e3d0
+    classDef media fill:#f9e0ae
+
+    U["Usuarios / Clientes<br/>Navegador + PWA móvil<br/>HTTPS"]:::box
+    P["ngrok endpoint público<br/>https://<id>.ngrok-free.app<br/>TLS / Web Inspector"]:::endpoint
+    A["Agente ngrok local<br/>Túnel a puerto 8000<br/>Dashboard 4040"]:::agent
+    D["Servidor Django (dev)<br/>Gunicorn/runserver :8000<br/>API REST + SSR"]:::django
+    F["Frontend estático<br/>HTML/CSS/JS + PWA<br/>proyecto/src/frontend"]:::frontend
+    B["Base de datos<br/>SQLite (dev)<br/>market/otros módulos"]:::db
+    M["Archivos media<br/>uploads locales"]:::media
+
+    U -->|TLS externo| P -->|Túnel TCP| A --> D --> B
+    M --> D
+    F --> D
+
+    %% Ayudas de layout para dar separación vertical
+    F -.->|assets| D
+    M -.->|archivos| D
