@@ -104,15 +104,10 @@ class ForoListView(generics.ListAPIView):
         if Foro.objects.exists():
             return
         from studentspoint.apps.campuses.models import Sede
+        from studentspoint.apps.accounts.models import CARRERAS_DISPONIBLES
         from django.utils.text import slugify
-        carreras = [
-            "Ingeniería en Informática",
-            "Ingeniería en Construcción",
-            "Ingeniería en Electricidad",
-            "Administración",
-            "Contabilidad",
-            "Técnico en Informática",
-        ]
+        
+        carreras = CARRERAS_DISPONIBLES
         sedes = list(Sede.objects.all())
         if not sedes:
             # Crear sede base si no hay

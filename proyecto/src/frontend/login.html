@@ -112,12 +112,6 @@
                 <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
             </button>
             
-            <div class="divider-gradient"></div>
-            
-            <button type="button" class="btn btn-outline w-100 mb-3" id="googleLogin">
-                <i class="fab fa-google"></i> Continuar con Google
-            </button>
-            
             <p class="text-center" style="color: var(--color-gray-light); margin-top: 2rem;">
                 ¿No tienes cuenta? 
                 <a href="/register.html" class="text-gradient-gold" style="font-weight: 600;">Regístrate aquí</a>
@@ -212,25 +206,6 @@
                 if (window.playSound) window.playSound('error');
                 loginBtn.disabled = false;
                 loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Iniciar Sesión';
-            }
-        });
-        
-        // Google Login
-        document.getElementById('googleLogin').addEventListener('click', async function() {
-            if (window.playSound) window.playSound('click');
-            
-            try {
-                const response = await fetch('/api/auth/google/login/');
-                const data = await response.json();
-                
-                if (data.auth_url) {
-                    window.location.href = data.auth_url;
-                } else {
-                    showAlert('Error al iniciar sesión con Google', 'error');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                showAlert('Error de conexión con Google', 'error');
             }
         });
         

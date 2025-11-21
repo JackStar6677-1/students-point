@@ -79,18 +79,19 @@
                         </label>
                         <select class="form-input form-select" id="career" required>
                             <option value="">Selecciona tu carrera</option>
-                            <option value="Ingenieria en Informatica">Ingeniería en Informática</option>
-                            <option value="Ingenieria en Construccion">Ingeniería en Construcción</option>
-                            <option value="Ingenieria en Electricidad">Ingeniería en Electricidad</option>
-                            <option value="Ingenieria Industrial">Ingeniería Industrial</option>
+                            <option value="Ingeniería en Informática">Ingeniería en Informática</option>
+                            <option value="Ingeniería en Conectividad y Redes">Ingeniería en Conectividad y Redes</option>
+                            <option value="Ingeniería en Construcción">Ingeniería en Construcción</option>
+                            <option value="Ingeniería en Electricidad">Ingeniería en Electricidad</option>
+                            <option value="Ingeniería Industrial">Ingeniería Industrial</option>
                             <option value="Derecho">Derecho</option>
                             <option value="Medicina">Medicina</option>
                             <option value="Arquitectura">Arquitectura</option>
-                            <option value="Psicologia">Psicología</option>
-                            <option value="Administracion de Empresas">Administración de Empresas</option>
+                            <option value="Psicología">Psicología</option>
+                            <option value="Administración de Empresas">Administración de Empresas</option>
                             <option value="Contabilidad">Contabilidad</option>
-                            <option value="Tecnico en Informatica">Técnico en Informática</option>
-                            <option value="Estudiante Generico">Estudiante Genérico</option>
+                            <option value="Técnico en Informática">Técnico en Informática</option>
+                            <option value="Estudiante Genérico">Estudiante Genérico</option>
                         </select>
                     </div>
                 </div>
@@ -156,12 +157,6 @@
             
             <button type="submit" class="btn btn-primary w-100 btn-lg mb-3" id="registerBtn">
                 <i class="fas fa-user-plus"></i> Crear Cuenta
-            </button>
-            
-            <div class="divider-gradient"></div>
-            
-            <button type="button" class="btn btn-outline w-100 mb-3" id="googleRegister">
-                <i class="fab fa-google"></i> Registrarse con Google
             </button>
             
             <p class="text-center" style="color: var(--color-gray-light); margin-top: 2rem;">
@@ -312,25 +307,6 @@
                 if (window.playSound) window.playSound('error');
                 registerBtn.disabled = false;
                 registerBtn.innerHTML = '<i class="fas fa-user-plus"></i> Crear Cuenta';
-            }
-        });
-        
-        // Google Register
-        document.getElementById('googleRegister').addEventListener('click', async function() {
-            if (window.playSound) window.playSound('click');
-            
-            try {
-                const response = await fetch('/api/auth/google/login/');
-                const data = await response.json();
-                
-                if (data.auth_url) {
-                    window.location.href = data.auth_url;
-                } else {
-                    showAlert('Error al registrarse con Google', 'error');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                showAlert('Error de conexión con Google', 'error');
             }
         });
         

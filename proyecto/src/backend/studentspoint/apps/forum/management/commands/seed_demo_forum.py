@@ -7,6 +7,7 @@ from django.contrib.auth import get_user_model
 from django.db import transaction
 from studentspoint.apps.campuses.models import Sede
 from studentspoint.apps.forum.models import Foro, Post, Comentario, OpcionEncuesta, VotoEncuesta
+from studentspoint.apps.accounts.models import CARRERAS_DISPONIBLES
 
 
 class Command(BaseCommand):
@@ -17,11 +18,8 @@ class Command(BaseCommand):
             sede_defaults = {"slug": "sede-maipu", "lat": -33.513, "lng": -70.761}
             sede, _ = Sede.objects.get_or_create(nombre="Sede Maipú", defaults=sede_defaults)
 
-            carreras = [
-                "Ingeniería en Informática",
-                "Administración",
-                "Contabilidad",
-            ]
+            # Usar solo las primeras 3 carreras para demo
+            carreras = CARRERAS_DISPONIBLES[:3]
             foros = []
             for carrera in carreras:
                 foro, _ = Foro.objects.get_or_create(

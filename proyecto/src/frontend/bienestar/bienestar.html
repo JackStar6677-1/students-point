@@ -121,14 +121,21 @@
                             <div class="glass p-4">
                                 <h4 class="text-center mb-4">Selecciona tu Carrera</h4>
                                 <select class="form-select form-select-lg mb-4" id="carrera-select">
-                                    <option value="">Elige tu carrera...</option>
-                                    <option value="informatica">Ingeniería en Informática</option>
-                                    <option value="construccion" disabled>Ingeniería en Construcción (Próximamente)</option>
-                                    <option value="administracion" disabled>Administración de Empresas (Próximamente)</option>
-                                    <option value="diseno" disabled>Diseño Gráfico (Próximamente)</option>
-                                    <option value="electronica" disabled>Ingeniería en Electrónica (Próximamente)</option>
+                                    <option value="informatica" selected>Ingeniería en Informática</option>
+                                    <option value="conectividad">Ingeniería en Conectividad y Redes</option>
+                                    <option value="construccion">Ingeniería en Construcción</option>
+                                    <option value="electricidad">Ingeniería en Electricidad</option>
+                                    <option value="industrial">Ingeniería Industrial</option>
+                                    <option value="derecho">Derecho</option>
+                                    <option value="medicina">Medicina</option>
+                                    <option value="arquitectura">Arquitectura</option>
+                                    <option value="psicologia">Psicología</option>
+                                    <option value="administracion">Administración de Empresas</option>
+                                    <option value="contabilidad">Contabilidad</option>
+                                    <option value="tecnico">Técnico en Informática</option>
+                                    <option value="generico">Estudiante Genérico</option>
                                 </select>
-                                <button class="btn btn-gradient-purple btn-lg w-100" onclick="loadConsejos()" id="load-btn" disabled>
+                                <button class="btn btn-gradient-purple btn-lg w-100" onclick="loadConsejos()" id="load-btn">
                                     <i class="fas fa-heart"></i> Ver Consejos de Bienestar
                                 </button>
                             </div>
@@ -190,8 +197,9 @@
     <script src="/static/js/main.js"></script>
     
     <script>
-        // Datos hardcodeados de ejemplo para Informática
-        const consejosInformatica = {
+        // Datos de bienestar para todas las carreras
+        const todosLosConsejos = {
+        informatica: {
             fisico: [
                 {
                     titulo: "Ergonomía para Programadores",
@@ -354,15 +362,1618 @@
                     duracion: "7 min"
                 }
             ]
+        },
+        
+        conectividad: {
+            fisico: [
+                {
+                    titulo: "Ergonomía en Instalación de Redes",
+                    descripcion: "Postura correcta para trabajos técnicos en altura y espacios reducidos",
+                    contenido: `
+                        <h5>Trabajo en Altura</h5>
+                        <ul>
+                            <li>Uso correcto de escaleras (regla 4:1)</li>
+                            <li>Protección de espalda al levantar equipos</li>
+                            <li>Postura en espacios reducidos (cielorrasos, cuartos técnicos)</li>
+                        </ul>
+                        <h5>Cableado y Crimpado</h5>
+                        <ul>
+                            <li>Muñecas rectas al crimpar cables</li>
+                            <li>Pausas cada 30 minutos</li>
+                            <li>Herramientas ergonómicas</li>
+                        </ul>
+                    `,
+                    duracion: "6 min"
+                },
+                {
+                    titulo: "Cuidado de Manos y Muñecas",
+                    descripcion: "Prevención de lesiones por movimientos repetitivos",
+                    contenido: `
+                        <h5>Síndrome del Túnel Carpiano</h5>
+                        <p>Común en técnicos por uso repetitivo de herramientas.</p>
+                        <h5>Ejercicios</h5>
+                        <ol>
+                            <li>Círculos de muñeca: 10 cada dirección</li>
+                            <li>Estiramiento de dedos: Abrir y cerrar manos 20 veces</li>
+                            <li>Oposición del pulgar: Tocar cada dedo con el pulgar</li>
+                        </ol>
+                    `,
+                    duracion: "4 min"
+                },
+                {
+                    titulo: "Pausas Activas en Campo",
+                    descripcion: "Estiramientos rápidos durante instalaciones",
+                    contenido: `
+                        <h5>Rutina de Campo (3 min)</h5>
+                        <ol>
+                            <li>Estiramiento de espalda baja</li>
+                            <li>Rotación de hombros</li>
+                            <li>Estiramiento de piernas (si estado de pie mucho tiempo)</li>
+                        </ol>
+                    `,
+                    duracion: "3 min"
+                }
+            ],
+            mental: [
+                {
+                    titulo: "Manejo de Estrés en Proyectos Críticos",
+                    descripcion: "Cómo mantener la calma cuando la red está caída",
+                    contenido: `
+                        <h5>Protocolo de Emergencias</h5>
+                        <ol>
+                            <li><strong>Respira:</strong> 3 respiraciones profundas</li>
+                            <li><strong>Prioriza:</strong> Servicios críticos primero</li>
+                            <li><strong>Comunica:</strong> Actualiza al equipo regularmente</li>
+                        </ol>
+                        <h5>Post-Incidente</h5>
+                        <p>Tómate 10 minutos para descomprimir después de resolver una crisis.</p>
+                    `,
+                    duracion: "8 min"
+                },
+                {
+                    titulo: "Concentración en Diagnóstico",
+                    descripcion: "Técnicas para troubleshooting efectivo",
+                    contenido: `
+                        <h5>Método Sistemático</h5>
+                        <ol>
+                            <li>Define el problema específicamente</li>
+                            <li>Aísla variables (capa por capa del modelo OSI)</li>
+                            <li>Prueba hipótesis una a la vez</li>
+                            <li>Documenta lo que intentaste</li>
+                        </ol>
+                    `,
+                    duracion: "10 min"
+                },
+                {
+                    titulo: "Balance Trabajo-Estudio",
+                    descripcion: "Gestión del tiempo entre clases y proyectos técnicos",
+                    contenido: `
+                        <h5>Time Blocking para Técnicos</h5>
+                        <ul>
+                            <li>Bloques de estudio teórico (protocolos, certificaciones)</li>
+                            <li>Bloques de práctica hands-on</li>
+                            <li>Buffer time para emergencias</li>
+                        </ul>
+                    `,
+                    duracion: "7 min"
+                }
+            ],
+            nutricional: [
+                {
+                    titulo: "Nutrición para Turnos Extendidos",
+                    descripcion: "Cómo mantener energía en ventanas de mantenimiento nocturno",
+                    contenido: `
+                        <h5>Antes del Turno</h5>
+                        <p>Comida completa: Proteína + Carbohidratos complejos + Grasas saludables</p>
+                        <h5>Durante (cada 3-4 horas)</h5>
+                        <ul>
+                            <li>Snacks: Frutos secos, barras de proteína</li>
+                            <li>Evita azúcar refinada (crash energético)</li>
+                        </ul>
+                        <h5>Hidratación</h5>
+                        <p>500ml de agua cada 2 horas</p>
+                    `,
+                    duracion: "10 min"
+                },
+                {
+                    titulo: "Cafeína Táctica",
+                    descripcion: "Uso estratégico de café en mantenimientos",
+                    contenido: `
+                        <h5>Timing</h5>
+                        <ul>
+                            <li>Primera dosis: 30 min antes del turno</li>
+                            <li>Segunda: A mitad del turno (si es > 6 horas)</li>
+                            <li>NO consumir 4 horas antes de dormir</li>
+                        </ul>
+                    `,
+                    duracion: "5 min"
+                },
+                {
+                    titulo: "Comidas Rápidas Saludables",
+                    descripcion: "Opciones cuando estás en el campo",
+                    contenido: `
+                        <h5>Para Llevar</h5>
+                        <ul>
+                            <li>Sandwich integral con pavo/pollo</li>
+                            <li>Frutas fáciles: manzana, plátano</li>
+                            <li>Mix de frutos secos y pasas</li>
+                        </ul>
+                    `,
+                    duracion: "6 min"
+                }
+            ]
+        },
+        
+        construccion: {
+            fisico: [
+                {
+                    titulo: "Prevención de Lesiones en Obra",
+                    descripcion: "Seguridad y ergonomía en el sitio de construcción",
+                    contenido: `
+                        <h5>Levantamiento Seguro</h5>
+                        <ol>
+                            <li>Flexiona las rodillas, no la espalda</li>
+                            <li>Mantén la carga cerca del cuerpo</li>
+                            <li>No gires el torso con peso</li>
+                            <li>Pide ayuda para cargas > 20kg</li>
+                        </ol>
+                        <h5>EPP Esencial</h5>
+                        <ul>
+                            <li>Casco siempre</li>
+                            <li>Botas con punta de acero</li>
+                            <li>Guantes según tarea</li>
+                        </ul>
+                    `,
+                    duracion: "8 min"
+                },
+                {
+                    titulo: "Protección contra el Sol",
+                    descripcion: "Cuidado de la piel en trabajos al aire libre",
+                    contenido: `
+                        <h5>Protección Solar</h5>
+                        <ul>
+                            <li>Bloqueador FPS 50+ cada 2 horas</li>
+                            <li>Gorro con ala ancha o casco con visera</li>
+                            <li>Ropa de manga larga (tela respirable)</li>
+                        </ul>
+                        <h5>Hidratación en Verano</h5>
+                        <p>1 litro de agua por cada 2 horas en el sol</p>
+                    `,
+                    duracion: "6 min"
+                },
+                {
+                    titulo: "Estiramientos para Constructores",
+                    descripcion: "Rutina para prevenir dolores musculares",
+                    contenido: `
+                        <h5>Rutina Matinal (5 min)</h5>
+                        <ol>
+                            <li>Rotación de cuello y hombros</li>
+                            <li>Estiramiento de espalda (gato-vaca)</li>
+                            <li>Estiramiento de piernas (cuádriceps, isquiotibiales)</li>
+                            <li>Rotación de tobillos</li>
+                        </ol>
+                    `,
+                    duracion: "5 min"
+                }
+            ],
+            mental: [
+                {
+                    titulo: "Gestión de Proyectos Bajo Presión",
+                    descripcion: "Manejo del estrés en plazos de entrega",
+                    contenido: `
+                        <h5>Método Crítico Path</h5>
+                        <ol>
+                            <li>Identifica tareas críticas vs paralelas</li>
+                            <li>Enfócate en el camino crítico</li>
+                            <li>Delega tareas secundarias</li>
+                        </ol>
+                        <h5>Comunicación con Cliente</h5>
+                        <p>Expectativas claras desde el inicio previenen estrés futuro.</p>
+                    `,
+                    duracion: "10 min"
+                },
+                {
+                    titulo: "Trabajo en Equipo en Obra",
+                    descripcion: "Coordinación efectiva entre especialidades",
+                    contenido: `
+                        <h5>Reuniones de Coordinación</h5>
+                        <ul>
+                            <li>Daily standup: 10 min cada mañana</li>
+                            <li>Revisión de planificación semanal</li>
+                            <li>Resolución de conflictos inmediata</li>
+                        </ul>
+                    `,
+                    duracion: "8 min"
+                },
+                {
+                    titulo: "Adaptabilidad en Obra",
+                    descripcion: "Cómo manejar imprevistos y cambios",
+                    contenido: `
+                        <h5>Mindset Flexible</h5>
+                        <p>En construcción, siempre hay imprevistos. La clave es adaptarse rápido.</p>
+                        <h5>Protocolo de Cambios</h5>
+                        <ol>
+                            <li>Evalúa impacto en tiempo y costo</li>
+                            <li>Propón soluciones alternativas</li>
+                            <li>Documenta todo</li>
+                        </ol>
+                    `,
+                    duracion: "9 min"
+                }
+            ],
+            nutricional: [
+                {
+                    titulo: "Nutrición para Trabajo Físico Intenso",
+                    descripcion: "Alimentación para mantener energía en obra",
+                    contenido: `
+                        <h5>Desayuno Contundente</h5>
+                        <p>Avena + huevos + frutas = Energía sostenida</p>
+                        <h5>Almuerzo en Obra</h5>
+                        <ul>
+                            <li>Proteína: Pollo, carne, pescado</li>
+                            <li>Carbohidratos: Arroz, papa, pasta</li>
+                            <li>Vegetales</li>
+                        </ul>
+                        <h5>Snacks de Media Mañana/Tarde</h5>
+                        <p>Frutos secos, barras energéticas, frutas</p>
+                    `,
+                    duracion: "12 min"
+                },
+                {
+                    titulo: "Hidratación en Verano",
+                    descripcion: "Prevención de golpe de calor",
+                    contenido: `
+                        <h5>Señales de Deshidratación</h5>
+                        <ul>
+                            <li>Mareos</li>
+                            <li>Calambres musculares</li>
+                            <li>Orina muy oscura</li>
+                            <li>Fatiga extrema</li>
+                        </ul>
+                        <h5>Prevención</h5>
+                        <p><strong>Regla de oro:</strong> Bebe ANTES de tener sed</p>
+                        <p>500ml cada hora en días calurosos</p>
+                    `,
+                    duracion: "7 min"
+                },
+                {
+                    titulo: "Suplementación para Constructores",
+                    descripcion: "Complementos útiles para trabajo físico",
+                    contenido: `
+                        <h5>Recomendados</h5>
+                        <ul>
+                            <li><strong>Multivitamínico:</strong> Cubrir deficiencias</li>
+                            <li><strong>Proteína en polvo:</strong> Si no alcanzas requerimiento</li>
+                            <li><strong>Electrolitos:</strong> En días muy calurosos</li>
+                        </ul>
+                    `,
+                    duracion: "6 min"
+                }
+            ]
+        },
+        
+        electricidad: {
+            fisico: [
+                {
+                    titulo: "Ergonomía en Instalaciones Eléctricas",
+                    descripcion: "Postura correcta en tableros y cableado",
+                    contenido: `
+                        <h5>Trabajo en Tableros</h5>
+                        <ul>
+                            <li>Altura óptima: A nivel del pecho</li>
+                            <li>Iluminación adecuada</li>
+                            <li>Evita posturas forzadas del cuello</li>
+                        </ul>
+                        <h5>Prevención de Fatiga Visual</h5>
+                        <p>Trabajo con cables de colores requiere buena iluminación.</p>
+                    `,
+                    duracion: "5 min"
+                },
+                {
+                    titulo: "Seguridad Eléctrica Personal",
+                    descripcion: "Prevención de accidentes eléctricos",
+                    contenido: `
+                        <h5>Regla de Oro</h5>
+                        <p><strong>NUNCA</strong> trabajes en circuitos energizados sin capacitación específica.</p>
+                        <h5>Lock Out / Tag Out</h5>
+                        <ol>
+                            <li>Desenergiza el circuito</li>
+                            <li>Bloquea el interruptor</li>
+                            <li>Verifica con multímetro (voltaje CERO)</li>
+                            <li>Coloca etiqueta de advertencia</li>
+                        </ol>
+                    `,
+                    duracion: "10 min"
+                },
+                {
+                    titulo: "Cuidado de Manos",
+                    descripcion: "Prevención de lesiones en dedos y manos",
+                    contenido: `
+                        <h5>Guantes Adecuados</h5>
+                        <ul>
+                            <li>Dieléctricos para trabajo eléctrico</li>
+                            <li>Verificar clase y voltaje</li>
+                            <li>Inspeccionar antes de usar</li>
+                        </ul>
+                    `,
+                    duracion: "4 min"
+                }
+            ],
+            mental: [
+                {
+                    titulo: "Concentración Crítica",
+                    descripcion: "Enfoque total en tareas eléctricas",
+                    contenido: `
+                        <h5>Cero Distracciones</h5>
+                        <p>Un error eléctrico puede ser fatal. Concentración 100%.</p>
+                        <h5>Checklist Mental</h5>
+                        <ol>
+                            <li>¿Desenergizado?</li>
+                            <li>¿Verificado?</li>
+                            <li>¿Bloqueado?</li>
+                            <li>¿EPP correcto?</li>
+                        </ol>
+                    `,
+                    duracion: "8 min"
+                },
+                {
+                    titulo: "Manejo de Estrés en Emergencias",
+                    descripcion: "Protocolo mental para apagones",
+                    contenido: `
+                        <h5>Respiración de Emergencia</h5>
+                        <p>4-4-4: Inhala 4, mantén 4, exhala 4</p>
+                        <h5>Protocolo</h5>
+                        <ol>
+                            <li>Calma: No entres en pánico</li>
+                            <li>Evalúa: ¿Cuál es el problema real?</li>
+                            <li>Prioriza: Seguridad primero, luego servicio</li>
+                            <li>Ejecuta: Paso a paso</li>
+                        </ol>
+                    `,
+                    duracion: "10 min"
+                },
+                {
+                    titulo: "Aprendizaje Continuo",
+                    descripcion: "Mantenerse actualizado en normativas",
+                    contenido: `
+                        <h5>Actualización Técnica</h5>
+                        <p>Normas eléctricas cambian. Mantente al día.</p>
+                        <h5>Recursos</h5>
+                        <ul>
+                            <li>Normativa SEC</li>
+                            <li>Cursos de actualización</li>
+                            <li>Certificaciones profesionales</li>
+                        </ul>
+                    `,
+                    duracion: "9 min"
+                }
+            ],
+            nutricional: [
+                {
+                    titulo: "Energía para Trabajo Técnico",
+                    descripcion: "Alimentación para mantener concentración",
+                    contenido: `
+                        <h5>Desayuno Energético</h5>
+                        <p>Pan integral + huevos + frutas</p>
+                        <h5>Almuerzo Balanceado</h5>
+                        <p>Proteína + Carbohidratos complejos + Vegetales</p>
+                        <h5>Snacks</h5>
+                        <ul>
+                            <li>Frutos secos</li>
+                            <li>Frutas</li>
+                            <li>Yogur</li>
+                        </ul>
+                    `,
+                    duracion: "8 min"
+                },
+                {
+                    titulo: "Hidratación en Campo",
+                    descripcion: "Mantenerse hidratado en instalaciones",
+                    contenido: `
+                        <h5>Agua Constante</h5>
+                        <p>Lleva botella reutilizable siempre</p>
+                        <p>Meta: 2-3 litros al día</p>
+                    `,
+                    duracion: "5 min"
+                },
+                {
+                    titulo: "Cafeína Moderada",
+                    descripcion: "Uso inteligente del café",
+                    contenido: `
+                        <h5>Límite Recomendado</h5>
+                        <p>2-3 tazas al día máximo</p>
+                        <h5>Alternativas</h5>
+                        <p>Té verde: Menos cafeína, más antioxidantes</p>
+                    `,
+                    duracion: "6 min"
+                }
+            ]
+        },
+        
+        industrial: {
+            fisico: [
+                {
+                    titulo: "Ergonomía en Planta",
+                    descripcion: "Postura correcta en supervisión y operaciones",
+                    contenido: `
+                        <h5>Inspección de Planta</h5>
+                        <ul>
+                            <li>Calzado adecuado para caminar mucho</li>
+                            <li>Postura erguida al caminar</li>
+                            <li>Pausas cada 2 horas</li>
+                        </ul>
+                        <h5>Trabajo de Oficina/Planta</h5>
+                        <p>Alterna entre estar de pie y sentado</p>
+                    `,
+                    duracion: "6 min"
+                },
+                {
+                    titulo: "Pausas Activas en Oficina",
+                    descripcion: "Estiramientos para trabajo administrativo",
+                    contenido: `
+                        <h5>Cada Hora</h5>
+                        <ol>
+                            <li>Levántate y camina 2 minutos</li>
+                            <li>Estiramiento de espalda</li>
+                            <li>Rotación de cuello</li>
+                        </ol>
+                    `,
+                    duracion: "4 min"
+                },
+                {
+                    titulo: "Cuidado de la Voz",
+                    descripcion: "Para líderes que dirigen equipos",
+                    contenido: `
+                        <h5>Proyección Vocal</h5>
+                        <ul>
+                            <li>Respira desde el diafragma</li>
+                            <li>Hidratación constante</li>
+                            <li>Evita gritar</li>
+                        </ul>
+                    `,
+                    duracion: "5 min"
+                }
+            ],
+            mental: [
+                {
+                    titulo: "Liderazgo Bajo Presión",
+                    descripcion: "Cómo dirigir equipos en situaciones críticas",
+                    contenido: `
+                        <h5>Principios de Liderazgo</h5>
+                        <ol>
+                            <li><strong>Calma:</strong> Transmite serenidad</li>
+                            <li><strong>Claridad:</strong> Comunicación directa</li>
+                            <li><strong>Confianza:</strong> Confía en tu equipo</li>
+                            <li><strong>Decisión:</strong> Toma decisiones rápidas</li>
+                        </ol>
+                    `,
+                    duracion: "10 min"
+                },
+                {
+                    titulo: "Toma de Decisiones",
+                    descripcion: "Método para decisiones industriales",
+                    contenido: `
+                        <h5>Matriz de Decisión</h5>
+                        <ol>
+                            <li>Define criterios (costo, tiempo, calidad, seguridad)</li>
+                            <li>Pondera cada criterio</li>
+                            <li>Evalúa opciones</li>
+                            <li>Calcula score</li>
+                        </ol>
+                        <h5>Consulta al Equipo</h5>
+                        <p>Las mejores decisiones involucran a quienes ejecutan.</p>
+                    `,
+                    duracion: "12 min"
+                },
+                {
+                    titulo: "Gestión del Cambio",
+                    descripcion: "Liderando transformación en procesos",
+                    contenido: `
+                        <h5>Resistencia al Cambio</h5>
+                        <p>Es natural. Abórdala con empatía.</p>
+                        <h5>Estrategia</h5>
+                        <ol>
+                            <li>Comunica el "por qué"</li>
+                            <li>Involucra a líderes informales</li>
+                            <li>Capacita adecuadamente</li>
+                            <li>Celebra pequeños wins</li>
+                        </ol>
+                    `,
+                    duracion: "15 min"
+                }
+            ],
+            nutricional: [
+                {
+                    titulo: "Alimentación para Líderes",
+                    descripcion: "Energía sostenida para toma de decisiones",
+                    contenido: `
+                        <h5>Desayuno Ejecutivo</h5>
+                        <p>Proteína + Grasas saludables + Carbohidratos complejos</p>
+                        <h5>Evitar</h5>
+                        <ul>
+                            <li>Azúcar refinada (crash energético)</li>
+                            <li>Comidas muy pesadas (somnolencia)</li>
+                        </ul>
+                    `,
+                    duracion: "10 min"
+                },
+                {
+                    titulo: "Snacks de Alto Rendimiento",
+                    descripcion: "Opciones para reuniones largas",
+                    contenido: `
+                        <h5>Top Snacks</h5>
+                        <ul>
+                            <li>Almendras</li>
+                            <li>Manzana con mantequilla de maní</li>
+                            <li>Chocolate negro (85%+)</li>
+                            <li>Yogur griego</li>
+                        </ul>
+                    `,
+                    duracion: "6 min"
+                },
+                {
+                    titulo: "Hidratación Ejecutiva",
+                    descripcion: "Mantenerse alerta todo el día",
+                    contenido: `
+                        <h5>Agua + Electrolitos</h5>
+                        <p>Si sudas mucho en planta, considera bebidas con electrolitos</p>
+                        <h5>Meta Diaria</h5>
+                        <p>2.5 - 3 litros</p>
+                    `,
+                    duracion: "5 min"
+                }
+            ]
+        }
+        
+        ,
+        
+        derecho: {
+            fisico: [
+                {
+                    titulo: "Postura para Lecturas Largas",
+                    descripcion: "Ergonomía para estudiar códigos y jurisprudencia por horas",
+                    contenido: `
+                        <h5>Posición Ideal para Lectura</h5>
+                        <ul>
+                            <li>Atril a 45° para evitar encorvar el cuello</li>
+                            <li>Espalda recta contra el respaldo</li>
+                            <li>Libro/tablet a 30-40cm de distancia</li>
+                            <li>Iluminación adecuada (evita sombras)</li>
+                        </ul>
+                        <h5>Regla 50-10</h5>
+                        <p>Cada 50 minutos de lectura, 10 minutos de descanso activo</p>
+                    `,
+                    duracion: "6 min"
+                },
+                {
+                    titulo: "Cuidado de la Voz para Litigantes",
+                    descripcion: "Técnicas vocales para audiencias y alegatos",
+                    contenido: `
+                        <h5>Calentamiento Vocal</h5>
+                        <ol>
+                            <li>Respiración diafragmática: 5 repeticiones</li>
+                            <li>Sirena vocal (grave a agudo): 3 veces</li>
+                            <li>Labios vibrantes ("brrrr"): 30 segundos</li>
+                        </ol>
+                        <h5>Hidratación</h5>
+                        <p>Agua tibia (NO fría) antes de hablar en público</p>
+                        <p>Evita lácteos antes de audiencias (producen flema)</p>
+                    `,
+                    duracion: "7 min"
+                },
+                {
+                    titulo: "Pausas Activas en Biblioteca",
+                    descripcion: "Estiramientos discretos durante estudio",
+                    contenido: `
+                        <h5>Rutina Silenciosa (3 min)</h5>
+                        <ol>
+                            <li>Rotación de cuello (sentado)</li>
+                            <li>Estiramiento de manos y dedos</li>
+                            <li>Rotación de tobillos bajo la mesa</li>
+                            <li>Respiración profunda</li>
+                        </ol>
+                    `,
+                    duracion: "3 min"
+                }
+            ],
+            mental: [
+                {
+                    titulo: "Manejo del Estrés en Exámenes Orales",
+                    descripcion: "Técnicas para controlar nervios en evaluaciones",
+                    contenido: `
+                        <h5>Antes del Examen</h5>
+                        <ol>
+                            <li><strong>Visualización:</strong> Imagínate respondiendo con confianza</li>
+                            <li><strong>Respiración 4-4-4:</strong> Inhala 4, mantén 4, exhala 4</li>
+                            <li><strong>Power Pose:</strong> 2 minutos en postura de confianza</li>
+                        </ol>
+                        <h5>Durante el Examen</h5>
+                        <p>Si te bloqueas: Respira, pide reformular la pregunta, tómate tu tiempo</p>
+                    `,
+                    duracion: "10 min"
+                },
+                {
+                    titulo: "Memorización de Códigos y Leyes",
+                    descripcion: "Técnicas mnemotécnicas para el derecho",
+                    contenido: `
+                        <h5>Método de Localización (Palacio Mental)</h5>
+                        <p>Asocia artículos con lugares físicos que conoces</p>
+                        <h5>Técnica de Acrónimos</h5>
+                        <p>Crea palabras con las primeras letras de conceptos clave</p>
+                        <h5>Mapas Conceptuales</h5>
+                        <p>Conecta visualmente conceptos jurídicos relacionados</p>
+                    `,
+                    duracion: "12 min"
+                },
+                {
+                    titulo: "Balance Trabajo-Estudio en Derecho",
+                    descripcion: "Gestión del tiempo en una carrera exigente",
+                    contenido: `
+                        <h5>Priorización Jurídica</h5>
+                        <ul>
+                            <li>Casos de la semana: Prioridad 1</li>
+                            <li>Lectura complementaria: Prioridad 2</li>
+                            <li>Proyectos a largo plazo: Planifica con anticipación</li>
+                        </ul>
+                        <h5>Método Cornell para Apuntes</h5>
+                        <p>Divide la hoja: Notas | Preguntas clave | Resumen</p>
+                    `,
+                    duracion: "15 min"
+                }
+            ],
+            nutricional: [
+                {
+                    titulo: "Alimentación para Jornadas Largas",
+                    descripcion: "Energía sostenida para días de 12+ horas de estudio",
+                    contenido: `
+                        <h5>Snacks Inteligentes para Biblioteca</h5>
+                        <ul>
+                            <li>Frutos secos (no ruidosos)</li>
+                            <li>Barritas de cereales sin azúcar</li>
+                            <li>Frutas fáciles: manzana, uvas</li>
+                            <li>Chocolate negro 85%</li>
+                        </ul>
+                        <h5>Comidas Previas a Exámenes</h5>
+                        <p>Proteína + Carbohidratos complejos = Energía estable</p>
+                        <p>Evita comidas pesadas (somnolencia)</p>
+                    `,
+                    duracion: "8 min"
+                },
+                {
+                    titulo: "Hidratación Cerebral",
+                    descripcion: "El agua mejora tu capacidad de argumentación",
+                    contenido: `
+                        <h5>Meta Diaria</h5>
+                        <p>2.5 litros mínimo (cerebro funciona mejor hidratado)</p>
+                        <h5>Hidratación Estratégica</h5>
+                        <p>Botella de agua en cada sesión de estudio</p>
+                        <p>Un vaso antes de cada examen/presentación</p>
+                    `,
+                    duracion: "5 min"
+                },
+                {
+                    titulo: "Café vs. Té en Derecho",
+                    descripcion: "Qué elegir para concentración sostenida",
+                    contenido: `
+                        <h5>Para Lectura Larga: Té Verde</h5>
+                        <p>Cafeína + L-teanina = Concentración sin ansiedad</p>
+                        <h5>Para Litigar/Presentar: Café Moderado</h5>
+                        <p>1 taza 30 min antes para energía y alerta</p>
+                        <h5>Evitar</h5>
+                        <p>Más de 3 cafés al día (aumenta ansiedad)</p>
+                    `,
+                    duracion: "6 min"
+                }
+            ]
+        },
+        
+        medicina: {
+            fisico: [
+                {
+                    titulo: "Postura en Guardias Largas",
+                    descripcion: "Cuidado del cuerpo en turnos de 12-24 horas",
+                    contenido: `
+                        <h5>Calzado Profesional</h5>
+                        <ul>
+                            <li>Zapatos con soporte de arco</li>
+                            <li>Cambiar de calzado cada 6 meses</li>
+                            <li>Plantillas ergonómicas si es necesario</li>
+                        </ul>
+                        <h5>Técnica de Pie</h5>
+                        <p>Alterna el peso entre ambos pies cada 15-20 min</p>
+                        <h5>Microdescansos</h5>
+                        <p>Siéntate 2-3 minutos cada 2 horas de estar de pie</p>
+                    `,
+                    duracion: "8 min"
+                },
+                {
+                    titulo: "Higiene del Sueño para Médicos",
+                    descripcion: "Optimiza tu descanso entre guardias",
+                    contenido: `
+                        <h5>Después de Guardia Nocturna</h5>
+                        <ol>
+                            <li>Lentes de sol al salir (bloquea luz activante)</li>
+                            <li>Cuarto oscuro total (cortinas blackout)</li>
+                            <li>Siesta de 20-30 min al llegar</li>
+                            <li>Dormir 4-6 horas seguidas</li>
+                        </ol>
+                        <h5>Nap Estratégico</h5>
+                        <p>20 min de siesta = Reseteo cognitivo</p>
+                    `,
+                    duracion: "10 min"
+                },
+                {
+                    titulo: "Prevención de Lesiones por Agujas",
+                    descripcion: "Seguridad y ergonomía en procedimientos",
+                    contenido: `
+                        <h5>Reglas de Oro</h5>
+                        <ul>
+                            <li>NUNCA reencapsular agujas</li>
+                            <li>Contenedor de cortopunzantes cerca</li>
+                            <li>Atención plena durante procedimientos</li>
+                        </ul>
+                        <h5>Ergonomía</h5>
+                        <p>Altura de cama/camilla a nivel de tus codos</p>
+                    `,
+                    duracion: "7 min"
+                }
+            ],
+            mental: [
+                {
+                    titulo: "Manejo de Estrés en Emergencias",
+                    descripcion: "Cómo mantener la calma en código azul",
+                    contenido: `
+                        <h5>Protocolo Mental</h5>
+                        <ol>
+                            <li><strong>Respira:</strong> 2 respiraciones profundas</li>
+                            <li><strong>Evalúa:</strong> ABC (Airway, Breathing, Circulation)</li>
+                            <li><strong>Delega:</strong> Asigna tareas específicas</li>
+                            <li><strong>Ejecuta:</strong> Protocolo paso a paso</li>
+                        </ol>
+                        <h5>Post-Código</h5>
+                        <p>Tómate 5 minutos para descomprimir antes de continuar</p>
+                    `,
+                    duracion: "12 min"
+                },
+                {
+                    titulo: "Empatía Sostenible",
+                    descripcion: "Cuidar al paciente sin agotarte emocionalmente",
+                    contenido: `
+                        <h5>Compasión sin Agotamiento</h5>
+                        <ul>
+                            <li>Escucha activa con límites claros</li>
+                            <li>Valida emociones sin absorberlas</li>
+                            <li>Separa trabajo de vida personal</li>
+                        </ul>
+                        <h5>Autocuidado</h5>
+                        <p>No puedes llenar la copa de otros si la tuya está vacía</p>
+                        <p>Terapia profesional si es necesario</p>
+                    `,
+                    duracion: "15 min"
+                },
+                {
+                    titulo: "Estudio Médico Efectivo",
+                    descripcion: "Técnicas para memorizar anatomía y farmacología",
+                    contenido: `
+                        <h5>Flashcards con Anki</h5>
+                        <p>Repetición espaciada para retención a largo plazo</p>
+                        <h5>Casos Clínicos</h5>
+                        <p>Estudia aplicando conocimiento a casos reales</p>
+                        <h5>Grupos de Estudio</h5>
+                        <p>Enseñar a otros = Mejor retención</p>
+                    `,
+                    duracion: "10 min"
+                }
+            ],
+            nutricional: [
+                {
+                    titulo: "Nutrición para Guardias",
+                    descripcion: "Cómo alimentarte en turnos de 24 horas",
+                    contenido: `
+                        <h5>Antes de la Guardia</h5>
+                        <p>Comida completa: Proteína + Carbohidratos + Vegetales</p>
+                        <h5>Durante (cada 4-6 horas)</h5>
+                        <ul>
+                            <li>Snacks preparados: Frutos secos, frutas</li>
+                            <li>Comida ligera si hay tiempo</li>
+                            <li>Evita comidas muy pesadas</li>
+                        </ul>
+                        <h5>Después</h5>
+                        <p>Comida nutritiva antes de dormir</p>
+                    `,
+                    duracion: "10 min"
+                },
+                {
+                    titulo: "Hidratación en Sala",
+                    descripcion: "Mantenerse hidratado sin ir al baño cada 30 min",
+                    contenido: `
+                        <h5>Estrategia</h5>
+                        <p>Sorbos pequeños y frecuentes > Grandes cantidades de golpe</p>
+                        <h5>Meta</h5>
+                        <p>200ml cada 2 horas en guardia</p>
+                        <h5>Señales de Alerta</h5>
+                        <ul>
+                            <li>Orina muy oscura</li>
+                            <li>Dolor de cabeza</li>
+                            <li>Mareos</li>
+                        </ul>
+                    `,
+                    duracion: "6 min"
+                },
+                {
+                    titulo: "Cafeína Médica Inteligente",
+                    descripcion: "Uso estratégico del café en guardias",
+                    contenido: `
+                        <h5>Timing Óptimo</h5>
+                        <ul>
+                            <li>Primera dosis: 2-3 horas en la guardia</li>
+                            <li>Segunda: A mitad de turno</li>
+                            <li>NO tomar 4 horas antes de dormir</li>
+                        </ul>
+                        <h5>Límite</h5>
+                        <p>Máximo 400mg/día (4 cafés)</p>
+                    `,
+                    duracion: "7 min"
+                }
+            ]
+        },
+        
+        arquitectura: {
+            fisico: [
+                {
+                    titulo: "Postura en Mesa de Dibujo",
+                    descripcion: "Ergonomía para largas horas diseñando",
+                    contenido: `
+                        <h5>Altura Ideal de Mesa</h5>
+                        <ul>
+                            <li>Mesa inclinada 15-20° para dibujo manual</li>
+                            <li>Altura ajustable según si trabajas de pie o sentado</li>
+                            <li>Silla con respaldo lumbar</li>
+                        </ul>
+                        <h5>Iluminación</h5>
+                        <p>Lámpara de arquitecto a 45° (evita sombras)</p>
+                        <h5>Regla 60-5</h5>
+                        <p>Cada 60 min de dibujo, 5 min de estiramiento</p>
+                    `,
+                    duracion: "7 min"
+                },
+                {
+                    titulo: "Cuidado de Manos y Muñecas",
+                    descripcion: "Prevención de lesiones por dibujo técnico",
+                    contenido: `
+                        <h5>Ejercicios Preventivos</h5>
+                        <ol>
+                            <li>Círculos de muñeca: 10 cada dirección</li>
+                            <li>Apertura y cierre de manos: 20 repeticiones</li>
+                            <li>Estiramiento de dedos individualmente</li>
+                        </ol>
+                        <h5>Herramientas Ergonómicas</h5>
+                        <p>Lápices/bolígrafos con grip ergonómico</p>
+                    `,
+                    duracion: "5 min"
+                },
+                {
+                    titulo: "Estiramientos en Taller",
+                    descripcion: "Rutina para después de maquetas",
+                    contenido: `
+                        <h5>Post-Maqueta (10 min)</h5>
+                        <ol>
+                            <li>Estiramiento de cuello y hombros</li>
+                            <li>Rotación de espalda</li>
+                            <li>Estiramiento de brazos y antebrazos</li>
+                            <li>Flexión de rodillas (si estuviste de pie)</li>
+                        </ol>
+                    `,
+                    duracion: "10 min"
+                }
+            ],
+            mental: [
+                {
+                    titulo: "Manejo de Críticas en Entregas",
+                    descripcion: "Cómo recibir feedback constructivamente",
+                    contenido: `
+                        <h5>Mindset Correcto</h5>
+                        <p>Las críticas son sobre el proyecto, no sobre ti personalmente</p>
+                        <h5>Durante la Crítica</h5>
+                        <ol>
+                            <li>Escucha sin interrumpir</li>
+                            <li>Toma notas de los puntos clave</li>
+                            <li>Haz preguntas clarificadoras</li>
+                            <li>Agradece el feedback</li>
+                        </ol>
+                        <h5>Después</h5>
+                        <p>Procesa la información, identifica lo útil</p>
+                    `,
+                    duracion: "10 min"
+                },
+                {
+                    titulo: "Creatividad Bajo Presión",
+                    descripcion: "Técnicas para diseñar con deadline encima",
+                    contenido: `
+                        <h5>Bloqueo Creativo</h5>
+                        <ol>
+                            <li><strong>Cambia de actividad:</strong> 10 min haciendo algo diferente</li>
+                            <li><strong>Referencias:</strong> Mira proyectos similares</li>
+                            <li><strong>Brainstorming:</strong> Anota TODAS las ideas (sin filtrar)</li>
+                        </ol>
+                        <h5>Método de Iteración Rápida</h5>
+                        <p>3 bocetos rápidos > Evalúa > Desarrolla el mejor</p>
+                    `,
+                    duracion: "12 min"
+                },
+                {
+                    titulo: "Balance Perfeccionismo-Entregas",
+                    descripcion: "Cuándo dejar de iterar y entregar",
+                    contenido: `
+                        <h5>Regla 80-20</h5>
+                        <p>El 80% del impacto viene del 20% del trabajo</p>
+                        <h5>Done is Better than Perfect</h5>
+                        <p>Un proyecto terminado imperfecto > Uno perfecto sin terminar</p>
+                        <h5>Estrategia</h5>
+                        <p>Define un MVP (Mínimo Producto Viable) y mejora desde ahí</p>
+                    `,
+                    duracion: "8 min"
+                }
+            ],
+            nutricional: [
+                {
+                    titulo: "Alimentación para Madrugadas de Entrega",
+                    descripcion: "Energía sostenida en all-nighters",
+                    contenido: `
+                        <h5>Antes de la Madrugada</h5>
+                        <p>Cena completa: Proteína + Carbohidratos complejos</p>
+                        <h5>Durante (cada 3 horas)</h5>
+                        <ul>
+                            <li>Snacks energéticos: Frutos secos, frutas</li>
+                            <li>Evita azúcar (crash inevitable)</li>
+                            <li>Comida ligera a medianoche si es necesario</li>
+                        </ul>
+                    `,
+                    duracion: "8 min"
+                },
+                {
+                    titulo: "Hidratación en Taller",
+                    descripcion: "Mantenerse hidratado mientras trabajas",
+                    contenido: `
+                        <h5>Botella Siempre Visible</h5>
+                        <p>Al lado de tu mesa de trabajo</p>
+                        <h5>Meta</h5>
+                        <p>2-3 litros al día</p>
+                        <h5>Tip</h5>
+                        <p>Marca horarios en tu botella para tracking</p>
+                    `,
+                    duracion: "5 min"
+                },
+                {
+                    titulo: "Café para Arquitectos",
+                    descripcion: "Uso estratégico en entregas",
+                    contenido: `
+                        <h5>Timing</h5>
+                        <ul>
+                            <li>Primera taza: Después de desayunar</li>
+                            <li>Segunda: Tarde (14-16h)</li>
+                            <li>NO después de las 18h (afecta sueño)</li>
+                        </ul>
+                        <h5>En All-Nighters</h5>
+                        <p>Café + Nap 20min = Power combo</p>
+                    `,
+                    duracion: "6 min"
+                }
+            ]
+        },
+        
+        psicologia: {
+            fisico: [
+                {
+                    titulo: "Postura en Sesiones Terapéuticas",
+                    descripcion: "Ergonomía para psicólogos clínicos",
+                    contenido: `
+                        <h5>Postura de Escucha Activa</h5>
+                        <ul>
+                            <li>Espalda recta pero relajada</li>
+                            <li>Pies en el suelo</li>
+                            <li>Cuerpo ligeramente inclinado hacia adelante (atención)</li>
+                            <li>Brazos relajados</li>
+                        </ul>
+                        <h5>Entre Sesiones</h5>
+                        <p>Estiramiento de 3 minutos para resetear</p>
+                    `,
+                    duracion: "6 min"
+                },
+                {
+                    titulo: "Autocuidado Físico del Terapeuta",
+                    descripcion: "Cuidar tu cuerpo mientras cuidas mentes",
+                    contenido: `
+                        <h5>Rutina Diaria</h5>
+                        <ol>
+                            <li>Ejercicio 30 min (caminar, yoga)</li>
+                            <li>Estiramientos matinales</li>
+                            <li>Pausas entre pacientes</li>
+                        </ol>
+                        <h5>Importancia</h5>
+                        <p>Un terapeuta saludable = Mejor atención a pacientes</p>
+                    `,
+                    duracion: "8 min"
+                },
+                {
+                    titulo: "Regulación Somática",
+                    descripcion: "Técnicas corporales para regular emociones",
+                    contenido: `
+                        <h5>Grounding 5-4-3-2-1</h5>
+                        <ul>
+                            <li>5 cosas que VES</li>
+                            <li>4 cosas que TOCAS</li>
+                            <li>3 cosas que ESCUCHAS</li>
+                            <li>2 cosas que HUELES</li>
+                            <li>1 cosa que SABOREAS</li>
+                        </ul>
+                    `,
+                    duracion: "5 min"
+                }
+            ],
+            mental: [
+                {
+                    titulo: "Manejo de Transferencia y Contratransferencia",
+                    descripcion: "Protección emocional del terapeuta",
+                    contenido: `
+                        <h5>Identificación</h5>
+                        <p>Reconoce cuando el caso te afecta personalmente</p>
+                        <h5>Estrategias</h5>
+                        <ol>
+                            <li>Supervisión regular con colegas</li>
+                            <li>Terapia personal</li>
+                            <li>Journaling post-sesiones difíciles</li>
+                            <li>Límites claros con pacientes</li>
+                        </ol>
+                    `,
+                    duracion: "15 min"
+                },
+                {
+                    titulo: "Prevención del Burnout",
+                    descripcion: "Cuidar al cuidador",
+                    contenido: `
+                        <h5>Señales de Alerta</h5>
+                        <ul>
+                            <li>Agotamiento emocional</li>
+                            <li>Despersonalización de pacientes</li>
+                            <li>Sensación de ineficacia</li>
+                            <li>Irritabilidad constante</li>
+                        </ul>
+                        <h5>Prevención</h5>
+                        <ol>
+                            <li>Límite de pacientes por día</li>
+                            <li>Días de descanso sagrados</li>
+                            <li>Hobbies fuera de la psicología</li>
+                            <li>Red de apoyo profesional</li>
+                        </ol>
+                    `,
+                    duracion: "12 min"
+                },
+                {
+                    titulo: "Estudio de Psicología Efectivo",
+                    descripcion: "Técnicas para memorizar teorías y estudios",
+                    contenido: `
+                        <h5>Mapas Conceptuales</h5>
+                        <p>Conecta teorías visualmente</p>
+                        <h5>Casos Prácticos</h5>
+                        <p>Aplica teorías a casos reales</p>
+                        <h5>Grupos de Discusión</h5>
+                        <p>Debate conceptos con compañeros</p>
+                    `,
+                    duracion: "10 min"
+                }
+            ],
+            nutricional: [
+                {
+                    titulo: "Alimentación para Regulación Emocional",
+                    descripcion: "Nutrientes que apoyan la salud mental",
+                    contenido: `
+                        <h5>Alimentos Estabilizadores</h5>
+                        <ul>
+                            <li><strong>Omega-3:</strong> Salmón, nueces (cerebro)</li>
+                            <li><strong>Magnesio:</strong> Espinaca, almendras (calma)</li>
+                            <li><strong>Triptófano:</strong> Pavo, huevos (serotonina)</li>
+                            <li><strong>Vitamina B:</strong> Legumbres (energía)</li>
+                        </ul>
+                        <h5>Evitar</h5>
+                        <p>Azúcar refinada (montaña rusa emocional)</p>
+                    `,
+                    duracion: "10 min"
+                },
+                {
+                    titulo: "Hidratación y Claridad Mental",
+                    descripcion: "El agua mejora tu capacidad terapéutica",
+                    contenido: `
+                        <h5>Meta Diaria</h5>
+                        <p>2.5 litros (cerebro = 75% agua)</p>
+                        <h5>Entre Sesiones</h5>
+                        <p>Vaso de agua como ritual de transición</p>
+                    `,
+                    duracion: "5 min"
+                },
+                {
+                    titulo: "Té vs. Café para Terapeutas",
+                    descripcion: "Qué elegir según tu jornada",
+                    contenido: `
+                        <h5>Té de Hierbas</h5>
+                        <p>Manzanilla, lavanda: Efecto calmante para ti y ambiente</p>
+                        <h5>Té Verde</h5>
+                        <p>Concentración sin ansiedad</p>
+                        <h5>Café Moderado</h5>
+                        <p>Solo si necesitas energía puntual (máx. 2 al día)</p>
+                    `,
+                    duracion: "6 min"
+                }
+            ]
+        },
+        
+        administracion: {
+            fisico: [
+                {
+                    titulo: "Ergonomía en Oficina",
+                    descripcion: "Postura correcta para managers y ejecutivos",
+                    contenido: `
+                        <h5>Workstation Ideal</h5>
+                        <ul>
+                            <li>Monitor a altura de ojos</li>
+                            <li>Silla con soporte lumbar ajustable</li>
+                            <li>Teclado y mouse a nivel de codos</li>
+                            <li>Pies completamente en el suelo</li>
+                        </ul>
+                        <h5>Escritorio de Pie</h5>
+                        <p>Alterna: 30 min sentado, 30 min de pie</p>
+                    `,
+                    duracion: "6 min"
+                },
+                {
+                    titulo: "Pausas Activas Ejecutivas",
+                    descripcion: "Estiramientos entre reuniones",
+                    contenido: `
+                        <h5>Rutina de 5 Minutos</h5>
+                        <ol>
+                            <li>Camina por la oficina</li>
+                            <li>Estiramiento de cuello y hombros</li>
+                            <li>Rotación de columna sentado</li>
+                            <li>Respiración profunda</li>
+                        </ol>
+                        <h5>Frecuencia</h5>
+                        <p>Entre cada reunión o cada 90 minutos</p>
+                    `,
+                    duracion: "5 min"
+                },
+                {
+                    titulo: "Cuidado de la Voz en Presentaciones",
+                    descripcion: "Técnicas vocales para líderes",
+                    contenido: `
+                        <h5>Calentamiento Pre-Presentación</h5>
+                        <ol>
+                            <li>Respiración diafragmática</li>
+                            <li>Labios vibrantes</li>
+                            <li>Escalas vocales suaves</li>
+                        </ol>
+                        <h5>Durante</h5>
+                        <p>Proyecta desde el diafragma, no la garganta</p>
+                    `,
+                    duracion: "6 min"
+                }
+            ],
+            mental: [
+                {
+                    titulo: "Liderazgo y Gestión de Equipos",
+                    descripcion: "Habilidades blandas para administradores",
+                    contenido: `
+                        <h5>Comunicación Efectiva</h5>
+                        <ul>
+                            <li>Mensajes claros y concisos</li>
+                            <li>Escucha activa</li>
+                            <li>Feedback constructivo</li>
+                        </ul>
+                        <h5>Delegación Inteligente</h5>
+                        <ol>
+                            <li>Identifica fortalezas del equipo</li>
+                            <li>Asigna tareas según habilidades</li>
+                            <li>Confía y supervisa sin micromanagear</li>
+                        </ol>
+                    `,
+                    duracion: "12 min"
+                },
+                {
+                    titulo: "Toma de Decisiones Bajo Presión",
+                    descripcion: "Método para decisiones empresariales",
+                    contenido: `
+                        <h5>Framework de Decisión</h5>
+                        <ol>
+                            <li><strong>Define:</strong> ¿Cuál es exactamente el problema?</li>
+                            <li><strong>Analiza:</strong> Datos relevantes</li>
+                            <li><strong>Opciones:</strong> Al menos 3 alternativas</li>
+                            <li><strong>Evalúa:</strong> Pros y contras</li>
+                            <li><strong>Decide:</strong> Y comunica claramente</li>
+                        </ol>
+                    `,
+                    duracion: "10 min"
+                },
+                {
+                    titulo: "Balance Trabajo-Vida Personal",
+                    descripcion: "Gestión del tiempo para ejecutivos",
+                    contenido: `
+                        <h5>Time Blocking</h5>
+                        <ul>
+                            <li>Bloques de trabajo profundo</li>
+                            <li>Bloques de reuniones</li>
+                            <li>Bloques de vida personal (sagrados)</li>
+                        </ul>
+                        <h5>Regla del NO</h5>
+                        <p>Cada "sí" es un "no" a otra cosa. Prioriza.</p>
+                    `,
+                    duracion: "15 min"
+                }
+            ],
+            nutricional: [
+                {
+                    titulo: "Alimentación Ejecutiva",
+                    descripcion: "Energía para jornadas de reuniones",
+                    contenido: `
+                        <h5>Desayuno Power</h5>
+                        <p>Proteína + Grasas saludables + Carbohidratos complejos</p>
+                        <p>Ejemplo: Huevos + aguacate + avena</p>
+                        <h5>Almuerzo de Negocios</h5>
+                        <ul>
+                            <li>Evita comidas muy pesadas</li>
+                            <li>Proteína magra + vegetales</li>
+                            <li>Limita alcohol</li>
+                        </ul>
+                    `,
+                    duracion: "10 min"
+                },
+                {
+                    titulo: "Snacks de Alto Rendimiento",
+                    descripcion: "Opciones para entre reuniones",
+                    contenido: `
+                        <h5>En la Oficina</h5>
+                        <ul>
+                            <li>Almendras o nueces</li>
+                            <li>Frutas frescas</li>
+                            <li>Yogur griego</li>
+                            <li>Barras de proteína (sin azúcar añadida)</li>
+                        </ul>
+                        <h5>Evitar</h5>
+                        <p>Galletas, dulces (crash energético)</p>
+                    `,
+                    duracion: "6 min"
+                },
+                {
+                    titulo: "Café Estratégico",
+                    descripcion: "Timing óptimo para ejecutivos",
+                    contenido: `
+                        <h5>Horario Ideal</h5>
+                        <ul>
+                            <li>Primera taza: 90 min después de despertar</li>
+                            <li>Segunda: Antes de reunión importante</li>
+                            <li>Última: Antes de las 14:00</li>
+                        </ul>
+                        <h5>Límite</h5>
+                        <p>Máximo 3 cafés al día</p>
+                    `,
+                    duracion: "6 min"
+                }
+            ]
+        },
+        
+        contabilidad: {
+            fisico: [
+                {
+                    titulo: "Ergonomía Contable",
+                    descripcion: "Postura para largas horas con números",
+                    contenido: `
+                        <h5>Setup Óptimo</h5>
+                        <ul>
+                            <li>Calculadora al alcance de la mano</li>
+                            <li>Documentos a 30-40cm de distancia</li>
+                            <li>Monitor principal centrado</li>
+                            <li>Segundo monitor (si usas) a 30° a la derecha</li>
+                        </ul>
+                        <h5>Regla 45-5</h5>
+                        <p>45 minutos de trabajo, 5 minutos de descanso visual</p>
+                    `,
+                    duracion: "6 min"
+                },
+                {
+                    titulo: "Cuidado Visual en Auditorías",
+                    descripcion: "Protege tus ojos revisando documentos",
+                    contenido: `
+                        <h5>Iluminación Adecuada</h5>
+                        <p>Luz natural + lámpara de escritorio (sin reflejos)</p>
+                        <h5>Regla 20-20-20</h5>
+                        <p>Cada 20 min, mira algo a 20 pies (6m) por 20 seg</p>
+                        <h5>Ejercicios Oculares</h5>
+                        <ol>
+                            <li>Parpadeo consciente: 10 veces</li>
+                            <li>Enfoque cercano-lejano: 10 repeticiones</li>
+                        </ol>
+                    `,
+                    duracion: "5 min"
+                },
+                {
+                    titulo: "Estiramientos para Contadores",
+                    descripcion: "Rutina anti-tensión",
+                    contenido: `
+                        <h5>Rutina de 5 Minutos</h5>
+                        <ol>
+                            <li>Cuello: Inclina a cada lado</li>
+                            <li>Hombros: Encoge y suelta</li>
+                            <li>Muñecas: Círculos y flexiones</li>
+                            <li>Espalda: Giro de torso sentado</li>
+                        </ol>
+                    `,
+                    duracion: "5 min"
+                }
+            ],
+            mental: [
+                {
+                    titulo: "Manejo del Estrés en Cierre Contable",
+                    descripcion: "Cómo sobrevivir a fin de mes",
+                    contenido: `
+                        <h5>Planificación Preventiva</h5>
+                        <ul>
+                            <li>Checklist de tareas</li>
+                            <li>Prioriza lo crítico</li>
+                            <li>Delega lo delegable</li>
+                        </ul>
+                        <h5>Durante el Cierre</h5>
+                        <ol>
+                            <li>Respira: Técnica 4-4-4</li>
+                            <li>Enfócate: Una tarea a la vez</li>
+                            <li>Comunica: Updates al equipo</li>
+                        </ol>
+                    `,
+                    duracion: "10 min"
+                },
+                {
+                    titulo: "Concentración en Números",
+                    descripcion: "Técnicas para no perder el foco",
+                    contenido: `
+                        <h5>Ambiente Óptimo</h5>
+                        <ul>
+                            <li>Silencio o música instrumental</li>
+                            <li>Notificaciones: OFF</li>
+                            <li>Escritorio ordenado</li>
+                        </ul>
+                        <h5>Método Pomodoro Contable</h5>
+                        <p>45 min trabajo + 10 min descanso</p>
+                    `,
+                    duracion: "8 min"
+                },
+                {
+                    titulo: "Precisión Bajo Presión",
+                    descripcion: "Evita errores cuando hay deadline",
+                    contenido: `
+                        <h5>Protocolo de Revisión</h5>
+                        <ol>
+                            <li>Primera pasada: Hacer</li>
+                            <li>Segunda pasada: Revisar</li>
+                            <li>Tercera pasada: Verificar totales</li>
+                        </ol>
+                        <h5>Checklist</h5>
+                        <p>Usa listas de verificación para cada proceso</p>
+                    `,
+                    duracion: "9 min"
+                }
+            ],
+            nutricional: [
+                {
+                    titulo: "Alimentación para Concentración Numérica",
+                    descripcion: "Nutrientes que mejoran precisión",
+                    contenido: `
+                        <h5>Desayuno Contable</h5>
+                        <p>Avena + nueces + arándanos = Concentración sostenida</p>
+                        <h5>Almuerzo</h5>
+                        <p>Proteína magra + vegetales + carbohidratos complejos</p>
+                        <h5>Snacks</h5>
+                        <ul>
+                            <li>Frutos secos</li>
+                            <li>Frutas</li>
+                            <li>Chocolate negro 85%</li>
+                        </ul>
+                    `,
+                    duracion: "8 min"
+                },
+                {
+                    titulo: "Hidratación en Auditoría",
+                    descripcion: "Mantenerse alerta revisando números",
+                    contenido: `
+                        <h5>Meta Diaria</h5>
+                        <p>2.5 litros (cerebro funciona mejor hidratado)</p>
+                        <h5>Estrategia</h5>
+                        <p>Botella en el escritorio, sorbos constantes</p>
+                    `,
+                    duracion: "5 min"
+                },
+                {
+                    titulo: "Café en Temporada Alta",
+                    descripcion: "Uso inteligente durante cierres",
+                    contenido: `
+                        <h5>Timing</h5>
+                        <ul>
+                            <li>Primera taza: Media mañana</li>
+                            <li>Segunda: Después del almuerzo</li>
+                            <li>NO después de las 16:00</li>
+                        </ul>
+                        <h5>Alternativa</h5>
+                        <p>Té verde: Concentración sin nerviosismo</p>
+                    `,
+                    duracion: "6 min"
+                }
+            ]
+        },
+        
+        tecnico: null,  // Usa informatica (similar)
+        
+        generico: {
+            fisico: [
+                {
+                    titulo: "Postura Correcta al Estudiar",
+                    descripcion: "Ergonomía básica para todas las carreras",
+                    contenido: `
+                        <h5>Posición Ideal</h5>
+                        <ul>
+                            <li>Espalda recta, apoyada en el respaldo</li>
+                            <li>Pies completamente en el suelo</li>
+                            <li>Brazos en ángulo de 90 grados</li>
+                            <li>Pantalla a la altura de los ojos</li>
+                        </ul>
+                        <h5>Pausas Regulares</h5>
+                        <p>Levántate y estírate cada 45-60 minutos</p>
+                    `,
+                    duracion: "5 min"
+                },
+                {
+                    titulo: "Cuidado Visual",
+                    descripcion: "Protege tus ojos del cansancio",
+                    contenido: `
+                        <h5>Regla 20-20-20</h5>
+                        <p>Cada 20 minutos, mira algo a 20 pies (6 metros) por 20 segundos</p>
+                        <h5>Ejercicios Oculares</h5>
+                        <ol>
+                            <li>Parpadeo consciente: 10 veces</li>
+                            <li>Enfoque cercano-lejano: Alterna 10 veces</li>
+                            <li>Círculos con los ojos: 5 veces cada dirección</li>
+                        </ol>
+                    `,
+                    duracion: "4 min"
+                },
+                {
+                    titulo: "Estiramientos Básicos",
+                    descripcion: "Rutina rápida para todo el cuerpo",
+                    contenido: `
+                        <h5>Rutina de 5 Minutos</h5>
+                        <ol>
+                            <li>Cuello: Inclina a cada lado (15 seg)</li>
+                            <li>Hombros: Encoge y suelta (10 veces)</li>
+                            <li>Espalda: Gira el torso sentado (20 seg cada lado)</li>
+                            <li>Piernas: Estira si estado de pie</li>
+                        </ol>
+                    `,
+                    duracion: "5 min"
+                }
+            ],
+            mental: [
+                {
+                    titulo: "Manejo del Estrés Académico",
+                    descripcion: "Técnicas para mantener la calma en exámenes",
+                    contenido: `
+                        <h5>Respiración 4-7-8</h5>
+                        <ol>
+                            <li>Inhala por la nariz: 4 segundos</li>
+                            <li>Mantén: 7 segundos</li>
+                            <li>Exhala por la boca: 8 segundos</li>
+                            <li>Repite 4 veces</li>
+                        </ol>
+                        <h5>Técnica Pomodoro</h5>
+                        <p>25 min estudio + 5 min descanso. Después de 4 ciclos: 15-30 min descanso largo.</p>
+                    `,
+                    duracion: "10 min"
+                },
+                {
+                    titulo: "Organización y Productividad",
+                    descripcion: "Gestiona tu tiempo efectivamente",
+                    contenido: `
+                        <h5>Matriz de Eisenhower</h5>
+                        <ul>
+                            <li>Urgente e Importante: Hazlo ahora</li>
+                            <li>Importante no Urgente: Planifica</li>
+                            <li>Urgente no Importante: Delega</li>
+                            <li>Ni Urgente ni Importante: Elimina</li>
+                        </ul>
+                        <h5>Time Blocking</h5>
+                        <p>Asigna bloques específicos de tiempo a cada actividad</p>
+                    `,
+                    duracion: "12 min"
+                },
+                {
+                    titulo: "Concentración Profunda",
+                    descripcion: "Técnicas para entrar en estado de flow",
+                    contenido: `
+                        <h5>Preparación del Entorno</h5>
+                        <ul>
+                            <li>Espacio limpio y ordenado</li>
+                            <li>Silencia todas las notificaciones</li>
+                            <li>Música instrumental (opcional)</li>
+                        </ul>
+                        <h5>Método de Una Sola Tarea</h5>
+                        <p>Enfócate en UNA cosa a la vez. Multitarea reduce productividad 40%.</p>
+                    `,
+                    duracion: "10 min"
+                }
+            ],
+            nutricional: [
+                {
+                    titulo: "Alimentación para el Cerebro",
+                    descripcion: "Nutrientes que mejoran el rendimiento cognitivo",
+                    contenido: `
+                        <h5>Top 5 Alimentos Cerebro-Boost</h5>
+                        <ol>
+                            <li><strong>Arándanos:</strong> Antioxidantes para memoria</li>
+                            <li><strong>Nueces:</strong> Omega-3 y vitamina E</li>
+                            <li><strong>Huevos:</strong> Colina para neurotransmisores</li>
+                            <li><strong>Aguacate:</strong> Grasas saludables</li>
+                            <li><strong>Chocolate negro (85%+):</strong> Flavonoides</li>
+                        </ol>
+                        <h5>Desayuno Ideal</h5>
+                        <p>2 huevos + avena con arándanos + té verde</p>
+                    `,
+                    duracion: "10 min"
+                },
+                {
+                    titulo: "Hidratación Óptima",
+                    descripcion: "El agua y tu rendimiento cerebral",
+                    contenido: `
+                        <h5>¿Cuánta Agua?</h5>
+                        <p><strong>Fórmula:</strong> 33ml x tu peso en kg</p>
+                        <p>Ejemplo: 70kg = 2.3 litros al día</p>
+                        <h5>Señales de Deshidratación</h5>
+                        <ul>
+                            <li>Dolor de cabeza</li>
+                            <li>Dificultad para concentrarse</li>
+                            <li>Fatiga</li>
+                            <li>Orina oscura</li>
+                        </ul>
+                    `,
+                    duracion: "6 min"
+                },
+                {
+                    titulo: "Cafeína Inteligente",
+                    descripcion: "Cómo usar el café correctamente",
+                    contenido: `
+                        <h5>Límite Seguro</h5>
+                        <p><strong>Máximo:</strong> 400mg al día (4 tazas)</p>
+                        <h5>Timing Óptimo</h5>
+                        <ul>
+                            <li>Primera taza: 90-120 min después de despertar</li>
+                            <li>Última: Antes de las 14:00</li>
+                        </ul>
+                        <h5>Alternativa</h5>
+                        <p><strong>Té verde:</strong> Cafeína + L-teanina = Concentración sin nerviosismo</p>
+                    `,
+                    duracion: "8 min"
+                }
+            ]
+        }
         };
+        
+        // Helper para obtener consejos (usa generico si la carrera no tiene contenido específico)
+        function obtenerConsejos(carrera) {
+            if (todosLosConsejos[carrera] === null || !todosLosConsejos[carrera]) {
+                // Carreras sin contenido específico usan generico
+                // Técnico usa informatica
+                if (carrera === 'tecnico') {
+                    return todosLosConsejos.informatica;
+                }
+                return todosLosConsejos.generico;
+            }
+            return todosLosConsejos[carrera];
+        }
 
         let carreraActual = '';
-
-        // Habilitar botón cuando se selecciona carrera
-        document.getElementById('carrera-select').addEventListener('change', function() {
-            const loadBtn = document.getElementById('load-btn');
-            loadBtn.disabled = !this.value;
-        });
 
         function loadConsejos() {
             const select = document.getElementById('carrera-select');
@@ -377,16 +1988,16 @@
             // Actualizar título
             document.getElementById('carrera-titulo').textContent = select.options[select.selectedIndex].text;
             
-            // Cargar consejos
-            if (carreraActual === 'informatica') {
-                cargarConsejosInformatica();
-            }
+            // Cargar consejos según carrera
+            cargarConsejos(carreraActual);
         }
 
-        function cargarConsejosInformatica() {
+        function cargarConsejos(carrera) {
+            const consejos = obtenerConsejos(carrera);
+            
             // Físico
             const fisicoContent = document.getElementById('fisico-content');
-            fisicoContent.innerHTML = consejosInformatica.fisico.map(consejo => `
+            fisicoContent.innerHTML = consejos.fisico.map(consejo => `
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="glass h-100">
                         <div class="p-4">
@@ -408,7 +2019,7 @@
 
             // Mental
             const mentalContent = document.getElementById('mental-content');
-            mentalContent.innerHTML = consejosInformatica.mental.map(consejo => `
+            mentalContent.innerHTML = consejos.mental.map(consejo => `
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="glass h-100">
                         <div class="p-4">
@@ -430,7 +2041,7 @@
 
             // Nutricional
             const nutricionalContent = document.getElementById('nutricional-content');
-            nutricionalContent.innerHTML = consejosInformatica.nutricional.map(consejo => `
+            nutricionalContent.innerHTML = consejos.nutricional.map(consejo => `
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="glass h-100">
                         <div class="p-4">
@@ -505,8 +2116,9 @@
             }
         }
 
-        // Cargar usuario
+        // Inicialización completa cuando el DOM esté listo
         document.addEventListener('DOMContentLoaded', function() {
+            // Cargar usuario
             const userName = localStorage.getItem('user_name') || 'Usuario';
             const userRole = localStorage.getItem('user_career') || 'Estudiante';
             document.getElementById('sidebarUserName').textContent = userName;

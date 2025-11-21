@@ -3,20 +3,14 @@ from django.utils.text import slugify
 
 from studentspoint.apps.campuses.models import Sede
 from studentspoint.apps.forum.models import Foro
+from studentspoint.apps.accounts.models import CARRERAS_DISPONIBLES
 
 
 class Command(BaseCommand):
     help = "Crea foros por defecto por sede y carrera si no existen"
 
     def handle(self, *args, **options):
-        carreras = [
-            "Ingeniería en Informática",
-            "Ingeniería en Construcción",
-            "Ingeniería en Electricidad",
-            "Administración",
-            "Contabilidad",
-            "Técnico en Informática",
-        ]
+        carreras = CARRERAS_DISPONIBLES
 
         sedes = list(Sede.objects.all())
         if not sedes:
