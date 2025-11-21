@@ -21,7 +21,6 @@
     <link rel="manifest" href="/static/manifest.json">
     <meta name="theme-color" content="#1a1a1b">
     <link rel="icon" href="/static/favicon.ico">
-    <script id="retell-widget" src="https://dashboard.retellai.com/retell-widget.js" type="module" data-public-key="public_key_185b63a3eada8d6f65c02" data-agent-id="agent_447cb579449f02a59ec24fb63a" data-agent-version="" data-title="SPBot" data-logo-url="https://icones.pro/wp-content/uploads/2022/10/icone-robot-orange.png" data-color="#FF8000" data-bot-name="SPBott" data-popup-message="Hola bienvenido a bienestar estudiantil" data-show-ai-popup="true" data-show-ai-popup-time="5" data-auto-open="false"/>
 </head>
 <body>
     <div class="app-container">
@@ -513,6 +512,158 @@
             document.getElementById('sidebarUserName').textContent = userName;
             document.getElementById('sidebarUserRole').textContent = userRole;
         });
+    </script>
+
+    <!-- Retell AI Bot Widget - Asistente de Bienestar Estudiantil -->
+    <script 
+        id="retell-widget" 
+        src="https://dashboard.retellai.com/retell-widget.js" 
+        type="module" 
+        data-public-key="public_key_185b63a3eada8d6f65c02" 
+        data-agent-id="agent_447cb579449f02a59ec24fb63a" 
+        data-agent-version="" 
+        data-title="SPBot" 
+        data-logo-url="https://icones.pro/wp-content/uploads/2022/10/icone-robot-orange.png" 
+        data-color="#4b0082" 
+        data-bot-name="SPBot" 
+        data-popup-message="Hola bienvenido a bienestar estudiantil" 
+        data-show-ai-popup="true" 
+        data-show-ai-popup-time="5" 
+        data-auto-open="false">
+    </script>
+
+    <!-- Estilos personalizados para el widget del bot -->
+    <style>
+        /* Ajustar el widget al tema dark de la página */
+        #retell-widget-container {
+            z-index: 1000 !important;
+        }
+
+        /* Asegurar que el botón del widget sea visible y accesible */
+        #retell-widget-button {
+            bottom: 20px !important;
+            right: 20px !important;
+            box-shadow: 0 4px 12px rgba(75, 0, 130, 0.4) !important;
+            transition: all 0.3s ease !important;
+        }
+
+        #retell-widget-button:hover {
+            transform: scale(1.05) !important;
+            box-shadow: 0 6px 20px rgba(75, 0, 130, 0.6) !important;
+        }
+
+        /* Adaptar el popup al diseño de la página */
+        #retell-popup-message {
+            background: linear-gradient(135deg, #4b0082 0%, #6a1b9a 100%) !important;
+            border-radius: 12px !important;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
+            color: white !important;
+        }
+
+        /* Ajustar el iframe del chat */
+        #retell-widget-iframe {
+            border-radius: 12px !important;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4) !important;
+            border: 1px solid rgba(75, 0, 130, 0.3) !important;
+        }
+
+        /* Responsive: ajustar en móviles */
+        @media (max-width: 768px) {
+            #retell-widget-button {
+                bottom: 70px !important;
+                right: 15px !important;
+                width: 56px !important;
+                height: 56px !important;
+            }
+
+            #retell-widget-iframe {
+                width: calc(100vw - 20px) !important;
+                height: calc(100vh - 100px) !important;
+                bottom: 10px !important;
+                right: 10px !important;
+            }
+        }
+
+        /* Animación de entrada suave */
+        @keyframes slideInBot {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        #retell-widget-button {
+            animation: slideInBot 0.5s ease-out;
+        }
+
+        /* Indicador de que el bot está activo */
+        #retell-widget-button::after {
+            content: '';
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            width: 12px;
+            height: 12px;
+            background: #4ade80;
+            border-radius: 50%;
+            border: 2px solid #1a1a1b;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.7;
+                transform: scale(1.1);
+            }
+        }
+    </style>
+
+    <!-- Script para mejorar la integración del bot -->
+    <script>
+        // Esperar a que el widget esté cargado
+        document.addEventListener('DOMContentLoaded', function() {
+            // Personalizar el mensaje de bienvenida según el usuario
+            setTimeout(function() {
+                const userName = localStorage.getItem('user_name') || 'estudiante';
+                const retellWidget = document.querySelector('#retell-widget');
+                
+                if (retellWidget) {
+                    // Actualizar mensaje con nombre del usuario
+                    const customMessage = `¡Hola ${userName}! 👋 Soy SPBot, tu asistente de bienestar estudiantil. ¿En qué puedo ayudarte hoy?`;
+                    
+                    // Intentar actualizar el mensaje si el widget lo permite
+                    try {
+                        retellWidget.setAttribute('data-popup-message', customMessage);
+                    } catch (e) {
+                        console.log('Widget personalizado con configuración por defecto');
+                    }
+                }
+            }, 1000);
+
+            // Registrar interacciones con el bot para analytics
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('#retell-widget-button')) {
+                    console.log('🤖 Usuario interactuando con SPBot');
+                    // Aquí podrías añadir analytics si lo deseas
+                }
+            });
+        });
+
+        // Función para abrir el bot programáticamente si se necesita
+        window.abrirAsistenteBienestar = function() {
+            const widgetButton = document.querySelector('#retell-widget-button');
+            if (widgetButton) {
+                widgetButton.click();
+            }
+        };
     </script>
 </body>
 </html>
