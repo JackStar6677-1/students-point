@@ -2,15 +2,15 @@
 
 ## 📋 Descripción
 
-Se ha integrado un asistente virtual inteligente (SPBot) en el módulo de Bienestar Estudiantil utilizando la plataforma Retell AI. Este bot proporciona soporte y orientación a los estudiantes en temas relacionados con bienestar estudiantil.
+Se ha integrado un asistente virtual inteligente (SPBott) en el módulo de Bienestar Estudiantil utilizando la plataforma Retell AI. Este bot proporciona soporte y orientación a los estudiantes en temas relacionados con bienestar estudiantil.
 
 ## ✨ Características
 
 ### Configuración del Bot
 
-- **Nombre**: SPBot
+- **Nombre**: SPBott
 - **Color temático**: Morado (`#4b0082`) - Coincide con el tema de la aplicación
-- **Logo**: Icono de robot naranja
+- **Logo**: Icono de robot violeta (combina con el tema morado)
 - **Mensaje de bienvenida**: Personalizado con el nombre del usuario
 - **Tiempo de popup automático**: 5 segundos
 - **Apertura automática**: Desactivada (el usuario debe hacer clic)
@@ -69,8 +69,9 @@ Se ha integrado un asistente virtual inteligente (SPBot) en el módulo de Bienes
     data-public-key="public_key_185b63a3eada8d6f65c02" 
     data-agent-id="agent_447cb579449f02a59ec24fb63a" 
     data-title="SPBot" 
+    data-logo-url="https://icones.pro/wp-content/uploads/2022/10/icone-robot-violet.png" 
     data-color="#4b0082" 
-    data-bot-name="SPBot" 
+    data-bot-name="SPBott" 
     data-popup-message="Hola bienvenido a bienestar estudiantil" 
     data-show-ai-popup="true" 
     data-show-ai-popup-time="5" 
@@ -103,7 +104,7 @@ Esta función permite abrir el chat del bot desde cualquier parte del código, �
 ### Mensaje de Bienvenida Personalizado
 
 ```javascript
-`¡Hola ${userName}! 👋 Soy SPBot, tu asistente de bienestar estudiantil. ¿En qué puedo ayudarte hoy?`
+`¡Hola ${userName}! 👋 Soy SPBott, tu asistente de bienestar estudiantil. ¿En qué puedo ayudarte hoy?`
 ```
 
 ## 🔐 Configuración de Seguridad
@@ -123,7 +124,7 @@ Esta función permite abrir el chat del bot desde cualquier parte del código, �
 // Interacción con el bot
 document.addEventListener('click', function(e) {
     if (e.target.closest('#retell-widget-button')) {
-        console.log('🤖 Usuario interactuando con SPBot');
+        console.log('🤖 Usuario interactuando con SPBott');
         // Integración con analytics futura
     }
 });
