@@ -1,0 +1,31 @@
+Tabla -> Función (resumen PPT)
+
+accounts_user: Usuarios, roles y perfil; base para permisos y ownership.
+accounts_loginlog / registrationlog / useractivitylog: Bitácora de accesos, registros y acciones.
+
+campuses_sede / campus_map_* / campuses_recorrido: Catálogo de sedes y mapas (markers, tours y pasos).
+
+market_producto / market_categoriaproducto: Marketplace (publicaciones, categorías, vendedor).
+market_productoanalytics / productofavorito / productoreporte: Métricas, favoritos y reportes de marketplace.
+
+forum_post / forum_comentario / forum_foro: Publicaciones, comentarios y foros temáticos.
+forum_votopost / votocomentario / votoencuesta / opcionencuesta: Votaciones y encuestas en posts.
+forum_postreporte / moderacionevent: Reportes y eventos de moderación.
+
+polls_poll (+ opciones, votos, analytics, sedes): Encuestas independientes o ligadas a posts.
+
+reports_reporte / reportemedia: Reportes de incidencias con adjuntos.
+
+portfolio_* (experiencia, habilidad, logro, proyecto, config, analytics, sugerencia): Portafolios de usuario y métricas.
+
+notifications_*: Plantillas, preferencias, envíos y suscripciones push.
+
+infrastructure_monitoring_*: Inventario, métricas, alertas y mantenimientos de infraestructura.
+
+document_converter_conversionjob: Jobs de conversión de documentos.
+otec_curso / otec_clasevideo: Cursos OTEC y sus clases en video.
+wellbeing_bienestaritem: Contenidos de bienestar.
+
+token_blacklist_*: Tokens JWT emitidos y revocados (seguridad).
+
+django_admin_log / auth_* / django_* / sessions: Infraestructura Django (permisos, sesiones, migraciones, auditoría).
