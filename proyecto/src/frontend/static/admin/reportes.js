@@ -213,12 +213,6 @@ function renderizarReportes(reportesArray) {
                         <button class="btn btn-danger btn-sm" onclick="eliminarPost(${reporte.post}, ${reporte.id})" title="Eliminar post y actualizar reportes">
                             <i class="fas fa-trash"></i> Eliminar Post
                         </button>
-                        <button class="btn btn-success btn-sm" onclick="actualizarEstadoReporte(${reporte.id}, 'resuelto')" title="Marcar como resuelto">
-                            <i class="fas fa-check"></i> Resolver
-                        </button>
-                        <button class="btn btn-secondary btn-sm" onclick="actualizarEstadoReporte(${reporte.id}, 'descartado')" title="Descartar reporte">
-                            <i class="fas fa-times"></i> Descartar
-                        </button>
                     </div>
                 </div>
             </div>

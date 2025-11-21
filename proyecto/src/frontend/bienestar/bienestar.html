@@ -2118,11 +2118,36 @@
 
         // Inicialización completa cuando el DOM esté listo
         document.addEventListener('DOMContentLoaded', function() {
-            // Cargar usuario
-            const userName = localStorage.getItem('user_name') || 'Usuario';
-            const userRole = localStorage.getItem('user_career') || 'Estudiante';
-            document.getElementById('sidebarUserName').textContent = userName;
-            document.getElementById('sidebarUserRole').textContent = userRole;
+            // Cargar usuario desde user_data (igual que otros módulos)
+            try {
+                const userData = localStorage.getItem('user_data');
+                if (userData) {
+                    const user = JSON.parse(userData);
+                    document.getElementById('sidebarUserName').textContent = user.name || user.email || 'Usuario';
+                    document.getElementById('sidebarUserRole').textContent = user.career || 'Estudiante';
+                } else {
+                    // Fallback: intentar cargar desde API
+                    if (window.authAPI && window.authAPI.isAuthenticated()) {
+                        window.authAPI.getCurrentUser().then(user => {
+                            if (user) {
+                                document.getElementById('sidebarUserName').textContent = user.name || user.email || 'Usuario';
+                                document.getElementById('sidebarUserRole').textContent = user.career || 'Estudiante';
+                            }
+                        }).catch(() => {
+                            // Si falla, usar valores por defecto
+                            document.getElementById('sidebarUserName').textContent = 'Usuario';
+                            document.getElementById('sidebarUserRole').textContent = 'Estudiante';
+                        });
+                    } else {
+                        document.getElementById('sidebarUserName').textContent = 'Usuario';
+                        document.getElementById('sidebarUserRole').textContent = 'Estudiante';
+                    }
+                }
+            } catch (error) {
+                console.error('Error cargando usuario:', error);
+                document.getElementById('sidebarUserName').textContent = 'Usuario';
+                document.getElementById('sidebarUserRole').textContent = 'Estudiante';
+            }
         });
     </script>
 
