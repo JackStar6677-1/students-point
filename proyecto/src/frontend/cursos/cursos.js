@@ -8,7 +8,6 @@ document.addEventListener('DOMContentLoaded', () => {
     initAuth();
     cargarEstadisticas();
     cargarCursos();
-    configurarFechaMinima();
     
     // Configurar event listener para pausar videos al cerrar el modal
     const modalDetalleCurso = document.getElementById('detalleCursoModal');
@@ -206,8 +205,6 @@ function filtrarCursos() {
     // Ordenamiento
     const orden = document.getElementById('filtroOrden').value;
     cursosFiltrados.sort((a, b) => {
-        if (orden === 'created_at') return new Date(a.created_at) - new Date(b.created_at);
-        if (orden === '-created_at') return new Date(b.created_at) - new Date(a.created_at);
         if (orden === 'precio') return (a.precio || 0) - (b.precio || 0);
         if (orden === '-precio') return (b.precio || 0) - (a.precio || 0);
         if (orden === '-visualizaciones') return b.visualizaciones - a.visualizaciones;
@@ -320,12 +317,10 @@ function mostrarDetalleCurso(curso) {
             <div class="col-md-6">
                 <p class="mb-2"><i class="fas fa-user"></i> <strong>Autor:</strong> ${curso.autor_nombre}</p>
                 <p class="mb-2"><i class="fas fa-clock"></i> <strong>Duracion:</strong> ${curso.duracion || 'No especificada'}</p>
-                <p class="mb-2"><i class="fas fa-calendar"></i> <strong>Inicio:</strong> ${new Date(curso.fecha_inicio).toLocaleDateString('es-CL')}</p>
             </div>
             <div class="col-md-6">
                 <p class="mb-2"><i class="fas fa-tag"></i> <strong>Precio:</strong> <span class="${curso.precio_formateado === 'Gratuito' ? 'text-success' : 'text-warning'}">${curso.precio_formateado}</span></p>
                 <p class="mb-2"><i class="fas fa-eye"></i> <strong>Visualizaciones:</strong> ${curso.visualizaciones}</p>
-                ${curso.fecha_fin ? `<p class="mb-2"><i class="fas fa-calendar-check"></i> <strong>Fin:</strong> ${new Date(curso.fecha_fin).toLocaleDateString('es-CL')}</p>` : ''}
             </div>
         </div>
         
@@ -564,9 +559,7 @@ async function publicarCurso() {
         url: tipo === 'externo' ? document.getElementById('urlCurso').value : (tipo === 'personal' ? document.getElementById('urlContacto').value : ''),
         email_contacto: tipo === 'personal' ? document.getElementById('emailContacto').value : '',
         telefono_contacto: tipo === 'personal' ? document.getElementById('telefonoContacto').value : '',
-        imagen_url: document.getElementById('imagenCurso').value,
-        fecha_inicio: document.getElementById('fechaInicioCurso').value,
-        fecha_fin: document.getElementById('fechaFinCurso').value || null
+        imagen_url: document.getElementById('imagenCurso').value
     };
     
     try {
@@ -645,13 +638,6 @@ function togglePrecio() {
     if (esGratuito) {
         document.getElementById('precioCurso').value = '';
     }
-}
-
-// Configurar fecha minima
-function configurarFechaMinima() {
-    const hoy = new Date().toISOString().split('T')[0];
-    document.getElementById('fechaInicioCurso').min = hoy;
-    document.getElementById('fechaFinCurso').min = hoy;
 }
 
 // Mostrar mensajes

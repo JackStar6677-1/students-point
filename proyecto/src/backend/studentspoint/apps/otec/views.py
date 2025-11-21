@@ -59,8 +59,11 @@ class CursoViewSet(viewsets.ModelViewSet):
         vigente = self.request.query_params.get('vigente', None)
         if vigente == 'true':
             today = timezone.now().date()
+            # Un curso es vigente si:
+            # - No tiene fecha_inicio O fecha_inicio <= today
+            # - No tiene fecha_fin O fecha_fin >= today
             qs = qs.filter(
-                fecha_inicio__lte=today
+                Q(fecha_inicio__isnull=True) | Q(fecha_inicio__lte=today)
             ).filter(
                 Q(fecha_fin__isnull=True) | Q(fecha_fin__gte=today)
             )

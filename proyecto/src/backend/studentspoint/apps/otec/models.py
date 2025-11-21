@@ -98,14 +98,16 @@ class Curso(models.Model):
         help_text='URL de imagen del curso'
     )
     
-    # Fechas
+    # Fechas (DEPRECATED - Ya no se usan en el frontend)
     fecha_inicio = models.DateField(
-        help_text='Fecha de inicio del curso'
+        null=True,
+        blank=True,
+        help_text='Fecha de inicio del curso (DEPRECATED)'
     )
     fecha_fin = models.DateField(
         null=True,
         blank=True,
-        help_text='Fecha de fin (opcional)'
+        help_text='Fecha de fin (DEPRECATED)'
     )
     
     # Metadata
@@ -126,11 +128,14 @@ class Curso(models.Model):
         ]
 
     def esta_vigente(self) -> bool:
+        """Verifica si el curso está vigente"""
         today = timezone.now().date()
         if not self.visible:
             return False
-        if self.fecha_inicio > today:
+        # Si tiene fecha_inicio, verificar que ya haya empezado
+        if self.fecha_inicio and self.fecha_inicio > today:
             return False
+        # Si tiene fecha_fin, verificar que no haya terminado
         if self.fecha_fin and self.fecha_fin < today:
             return False
         return True

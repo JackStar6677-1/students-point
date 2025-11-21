@@ -101,12 +101,11 @@
                 </div>
             </div>
             
-            <div class="flex-between mb-3">
+            <div class="mb-3">
                 <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
                     <input type="checkbox" id="remember" style="width: 18px; height: 18px; cursor: pointer;">
                     <span style="color: var(--color-gray-light);">Recordarme</span>
                 </label>
-                <a href="#" class="text-gradient-purple" id="forgotPassword">¿Olvidaste tu contraseña?</a>
             </div>
             
             <button type="submit" class="btn btn-primary w-100 btn-lg mb-3" id="loginBtn">
@@ -233,13 +232,6 @@
                 console.error('Error:', error);
                 showAlert('Error de conexión con Google', 'error');
             }
-        });
-        
-        // Forgot Password
-        document.getElementById('forgotPassword').addEventListener('click', function(e) {
-            e.preventDefault();
-            if (window.playSound) window.playSound('click');
-            showAlert('Funcionalidad de recuperación de contraseña disponible próximamente.', 'warning');
         });
         
         // Fill demo credentials

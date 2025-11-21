@@ -129,19 +129,6 @@
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.curso-fechas {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    font-size: 0.875rem;
-    color: rgba(255, 255, 255, 0.8);
-}
-
-.curso-fechas i {
-    color: var(--gold);
-    margin-right: 0.5rem;
-}
-
 /* Estado de vigencia */
 .curso-vigencia {
     padding: 0.5rem 1rem;
