@@ -141,16 +141,63 @@ class ProductoFavoritoSerializer(serializers.ModelSerializer):
 class ProductoReporteSerializer(serializers.ModelSerializer):
     """Serializer para reportes de productos."""
     
-    reportador_nombre = serializers.CharField(source='reportador.name', read_only=True)
-    producto_titulo = serializers.CharField(source='producto.titulo', read_only=True)
+    reportador_name = serializers.SerializerMethodField()
+    reportador_email = serializers.SerializerMethodField()
+    producto_titulo = serializers.SerializerMethodField()
+    producto_descripcion = serializers.SerializerMethodField()
+    producto_vendedor = serializers.SerializerMethodField()
+    tipo_display = serializers.CharField(source="get_tipo_display", read_only=True)
+    estado_display = serializers.CharField(source="get_estado_display", read_only=True)
     
     class Meta:
         model = ProductoReporte
         fields = [
-            'id', 'producto', 'producto_titulo', 'reportador', 'reportador_nombre',
-            'tipo', 'descripcion', 'resuelto', 'created_at'
+            'id', 'producto', 'producto_titulo', 'producto_descripcion', 'producto_vendedor',
+            'reportador', 'reportador_name', 'reportador_email', 'tipo', 'tipo_display',
+            'descripcion', 'estado', 'estado_display', 'created_at'
         ]
         read_only_fields = ['reportador', 'created_at']
+    
+    def get_reportador_name(self, obj):
+        """Obtener nombre del reportador de forma segura"""
+        try:
+            return obj.reportador.name if obj.reportador else None
+        except:
+            return None
+    
+    def get_reportador_email(self, obj):
+        """Obtener email del reportador de forma segura"""
+        try:
+            return obj.reportador.email if obj.reportador else None
+        except:
+            return None
+    
+    def get_producto_titulo(self, obj):
+        """Obtener título del producto de forma segura"""
+        try:
+            return obj.producto.titulo if obj.producto else None
+        except:
+            return None
+    
+    def get_producto_descripcion(self, obj):
+        """Obtener descripción del producto de forma segura"""
+        try:
+            return obj.producto.descripcion if obj.producto else None
+        except:
+            return None
+    
+    def get_producto_vendedor(self, obj):
+        """Obtener vendedor del producto de forma segura"""
+        try:
+            return obj.producto.vendedor.name if obj.producto and obj.producto.vendedor else None
+        except:
+            return None
+    
+    def create(self, validated_data):
+        """Crea un nuevo reporte."""
+        request = self.context.get('request')
+        validated_data['reportador'] = request.user
+        return super().create(validated_data)
     
     def create(self, validated_data):
         """Crea un nuevo reporte."""

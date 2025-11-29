@@ -208,10 +208,13 @@
                                     ${p.fecha ? `<span class="badge bg-info"><i class="far fa-clock"></i> ${p.fecha}</span>` : ''}
                                 </div>
                             </div>
-                            <div>
+                            <div class="d-flex gap-2">
                                 <a href="${p.url}" target="_blank" class="btn-link-externo">
                                     <i class="fas fa-external-link-alt"></i> Ver Producto
                                 </a>
+                                <button class="btn btn-sm btn-outline-danger" onclick="reportarProducto(${p.id})" title="Reportar producto">
+                                    <i class="fas fa-flag"></i>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -324,7 +327,91 @@
             }
         });
         
+        async function reportarProducto(productoId) {
+            const modal = new bootstrap.Modal(document.getElementById('reportModal'));
+            document.getElementById('reportModal').setAttribute('data-producto-id', productoId);
+            modal.show();
+        }
+        
+        async function submitReport() {
+            const productoId = document.getElementById('reportModal').getAttribute('data-producto-id');
+            const tipo = document.getElementById('reportType').value;
+            const descripcion = document.getElementById('reportDescription').value;
+            
+            if (!tipo) {
+                alert('Por favor selecciona un tipo de reporte');
+                return;
+            }
+            
+            try {
+                const token = getToken();
+                if (!token) {
+                    alert('Debes iniciar sesión');
+                    return;
+                }
+                
+                const response = await fetch(`/api/market/productos/${productoId}/reportar/`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        tipo: tipo,
+                        descripcion: descripcion
+                    })
+                });
+                
+                if (response.ok) {
+                    alert('Reporte enviado correctamente');
+                    bootstrap.Modal.getInstance(document.getElementById('reportModal')).hide();
+                    document.getElementById('reportType').value = '';
+                    document.getElementById('reportDescription').value = '';
+                } else {
+                    const error = await response.json();
+                    alert('Error al enviar el reporte: ' + (error.error || error.detail || 'Error desconocido'));
+                }
+            } catch (e) {
+                console.error(e);
+                alert('Error al enviar el reporte');
+            }
+        }
+        
         cargar();
     </script>
+    
+    <!-- Modal: Reportar Producto -->
+    <div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content bg-dark">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="reportModalLabel">Reportar producto</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="reportType" class="form-label">Motivo</label>
+                        <select id="reportType" class="form-select" required>
+                            <option value="">Selecciona un motivo</option>
+                            <option value="fraude">Posible Fraude</option>
+                            <option value="inapropiado">Contenido Inapropiado</option>
+                            <option value="spam">Spam</option>
+                            <option value="otro">Otro</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="reportDescription" class="form-label">Descripción</label>
+                        <textarea id="reportDescription" class="form-control" rows="4" placeholder="Describe brevemente el problema"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" onclick="submitReport()">
+                        <i class="fas fa-flag me-2"></i>Enviar reporte
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

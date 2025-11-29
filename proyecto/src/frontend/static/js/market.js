@@ -166,9 +166,14 @@ class MarketApp {
                         <div class="producto-precios">
                             ${this.renderCardPrice(producto)}
                         </div>
-                        <button class="btn btn-sm btn-outline ver-producto" data-id="${producto.id}">
-                            Ver Detalles
-                        </button>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-sm btn-outline ver-producto" data-id="${producto.id}">
+                                Ver Detalles
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger reportar-producto" data-id="${producto.id}" onclick="marketApp.reportarProducto(${producto.id})" title="Reportar producto">
+                                <i class="fas fa-flag"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -440,23 +445,38 @@ class MarketApp {
         }
     }
     
-    async reportarProducto(e) {
-        e.preventDefault();
-        
-        const formData = {
-            producto: this.productoActual.id,
-            tipo: document.getElementById('inputTipoReporte').value,
-            descripcion: document.getElementById('inputDescripcionReporte').value
-        };
-        
+    reportarProducto(productoId) {
+        this.currentProductoId = productoId;
+        const modal = new bootstrap.Modal(document.getElementById('reportModal'));
+        modal.show();
+    }
+
+    async submitReport() {
         try {
-            await window.marketAPI.reportarProducto(formData);
-            this.showSuccess('Reporte enviado exitosamente');
-            this.closeModal();
-            document.getElementById('formReportar').reset();
+            const reportTypeElement = document.getElementById('reportType');
+            const reportDescriptionElement = document.getElementById('reportDescription');
+            const reportType = reportTypeElement ? reportTypeElement.value : '';
+            const reportDescription = reportDescriptionElement ? reportDescriptionElement.value : '';
+
+            if (!reportType) {
+                this.showError('Por favor selecciona un tipo de reporte');
+                return;
+            }
+
+            await window.marketAPI.reportarProducto(this.currentProductoId, {
+                tipo: reportType,
+                descripcion: reportDescription
+            });
+
+            this.showSuccess('Reporte enviado correctamente');
+            bootstrap.Modal.getInstance(document.getElementById('reportModal')).hide();
+            
+            // Limpiar formulario
+            if (reportTypeElement) reportTypeElement.value = '';
+            if (reportDescriptionElement) reportDescriptionElement.value = '';
         } catch (error) {
-            console.error('Error reportando producto:', error);
-            this.showError(error.message || 'Error enviando reporte');
+            console.error('Error submitting report:', error);
+            this.showError(error.message || 'Error al enviar el reporte');
         }
     }
     

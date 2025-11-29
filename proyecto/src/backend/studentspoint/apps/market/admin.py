@@ -36,8 +36,8 @@ class ProductoFavoritoAdmin(admin.ModelAdmin):
 
 @admin.register(ProductoReporte)
 class ProductoReporteAdmin(admin.ModelAdmin):
-    list_display = ['producto', 'reportador', 'tipo', 'resuelto', 'created_at']
-    list_filter = ['tipo', 'resuelto', 'created_at']
+    list_display = ['producto', 'reportador', 'tipo', 'estado', 'created_at']
+    list_filter = ['tipo', 'estado', 'created_at']
     search_fields = ['producto__titulo', 'reportador__email', 'descripcion']
 
 

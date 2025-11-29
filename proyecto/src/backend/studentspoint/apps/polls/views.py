@@ -9,10 +9,12 @@ from rest_framework import generics, permissions, status, filters
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.decorators import action
+from rest_framework.views import exception_handler
 from drf_spectacular.utils import extend_schema, extend_schema_view
 
-from studentspoint.apps.accounts.permissions import IsModeratorOrDirector
-from .models import Poll, PollAnalytics, PollOpcion
+from studentspoint.apps.accounts.permissions import IsModeratorOrDirector, IsModerator
+from rest_framework.permissions import IsAuthenticated
+from .models import Poll, PollAnalytics, PollOpcion, PollReporte
 from .serializers import (
     PollListSerializer,
     PollDetailSerializer,
@@ -21,6 +23,7 @@ from .serializers import (
     PollVoteSerializer,
     PollExportSerializer,
     PollAnalyticsSerializer,
+    PollReporteSerializer,
     SimpleStatusSerializer,
 )
 
@@ -32,7 +35,7 @@ from .serializers import (
     ),
     create=extend_schema(
         summary="Crea nueva encuesta",
-        description="Permite a moderadores y directores crear encuestas con opciones múltiples."
+        description="Permite a cualquier usuario autenticado crear encuestas con opciones múltiples."
     )
 )
 class PollListCreateView(generics.ListCreateAPIView):
@@ -50,9 +53,20 @@ class PollListCreateView(generics.ListCreateAPIView):
         return PollListSerializer
     
     def get_permissions(self):
-        if self.request.method == "POST":
-            return [permissions.IsAuthenticated(), IsModeratorOrDirector()]
+        # Permitir que cualquier usuario autenticado pueda crear encuestas
         return [permissions.IsAuthenticated()]
+    
+    def create(self, request, *args, **kwargs):
+        """Crear encuesta y devolver respuesta con detalles completos."""
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        poll = serializer.save()
+        
+        # Devolver respuesta con detalles completos usando PollDetailSerializer
+        from .serializers import PollDetailSerializer
+        detail_serializer = PollDetailSerializer(poll, context={'request': request})
+        headers = self.get_success_headers(detail_serializer.data)
+        return Response(detail_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
     
     def get_queryset(self):
         user = self.request.user
@@ -151,6 +165,11 @@ class PollDetailView(generics.RetrieveUpdateDestroyAPIView):
         user = self.request.user
         if user.role != "admin_global" and instance.creador != user:
             raise permissions.PermissionDenied("Solo administradores o el creador pueden eliminar esta encuesta")
+        
+        # Actualizar todos los reportes relacionados a "poll_eliminado"
+        PollReporte.objects.filter(poll=instance).update(
+            estado=PollReporte.Estado.POLL_ELIMINADO
+        )
         
         instance.delete()
 
@@ -364,3 +383,87 @@ class PollsDashboardView(APIView):
                 "role": user.role
             }
         })
+
+
+class PollReporteView(generics.CreateAPIView):
+    """Permite a usuarios reportar encuestas inapropiadas."""
+    
+    serializer_class = PollReporteSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def create(self, request, *args, **kwargs):
+        """Crear reporte con manejo de errores mejorado"""
+        try:
+            poll = get_object_or_404(Poll, pk=self.kwargs["pk"])
+            
+            # Validar datos
+            tipo = request.data.get('tipo')
+            descripcion = request.data.get('descripcion', '')
+            
+            if not tipo:
+                return Response(
+                    {'error': 'Debes especificar el tipo de reporte'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            
+            # Usar el método reportar del modelo (maneja duplicados automáticamente)
+            reporte = poll.reportar(request.user, tipo, descripcion)
+            
+            # Serializar el reporte creado/actualizado
+            serializer = self.get_serializer(reporte)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            return Response(
+                {'error': f'Error al crear el reporte: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+
+class PollReportesListView(generics.ListAPIView):
+    """Lista reportes de una encuesta específica."""
+    
+    permission_classes = [IsModerator]
+    serializer_class = PollReporteSerializer
+    
+    def get_queryset(self):
+        poll = get_object_or_404(Poll, pk=self.kwargs["pk"])
+        qs = PollReporte.objects.filter(poll=poll).order_by("-created_at")
+        estado = self.request.query_params.get("estado")
+        if estado:
+            qs = qs.filter(estado=estado)
+        return qs
+
+
+class PollReporteUpdateView(generics.UpdateAPIView):
+    """Permite a moderadores y administradores actualizar el estado de un reporte."""
+    permission_classes = [IsModerator]
+    serializer_class = PollReporteSerializer
+
+    def get_queryset(self):
+        return PollReporte.objects.all()
+
+
+class TodosPollReportesListView(generics.ListAPIView):
+    """Lista TODOS los reportes de encuestas - Solo para administradores."""
+    
+    permission_classes = [IsModerator]
+    serializer_class = PollReporteSerializer
+    
+    def get_queryset(self):
+        """Obtener todos los reportes con información de la encuesta"""
+        qs = PollReporte.objects.select_related(
+            'poll', 'poll__creador', 'usuario'
+        ).order_by("-created_at")
+        
+        # Filtros opcionales
+        estado = self.request.query_params.get("estado")
+        if estado:
+            qs = qs.filter(estado=estado)
+        
+        tipo = self.request.query_params.get("tipo")
+        if tipo:
+            qs = qs.filter(tipo=tipo)
+        
+        return qs

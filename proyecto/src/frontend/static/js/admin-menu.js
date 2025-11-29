@@ -51,7 +51,7 @@ async function esAdmin() {
 }
 
 /**
- * Agrega el enlace de reportes del foro al sidebar si el usuario es admin
+ * Agrega el enlace de administración al sidebar si el usuario es admin
  */
 async function agregarEnlaceAdmin() {
     const esAdminUser = await esAdmin();
@@ -69,7 +69,12 @@ async function agregarEnlaceAdmin() {
     // Verificar si ya existe el enlace
     const enlaceExistente = sidebarMenu.querySelector('a[href="/moderacion/"]');
     if (enlaceExistente) {
-        return; // Ya existe
+        // Actualizar el enlace existente para asegurar que tenga el icono y texto correctos
+        enlaceExistente.innerHTML = `
+            <i class="fas fa-shield-alt"></i>
+            <span>Admin</span>
+        `;
+        return;
     }
     
     // Buscar el enlace del foro para insertar después
@@ -80,8 +85,8 @@ async function agregarEnlaceAdmin() {
         adminLink.href = '/moderacion/';
         adminLink.className = 'menu-item';
         adminLink.innerHTML = `
-            <i class="fas fa-flag"></i>
-            <span>Reportes Foro</span>
+            <i class="fas fa-shield-alt"></i>
+            <span>Admin</span>
         `;
         
         // Insertar después del enlace del foro

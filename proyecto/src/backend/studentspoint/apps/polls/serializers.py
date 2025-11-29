@@ -8,7 +8,7 @@ from django.utils import timezone
 from drf_spectacular.utils import extend_schema_field
 
 from studentspoint.apps.campuses.models import Sede
-from .models import Poll, PollOpcion, PollVoto, PollAnalytics
+from .models import Poll, PollOpcion, PollVoto, PollAnalytics, PollReporte
 
 
 class PollOpcionSerializer(serializers.ModelSerializer):
@@ -352,3 +352,59 @@ class SimpleStatusSerializer(serializers.Serializer):
     
     status = serializers.CharField()
     message = serializers.CharField(required=False)
+
+
+class PollReporteSerializer(serializers.ModelSerializer):
+    """Serializer para reportes de encuestas."""
+    
+    usuario_name = serializers.SerializerMethodField()
+    usuario_email = serializers.SerializerMethodField()
+    poll_titulo = serializers.SerializerMethodField()
+    poll_descripcion = serializers.SerializerMethodField()
+    poll_creador = serializers.SerializerMethodField()
+    tipo_display = serializers.CharField(source="get_tipo_display", read_only=True)
+    estado_display = serializers.CharField(source="get_estado_display", read_only=True)
+    
+    class Meta:
+        model = PollReporte
+        fields = [
+            "id", "poll", "poll_titulo", "poll_descripcion", "poll_creador",
+            "usuario", "usuario_name", "usuario_email", "tipo", "tipo_display",
+            "descripcion", "estado", "estado_display", "created_at"
+        ]
+        read_only_fields = ["usuario", "created_at"]
+    
+    def get_usuario_name(self, obj):
+        """Obtener nombre del usuario de forma segura"""
+        try:
+            return obj.usuario.name if obj.usuario else None
+        except:
+            return None
+    
+    def get_usuario_email(self, obj):
+        """Obtener email del usuario de forma segura"""
+        try:
+            return obj.usuario.email if obj.usuario else None
+        except:
+            return None
+    
+    def get_poll_titulo(self, obj):
+        """Obtener título de la encuesta de forma segura"""
+        try:
+            return obj.poll.titulo if obj.poll else None
+        except:
+            return None
+    
+    def get_poll_descripcion(self, obj):
+        """Obtener descripción de la encuesta de forma segura"""
+        try:
+            return obj.poll.descripcion if obj.poll else None
+        except:
+            return None
+    
+    def get_poll_creador(self, obj):
+        """Obtener creador de la encuesta de forma segura"""
+        try:
+            return obj.poll.creador.name if obj.poll and obj.poll.creador else None
+        except:
+            return None

@@ -1,6 +1,7 @@
 /**
  * Servicio API para el módulo de encuestas/polls.
  * Centraliza todas las llamadas HTTP al backend relacionadas con encuestas.
+ * Basado en el patrón de MarketAPI
  */
 
 class PollsAPI {
@@ -13,6 +14,9 @@ class PollsAPI {
      * @returns {string|null} Token de acceso o null si no existe
      */
     getAuthToken() {
+        if (window.authAPI && typeof window.authAPI.getAuthToken === 'function') {
+            return window.authAPI.getAuthToken();
+        }
         return localStorage.getItem('access_token');
     }
 
@@ -46,9 +50,11 @@ class PollsAPI {
      */
     async handleResponse(response) {
         if (response.status === 401) {
-            // Token expirado, redirigir al login
-            if (window.authAPI) {
+            if (window.authAPI && typeof window.authAPI.logout === 'function') {
                 window.authAPI.logout();
+            } else {
+                localStorage.removeItem('access_token');
+                localStorage.removeItem('refresh_token');
             }
             window.location.href = '/login.html';
             return null;
@@ -58,8 +64,7 @@ class PollsAPI {
         if (contentType && contentType.includes('application/json')) {
             const data = await response.json();
             if (!response.ok) {
-                const errorMsg = data.detail || data.error || data.message || 'Error en la petición';
-                throw new Error(errorMsg);
+                throw new Error(data.detail || data.message || data.error || 'Error en la petición');
             }
             return data;
         }
@@ -79,11 +84,13 @@ class PollsAPI {
     async getPolls(filters = {}) {
         try {
             const params = new URLSearchParams();
-            if (filters.estado) params.append('estado', filters.estado);
-            if (filters.categoria) params.append('categoria', filters.categoria);
-            if (filters.search) params.append('search', filters.search);
+            Object.keys(filters).forEach(key => {
+                if (filters[key] !== null && filters[key] !== undefined && filters[key] !== '') {
+                    params.append(key, filters[key]);
+                }
+            });
 
-            const url = `${this.baseURL}/${params.toString() ? '?' + params.toString() : ''}`;
+            const url = `${this.baseURL}/polls/${params.toString() ? '?' + params : ''}`;
             const response = await fetch(url, {
                 headers: this.getHeaders(true)
             });
@@ -103,7 +110,7 @@ class PollsAPI {
      */
     async getPoll(id) {
         try {
-            const response = await fetch(`${this.baseURL}/${id}/`, {
+            const response = await fetch(`${this.baseURL}/polls/${id}/`, {
                 headers: this.getHeaders(true)
             });
 
@@ -121,7 +128,7 @@ class PollsAPI {
      */
     async createPoll(pollData) {
         try {
-            const response = await fetch(`${this.baseURL}/`, {
+            const response = await fetch(`${this.baseURL}/polls/`, {
                 method: 'POST',
                 headers: this.getHeaders(true),
                 body: JSON.stringify(pollData)
@@ -142,7 +149,7 @@ class PollsAPI {
      */
     async updatePoll(id, pollData) {
         try {
-            const response = await fetch(`${this.baseURL}/${id}/`, {
+            const response = await fetch(`${this.baseURL}/polls/${id}/`, {
                 method: 'PATCH',
                 headers: this.getHeaders(true),
                 body: JSON.stringify(pollData)
@@ -162,7 +169,7 @@ class PollsAPI {
      */
     async deletePoll(id) {
         try {
-            const response = await fetch(`${this.baseURL}/${id}/`, {
+            const response = await fetch(`${this.baseURL}/polls/${id}/`, {
                 method: 'DELETE',
                 headers: this.getHeaders(true)
             });
@@ -179,7 +186,7 @@ class PollsAPI {
     /**
      * Vota en una encuesta.
      * @param {number} id - ID de la encuesta
-     * @param {Array} respuestas - Array de respuestas
+     * @param {Object} payload - Payload con opciones
      * @returns {Promise<Object>} Resultado de la votación
      */
     async votePoll(id, payload) {
@@ -188,7 +195,7 @@ class PollsAPI {
             // Normalizamos a { opciones: [...] } que es lo que espera el backend
             const body = payload.opciones ? payload : { opciones: payload.respuestas || payload.opciones || [] };
             
-            const response = await fetch(`${this.baseURL}/${id}/votar/`, {
+            const response = await fetch(`${this.baseURL}/polls/${id}/votar/`, {
                 method: 'POST',
                 headers: this.getHeaders(true),
                 body: JSON.stringify(body)
@@ -202,13 +209,34 @@ class PollsAPI {
     }
 
     /**
+     * Reporta una encuesta.
+     * @param {number} pollId - ID de la encuesta
+     * @param {Object} reportData - Datos del reporte (tipo, descripcion)
+     * @returns {Promise<Object>} Reporte creado
+     */
+    async reportarPoll(pollId, reportData) {
+        try {
+            const response = await fetch(`${this.baseURL}/polls/${pollId}/reportar/`, {
+                method: 'POST',
+                headers: this.getHeaders(true),
+                body: JSON.stringify(reportData)
+            });
+
+            return await this.handleResponse(response);
+        } catch (error) {
+            console.error('Error reportando encuesta:', error);
+            throw error;
+        }
+    }
+
+    /**
      * Obtiene las respuestas de una encuesta.
      * @param {number} id - ID de la encuesta
      * @returns {Promise<Array>} Lista de respuestas
      */
     async getPollResponses(id) {
         try {
-            const response = await fetch(`${this.baseURL}/${id}/respuestas/`, {
+            const response = await fetch(`${this.baseURL}/polls/${id}/respuestas/`, {
                 headers: this.getHeaders(true)
             });
 
@@ -226,7 +254,7 @@ class PollsAPI {
      */
     async getMyPolls() {
         try {
-            const response = await fetch(`${this.baseURL}/mis-encuestas/`, {
+            const response = await fetch(`${this.baseURL}/polls/mis-encuestas/`, {
                 headers: this.getHeaders(true)
             });
 
@@ -245,7 +273,7 @@ class PollsAPI {
      */
     async closePoll(id) {
         try {
-            const response = await fetch(`${this.baseURL}/${id}/cerrar/`, {
+            const response = await fetch(`${this.baseURL}/polls/${id}/cerrar/`, {
                 method: 'POST',
                 headers: this.getHeaders(true)
             });
@@ -264,7 +292,7 @@ class PollsAPI {
      */
     async getPollAnalytics(id) {
         try {
-            const response = await fetch(`${this.baseURL}/${id}/analytics/`, {
+            const response = await fetch(`${this.baseURL}/polls/${id}/analytics/`, {
                 headers: this.getHeaders(true)
             });
 
@@ -283,7 +311,7 @@ class PollsAPI {
      */
     async exportPoll(id, format = 'csv') {
         try {
-            const response = await fetch(`${this.baseURL}/${id}/export/?format=${format}`, {
+            const response = await fetch(`${this.baseURL}/polls/${id}/export/?format=${format}`, {
                 headers: this.getHeaders(true)
             });
 
@@ -304,7 +332,7 @@ class PollsAPI {
      */
     async getDashboard() {
         try {
-            const response = await fetch(`${this.baseURL}/dashboard/`, {
+            const response = await fetch(`${this.baseURL}/polls/dashboard/`, {
                 headers: this.getHeaders(true)
             });
 
@@ -316,17 +344,22 @@ class PollsAPI {
     }
 
     /**
-     * Obtiene el usuario actual usando el servicio de autenticación.
+     * Obtiene información del usuario actual.
      * @returns {Promise<Object>} Datos del usuario
      */
     async getCurrentUser() {
-        if (window.authAPI) {
-            return await window.authAPI.getCurrentUser();
+        try {
+            const response = await fetch('/api/auth/me/', {
+                headers: this.getHeaders(true)
+            });
+
+            return await this.handleResponse(response);
+        } catch (error) {
+            console.error('Error obteniendo usuario:', error);
+            throw error;
         }
-        throw new Error('Servicio de autenticación no disponible');
     }
 }
 
 // Exportar instancia global del servicio API
 window.pollsAPI = new PollsAPI();
-

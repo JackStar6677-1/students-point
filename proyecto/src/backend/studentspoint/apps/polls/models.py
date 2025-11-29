@@ -119,6 +119,29 @@ class Poll(models.Model):
             return not self.esta_activa
         else:  # TIEMPO_REAL
             return True
+    
+    def reportar(self, usuario, tipo, descripcion=""):
+        """Registra un reporte sobre la encuesta."""
+        # Importar aquí para evitar referencia circular
+        # PollReporte se define más abajo en este mismo archivo
+        
+        reporte, created = PollReporte.objects.get_or_create(
+            poll=self,
+            usuario=usuario,
+            defaults={
+                "tipo": tipo,
+                "descripcion": descripcion
+            }
+        )
+        
+        # Si el reporte ya existía, actualizar tipo y descripción
+        if not created:
+            reporte.tipo = tipo
+            reporte.descripcion = descripcion
+            reporte.estado = PollReporte.Estado.PENDIENTE  # Resetear a pendiente si se actualiza
+            reporte.save()
+        
+        return reporte
 
 
 class PollOpcion(models.Model):
@@ -246,6 +269,43 @@ class PollAnalytics(models.Model):
     
     def __str__(self):
         return f"Analytics: {self.poll.titulo}"
+
+class PollReporte(models.Model):
+    """Reportes de usuarios sobre encuestas inapropiadas."""
+    
+    class TipoReporte(models.TextChoices):
+        SPAM = "spam", "Spam"
+        CONTENIDO_INAPROPIADO = "contenido_inapropiado", "Contenido Inapropiado"
+        ACOSO = "acoso", "Acoso"
+        DESINFORMACION = "desinformacion", "Desinformación"
+        VIOLENCIA = "violencia", "Violencia"
+        OTRO = "otro", "Otro"
+    
+    class Estado(models.TextChoices):
+        PENDIENTE = "pendiente", "Pendiente"
+        RESUELTO = "resuelto", "Resuelto"
+        DESCARTADO = "descartado", "Descartado"
+        POLL_ELIMINADO = "poll_eliminado", "Encuesta Eliminada"
+    
+    poll = models.ForeignKey(Poll, on_delete=models.CASCADE, related_name="reportes")
+    usuario = models.ForeignKey(
+        settings.AUTH_USER_MODEL, 
+        on_delete=models.CASCADE, 
+        related_name="reportes_encuestas"
+    )
+    tipo = models.CharField(max_length=30, choices=TipoReporte.choices)
+    descripcion = models.TextField(blank=True)
+    estado = models.CharField(max_length=20, choices=Estado.choices, default=Estado.PENDIENTE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        unique_together = ("poll", "usuario")
+        verbose_name = "Reporte de Encuesta"
+        verbose_name_plural = "Reportes de Encuestas"
+    
+    def __str__(self) -> str:
+        return f"Reporte de {self.usuario.name} sobre {self.poll.titulo}"
+
 
 # Compatibilidad para tests legacy que esperan el nombre PollOption
 PollOption = PollOpcion

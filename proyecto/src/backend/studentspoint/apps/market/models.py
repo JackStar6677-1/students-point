@@ -158,6 +158,26 @@ class Producto(models.Model):
         if self.publicado_at:
             return timezone.now() - self.publicado_at
         return None
+    
+    def reportar(self, usuario, tipo, descripcion=""):
+        """Registra un reporte sobre el producto."""
+        reporte, created = ProductoReporte.objects.get_or_create(
+            producto=self,
+            reportador=usuario,
+            defaults={
+                "tipo": tipo,
+                "descripcion": descripcion
+            }
+        )
+        
+        # Si el reporte ya existía, actualizar tipo y descripción
+        if not created:
+            reporte.tipo = tipo
+            reporte.descripcion = descripcion
+            reporte.estado = ProductoReporte.Estado.PENDIENTE  # Resetear a pendiente si se actualiza
+            reporte.save()
+        
+        return reporte
 
 
 class ProductoFavorito(models.Model):
@@ -189,6 +209,12 @@ class ProductoReporte(models.Model):
         SPAM = "spam", "Spam"
         OTRO = "otro", "Otro"
     
+    class Estado(models.TextChoices):
+        PENDIENTE = "pendiente", "Pendiente"
+        RESUELTO = "resuelto", "Resuelto"
+        DESCARTADO = "descartado", "Descartado"
+        PRODUCTO_ELIMINADO = "producto_eliminado", "Producto Eliminado"
+    
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE, related_name="reportes")
     reportador = models.ForeignKey(
         settings.AUTH_USER_MODEL, 
@@ -196,8 +222,8 @@ class ProductoReporte(models.Model):
         related_name="reportes_productos"
     )
     tipo = models.CharField(max_length=20, choices=TiposReporte.choices)
-    descripcion = models.TextField()
-    resuelto = models.BooleanField(default=False)
+    descripcion = models.TextField(blank=True)
+    estado = models.CharField(max_length=20, choices=Estado.choices, default=Estado.PENDIENTE)
     created_at = models.DateTimeField(auto_now_add=True)
     
     class Meta:

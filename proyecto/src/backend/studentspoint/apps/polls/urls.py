@@ -11,6 +11,10 @@ from .views import (
     PollCloseView,
     MyPollsView,
     PollsDashboardView,
+    PollReporteView,
+    PollReportesListView,
+    PollReporteUpdateView,
+    TodosPollReportesListView,
 )
 
 urlpatterns = [
@@ -27,4 +31,9 @@ urlpatterns = [
     # Vistas especiales
     path("polls/mis-encuestas/", MyPollsView.as_view(), name="my-polls"),
     path("polls/dashboard/", PollsDashboardView.as_view(), name="polls-dashboard"),
+    # Reportes de encuestas
+    path("polls/<int:pk>/reportar/", PollReporteView.as_view(), name="poll-report"),
+    path("polls/<int:pk>/reportes/", PollReportesListView.as_view(), name="poll-reports"),
+    path("polls/reportes/<int:pk>/", PollReporteUpdateView.as_view(), name="poll-report-update"),
+    path("polls/reportes/todos/", TodosPollReportesListView.as_view(), name="todos-poll-reportes"),
 ]

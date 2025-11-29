@@ -294,12 +294,13 @@ class MarketAPI {
 
     /**
      * Reporta un producto.
-     * @param {Object} reportData - Datos del reporte (producto, tipo, descripcion)
+     * @param {number} productoId - ID del producto
+     * @param {Object} reportData - Datos del reporte (tipo, descripcion)
      * @returns {Promise<Object>} Reporte creado
      */
-    async reportarProducto(reportData) {
+    async reportarProducto(productoId, reportData) {
         try {
-            const response = await fetch(`${this.baseURL}/reports/`, {
+            const response = await fetch(`/api/market/productos/${productoId}/reportar/`, {
                 method: 'POST',
                 headers: this.getHeaders(true),
                 body: JSON.stringify(reportData)
