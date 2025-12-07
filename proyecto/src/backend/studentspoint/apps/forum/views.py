@@ -132,10 +132,9 @@ class ForoListView(generics.ListAPIView):
 
 class PostListCreateView(generics.ListCreateAPIView, generics.DestroyAPIView):
     """Lista posts de un foro y permite crear nuevas publicaciones.
-    
-    RESTRICCION IMPORTANTE: Los usuarios solo pueden crear posts en el foro
-    correspondiente a su carrera. Sin embargo, pueden comentar en posts de
-    cualquier foro.
+
+    Ahora cualquier usuario autenticado puede crear publicaciones en cualquier foro
+    (los controles de moderación y contenido permanecen activos).
     """
 
     serializer_class = PostSerializer

@@ -53,28 +53,14 @@ class ForumPermissionService:
     
     @classmethod
     def puede_postear_en_foro(cls, usuario, foro) -> bool:
-        """Verifica si un usuario puede crear posts en un foro específico.
-        
-        Args:
-            usuario: Instancia de usuario de Django
-            foro: Instancia del modelo Foro
-            
-        Returns:
-            bool: True si el usuario puede postear en el foro
-        """
+        """Verifica si un usuario puede crear posts en un foro."""
         if not usuario or not usuario.is_authenticated:
             return False
-            
-        # Admin y moderadores pueden postear en todos los foros
-        if cls.puede_moderar(usuario):
-            return True
-            
-        # Usuario normal solo puede postear en foro de su carrera
-        # Comparación normalizada para manejar diferencias de tildes y mayúsculas
-        carrera_usuario = normalizar_carrera(usuario.career) if usuario.career else ""
-        carrera_foro = normalizar_carrera(foro.carrera) if foro.carrera else ""
-        return carrera_usuario == carrera_foro
-    
+
+        # Permitir a cualquier usuario autenticado postear en cualquier foro
+        # (la moderacion y revision de contenido se controlan en otras capas).
+        return True
+
     @classmethod
     def puede_ver_foro(cls, usuario, foro) -> bool:
         """Verifica si un usuario puede ver un foro.
