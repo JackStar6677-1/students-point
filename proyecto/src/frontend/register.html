@@ -226,10 +226,23 @@
         // Show alert
         function showAlert(message, type = 'error') {
             const container = document.getElementById('alertContainer');
-            const alertClass = type === 'success' ? 'alert-success' : (type === 'warning' ? 'alert-warning' : 'alert-error');
+            let alertClass, iconClass;
+            if (type === 'success') {
+                alertClass = 'alert-success';
+                iconClass = 'check-circle';
+            } else if (type === 'warning') {
+                alertClass = 'alert-warning';
+                iconClass = 'exclamation-triangle';
+            } else if (type === 'info') {
+                alertClass = 'alert-success'; // Usar verde para info también
+                iconClass = 'info-circle';
+            } else {
+                alertClass = 'alert-error';
+                iconClass = 'exclamation-circle';
+            }
             container.innerHTML = `
                 <div class="${alertClass} animate-fade-in" style="margin-bottom: 1.5rem;">
-                    <i class="fas fa-${type === 'success' ? 'check-circle' : (type === 'warning' ? 'exclamation-triangle' : 'exclamation-circle')}"></i>
+                    <i class="fas fa-${iconClass}"></i>
                     ${message}
                 </div>
             `;
@@ -294,7 +307,7 @@
                     }, 2000);
                 } else {
                     // Mostrar mensaje de verificación
-                    showAlert(data.message || '¡Cuenta creada! Por favor verifica tu email con el código enviado.', 'info');
+                    showAlert(data.message || '¡Cuenta creada! Por favor verifica tu email con el código enviado.', 'success');
                     if (window.playSound) window.playSound('success');
                     
                     setTimeout(() => {
